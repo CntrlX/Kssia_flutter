@@ -18,6 +18,8 @@ class _MainPageState extends State<MainPage> {
     Text('Home Page', style: TextStyle(fontSize: 24)),
     Text('Feed Page', style: TextStyle(fontSize: 24)),
     Text('Profile Page', style: TextStyle(fontSize: 24)),
+    Text('Profile Page', style: TextStyle(fontSize: 24)),
+    Text('Profile Page', style: TextStyle(fontSize: 24)),
   ];
 
   void _onItemTapped(int index) {
