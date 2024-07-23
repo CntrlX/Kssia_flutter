@@ -26,16 +26,31 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset('assets/logo.png', height: 30), // Add your logo here
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
+                appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Center(
+                child: Text(
+                  'Home Page',
+                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                ),
+              ),
+            ),
+            title: Image.asset('assets/logo.png', height: 30), // Add your logo here
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.notifications, color: Colors.black),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.menu, color: Colors.black),
+                onPressed: () {},
+              ),
+            ],
           ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/screens/home_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -14,13 +15,13 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text('Home Page', style: TextStyle(fontSize: 24)),
-    Text('Feed Page', style: TextStyle(fontSize: 24)),
-    Text('Profile Page', style: TextStyle(fontSize: 24)),
-    Text('Search Page', style: TextStyle(fontSize: 24)),
-    Text('Settings Page', style: TextStyle(fontSize: 24)),
-  ];
+  static  List<Widget> _widgetOptions = <Widget>[
+      HomePage(),
+      Text('Feed Page', style: TextStyle(fontSize: 24)),
+      Text('Profile Page', style: TextStyle(fontSize: 24)),
+      Text('Search Page', style: TextStyle(fontSize: 24)),
+      Text('Settings Page', style: TextStyle(fontSize: 24)),
+    ];
 
   void _onItemTapped(int index) {
     setState(() {
