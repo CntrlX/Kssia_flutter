@@ -18,6 +18,8 @@ class _MainPageState extends State<MainPage> {
     Text('Home Page', style: TextStyle(fontSize: 24)),
     Text('Feed Page', style: TextStyle(fontSize: 24)),
     Text('Profile Page', style: TextStyle(fontSize: 24)),
+    Text('Search Page', style: TextStyle(fontSize: 24)),
+    Text('Settings Page', style: TextStyle(fontSize: 24)),
   ];
 
   void _onItemTapped(int index) {
@@ -46,12 +48,12 @@ class _MainPageState extends State<MainPage> {
             label: 'Feed',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
-            label: 'Feed',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -60,6 +62,8 @@ class _MainPageState extends State<MainPage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );
