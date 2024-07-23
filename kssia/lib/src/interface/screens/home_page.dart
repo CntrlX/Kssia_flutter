@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            title: Image.asset('assets/logo.png', height: 30), // Add your logo here
+            title: Image.asset('assets/kssia_logo.png', height: 30), // Add your logo here
             centerTitle: true,
             actions: [
               IconButton(
