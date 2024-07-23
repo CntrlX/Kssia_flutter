@@ -64,7 +64,6 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );
