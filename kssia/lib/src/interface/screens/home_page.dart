@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Import the package that provides SvgPicture
 import 'package:kssia/src/interface/components/app_bar.dart';
 import 'main_page.dart'; // Import MainPage
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +30,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-                appBar: App_bar(),
+      appBar: App_bar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -52,7 +55,7 @@ class HomePage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                   // Add your image here
+                    // Add your image here
                     SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -165,4 +168,41 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+
+
+class App_bar extends StatelessWidget implements PreferredSizeWidget {
+  const App_bar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SvgPicture.asset(
+          'assets/icons/kssiaLogo.svg',
+          width: 24,
+          height: 24,
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.notifications),
+          onPressed: () {
+            // Add your notification icon's onPressed functionality here
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            // Add your hamburger icon's onPressed functionality here
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

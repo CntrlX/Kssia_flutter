@@ -20,4 +20,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/kssiaLogo.svg
+    - assets\icons\profile_avatar.svg
 

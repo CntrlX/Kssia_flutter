@@ -48,16 +48,16 @@ class _MainPageState extends State<MainPage> {
             label: 'Feed',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event_seat),
+            label: 'Events/news',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'People',
           ),
         ],
         currentIndex: _selectedIndex,
