@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/components/app_bar.dart';
 import 'main_page.dart'; // Import MainPage
 
 void main() {
@@ -26,31 +27,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-                appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Center(
-                child: Text(
-                  'Home Page',
-                  style: TextStyle(color: Colors.grey, fontSize: 18),
-                ),
-              ),
-            ),
-            title: Image.asset('assets/kssia_logo.png', height: 30), // Add your logo here
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.notifications, color: Colors.black),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(Icons.menu, color: Colors.black),
-                onPressed: () {},
-              ),
-            ],
-          ),
+                appBar: App_bar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -75,7 +52,7 @@ class HomePage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Image.asset('assets/promo1.png', height: 60), // Add your image here
+                   // Add your image here
                     SizedBox(width: 16),
                     Expanded(
                       child: Column(
