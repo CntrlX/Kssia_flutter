@@ -1,27 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Import flutter_svg package
+import 'package:flutter_svg/flutter_svg.dart';
 import 'main_page.dart'; // Import MainPage
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'KSSIA Homepage',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
-      // Define named routes
-      routes: {
-        '/main': (context) => MainPage(),
-      },
-    );
-  }
-}
 
 class HomePage extends StatelessWidget {
   @override
