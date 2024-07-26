@@ -19,6 +19,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/icons/kssiaLogo.svg
-    - assets\icons\profile_avatar.svg
-
+    - assets/icons/profile_avatar.svg
+    - assets\icons\kssiaLogo.png
+    - assets\icons\membership_logo.svg
+    - assets\icons\posterside_logo.svg

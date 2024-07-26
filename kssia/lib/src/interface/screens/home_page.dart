@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Import the package that provides SvgPicture
-import 'package:kssia/src/interface/components/app_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Import flutter_svg package
 import 'main_page.dart'; // Import MainPage
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -73,15 +70,46 @@ class HomePage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: Colors.white, // Set the background color to white
                   borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: Color.fromARGB(255, 225, 231, 236), // Set the border color to blue
+                    width: 2.0, // Adjust the width as needed
+                  ),
                 ),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('KSSIA Membership', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    SizedBox(height: 8),
-                    Text('Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.'),
+                    SvgPicture.asset(
+                      'assets/icons/membership_logo.svg', // Ensure this path is correct
+                      width: 40,
+                      height: 40,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'KSSIA Membership',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              // color: Colors.blue, // Set the font color to blue
+                              color: Color(0xFF004797), // Set the font color to blue
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.',
+                            style: TextStyle(
+                              // color: Colors.blue, // Set the font color to blue
+                              color: Color.fromRGBO(0, 0, 0, 1), // Set the font color to blue
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -89,7 +117,11 @@ class HomePage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade100,
+                  gradient: LinearGradient(
+                    colors: [Color.fromARGB(41, 249, 180, 6), Color.fromARGB(113, 249, 180, 6)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Column(
@@ -97,12 +129,17 @@ class HomePage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.star, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text('Lorem ipsum dolor sit amet consectetur.', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        SvgPicture.asset(
+                          'assets/icons/posterside_logo.svg', // Ensure this path is correct
+                          width: 40,
+                          height: 40,
+                        ),
+                        SizedBox(width: 15),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    Padding(padding: EdgeInsets.all(8.0)),
+                    const Text('Poster', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,)),
+                    SizedBox(height: 80),
                     Text('Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.'),
                     SizedBox(height: 8),
                     TextButton(
@@ -114,21 +151,29 @@ class HomePage extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          Text('Go to Main Page'),
-                          Icon(Icons.arrow_forward),
+                          Text(
+                            'Know More',
+                            style: TextStyle(
+                              color: Color(0xFF040F4F), // Change the color here
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xFF040F4F), // Change the icon color here
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
               Text('Video title', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               SizedBox(height: 8),
               Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Color(0xFF2C2829),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Center(
@@ -170,8 +215,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-
-
 class App_bar extends StatelessWidget implements PreferredSizeWidget {
   const App_bar({Key? key}) : super(key: key);
 
@@ -179,11 +222,11 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SvgPicture.asset(
-          'assets/icons/kssiaLogo.svg',
-          width: 24,
-          height: 24,
+        padding: const EdgeInsets.all(10.0),
+        child: Image.asset(
+          'assets/icons/kssiaLogo.png', // Ensure this path is correct
+          width: 60,
+          height: 60,
         ),
       ),
       actions: [
