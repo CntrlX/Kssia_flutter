@@ -23,3 +23,8 @@ flutter:
     - assets\icons\kssiaLogo.png
     - assets\icons\membership_logo.svg
     - assets\icons\posterside_logo.svg
+    - assets/icons/lightBulb_feed.png
+    - assets\icons\feed_productBag.svg
+    - assets/icons/homePage_wepik.png
+    - assets\icons\homepage_youtube.png
+    - assets\icons\johnkappa_feed.png

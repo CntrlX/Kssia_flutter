@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kssia/src/interface/screens/feedPage.dart';
+import 'package:kssia/src/interface/screens/feed_page.dart';
 import 'package:kssia/src/interface/screens/home_page.dart';
 
 class MainPage extends StatefulWidget {

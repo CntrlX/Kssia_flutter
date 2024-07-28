@@ -1,54 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-class FeedPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              'assets/icons/kssiaLogo.png', // Replace with your logo image path
-              width: 24,
-              height: 24,
-            ),
-          ),
-          title: Text('KSSIA'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {},
-            ),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(text: "FEED"),
-              Tab(text: "PRODUCTS"),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            FeedView(),
-            ProductsView(),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {},
-          label: Text('Add Requirement/update'),
-          icon: Icon(Icons.add),
-        ),
-      ),
-    );
-  }
-}
 
 class FeedView extends StatelessWidget {
   @override
@@ -73,7 +23,7 @@ class FeedView extends StatelessWidget {
             companyName: 'Company name',
             timestamp: '12:30 PM · Apr 21, 2021',
             content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/images/lightbulb.png', // Replace with the path to your image
+            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
           ),
           SizedBox(height: 16),
           PostWidget(
@@ -81,20 +31,11 @@ class FeedView extends StatelessWidget {
             companyName: 'Company name',
             timestamp: '12:30 PM · Apr 21, 2021',
             content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/images/lightbulb.png', // Replace with the path to your image
+            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
           ),
           SizedBox(height: 16),
         ],
       ),
-    );
-  }
-}
-
-class ProductsView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Products Page'),
     );
   }
 }

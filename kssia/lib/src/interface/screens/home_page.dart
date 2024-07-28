@@ -30,19 +30,37 @@ class HomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Row(
-                  children: [
-                    // Add your image here
+                    children: [
+                    SizedBox(
+                      width: 100, // Adjust the width as needed
+                      height: 100, // Adjust the height as needed
+                      child: Image.asset(
+                      'assets/icons/homePage_wepik.png', // Add your image here
+                      fit: BoxFit.cover,
+                      ),
+                    ),
                     SizedBox(width: 16),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Lorem ipsum dolor sit amet', style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text('Lorem ipsum dolor sit amet'),
-                        ],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                        'Lorem ipsum dolor sit amet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        ),
+                        Text(
+                        'Lorem ipsum dolor sit amet',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                        ),
+                      ],
                       ),
                     ),
-                  ],
+                    ],
                 ),
               ),
               SizedBox(height: 16),
@@ -74,7 +92,6 @@ class HomePage extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
-                              // color: Colors.blue, // Set the font color to blue
                               color: Color(0xFF004797), // Set the font color to blue
                             ),
                           ),
@@ -82,7 +99,6 @@ class HomePage extends StatelessWidget {
                           Text(
                             'Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.',
                             style: TextStyle(
-                              // color: Colors.blue, // Set the font color to blue
                               color: Color.fromRGBO(0, 0, 0, 1), // Set the font color to blue
                             ),
                           ),
@@ -118,7 +134,7 @@ class HomePage extends StatelessWidget {
                     ),
                     Padding(padding: EdgeInsets.all(8.0)),
                     const Text('Poster', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,)),
-                    SizedBox(height: 80),
+                    SizedBox(height: 8),
                     Text('Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.'),
                     SizedBox(height: 8),
                     TextButton(
@@ -152,13 +168,16 @@ class HomePage extends StatelessWidget {
               Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: Color(0xFF2C2829),
+                  color: Colors.transparent, // Make background transparent to show the image
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: Center(
-                  child: IconButton(
-                    icon: Icon(Icons.play_arrow, color: Colors.white, size: 50),
-                    onPressed: () {},
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    'assets/icons/homepage_youtube.png', // Add your image here
+                    width: double.infinity,
+                    height: 200, // Adjust the height as needed
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
