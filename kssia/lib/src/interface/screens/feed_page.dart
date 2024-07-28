@@ -57,22 +57,24 @@ class _FeedPageState extends State<FeedPage> with SingleTickerProviderStateMixin
                   ),
                 ),
               ),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                indicatorColor: Color(0xFF004797), // Set to AppPalette.kPrimaryColor
-                indicatorWeight: 2.0,
-                indicatorPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                labelStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+              child: Center(
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: false, // Disable scroll to center the tabs
+                  indicatorColor: Color(0xFF004797), // Set to AppPalette.kPrimaryColor
+                  indicatorWeight: 2.0,
+                  indicatorPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  tabs: [
+                    Tab(text: "FEED"),
+                    Tab(text: "PRODUCTS"),
+                  ],
                 ),
-                tabs: [
-                  Tab(text: "FEED"),
-                  Tab(text: "PRODUCTS"),
-                ],
               ),
             ),
           ),
@@ -119,7 +121,7 @@ class FeedView extends StatelessWidget {
         SizedBox(height: 16),
         _buildPost(),
         _buildPost(withImage: true),
-        _buildPost(),
+        _buildPost(withImage: true),
       ],
     );
   }
@@ -175,15 +177,6 @@ class FeedView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class ProductView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Product View'),
     );
   }
 }
