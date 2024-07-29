@@ -50,31 +50,6 @@ class ProductView extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1, // Set the current index to highlight the 'Feed' tab
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
-            label: 'Feed',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: 'Events/news',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'People',
-          ),
-        ],
-      ),
     );
   }
 }
