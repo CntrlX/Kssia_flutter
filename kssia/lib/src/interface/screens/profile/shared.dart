@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import '../profile/card.dart'; // Import the XCard widget
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/icons/kssia_logo.png', height: 30),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -32,8 +36,7 @@ class ProfilePage extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Image.asset(
-                                'assets/icons/show_hide_button.png'),
+                            icon: Image.asset('assets/icons/show_hide_button.png'),
                             onPressed: () {
                               // Handle show/hide button pressed
                             },
@@ -45,6 +48,7 @@ class ProfilePage extends StatelessWidget {
                               radius: 40,
                               backgroundImage: NetworkImage(
                                   'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'),
+                              onBackgroundImageError: (_, __) => AssetImage('assets/icons/default_avatar.png'),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -59,7 +63,7 @@ class ProfilePage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/icons/volkwagenLogo.png',
+                                  'assets/icons/volkswagenLogo.png',
                                   height: 20,
                                 ),
                                 SizedBox(width: 5),
@@ -82,6 +86,11 @@ class ProfilePage extends StatelessWidget {
                           ],
                         ),
                       ],
+                    ),
+                    SizedBox(height: 20),
+                    Image.asset(
+                      'assets/icons/QR_card.png', // Ensure this path is correct
+                      height: 200, // Adjust height as needed
                     ),
                     SizedBox(height: 20),
                     Row(
@@ -123,53 +132,55 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'KSSIA',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Member ID: KSSIA-GM-0934',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Image.asset('assets/icons/share_profile_button.png'),
-                    iconSize: 50,
-                    onPressed: () {
-                      // Handle share profile button pressed
-                    },
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Image.asset('assets/icons/QR_prof.png'),
-                    iconSize: 50,
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => Card()), // Navigate to XCard
+                        MaterialPageRoute(builder: (context) => Shared()),
                       );
                     },
+                    child: Text('SHARE'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle download QR button pressed
+                    },
+                    child: Text('DOWNLOAD QR'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[200],
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      foregroundColor: Colors.black,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Shared extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Share Profile'),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: Center(
+        child: Text('Share Profile Page'),
       ),
     );
   }

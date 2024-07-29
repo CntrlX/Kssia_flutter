@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'products_search.dart'; // Import the ProductsSearchPage
 
 class ProductView extends StatelessWidget {
   @override
@@ -10,13 +11,22 @@ class ProductView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Search your Products and requirements',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProductsSearchPage()),
+                );
+              },
+              child: TextField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: 'Search your Products and requirements',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
+                enabled: false, // Disable the TextField to make it non-editable
               ),
             ),
             SizedBox(height: 100),
@@ -67,4 +77,10 @@ class ProductView extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: ProductView(),
+  ));
 }

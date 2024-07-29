@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.10+1
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -34,3 +35,12 @@ flutter:
     - assets/icons/show_hide_button.png
     - assets/icons/QR_card.png
     - assets/icons/expand_button_profile.png
+    - assets/icons/feed_active.svg
+    - assets/icons/feed_inactive.svg
+    - assets/icons/home_active.svg
+    - assets/icons/home_inactive.svg
+    - assets/icons/profile_icon.png
+    - assets/icons/people_inactive.svg
+    - assets/icons/people_active.svg
+    - assets/icons/news_inactive.svg
+    - assets/icons/news_active.svg

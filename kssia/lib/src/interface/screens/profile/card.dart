@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class XCard extends StatelessWidget {
+class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +36,7 @@ class XCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Image.asset(
-                                'assets/icons/expand_button_profile.png'),
+                            icon: Image.asset('assets/icons/expand_button_profile.png'),
                             onPressed: () {
                               // Handle expand button pressed
                             },
@@ -86,6 +85,11 @@ class XCard extends StatelessWidget {
                           ],
                         ),
                       ],
+                    ),
+                    SizedBox(height: 20),
+                    Image.asset(
+                      'assets/icons/QR_card.png', // Ensure this path is correct
+                      height: 200, // Adjust height as needed
                     ),
                     SizedBox(height: 20),
                     Row(
@@ -164,8 +168,7 @@ class XCard extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => QRImageScreen()),
+                        MaterialPageRoute(builder: (context) => QRImageScreen()),
                       );
                     },
                   ),

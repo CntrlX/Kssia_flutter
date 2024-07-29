@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Add this import for using SVGs
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -30,30 +31,56 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: App_bar(),
+      appBar: AppBar(
+        title: Text('Your App Title'),
+        // Customize your app bar as needed
+      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: SvgPicture.asset(
+              _selectedIndex == 0
+                  ? 'assets/icons/home_active.svg'
+                  : 'assets/icons/home_inactive.svg',
+              height: 24,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
+            icon: SvgPicture.asset(
+              _selectedIndex == 1
+                  ? 'assets/icons/feed_active.svg'
+                  : 'assets/icons/feed_inactive.svg',
+              height: 24,
+            ),
             label: 'Feed',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: CircleAvatar(
+              radius: 12,
+              backgroundImage: AssetImage('assets/icons/profile_icon.png'),
+            ),
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event_seat),
+            icon: SvgPicture.asset(
+              _selectedIndex == 3
+                  ? 'assets/icons/news_active.svg'
+                  : 'assets/icons/news_inactive.svg',
+              height: 24,
+            ),
             label: 'Events/news',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
+            icon: SvgPicture.asset(
+              _selectedIndex == 4
+                  ? 'assets/icons/people_active.svg'
+                  : 'assets/icons/people_inactive.svg',
+              height: 24,
+            ),
             label: 'People',
           ),
         ],
@@ -64,4 +91,10 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: MainPage(),
+  ));
 }

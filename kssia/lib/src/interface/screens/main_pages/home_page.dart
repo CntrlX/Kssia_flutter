@@ -33,8 +33,7 @@ class HomePage extends StatelessWidget {
                     SizedBox(
                       width: 100, // Adjust the width as needed
                       height: 100, // Adjust the height as needed
-                      child: Image.asset(
-                        'assets/icons/homePage_wepik.png', // Add your image here
+                      child: Image.asset('assets\icons\homePage_wepik.png', // Add your image here
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -186,8 +185,7 @@ class HomePage extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    'assets/icons/homepage_youtube.png', // Add your image here
+                  child: Image.asset('assets/icons/homepage_youtube.png', // Add your image here
                     width: double.infinity,
                     height: 200, // Adjust the height as needed
                     fit: BoxFit.cover,
