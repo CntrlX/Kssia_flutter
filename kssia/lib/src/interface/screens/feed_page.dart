@@ -25,15 +25,15 @@ class _FeedPageState extends State<FeedPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 10,
       child: Scaffold(
         appBar: AppBar(
           leading: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
               'assets/icons/kssiaLogo.png', // Replace with your logo image path
-              width: 24,
-              height: 24,
+              width: 30,
+              height: 30,
             ),
           ),
           actions: [
@@ -107,14 +107,11 @@ class FeedView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: TextField(
             decoration: InputDecoration(
-              hintText: 'Search your Products and requirements',
               prefixIcon: Icon(Icons.search),
+              hintText: 'Search your Products and requirements',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide.none,
               ),
-              filled: true,
-              fillColor: Colors.grey[200],
             ),
           ),
         ),

@@ -19,7 +19,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/icons/profile_avatar.svg
+
     - assets\icons\kssiaLogo.png
     - assets\icons\membership_logo.svg
     - assets\icons\posterside_logo.svg
@@ -28,3 +28,8 @@ flutter:
     - assets/icons/homePage_wepik.png
     - assets\icons\homepage_youtube.png
     - assets\icons\johnkappa_feed.png
+    - assets/icons/display_picture_profilePage.png
+    - assets/icons/volkwagenLogo.png
+    - assets/icons/share_profile_button.png
+    - assets/icons/QR_prof.png
+    - assets/icons/show_hide_button.png
