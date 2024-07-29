@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/feed_page.dart';
 import 'package:kssia/src/interface/screens/home_page.dart';
+import 'package:kssia/src/interface/screens/profile.dart/profilePage.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _MainPageState extends State<MainPage> {
   static List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     FeedPage(),
-    Text('Profile Page', style: TextStyle(fontSize: 24)),
+    ProfilePage(),
     Text('Events/news Page', style: TextStyle(fontSize: 24)),
     Text('People Page', style: TextStyle(fontSize: 24)),
   ];
