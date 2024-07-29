@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:kssia/src/interface/screens/feed/feed_view.dart';
-import 'package:kssia/src/interface/screens/feed/product_view.dart';
+import 'package:kssia/src/interface/screens/event_news/event.dart';
+import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/people/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
-class People_Page extends StatefulWidget {
+class Event_News_Page extends StatefulWidget {
   @override
-  _People_PageState createState() => _People_PageState();
+  _Event_News_PageState createState() => _Event_News_PageState();
 }
 
-class _People_PageState extends State<People_Page>
+class _Event_News_PageState extends State<Event_News_Page>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -47,8 +47,8 @@ class _People_PageState extends State<People_Page>
                   fontWeight: FontWeight.bold,
                 ),
                 tabs: [
-                  Tab(text: "Members"),
-                  Tab(text: "Chat"),
+                  Tab(text: "News"),
+                  Tab(text: "Events"),
                 ],
               ),
             ),
@@ -56,8 +56,8 @@ class _People_PageState extends State<People_Page>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  MembersPage(),
-                  ChatPage(),
+                  NewsPage(),
+                  Event_page(),
                 ],
               ),
             ),

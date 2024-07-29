@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
-import 'package:kssia/src/interface/screens/profile/profilePage.dart';
+import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _MainPageState extends State<MainPage> {
     HomePage(),
     FeedPage(),
     ProfilePage(),
-    Text('Events/news Page', style: TextStyle(fontSize: 24)),
+    Event_News_Page(),
     People_Page(),
   ];
 

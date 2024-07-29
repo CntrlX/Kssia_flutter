@@ -36,7 +36,8 @@ class XCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Image.asset('assets/icons/expand_button_profile.png'),
+                            icon: Image.asset(
+                                'assets/icons/expand_button_profile.png'),
                             onPressed: () {
                               // Handle expand button pressed
                             },
@@ -46,7 +47,8 @@ class XCard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: AssetImage('assets/icons/display_picture_profilePage.png'),
+                              backgroundImage: AssetImage(
+                                  'assets/icons/display_picture_profilePage.png'),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -162,41 +164,14 @@ class XCard extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => QRImageScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => QRImageScreen()),
                       );
                     },
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              BottomNavigationBar(
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.feed),
-                    label: 'Feed',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.event),
-                    label: 'Events/News',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.people),
-                    label: 'People',
-                  ),
-                ],
-                currentIndex: 2,
-                onTap: (index) {
-                  // Handle bottom navigation bar item tap
-                },
-              ),
             ],
           ),
         ),

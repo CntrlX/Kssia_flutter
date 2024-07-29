@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'x_card.dart'; // Import the XCard widget
+import '../profile/x_card.dart'; // Import the XCard widget
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
