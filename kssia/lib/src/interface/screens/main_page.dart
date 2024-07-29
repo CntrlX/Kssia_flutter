@@ -31,10 +31,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Your App Title'),
-        // Customize your app bar as needed
-      ),
+      appBar: App_bar(),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
