@@ -169,35 +169,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
-              BottomNavigationBar(
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.feed),
-                    label: 'Feed',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.event),
-                    label: 'Events/News',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.people),
-                    label: 'People',
-                  ),
-                ],
-                currentIndex: 2,
-                onTap: (index) {
-                  // Handle bottom navigation bar item tap
-                },
-              ),
             ],
           ),
         ),
