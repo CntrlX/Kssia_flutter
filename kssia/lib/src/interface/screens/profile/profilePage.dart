@@ -37,7 +37,8 @@ class ProfilePage extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Image.asset('assets/icons/show_hide_button.png'),
+                            icon: Image.asset(
+                                'assets/icons/show_hide_button.png'),
                             onPressed: () {
                               // Handle show/hide button pressed
                             },
@@ -47,7 +48,8 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: AssetImage('assets/icons/display_picture_profilePage.png'),
+                              backgroundImage: NetworkImage(
+                                  'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -163,7 +165,8 @@ class ProfilePage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => XCard()), // Navigate to XCard
+                        MaterialPageRoute(
+                            builder: (context) => XCard()), // Navigate to XCard
                       );
                     },
                   ),
