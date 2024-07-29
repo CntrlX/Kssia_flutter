@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:kssia/src/interface/screens/feedMain.dart/feed_view.dart';
-import 'package:kssia/src/interface/screens/feedMain.dart/product_view.dart';
+import 'package:kssia/src/interface/screens/feed/feed_view.dart';
+import 'package:kssia/src/interface/screens/feed/product_view.dart';
 
 class FeedPage extends StatefulWidget {
   @override
   _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> with SingleTickerProviderStateMixin {
+class _FeedPageState extends State<FeedPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -61,7 +62,8 @@ class _FeedPageState extends State<FeedPage> with SingleTickerProviderStateMixin
                 child: TabBar(
                   controller: _tabController,
                   isScrollable: false, // Disable scroll to center the tabs
-                  indicatorColor: Color(0xFF004797), // Set to AppPalette.kPrimaryColor
+                  indicatorColor:
+                      Color(0xFF004797), // Set to AppPalette.kPrimaryColor
                   indicatorWeight: 2.0,
                   indicatorPadding: EdgeInsets.symmetric(horizontal: 16.0),
                   labelColor: Colors.black,
@@ -141,13 +143,15 @@ class FeedView extends StatelessWidget {
             ),
             if (withImage) ...[
               SizedBox(height: 16),
-              Image.asset('assets/icons/lightBulb_feed.png'), // Replace with your image path
+              Image.asset(
+                  'assets/icons/lightBulb_feed.png'), // Replace with your image path
             ],
             SizedBox(height: 16),
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: AssetImage('assets/icons/johnkappa_feed.png'), // Replace with your logo image path
+                  backgroundImage: AssetImage(
+                      'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
                   radius: 16,
                 ),
                 SizedBox(width: 8),
@@ -156,7 +160,8 @@ class FeedView extends StatelessWidget {
                   children: [
                     Text(
                       'John Kappa',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                     Text(
                       'Company name',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kssia/src/interface/screens/feed_page.dart';
-import 'package:kssia/src/interface/screens/home_page.dart';
-import 'package:kssia/src/interface/screens/profile.dart/profilePage.dart';
+import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
+import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
+import 'package:kssia/src/interface/screens/profile/profilePage.dart';
 
 class MainPage extends StatefulWidget {
   @override
