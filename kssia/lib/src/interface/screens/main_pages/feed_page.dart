@@ -37,6 +37,7 @@ class _FeedPageState extends State<FeedPage>
                 indicatorColor:
                     Color(0xFF004797), // Set to AppPalette.kPrimaryColor
                 indicatorWeight: 2.0,
+                indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 labelStyle: TextStyle(
