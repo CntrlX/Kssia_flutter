@@ -25,32 +25,42 @@ class _People_PageState extends State<People_Page>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: TabBar(
-          controller: _tabController,
-          isScrollable: false, // Disable scroll to center the tabs
-          indicatorColor: Color(0xFF004797), // Set to AppPalette.kPrimaryColor
-          indicatorWeight: 2.0,
-          indicatorSize: TabBarIndicatorSize.tab,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          labelStyle: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-          tabs: [
-            Tab(text: "Members"),
-            Tab(text: "Chat"),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        body: Column(
+          children: [
+            Center(
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: false, // Disable scroll to center the tabs
+                indicatorColor:
+                    Color(0xFF004797), // Set to AppPalette.kPrimaryColor
+                indicatorWeight: 2.0,
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                labelStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                tabs: [
+                  Tab(text: "Members"),
+                  Tab(text: "Chat"),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  FeedView(),
+                  ProductView(),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          FeedView(),
-          ProductView(),
-        ],
       ),
     );
   }
