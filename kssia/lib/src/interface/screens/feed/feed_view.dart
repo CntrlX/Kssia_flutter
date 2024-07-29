@@ -23,7 +23,7 @@ class FeedView extends StatelessWidget {
             companyName: 'Company name',
             timestamp: '12:30 PM · Apr 21, 2021',
             content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
+            imagePath: '', // Replace with the path to your image
           ),
           SizedBox(height: 16),
           PostWidget(
@@ -31,7 +31,7 @@ class FeedView extends StatelessWidget {
             companyName: 'Company name',
             timestamp: '12:30 PM · Apr 21, 2021',
             content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
+            imagePath: '', // Replace with the path to your image
           ),
           SizedBox(height: 16),
         ],
