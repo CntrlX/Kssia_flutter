@@ -24,6 +24,7 @@ flutter:
     - assets\icons\membership_logo.svg
     - assets\icons\posterside_logo.svg
     - assets/icons/lightBulb_feed.png
+    - assets/icons/lightBulb_feed.svg
     - assets\icons\feed_productBag.svg
     - assets/icons/homePage_wepik.png
     - assets\icons\homepage_youtube.png
@@ -33,3 +34,5 @@ flutter:
     - assets/icons/share_profile_button.png
     - assets/icons/QR_prof.png
     - assets/icons/show_hide_button.png
+    - assets/icons/QR_card.png
+    - assets/icons/expand_button_profile.png

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'x_card.dart'; // Import the XCard widget
 
-class ProfilePage extends StatelessWidget {
+class XCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +36,9 @@ class ProfilePage extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Image.asset('assets/icons/show_hide_button.png'),
+                            icon: Image.asset('assets/icons/expand_button_profile.png'),
                             onPressed: () {
-                              // Handle show/hide button pressed
+                              // Handle expand button pressed
                             },
                           ),
                         ),
@@ -163,7 +162,7 @@ class ProfilePage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => XCard()), // Navigate to XCard
+                        MaterialPageRoute(builder: (context) => QRImageScreen()),
                       );
                     },
                   ),
@@ -206,8 +205,18 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: ProfilePage(),
-  ));
+class QRImageScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('QR Code'),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: Center(
+        child: Image.asset('assets/icons/QR_card.png'),
+      ),
+    );
+  }
 }
