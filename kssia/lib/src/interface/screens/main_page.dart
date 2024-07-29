@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
+import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/profile/profilePage.dart';
 
 class MainPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _MainPageState extends State<MainPage> {
     FeedPage(),
     ProfilePage(),
     Text('Events/news Page', style: TextStyle(fontSize: 24)),
-    Text('People Page', style: TextStyle(fontSize: 24)),
+    People_Page(),
   ];
 
   void _onItemTapped(int index) {
@@ -28,6 +29,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: App_bar(),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

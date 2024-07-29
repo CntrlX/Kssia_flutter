@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class FeedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: TextField(
             decoration: InputDecoration(
               prefixIcon: Icon(Icons.search),
               hintText: 'Search your Products and requirements',
@@ -17,24 +17,69 @@ class FeedView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16),
-          PostWidget(
-            authorName: 'John Kappa',
-            companyName: 'Company name',
-            timestamp: '12:30 PM · Apr 21, 2021',
-            content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
-          ),
-          SizedBox(height: 16),
-          PostWidget(
-            authorName: 'John Kappa',
-            companyName: 'Company name',
-            timestamp: '12:30 PM · Apr 21, 2021',
-            content: 'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-            imagePath: 'assets/icons/lightBulb_feed.png', // Replace with the path to your image
-          ),
-          SizedBox(height: 16),
-        ],
+        ),
+        SizedBox(height: 16),
+        _buildPost(),
+        _buildPost(withImage: true),
+        _buildPost(withImage: true),
+      ],
+    );
+  }
+
+  Widget _buildPost({bool withImage = false}) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. '
+              'Amet hac bibendum dignissim eget pretium turpis in non cum.',
+              style: TextStyle(fontSize: 14),
+            ),
+            if (withImage) ...[
+              SizedBox(height: 16),
+              Image(
+                  image: NetworkImage(
+                      'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
+            ],
+            SizedBox(height: 16),
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: AssetImage(
+                      'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
+                  radius: 16,
+                ),
+                SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'John Kappa',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    Text(
+                      'Company name',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Text(
+                  '12:30 PM - Apr 21, 2021',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -79,12 +124,13 @@ class PostWidget extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(height: 8),
-          Image.asset(imagePath),
+          Image(image: NetworkImage(imagePath)),
           SizedBox(height: 8),
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: AssetImage('assets/images/avatar.png'), // Replace with your avatar image path
+                backgroundImage: AssetImage(
+                    'assets/images/avatar.png'), // Replace with your avatar image path
               ),
               SizedBox(width: 8),
               Column(
