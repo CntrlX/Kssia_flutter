@@ -6,7 +6,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: App_bar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -199,7 +198,6 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-     
     );
   }
 }
