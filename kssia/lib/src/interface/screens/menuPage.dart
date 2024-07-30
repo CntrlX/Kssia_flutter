@@ -39,24 +39,49 @@ void showDeleteAccountDialog(BuildContext context) {
           ),
         ),
         actions: <Widget>[
-          TextButton(
-            child: Text(
-              'No',
-              style: TextStyle(fontSize: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey.shade200,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      child: Text('No', style: TextStyle(fontSize: 16, color: Colors.black)),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      child: Text('Yes, Delete', style: TextStyle(fontSize: 16, color: Colors.red)),
+                      onPressed: () {
+                        // Add your delete account logic here
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text(
-              'Yes, Delete',
-              style: TextStyle(fontSize: 16, color: Colors.red),
-            ),
-            onPressed: () {
-              // Add your delete account logic here
-              Navigator.of(context).pop();
-            },
           ),
         ],
       );
@@ -103,24 +128,49 @@ void showLogoutDialog(BuildContext context) {
           ),
         ),
         actions: <Widget>[
-          TextButton(
-            child: Text(
-              'No',
-              style: TextStyle(fontSize: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey.shade200,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      child: Text('No', style: TextStyle(fontSize: 16, color: Colors.black)),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      child: Text('Yes, Logout', style: TextStyle(fontSize: 16, color: Colors.red)),
+                      onPressed: () {
+                        // Add your logout logic here
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text(
-              'Yes, Logout',
-              style: TextStyle(fontSize: 16, color: Colors.red),
-            ),
-            onPressed: () {
-              // Add your logout logic here
-              Navigator.of(context).pop();
-            },
           ),
         ],
       );
