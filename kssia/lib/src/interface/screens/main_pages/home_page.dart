@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/screens/notificationPage.dart';
 import '../main_page.dart'; // Import MainPage
 
 class HomePage extends StatelessWidget {
@@ -219,9 +220,12 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.notifications),
+          icon: Icon(Icons.notifications_none_outlined),
           onPressed: () {
-            // Add your notification icon's onPressed functionality here
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationPage()),
+            );
           },
         ),
         IconButton(
