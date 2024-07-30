@@ -46,8 +46,7 @@ class ProfileCard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: AssetImage(
-                                  'assets/icons/display_picture_profilePage.png'),
+                              backgroundImage: AssetImage('assets/icons/display_picture_profilePage.png'),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -110,14 +109,6 @@ class ProfileCard extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.person, color: Colors.blue),
-                        SizedBox(width: 10),
-                        Text('John.346.ig'),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
                         Icon(Icons.location_on, color: Colors.blue),
                         SizedBox(width: 10),
                         Expanded(
@@ -130,51 +121,6 @@ class ProfileCard extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'KSSIA',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Member ID: KSSIA-GM-0934',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Image.asset('assets/icons/share_profile_button.png'),
-                    iconSize: 50,
-                    onPressed: () {
-                      // Handle share profile button pressed
-                    },
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    icon: Image.asset('assets/icons/QR_prof.png'),
-                    iconSize: 50,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => QRImageScreen()),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
             ],
           ),
         ),
@@ -183,18 +129,8 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-class QRImageScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('QR Code'),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      body: Center(
-        child: Image.asset('assets/icons/QR_card.png'),
-      ),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    home: ProfileCard(),
+  ));
 }

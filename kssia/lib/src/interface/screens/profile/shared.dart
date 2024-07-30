@@ -8,6 +8,20 @@ class ProfilePage extends StatelessWidget {
         title: Image.asset('assets/icons/kssia_logo.png', height: 30),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Handle notifications button pressed
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              // Handle menu button pressed
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -111,14 +125,6 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.person, color: Colors.blue),
-                        SizedBox(width: 10),
-                        Text('John.346.ig'),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
                         Icon(Icons.location_on, color: Colors.blue),
                         SizedBox(width: 10),
                         Expanded(
@@ -137,10 +143,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Shared()),
-                      );
+                      // Handle share button pressed
                     },
                     child: Text('SHARE'),
                     style: ElevatedButton.styleFrom(
@@ -165,22 +168,6 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class Shared extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Share Profile'),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      body: Center(
-        child: Text('Share Profile Page'),
       ),
     );
   }
