@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'menu/requestNFC.dart';
-import 'menu/myrequirementsPage.dart';
-import 'menu/terms_and_conditions.dart';
-import 'menu/privacy.dart';
-import 'menu/about.dart';
+import '../menu/requestNFC.dart';
+import '../menu/myrequirementsPage.dart';
+import '../menu/terms_and_conditions.dart';
+import '../menu/privacy.dart';
+import '../menu/about.dart';
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
@@ -60,7 +60,8 @@ void showDeleteAccountDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('No', style: TextStyle(fontSize: 16, color: Colors.black)),
+                      child: Text('No',
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -78,7 +79,8 @@ void showDeleteAccountDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('Yes, Delete', style: TextStyle(fontSize: 16, color: Colors.red)),
+                      child: Text('Yes, Delete',
+                          style: TextStyle(fontSize: 16, color: Colors.red)),
                       onPressed: () {
                         // Add your delete account logic here
                         Navigator.of(context).pop();
@@ -149,7 +151,8 @@ void showLogoutDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('No', style: TextStyle(fontSize: 16, color: Colors.black)),
+                      child: Text('No',
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -167,7 +170,8 @@ void showLogoutDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('Yes, Logout', style: TextStyle(fontSize: 16, color: Colors.red)),
+                      child: Text('Yes, Logout',
+                          style: TextStyle(fontSize: 16, color: Colors.red)),
                       onPressed: () {
                         // Add your logout logic here
                         Navigator.of(context).pop();
@@ -207,7 +211,8 @@ class MenuPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage('https://placehold.co/100x100/png'),
+                    backgroundImage:
+                        NetworkImage('https://placehold.co/100x100/png'),
                   ),
                   SizedBox(width: 16),
                   Column(
@@ -305,10 +310,12 @@ class MenuPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TermsAndConditionsPage()),
+                  MaterialPageRoute(
+                      builder: (context) => TermsAndConditionsPage()),
                 );
               },
             ),
+            SizedBox(height: 10), // Add space here
             _buildListTile(
               context,
               Icons.logout,
@@ -316,6 +323,7 @@ class MenuPage extends StatelessWidget {
               textColor: Colors.black,
               onTap: () => showLogoutDialog(context),
             ),
+            SizedBox(height: 10), // Add space here
             _buildListTile(
               context,
               Icons.delete,
@@ -349,9 +357,10 @@ class MenuPage extends StatelessWidget {
         width: 16,
         color: textColor,
       ),
-      onTap: onTap ?? () {
-        // Handle list item tap
-      },
+      onTap: onTap ??
+          () {
+            // Handle list item tap
+          },
     );
   }
 }
