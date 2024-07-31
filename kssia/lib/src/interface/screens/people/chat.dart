@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class ChatPage extends StatelessWidget {
   final List<ChatItem> chatItems = [
     ChatItem(
