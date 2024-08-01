@@ -9,8 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.10+1
+  flutter_svg:  ^1.0.3
   modal_bottom_sheet: ^3.0.0
+  flutter_rating_bar: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -31,7 +32,7 @@ flutter:
     - assets/icons/display_picture_profilePage.png
     - assets/icons/volkwagenLogo.png
     - assets/icons/share_profile_button.png
-    - assets/icons/QR_prof.png
+    - assets/icons/qr_button.png
     - assets/icons/show_hide_button.png
     - assets/icons/QR_card.png
     - assets/icons/expand_button_profile.png
@@ -39,7 +40,7 @@ flutter:
     - assets/icons/feed_inactive.svg
     - assets/icons/home_active.svg
     - assets/icons/home_inactive.svg
-    - assets/icons/profile_icon.png
+    - assets\icons\profileDp.png
     - assets/icons/people_inactive.svg
     - assets/icons/people_active.svg
     - assets/icons/news_inactive.svg

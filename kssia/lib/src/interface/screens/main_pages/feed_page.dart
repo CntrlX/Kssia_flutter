@@ -110,25 +110,6 @@ class _FeedPageState extends State<FeedPage> with SingleTickerProviderStateMixin
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          title: Image.asset('assets/icons/kssia_logo.png', height: 30),
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {
-                // Handle notifications button pressed
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                // Handle menu button pressed
-              },
-            ),
-          ],
-        ),
         body: Column(
           children: [
             Center(

@@ -5,6 +5,12 @@ import '../menu/myrequirementsPage.dart';
 import '../menu/terms_and_conditions.dart';
 import '../menu/privacy.dart';
 import '../menu/about.dart';
+import '../menu/my_subscription.dart'; 
+import '../menu/my_events.dart'; 
+import '../menu/my_transaction.dart'; 
+
+
+
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
@@ -265,11 +271,32 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
-            _buildListTile(context, Icons.subscriptions, 'My subscriptions'),
+            _buildListTile(
+              context,
+              Icons.subscriptions,
+              'My subscriptions',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
+                );
+              },
+            ),
+
             _buildListTile(context, Icons.shopping_bag, 'My Products'),
             _buildListTile(context, Icons.reviews, 'My Reviews'),
             _buildListTile(context, Icons.event, 'My Events'),
-            _buildListTile(context, Icons.monetization_on, 'My transactions'),
+            _buildListTile(
+              context,
+              Icons.monetization_on,
+              'My Transactions',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyTransactionsPage()),
+                );
+              },
+            ),
             _buildListTile(
               context,
               Icons.notifications,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../profile/card.dart'; // Import the XCard widget
+import 'package:kssia/src/interface/screens/profile/card.dart'; // Import the XCard widget
+import 'package:kssia/src/interface/screens/profile/shared.dart'; // Import the Shared widget
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -44,7 +45,7 @@ class ProfilePage extends StatelessWidget {
                             CircleAvatar(
                               radius: 40,
                               backgroundImage: NetworkImage(
-                                  'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg'),
+                                  ''),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -150,18 +151,24 @@ class ProfilePage extends StatelessWidget {
                     icon: Image.asset('assets/icons/share_profile_button.png'),
                     iconSize: 50,
                     onPressed: () {
-                      // Handle share profile button pressed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Shared(), // Navigate to Shared
+                        ),
+                      );
                     },
                   ),
                   SizedBox(width: 20),
                   IconButton(
-                    icon: Image.asset('assets/icons/QR_prof.png'),
+                    icon: Image.asset('assets/icons/qr_button.png'),
                     iconSize: 50,
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Card()), // Navigate to XCard
+                          builder: (context) => CardPage(), // Navigate to CardPage
+                        ),
                       );
                     },
                   ),
@@ -173,6 +180,10 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
+  
+  CardPage() {}
+  
+  Shared() {}
 }
 
 void main() {
