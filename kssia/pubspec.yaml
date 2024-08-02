@@ -18,6 +18,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
   font_awesome_flutter: ^9.0.0
+  font_awesome_flutter: ^10.5.0 
 
 flutter:
   uses-material-design: true
@@ -46,3 +47,4 @@ flutter:
     - assets/icons/news_inactive.svg
     - assets/icons/news_active.svg
     - assets/icons/polygon.svg
+   

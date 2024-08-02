@@ -74,20 +74,41 @@ class MyEventsPage extends StatelessWidget {
                   children: [
                     const Icon(Icons.calendar_today, size: 20),
                     const SizedBox(width: 5),
-                    Text('02 Jan 2023', style: TextStyle(fontSize: 14)),
+                    Text('02 Jan 2023', style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 10),
                     const Icon(Icons.access_time, size: 20),
                     const SizedBox(width: 5),
-                    Text('09:00 PM', style: TextStyle(fontSize: 14)),
+                    Text('09:00 PM', style: const TextStyle(fontSize: 14)),
                   ],
                 ),
                 const SizedBox(height: 20),
-                Center(
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                  const Icon(Icons.calendar_today, size: 20),
+                  const SizedBox(width: 5),
+                  Text('02 Jan 2023', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 10),
+                  const Icon(Icons.access_time, size: 20),
+                  const SizedBox(width: 5),
+                  Text('09:00 PM', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Join event action
-                    },
-                    child: const Text('JOIN'),
+                  onPressed: () {
+                    // Join event action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF004797),
+                    shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4), // Adjust the value to make the edge less circular
+                    ),
+                    minimumSize: const Size(150, 40), // Adjust the width of the button
+                  ),
+                  child: const Text('JOIN', style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],

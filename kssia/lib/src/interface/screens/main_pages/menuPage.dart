@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
 import '../menu/terms_and_conditions.dart';
@@ -284,8 +285,23 @@ class MenuPage extends StatelessWidget {
             ),
 
             _buildListTile(context, Icons.shopping_bag, 'My Products'),
-            _buildListTile(context, Icons.reviews, 'My Reviews'),
-            _buildListTile(context, Icons.event, 'My Events'),
+
+           _buildListTile(context,Icons.subscriptions,'My Reviews',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyReviewsPage()),
+                );
+              },
+            ),
+             _buildListTile(context,Icons.subscriptions,'My Events',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyEventsPage()),
+                );
+              },
+            ),
             _buildListTile(
               context,
               Icons.monetization_on,
@@ -293,7 +309,7 @@ class MenuPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyTransactionsPage()),
+                  MaterialPageRoute(builder: (context) => MyTransactionsPage()),
                 );
               },
             ),

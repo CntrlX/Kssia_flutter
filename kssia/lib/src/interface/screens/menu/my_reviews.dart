@@ -6,6 +6,11 @@ class MyReviewsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Review distribution data
+    final ratingsDistribution = [5, 3, 15, 25, 12]; // Example: 1-star to 5-star counts
+    final int totalReviews = ratingsDistribution.fold(0, (previousValue, element) => previousValue + element);
+    final double maxRatingCount = ratingsDistribution.reduce((value, element) => value > element ? value : element).toDouble();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Reviews'),
@@ -15,109 +20,114 @@ class MyReviewsPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: Icon(Icons.search),
             onPressed: () {
-              // Implement search functionality
+              // Placeholder for search functionality
             },
           ),
         ],
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        elevation: 1,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: ListView(
+        children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '4.6',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        RatingBarIndicator(
-                          rating: 4.6,
-                          itemBuilder: (context, index) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 20.0,
-                          direction: Axis.vertical,
-                        ),
-                        Text('24 Reviews'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(), // to disable ListView's scrolling
-              shrinkWrap: true, // Use this to fit ListView in SingleChildScrollView
-              itemCount: 5, // Assuming we have 5 reviews for demo
-              itemBuilder: (BuildContext context, int index) {
-                return reviewCard(context);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: TextButton(
-                onPressed: () {
-                  // Implement view more action
-                },
-                child: Text(
-                  'View More',
-                  style: TextStyle(
-                    color: Colors.blue,
-                  ),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Text(
+                '4.6',
+                style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange, // Add this line to change the font color to orange
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget reviewCard(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.blueGrey, // Replace with network image for actual use
-        child: Text('JD'), // Placeholder for initials
-      ),
-      title: Text('Jane Doe'),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Lorem ipsum dolor sit amet consectetur... Justo vitae a laculis integer pulvinar. Nunc enim sapien elit tempus quam in elit porta mattis. Interdum tincidunt id.',
-            style: TextStyle(
-              color: Colors.black54,
+                RatingBarIndicator(
+                  rating: 4.6,
+                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                  itemCount: 5,
+                  itemSize: 40.0,
+                  direction: Axis.horizontal,
+                ),
+                const SizedBox(height: 8),
+                Text('24 Reviews', style: TextStyle(color: Colors.grey)),
+                const SizedBox(height: 16),
+                ...List.generate(5, (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Container(
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            FractionallySizedBox(
+                              widthFactor: ratingsDistribution[4 - index] / maxRatingCount,
+                              child: Container(
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: index == 0 ? Colors.orange : Colors.amber[400],
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text('${ratingsDistribution[4 - index]}'),
+                    ],
+                  ),
+                )),
+              ],
             ),
           ),
-          SizedBox(height: 5),
-          RatingBarIndicator(
-            rating: 4.0,
-            itemBuilder: (context, index) => Icon(
-              Icons.star,
-              color: Colors.amber,
+          Divider(),
+          ...List.generate(5, (index) => ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blueGrey[200],
+              child: Text('JD', style: TextStyle(color: Colors.white)),
             ),
-            itemCount: 5,
-            itemSize: 20.0,
-            direction: Axis.horizontal,
+            title: Text('Jane Doe'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RatingBarIndicator(
+                  rating: 4,
+                  itemBuilder: (context, index) => Icon(Icons.star, color: Colors.amber),
+                  itemCount: 5,
+                  itemSize: 20.0,
+                  direction: Axis.horizontal,
+                ),
+                Text('Lorem ipsum dolor sit amet consectetur.'),
+              ],
+            ),
+            trailing: Text('6 days ago', style: TextStyle(color: Colors.grey)),
+          )),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Placeholder for 'View More' functionality
+                },
+                child: const Text('View More'),
+              ),
+            ),
           ),
-          Text('6 days ago'),
         ],
       ),
-      isThreeLine: true,
     );
   }
 }
+
+void main() => runApp(MaterialApp(home: MyReviewsPage()));

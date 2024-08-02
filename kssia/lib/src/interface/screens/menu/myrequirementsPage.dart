@@ -82,22 +82,75 @@ class MyRequirementsPage extends StatelessWidget {
             SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade100,
+                backgroundColor: Color(0xFFEB5860),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
               onPressed: () {
-                // Handle delete button press
+                _showDeleteDialog(context);
               },
-              child: Text(
+              child: const Text(
                 'DELETE',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(
+                'https://img.freepik.com/free-photo/question-mark-bubble-speech-sign-symbol-icon-3d-rendering_56104-1950.jpg?t=st=1722584569~exp=1722588169~hmac=4fd202dfa51c41238e3a253545f7aab4bf8f87f64027a5f42e82cd22cd3395f5&w=1380',
+                height: 100,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Delete Post?',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              Text(
+                'Are you sure?',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('No', style: TextStyle(color: Colors.blue)),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(backgroundColor: Color(0xFFEB5860)),
+                    onPressed: () {
+                      // Handle the deletion logic
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Yes, Delete', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
