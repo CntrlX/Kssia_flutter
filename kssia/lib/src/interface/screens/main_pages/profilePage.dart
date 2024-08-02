@@ -44,8 +44,7 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: NetworkImage(
-                                  ''),
+                              backgroundImage: NetworkImage(''),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -167,7 +166,8 @@ class ProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CardPage(), // Navigate to CardPage
+                          builder: (context) =>
+                              CardPage(), // Navigate to CardPage
                         ),
                       );
                     },
@@ -180,9 +180,9 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-  
+
   CardPage() {}
-  
+
   Shared() {}
 }
 
