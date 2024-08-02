@@ -153,7 +153,8 @@ class ProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Shared(), // Navigate to Shared
+                          builder: (context) =>
+                              ProfilePage(), // Navigate to Shared
                         ),
                       );
                     },
@@ -167,7 +168,7 @@ class ProfilePage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              CardPage(), // Navigate to CardPage
+                              ProfileCard(), // Navigate to CardPage
                         ),
                       );
                     },
@@ -180,10 +181,6 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-
-  CardPage() {}
-
-  Shared() {}
 }
 
 void main() {

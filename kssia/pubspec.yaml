@@ -46,5 +46,5 @@ flutter:
     - assets/icons/news_inactive.svg
     - assets/icons/news_active.svg
     - assets/icons/polygon.svg
-    - kssia\assets\icons\loginVector.svg
+    - assets\icons\loginVector.svg
    
