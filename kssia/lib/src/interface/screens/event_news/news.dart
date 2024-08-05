@@ -15,7 +15,12 @@ class _NewsPageState extends State<NewsPage> {
       'category': 'FINANCE',
       'image': 'https://placehold.co/600x400/png',
       'date': 'Sep 07, 2021, 01:28 PM IST',
-      'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...'
+      'content': '''Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit..'''
     },
     {
       'title': 'Another news article',
@@ -41,39 +46,73 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image(image: NetworkImage(_news[_currentIndex]['image']!)),
-            SizedBox(height: 8),
-            Text(
-              _news[_currentIndex]['category']!,
-              style:
-                  TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              _news[_currentIndex]['title']!,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              _news[_currentIndex]['date']!,
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(height: 8),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  _news[_currentIndex]['content']!,
-                  style: TextStyle(fontSize: 16),
+      return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 200,
+                          child: Image.network(
+                            _news[_currentIndex]['image']!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _news[_currentIndex]['category']!,
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                _news[_currentIndex]['title']!,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                _news[_currentIndex]['date']!,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
                 ),
-              ),
+                SliverFillRemaining(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _news[_currentIndex]['content']!,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 OutlinedButton(
@@ -111,9 +150,9 @@ class _NewsPageState extends State<NewsPage> {
                   ),
                 ),
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
