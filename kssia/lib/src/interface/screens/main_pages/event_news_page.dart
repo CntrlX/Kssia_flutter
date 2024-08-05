@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/event_news/event.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
-import 'package:kssia/src/interface/screens/people/chat.dart';
+import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
 class Event_News_Page extends StatefulWidget {

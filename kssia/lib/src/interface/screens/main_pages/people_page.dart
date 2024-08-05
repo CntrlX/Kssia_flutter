@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/feed/feed_view.dart';
 import 'package:kssia/src/interface/screens/feed/product_view.dart';
-import 'package:kssia/src/interface/screens/people/chat.dart';
+import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
 class People_Page extends StatefulWidget {

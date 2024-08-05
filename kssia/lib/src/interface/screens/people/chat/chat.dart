@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
-
+import 'package:kssia/src/interface/models/chat_model.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 
 class ChatPage extends StatelessWidget {
-  final List<ChatItem> chatItems = [
-    ChatItem(
-        avatar: 'https://via.placeholder.com/150',
-        name: 'Alice',
-        designation: 'Manager',
+  ChatModel sourcChat = ChatModel(
+      name: '',
+      icon: 'https://via.placeholder.com/150',
+      time: '6:11',
+      currentMessage: 'awawbarwb',
+      id: 9,
+      unreadMessages: 4);
+
+  final List<ChatModel> chats = [
+    ChatModel(
+        name: 'Sreeram',
+        icon: 'https://via.placeholder.com/150',
+        time: '6:15',
+        currentMessage: 'Hey whats goin on',
+        id: 1,
         unreadMessages: 2),
-    ChatItem(
-        avatar: 'https://via.placeholder.com/150',
-        name: 'Bob',
-        designation: 'Developer',
-        unreadMessages: 5),
-    ChatItem(
-        avatar: 'https://via.placeholder.com/150',
-        name: 'Charlie',
-        designation: 'Designer',
-        unreadMessages: 0),
-    ChatItem(
-        avatar: 'https://via.placeholder.com/150',
-        name: 'David',
-        designation: 'Tester',
+    ChatModel(
+        name: 'Person 2',
+        icon: 'https://via.placeholder.com/150',
+        time: '6:15',
+        currentMessage: 'Hey whats goin on',
+        id: 2,
         unreadMessages: 3),
-    // Add more items here...
+    ChatModel(
+        name: 'Person 3',
+        icon: 'https://via.placeholder.com/150',
+        time: '6:15',
+        currentMessage: 'Hey whats goin on',
+        id: 3,
+        unreadMessages: 1)
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount: chatItems.length,
+        itemCount: chats.length,
         itemBuilder: (context, index) {
           return ListTile(
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(chatItems[index].avatar),
+              backgroundImage: NetworkImage(chats[index].icon),
             ),
-            title: Text(chatItems[index].name),
-            subtitle: Text(chatItems[index].designation),
-            trailing: chatItems[index].unreadMessages > 0
+            title: Text(chats[index].name),
+            subtitle: Text(chats[index].currentMessage),
+            trailing: chats[index].unreadMessages > 0
                 ? SizedBox(
                     width: 24,
                     height: 24,
@@ -54,7 +63,7 @@ class ChatPage extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          '${chatItems[index].unreadMessages}',
+                          '${chats[index].unreadMessages}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -64,7 +73,14 @@ class ChatPage extends StatelessWidget {
                       ),
                     ),
                   )
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => IndividualPage(
+                        chatModel: chats[index],
+                        sourchat: sourcChat,
+                      )));
+            },
           );
         },
       ),
