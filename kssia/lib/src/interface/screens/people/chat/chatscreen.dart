@@ -17,7 +17,6 @@ class IndividualPage extends StatefulWidget {
 class _IndividualPageState extends State<IndividualPage> {
   bool show = false;
   FocusNode focusNode = FocusNode();
-  bool sendButton = false;
   List<MessageModel> messages = [];
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
@@ -153,17 +152,6 @@ class _IndividualPageState extends State<IndividualPage> {
                                     keyboardType: TextInputType.multiline,
                                     maxLines: 5,
                                     minLines: 1,
-                                    onChanged: (value) {
-                                      if (value.length > 0) {
-                                        setState(() {
-                                          sendButton = true;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          sendButton = false;
-                                        });
-                                      }
-                                    },
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "What would you share?",
@@ -205,11 +193,11 @@ class _IndividualPageState extends State<IndividualPage> {
                                       borderRadius: BorderRadius.circular(5)),
                                   child: IconButton(
                                     icon: Icon(
-                                      sendButton ? Icons.send : Icons.mic,
+                                      Icons.send,
                                       color: Colors.white,
                                     ),
                                     onPressed: () {
-                                      if (sendButton) {
+                                      if (_controller.text.isNotEmpty) {
                                         _scrollController.animateTo(
                                             _scrollController
                                                 .position.maxScrollExtent,
@@ -221,9 +209,6 @@ class _IndividualPageState extends State<IndividualPage> {
                                             widget.sourchat.id,
                                             widget.chatModel.id);
                                         _controller.clear();
-                                        setState(() {
-                                          sendButton = false;
-                                        });
                                       }
                                     },
                                   ),

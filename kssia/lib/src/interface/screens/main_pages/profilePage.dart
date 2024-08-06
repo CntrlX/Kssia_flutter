@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart'; // Import the XCard widget
-import 'package:kssia/src/interface/screens/profile/shared.dart'; // Import the Shared widget
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -13,16 +13,16 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(30.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
+                      spreadRadius: 0,
+                      blurRadius: 1,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
@@ -41,52 +41,85 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CircleAvatar(
+                            const CircleAvatar(
                               radius: 40,
                               backgroundImage: NetworkImage(''),
                             ),
-                            SizedBox(height: 10),
-                            Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               'John Fitzgerald',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Image.asset(
-                                  'assets/icons/volkwagenLogo.png',
-                                  height: 20,
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/volkwagenLogo.png',
+                                      height: 33,
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(width: 5),
-                                Text(
-                                  'Chief Financial Officer',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
+                                const SizedBox(width: 10),
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Chief Financial Officer',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: Color.fromARGB(255, 42, 41, 41),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Company Name',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
-                            ),
-                            Text(
-                              'Company Name',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              Container(
+                padding: const EdgeInsets.only(
+                    left: 35, right: 130, top: 25, bottom: 35),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 0,
+                      blurRadius: 1,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Column(
+                  children: [
                     Row(
                       children: [
-                        Icon(Icons.phone, color: Colors.blue),
+                        Icon(Icons.phone, color: Color(0xFF004797)),
                         SizedBox(width: 10),
                         Text('+91 9458652637'),
                       ],
@@ -94,7 +127,7 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.email, color: Colors.blue),
+                        Icon(Icons.email, color: Color(0xFF004797)),
                         SizedBox(width: 10),
                         Text('johndoe@gmail.com'),
                       ],
@@ -102,7 +135,7 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.person, color: Colors.blue),
+                        Icon(Icons.person, color: Color(0xFF004797)),
                         SizedBox(width: 10),
                         Text('John.346.ig'),
                       ],
@@ -110,7 +143,7 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.blue),
+                        Icon(Icons.location_on, color: Color(0xFF004797)),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -122,9 +155,23 @@ class ProfilePage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              Center(
-                child: Column(
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 0,
+                      blurRadius: 1,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'KSSIA',
@@ -142,7 +189,7 @@ class ProfilePage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -159,7 +206,7 @@ class ProfilePage extends StatelessWidget {
                       );
                     },
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   IconButton(
                     icon: Image.asset('assets/icons/qr_button.png'),
                     iconSize: 50,
