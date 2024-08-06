@@ -164,9 +164,16 @@ class _FeedPageState extends State<FeedPage>
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: _showAddRequirementSheet,
-          label: const Text('Add Requirement/update'),
-          icon: const Icon(Icons.add),
-          backgroundColor: Colors.blue,
+          label: const Text(
+            'Add Requirement/update',
+            style: TextStyle(color: Colors.white),
+          ),
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 27,
+          ),
+          backgroundColor: Color(0xFF004797),
         ),
       ),
     );

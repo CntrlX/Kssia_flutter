@@ -7,17 +7,31 @@ class FeedView extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: TextField(
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: 'Search your Products and requirements',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                hintText: 'Search your Products and requirements',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: Color.fromARGB(255, 226, 224, 224),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+            )),
         SizedBox(height: 16),
         _buildPost(),
         _buildPost(withImage: true),
