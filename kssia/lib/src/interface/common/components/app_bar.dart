@@ -34,7 +34,8 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
+import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 
 class App_bar extends StatelessWidget implements PreferredSizeWidget {
   const App_bar({Key? key}) : super(key: key);
@@ -42,27 +43,32 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
       leading: Padding(
-        padding: const EdgeInsets.all(
-            8.0),
-        child: SvgPicture.asset(
-          'assets/icons/kssiaLogo.svg',
-          width: 24,
-          height: 24,
+        padding: const EdgeInsets.all(10.0),
+        child: Image.asset(
+          'assets/icons/kssiaLogo.png', // Ensure this path is correct
+          width: 60,
+          height: 60,
         ),
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.notifications),
+          icon: Icon(Icons.notifications_none_outlined),
           onPressed: () {
-           
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationPage()),
+            );
           },
         ),
         IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            // Add your hamburger icon's onPressed functionality here
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MenuPage()), // Navigate to MenuPage
+            );
           },
         ),
       ],

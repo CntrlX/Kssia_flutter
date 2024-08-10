@@ -46,7 +46,7 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           Expanded(
@@ -72,23 +72,22 @@ class _NewsPageState extends State<NewsPage> {
                             children: [
                               Text(
                                 _news[_currentIndex]['category']!,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 _news[_currentIndex]['title']!,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 _news[_currentIndex]['date']!,
-                                style: TextStyle(color: Colors.grey),
+                                style: const TextStyle(color: Colors.grey),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                             ],
                           ),
                         ),
@@ -102,7 +101,7 @@ class _NewsPageState extends State<NewsPage> {
                     child: SingleChildScrollView(
                       child: Text(
                         _news[_currentIndex]['content']!,
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
@@ -113,39 +112,47 @@ class _NewsPageState extends State<NewsPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 OutlinedButton(
                   onPressed: _previousNews,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey),
+                    side: const BorderSide(
+                        color: Color.fromARGB(255, 224, 219, 219)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      Icon(Icons.arrow_back, color: Colors.blue),
+                      Icon(Icons.arrow_back, color: Color(0xFF004797)),
                       SizedBox(width: 8),
-                      Text('Previous', style: TextStyle(color: Colors.blue)),
+                      Text('Previous',
+                          style: TextStyle(color: Color(0xFF004797))),
                     ],
                   ),
+                ),
+                SizedBox(
+                  width: 20,
                 ),
                 OutlinedButton(
                   onPressed: _nextNews,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey),
+                    side: const BorderSide(
+                        color: Color.fromARGB(255, 224, 219, 219)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 25, vertical: 10),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      Text('Next', style: TextStyle(color: Colors.blue)),
+                      Text('Next', style: TextStyle(color: Color(0xFF004797))),
                       SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.blue),
+                      Icon(Icons.arrow_forward, color: Color(0xFF004797)),
                     ],
                   ),
                 ),

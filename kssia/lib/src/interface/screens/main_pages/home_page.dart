@@ -1,78 +1,72 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
-import '../main_page.dart'; // Import MainPage
+import '../main_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   hintText: 'Search promotions',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 214, 211, 211)),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 217, 212, 212)),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
               ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.yellow.shade200,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 100, // Adjust the width as needed
-                      height: 100, // Adjust the height as needed
-                      child: Image(
-                        image: NetworkImage(
-                            'https://placehold.co/600x400/png'), // Add your image here
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Lorem ipsum dolor sit amet',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            'Lorem ipsum dolor sit amet',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+            ),
+            const SizedBox(height: 16),
+            Card(
+              color: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                color: Colors.transparent,
+                height: 140,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 2,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: _buildCards(MediaQuery.sizeOf(context).width),
+                    );
+                  },
                 ),
               ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.all(16),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 10, bottom: 0, left: 16, right: 16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white, // Set the background color to white
                   borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(
-                    color: Color.fromARGB(
+                    color: const Color.fromARGB(
                         255, 225, 231, 236), // Set the border color to blue
                     width: 2.0, // Adjust the width as needed
                   ),
@@ -85,8 +79,8 @@ class HomePage extends StatelessWidget {
                       width: 40,
                       height: 40,
                     ),
-                    SizedBox(width: 8),
-                    Expanded(
+                    const SizedBox(width: 8),
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -113,11 +107,15 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.all(16),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 10, bottom: 0, left: 16, right: 16),
+              child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       Color.fromARGB(41, 249, 180, 6),
                       Color.fromARGB(113, 249, 180, 6)
@@ -137,19 +135,19 @@ class HomePage extends StatelessWidget {
                           width: 40,
                           height: 40,
                         ),
-                        SizedBox(width: 15),
+                        const SizedBox(width: 15),
                       ],
                     ),
-                    Padding(padding: EdgeInsets.all(8.0)),
+                    const Padding(padding: EdgeInsets.all(8.0)),
                     const Text('Poster',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         )),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                         'Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.'),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -157,7 +155,7 @@ class HomePage extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => MainPage()),
                         );
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           Text(
                             'Know More',
@@ -176,11 +174,19 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              Text('Video title',
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 10, bottom: 0, left: 16, right: 16),
+              child: const Text('Video title',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              SizedBox(height: 8),
-              Container(
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 10, bottom: 0, left: 16, right: 16),
+              child: Container(
                 height: 200,
                 decoration: BoxDecoration(
                   color: Colors
@@ -197,52 +203,98 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class App_bar extends StatelessWidget implements PreferredSizeWidget {
-  const App_bar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      leading: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Image.asset(
-          'assets/icons/kssiaLogo.png', // Ensure this path is correct
-          width: 60,
-          height: 60,
+Widget _buildCards(double width) {
+  return Container(
+    width: width / 1.20,
+    child: Stack(
+      clipBehavior: Clip.none, // This allows overflow
+      children: [
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: 120,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(41, 249, 180, 6),
+                  Color.fromARGB(113, 249, 180, 6)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  SizedBox(width: 100),
+                  SizedBox(width: 40),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Padding(
+                            padding: EdgeInsets.only(left: 8, right: 8),
+                            child: Text(
+                              'Lorem ipsum dolor sit amet',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Flexible(
+                              child: Text(
+                                'Lorem ipsum dolor sit amet',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.notifications_none_outlined),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationPage()),
-            );
-          },
-        ),
-        IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MenuPage()), // Navigate to MenuPage
-            );
-          },
+        Positioned(
+          left: -10,
+          bottom: -10, // Make this value more negative to move the image up
+          child: SizedBox(
+            width: 240, // Adjust the width of the image
+            height: 240, // Adjust the height of the image
+            child: Image.asset(
+              'assets/homegirl.png',
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ],
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+    ),
+  );
 }

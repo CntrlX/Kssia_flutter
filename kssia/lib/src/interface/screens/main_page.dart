@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -64,21 +65,22 @@ class _MainPageState extends State<MainPage> {
       _selectedIndex = index;
     });
   }
+
   final List<String> _inactiveIcons = [
-      'assets/icons/home_inactive.svg',
-      'assets/icons/feed_inactive.svg',
-      'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg', 
-      'assets/icons/news_inactive.svg',
-      'assets/icons/people_inactive.svg',
-    ];
+    'assets/icons/home_inactive.svg',
+    'assets/icons/feed_inactive.svg',
+    'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg',
+    'assets/icons/news_inactive.svg',
+    'assets/icons/people_inactive.svg',
+  ];
 
   final List<String> _activeIcons = [
-      'assets/icons/home_active.svg',
-      'assets/icons/feed_active.svg',
-      'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg', 
-      'assets/icons/news_active.svg',
-      'assets/icons/people_active.svg',
-    ];
+    'assets/icons/home_active.svg',
+    'assets/icons/feed_active.svg',
+    'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg',
+    'assets/icons/news_active.svg',
+    'assets/icons/people_active.svg',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -88,21 +90,21 @@ class _MainPageState extends State<MainPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-       items: List.generate(5, (index) {
-  return BottomNavigationBarItem(
-    icon: IconResolver(
-      iconPath: _inactiveIcons[index],
-      color: _selectedIndex == index ? Colors.blue : Colors.grey,
-    ),
-    activeIcon: IconResolver(
-      iconPath: _activeIcons[index],
-      color: Colors.blue,
-    ),
-    label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
-  );
-}),
+        items: List.generate(5, (index) {
+          return BottomNavigationBarItem(
+            icon: IconResolver(
+              iconPath: _inactiveIcons[index],
+              color: _selectedIndex == index ? Colors.blue : Colors.grey,
+            ),
+            activeIcon: IconResolver(
+              iconPath: _activeIcons[index],
+              color: Colors.blue,
+            ),
+            label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
+          );
+        }),
         currentIndex: _selectedIndex,
-        selectedItemColor:  Colors.blue,
+        selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
         showUnselectedLabels: true,
@@ -110,5 +112,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-
