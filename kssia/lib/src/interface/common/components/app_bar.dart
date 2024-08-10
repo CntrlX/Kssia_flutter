@@ -33,7 +33,6 @@
 //   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -43,8 +42,10 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.white,
       leading: Padding(
-        padding: const EdgeInsets.all(8.0), // Add padding to ensure the SVG is not too close to the edges
+        padding: const EdgeInsets.all(
+            8.0),
         child: SvgPicture.asset(
           'assets/icons/kssiaLogo.svg',
           width: 24,
@@ -55,7 +56,7 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(Icons.notifications),
           onPressed: () {
-            // Add your notification icon's onPressed functionality here
+           
           },
         ),
         IconButton(
