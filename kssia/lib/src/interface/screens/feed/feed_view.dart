@@ -63,7 +63,7 @@ class FeedView extends StatelessWidget {
                       'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
             ],
             SizedBox(height: 16),
-            Row(
+            const Row(
               children: [
                 CircleAvatar(
                   backgroundImage: AssetImage(

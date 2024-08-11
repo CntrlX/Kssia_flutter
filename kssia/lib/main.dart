@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
+import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 
 void main() {
   runApp(const MainApp());
@@ -19,7 +20,7 @@ class MainApp extends StatelessWidget {
       ), // Remove the debug banner
       home: Scaffold(
         body: Center(
-          child: MainPage(),
+          child: LoginPage(),
         ),
       ),
     );
