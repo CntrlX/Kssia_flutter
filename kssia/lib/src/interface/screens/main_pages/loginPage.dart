@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:kssia/src/interface/common/custom_switch.dart';
+import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -465,176 +468,604 @@ class ProfileCompletionScreen extends StatelessWidget {
   }
 }
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends ConsumerStatefulWidget {
   const DetailsPage({super.key});
 
   @override
+  ConsumerState<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends ConsumerState<DetailsPage> {
+  final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
+  final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isWebsiteDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isVideoDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isAwardsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isProductsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  final isCertificateDetailsVisibleProvider =
+      StateProvider<bool>((ref) => false);
+  final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        offset: const Offset(0, 2),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  child: AppBar(
-                    backgroundColor: Colors.white,
-                    elevation: 0,
-                    leadingWidth: 100,
-                    leading: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Image.asset(
-                          'assets/icons/kssiaLogo.png',
-                          fit: BoxFit.contain,
+    final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
+    final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
+    final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
+    final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
+    final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
+    final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
+    final isProductsDetailsVisible =
+        ref.watch(isProductsDetailsVisibleProvider);
+    final isCertificateDetailsVisible =
+        ref.watch(isCertificateDetailsVisibleProvider);
+    final isBrochureDetailsVisible =
+        ref.watch(isBrochureDetailsVisibleProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          offset: const Offset(0, 2),
+                          blurRadius: 4,
                         ),
-                      ),
+                      ],
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      MainPage()));
-                        },
-                        child: const Text(
-                          'Skip',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 35),
-                Center(
-                  child: Stack(
-                    children: [
-                      DottedBorder(
-                        borderType: BorderType.Circle,
-                        dashPattern: [6, 3],
-                        color: Colors.grey,
-                        strokeWidth: 2,
-                        child: ClipOval(
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            child: const Icon(
-                              Icons.person,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
+                    child: AppBar(
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                      leadingWidth: 100,
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset(
+                            'assets/icons/kssiaLogo.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 4,
-                        right: 4,
-                        child: InkWell(
-                          onTap: () {
-                            // Add functionality to select image from files or gallery
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        MainPage()));
                           },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  offset: const Offset(2, 2),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                              shape: BoxShape.circle,
-                            ),
-                            child: const CircleAvatar(
-                              radius: 17,
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.edit,
-                                color: Color(0xFF004797),
-                                size: 16,
+                          child: const Text(
+                            'Skip',
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 35),
+                  Center(
+                    child: Stack(
+                      children: [
+                        DottedBorder(
+                          borderType: BorderType.Circle,
+                          dashPattern: [6, 3],
+                          color: Colors.grey,
+                          strokeWidth: 2,
+                          child: ClipOval(
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              child: const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.grey,
                               ),
                             ),
                           ),
                         ),
+                        Positioned(
+                          bottom: 4,
+                          right: 4,
+                          child: InkWell(
+                            onTap: () {
+                              // Add functionality to select image from files or gallery
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    offset: const Offset(2, 2),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                                shape: BoxShape.circle,
+                              ),
+                              child: const CircleAvatar(
+                                radius: 17,
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF004797),
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
+                        child: Text(
+                          'Personal Details',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ],
                   ),
-                ),
-                const Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
-                      child: Text(
-                        'Personal Details',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                  const Padding(
+                    padding: EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 10),
+                    child: Column(
+                      children: [
+                        CustomTextField(hintText: 'Enter your Full name'),
+                        SizedBox(height: 20.0),
+                        CustomTextField(hintText: 'Designation'),
+                        SizedBox(height: 20.0),
+                        CustomTextField(hintText: 'Bio', maxLines: 5),
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Add more',
+                          style: TextStyle(
+                              color: Color(0xFF004797),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15),
+                        ),
+                        Icon(
+                          Icons.add,
+                          color: Color(0xFF004797),
+                          size: 18,
+                        )
+                      ],
+                    ),
+                  ),
+                  const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
+                        child: Text(
+                          'Company Details',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Stack(
+                      children: [
+                        DottedBorder(
+                          radius: const Radius.circular(10),
+                          borderType: BorderType.RRect,
+                          dashPattern: [6, 3],
+                          color: Colors.grey,
+                          strokeWidth: 2,
+                          child: ClipRRect(
+                            child: Container(
+                                width: 110,
+                                height: 100,
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: const Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Upload',
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Company',
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Logo',
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ))),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: -4,
+                          right: -4,
+                          child: InkWell(
+                            onTap: () {
+                              // Add functionality to select image from files or gallery
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    offset: const Offset(-1, -1),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                                shape: BoxShape.circle,
+                              ),
+                              child: const CircleAvatar(
+                                radius: 17,
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF004797),
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(
+                        top: 20, left: 20, right: 20, bottom: 10),
+                    child: CustomTextField(hintText: 'Enter Company Name'),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: CustomTextField(
+                      hintText: 'Enter Company Address',
+                      maxLines: 3,
+                      prefixIcon: Icon(
+                        Icons.location_city,
+                        color: Color(0xFF004797),
                       ),
                     ),
-                  ],
-                ),
-                const Padding(
-                  padding:
-                      EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                  child: Column(
-                    children: [
-                      CustomTextField(hintText: 'Enter your Full name'),
-                      SizedBox(height: 20.0),
-                      CustomTextField(hintText: 'Designation'),
-                      SizedBox(height: 20.0),
-                      CustomTextField(hintText: 'Bio', maxLines: 5),
-                    ],
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Add more',
-                        style: TextStyle(
-                            color: Color(0xFF004797),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Phone Number',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        CustomSwitch(
+                          value: ref.watch(isPhoneNumberVisibleProvider),
+                          onChanged: (bool value) {
+                            setState(() {
+                              ref
+                                  .read(isPhoneNumberVisibleProvider.notifier)
+                                  .state = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isPhoneNumberVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 0, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter phone number',
+                        prefixIcon: Icon(Icons.phone, color: Color(0xFF004797)),
                       ),
-                      Icon(
-                        Icons.add,
-                        color: Color(0xFF004797),
-                        size: 18,
-                      )
-                    ],
+                    ),
+                  if (isPhoneNumberVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 20, bottom: 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Add more',
+                            style: TextStyle(
+                                color: Color(0xFF004797),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15),
+                          ),
+                          Icon(
+                            Icons.add,
+                            color: Color(0xFF004797),
+                            size: 18,
+                          )
+                        ],
+                      ),
+                    ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Contact Details',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        CustomSwitch(
+                          value: ref.watch(isContactDetailsVisibleProvider),
+                          onChanged: (bool value) {
+                            setState(() {
+                              ref
+                                  .read(
+                                      isContactDetailsVisibleProvider.notifier)
+                                  .state = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(
-                    height:
-                        80), // Add space at the bottom of the scrollable content
-              ],
+                  if (isContactDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 0, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Email',
+                        prefixIcon: Icon(Icons.email, color: Color(0xFF004797)),
+                      ),
+                    ),
+                  if (isContactDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Business Whatsapp',
+                        prefixIcon: SvgIcon(
+                          assetName: 'assets/icons/whatsapp-business.svg',
+                          color: Color(0xFF004797),
+                          size: 10,
+                        ),
+                      ),
+                    ),
+                  if (isContactDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Whatsapp',
+                        prefixIcon: SvgIcon(
+                          assetName: 'assets/icons/whatsapp.svg',
+                          color: Color(0xFF004797),
+                          size: 13,
+                        ),
+                      ),
+                    ),
+                  if (isContactDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Address',
+                        maxLines: 3,
+                        prefixIcon:
+                            Icon(Icons.location_on, color: Color(0xFF004797)),
+                      ),
+                    ),
+                  if (isContactDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 20, bottom: 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Add more',
+                            style: TextStyle(
+                                color: Color(0xFF004797),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15),
+                          ),
+                          Icon(
+                            Icons.add,
+                            color: Color(0xFF004797),
+                            size: 18,
+                          )
+                        ],
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Social Media',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        CustomSwitch(
+                          value: ref.watch(isSocialDetailsVisibleProvider),
+                          onChanged: (bool value) {
+                            setState(() {
+                              ref
+                                  .read(isSocialDetailsVisibleProvider.notifier)
+                                  .state = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isSocialDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Ig',
+                        prefixIcon: SvgIcon(
+                          assetName: 'assets/icons/instagram.svg',
+                          size: 10,
+                          color: Color(0xFF004797),
+                        ),
+                      ),
+                    ),
+                  if (isSocialDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Linkedin',
+                        prefixIcon: SvgIcon(
+                          assetName: 'assets/icons/linkedin.svg',
+                          color: Color(0xFF004797),
+                          size: 10,
+                        ),
+                      ),
+                    ),
+                  if (isSocialDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Twitter',
+                        prefixIcon: SvgIcon(
+                          assetName: 'assets/icons/twitter.svg',
+                          color: Color(0xFF004797),
+                          size: 13,
+                        ),
+                      ),
+                    ),
+                  if (isSocialDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, top: 20, bottom: 10),
+                      child: CustomTextField(
+                        hintText: 'Enter Facebook',
+                        prefixIcon: Icon(
+                          Icons.facebook,
+                          color: Color(0xFF004797),
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                  if (isSocialDetailsVisible)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 20, bottom: 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Add more',
+                            style: TextStyle(
+                                color: Color(0xFF004797),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15),
+                          ),
+                          Icon(
+                            Icons.add,
+                            color: Color(0xFF004797),
+                            size: 18,
+                          )
+                        ],
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Add Website',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        CustomSwitch(
+                          value: ref.watch(isWebsiteDetailsVisibleProvider),
+                          onChanged: (bool value) {
+                            setState(() {
+                              ref
+                                  .read(
+                                      isWebsiteDetailsVisibleProvider.notifier)
+                                  .state = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isWebsiteDetailsVisible)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: CustomTextField(
+                        hintText: 'Enter Website Link',
+                        suffixIcon: Icon(
+                          Icons.add,
+                          color: Color(0xFF004797),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 140),
+                ],
+              ),
             ),
-          ),
-          Positioned(
-              bottom: 20,
-              left: 20,
-              right: 20,
-              child: SizedBox(
-                  height: 50,
-                  child:
-                      customButton(label: 'Save & Proceed', onPressed: () {}))),
-        ],
+            Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: SizedBox(
+                    height: 50,
+                    child: customButton(
+                        label: 'Save & Proceed', onPressed: () {}))),
+          ],
+        ),
       ),
     );
   }
@@ -643,11 +1074,15 @@ class DetailsPage extends StatelessWidget {
 class CustomTextField extends StatelessWidget {
   final String hintText;
   final int maxLines;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     Key? key,
     required this.hintText,
     this.maxLines = 1,
+    this.prefixIcon,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -659,6 +1094,57 @@ class CustomTextField extends StatelessWidget {
         hintStyle: const TextStyle(color: Colors.grey),
         fillColor: const Color(0xFFF2F2F2),
         filled: true,
+        prefixIcon: prefixIcon != null && maxLines > 1
+            ? Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 50, left: 10, right: 10, top: 5),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  widthFactor: 1.0,
+                  heightFactor: maxLines > 1 ? null : 1.0,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
+                      width: 42,
+                      height: 42,
+                      child: prefixIcon),
+                ),
+              )
+            : prefixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      widthFactor: 1.0,
+                      heightFactor: maxLines > 1 ? null : 1.0,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white,
+                          ),
+                          width: 42,
+                          height: 42,
+                          child: prefixIcon),
+                    ),
+                  )
+                : null,
+        suffixIcon: suffixIcon != null
+            ? Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, right: 10, top: 5, bottom: 5),
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    width: 42,
+                    height: 42,
+                    child: suffixIcon),
+              )
+            : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
