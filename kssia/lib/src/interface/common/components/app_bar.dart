@@ -43,12 +43,16 @@ class App_bar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leadingWidth: 100,
       leading: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Image.asset(
-          'assets/icons/kssiaLogo.png', // Ensure this path is correct
-          width: 60,
-          height: 60,
+        padding: const EdgeInsets.only(left: 10),
+        child: SizedBox(
+          width: 100,
+          height: 100,
+          child: Image.asset(
+            'assets/icons/kssiaLogo.png',
+            fit: BoxFit.contain,
+          ),
         ),
       ),
       actions: [

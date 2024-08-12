@@ -7,6 +7,7 @@ import 'package:intl_phone_field/phone_number.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
+import 'package:dotted_border/dotted_border.dart';
 
 TextEditingController _mobileController = TextEditingController();
 TextEditingController _otpController = TextEditingController();
@@ -38,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
           PhoneNumberScreen(onNext: _nextPage),
           OTPScreen(onNext: _nextPage),
           ProfileCompletionScreen(onNext: _nextPage),
-          MainPage(),
+          const DetailsPage(),
         ],
       ),
     );
@@ -70,7 +71,7 @@ class PhoneNumberScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             IntlPhoneField(
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w400,
                 letterSpacing: 5.0,
@@ -155,14 +156,14 @@ class PhoneNumberScreen extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: onNext,
                     style: ButtonStyle(
-                      foregroundColor:
-                          WidgetStateProperty.all<Color>(Color(0xFF004797)),
-                      backgroundColor:
-                          WidgetStateProperty.all<Color>(Color(0xFF004797)),
+                      foregroundColor: WidgetStateProperty.all<Color>(
+                          const Color(0xFF004797)),
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                          const Color(0xFF004797)),
                       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(3),
-                          side: BorderSide(color: Color(0xFF004797)),
+                          side: const BorderSide(color: Color(0xFF004797)),
                         ),
                       ),
                     ),
@@ -248,7 +249,7 @@ class _OTPScreenState extends State<OTPScreen> {
             ),
             const SizedBox(height: 20),
             TextField(
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w400,
                 letterSpacing: 5.0,
@@ -333,14 +334,14 @@ class _OTPScreenState extends State<OTPScreen> {
                 child: ElevatedButton(
                     onPressed: widget.onNext,
                     style: ButtonStyle(
-                      foregroundColor:
-                          WidgetStateProperty.all<Color>(Color(0xFF004797)),
-                      backgroundColor:
-                          WidgetStateProperty.all<Color>(Color(0xFF004797)),
+                      foregroundColor: WidgetStateProperty.all<Color>(
+                          const Color(0xFF004797)),
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                          const Color(0xFF004797)),
                       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(3),
-                          side: BorderSide(color: Color(0xFF004797)),
+                          side: const BorderSide(color: Color(0xFF004797)),
                         ),
                       ),
                     ),
@@ -373,7 +374,7 @@ InkWell _buildbutton({
           height: 40,
           width: 100,
           child: DecoratedBox(
-              decoration: BoxDecoration(),
+              decoration: const BoxDecoration(),
               child: Center(
                   child: icondata != null
                       ? Icon(icondata,
@@ -445,11 +446,14 @@ class ProfileCompletionScreen extends StatelessWidget {
               child: SizedBox(
                   height: 50,
                   width: double.infinity,
-                  child: customButton(onPressed: () {})),
+                  child: customButton(label: 'Next', onPressed: onNext)),
             ),
             TextButton(
-              onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => MainPage()));
               },
               child: const Text('Skip',
                   style: TextStyle(color: Colors.black, fontSize: 15)),
@@ -462,15 +466,211 @@ class ProfileCompletionScreen extends StatelessWidget {
 }
 
 class DetailsPage extends StatelessWidget {
+  const DetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Main Page'),
-        backgroundColor: const Color(0xFF004797),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: AppBar(
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    leadingWidth: 100,
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Image.asset(
+                          'assets/icons/kssiaLogo.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MainPage()));
+                        },
+                        child: const Text(
+                          'Skip',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 35),
+                Center(
+                  child: Stack(
+                    children: [
+                      DottedBorder(
+                        borderType: BorderType.Circle,
+                        dashPattern: [6, 3],
+                        color: Colors.grey,
+                        strokeWidth: 2,
+                        child: ClipOval(
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            child: const Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: InkWell(
+                          onTap: () {
+                            // Add functionality to select image from files or gallery
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  offset: const Offset(2, 2),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                              shape: BoxShape.circle,
+                            ),
+                            child: const CircleAvatar(
+                              radius: 17,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                color: Color(0xFF004797),
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
+                      child: Text(
+                        'Personal Details',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+                const Padding(
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  child: Column(
+                    children: [
+                      CustomTextField(hintText: 'Enter your Full name'),
+                      SizedBox(height: 20.0),
+                      CustomTextField(hintText: 'Designation'),
+                      SizedBox(height: 20.0),
+                      CustomTextField(hintText: 'Bio', maxLines: 5),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Add more',
+                        style: TextStyle(
+                            color: Color(0xFF004797),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15),
+                      ),
+                      Icon(
+                        Icons.add,
+                        color: Color(0xFF004797),
+                        size: 18,
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                    height:
+                        80), // Add space at the bottom of the scrollable content
+              ],
+            ),
+          ),
+          Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: SizedBox(
+                  height: 50,
+                  child:
+                      customButton(label: 'Save & Proceed', onPressed: () {}))),
+        ],
       ),
-      body: const Center(
-        child: Text('Welcome to the Main Page!'),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  final String hintText;
+  final int maxLines;
+
+  const CustomTextField({
+    Key? key,
+    required this.hintText,
+    this.maxLines = 1,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.grey),
+        fillColor: const Color(0xFFF2F2F2),
+        filled: true,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
+              color:
+                  Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
+              color:
+                  Color.fromARGB(255, 223, 220, 220)), // Focused border color
+        ),
       ),
     );
   }

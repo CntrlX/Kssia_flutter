@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-Widget customButton({required VoidCallback onPressed}) {
+Widget customButton({required String label, required VoidCallback onPressed}) {
   return ElevatedButton(
-      onPressed: (){
-
-      },
+      onPressed: onPressed,
       style: ButtonStyle(
         foregroundColor: WidgetStateProperty.all<Color>(Color(0xFF004797)),
         backgroundColor: WidgetStateProperty.all<Color>(Color(0xFF004797)),
@@ -15,8 +13,8 @@ Widget customButton({required VoidCallback onPressed}) {
           ),
         ),
       ),
-      child: const Text(
-        'NEXT',
-        style: TextStyle(color: Colors.white),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white, fontSize: 16),
       ));
 }
