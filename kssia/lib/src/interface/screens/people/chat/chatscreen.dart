@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
-import 'package:kssia/src/interface/models/chat_model.dart';
-import 'package:kssia/src/interface/models/msg_model.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/models/msg_model.dart';
 
 class IndividualPage extends StatefulWidget {
   IndividualPage({required this.chatModel, required this.sourchat, super.key});
