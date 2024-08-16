@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:kssia/src/data/api_routes/api_routes.dart';
+import 'package:kssia/src/interface/common/customModalsheets.dart';
+import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_switch.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
@@ -452,7 +454,8 @@ class ProfileCompletionScreen extends StatelessWidget {
               child: SizedBox(
                   height: 50,
                   width: double.infinity,
-                  child: customButton(label: 'Next', onPressed: onNext)),
+                  child: customButton(
+                      label: 'Next', onPressed: onNext, fontSize: 16)),
             ),
             TextButton(
               onPressed: () {
@@ -479,6 +482,7 @@ class DetailsPage extends ConsumerStatefulWidget {
 }
 
 class _DetailsPageState extends ConsumerState<DetailsPage> {
+  String _productPriceType = 'Price per unit';
   final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
   final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
   final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
@@ -507,7 +511,30 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   final TextEditingController companyEmailController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  File? _imageFile;
+  final TextEditingController igController = TextEditingController();
+  final TextEditingController linkedinController = TextEditingController();
+  final TextEditingController twtitterController = TextEditingController();
+  final TextEditingController facebookController = TextEditingController();
+  final TextEditingController websiteNameController = TextEditingController();
+  final TextEditingController websiteLinkController = TextEditingController();
+  final TextEditingController videoNameController = TextEditingController();
+  final TextEditingController videoLinkController = TextEditingController();
+  final TextEditingController awardNameController = TextEditingController();
+  final TextEditingController awardAuthorityController =
+      TextEditingController();
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController productDescriptionController =
+      TextEditingController();
+  final TextEditingController productMoqController = TextEditingController();
+  final TextEditingController productActualPriceController =
+      TextEditingController();
+  final TextEditingController productOfferPriceController =
+      TextEditingController();
+  final TextEditingController certificateNameController =
+      TextEditingController();
+  final TextEditingController brochureNameController = TextEditingController();
+  File? _profileImageFile;
+  File? _companyImageFile;
   final ImagePicker _picker = ImagePicker();
   bool _invalidAddress = false;
 
@@ -600,17 +627,21 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     print(profileData);
   }
 
-  Future<void> _selectImage(ImageSource source) async {
+  Future<void> _selectImageFile(ImageSource source, String imageType) async {
     final XFile? image = await _picker.pickImage(source: source);
     print('$image');
-    if (image != null) {
+    if (image != null && imageType == 'profile') {
       setState(() {
-        _imageFile = File(image.path);
+        _profileImageFile = File(image.path);
+      });
+    } else if (image != null && imageType == 'company') {
+      setState(() {
+        _companyImageFile = File(image.path);
       });
     }
   }
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImage(ImageSource source, String imageType) async {
     PermissionStatus status;
 
     if (source == ImageSource.camera) {
@@ -622,7 +653,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
 
     if (status.isGranted) {
-      _selectImage(source);
+      _selectImageFile(source, imageType);
     } else if (status.isPermanentlyDenied) {
       _showPermissionDeniedDialog(true);
     } else {
@@ -735,14 +766,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                               width: 120,
                               height: 120,
                               color: const Color.fromARGB(255, 255, 255, 255),
-                              child: _imageFile == null
+                              child: _profileImageFile == null
                                   ? const Icon(
                                       Icons.person,
                                       size: 50,
                                       color: Colors.grey,
                                     )
                                   : Image.file(
-                                      _imageFile!,
+                                      _profileImageFile!,
                                       fit: BoxFit.cover,
                                       width: 120,
                                       height: 120,
@@ -757,8 +788,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                builder: (context) =>
-                                    _buildImagePickerOptions(context),
+                                builder: (context) => _buildImagePickerOptions(
+                                    context, 'profile'),
                               );
                             },
                             child: Container(
@@ -866,8 +897,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 width: 110,
                                 height: 100,
                                 color: const Color.fromARGB(255, 255, 255, 255),
-                                child: const Center(
-                                    child: Column(
+                                child:_companyImageFile == null?  Center(
+                                  
+                                    child: 
+                                    Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Row(
@@ -910,7 +943,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       ],
                                     ),
                                   ],
-                                ))),
+                                )
+                                ):Image.file(
+                                      _companyImageFile!,
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    ),
+                                )
+                                ,
                           ),
                         ),
                         Positioned(
@@ -918,7 +959,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           right: -4,
                           child: InkWell(
                             onTap: () {
-                              // Add functionality to select image from files or gallery
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) =>
+                                    _buildImagePickerOptions(context, 'company'),
+                              );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -1142,10 +1187,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                     ),
                   ),
                   if (isSocialDetailsVisible)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(
                           left: 20, right: 20, top: 20, bottom: 10),
                       child: CustomTextField(
+                        textController: igController,
                         labelText: 'Enter Ig',
                         prefixIcon: SvgIcon(
                           assetName: 'assets/icons/instagram.svg',
@@ -1155,10 +1201,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                     ),
                   if (isSocialDetailsVisible)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(
                           left: 20, right: 20, top: 20, bottom: 10),
                       child: CustomTextField(
+                        textController: linkedinController,
                         labelText: 'Enter Linkedin',
                         prefixIcon: SvgIcon(
                           assetName: 'assets/icons/linkedin.svg',
@@ -1168,10 +1215,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                     ),
                   if (isSocialDetailsVisible)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(
                           left: 20, right: 20, top: 20, bottom: 10),
                       child: CustomTextField(
+                        textController: twtitterController,
                         labelText: 'Enter Twitter',
                         prefixIcon: SvgIcon(
                           assetName: 'assets/icons/twitter.svg',
@@ -1181,10 +1229,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                     ),
                   if (isSocialDetailsVisible)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(
                           left: 20, right: 20, top: 20, bottom: 10),
                       child: CustomTextField(
+                        textController: facebookController,
                         labelText: 'Enter Facebook',
                         prefixIcon: Icon(
                           Icons.facebook,
@@ -1245,6 +1294,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                         right: 20,
                       ),
                       child: CustomTextField(
+                        textController: websiteLinkController,
                         readOnly: true,
                         labelText: 'Enter Website Link',
                         suffixIcon: const Icon(
@@ -1252,7 +1302,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           color: Color(0xFF004797),
                         ),
                         onTap: () {
-                          _showWlinkorVlinkSheet(
+                          showWlinkorVlinkSheet(
+                              textController1: websiteNameController,
+                              textController2: websiteLinkController,
                               fieldName: 'Add Website Link',
                               title: 'Add Website',
                               context: context);
@@ -1284,10 +1336,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                   ),
                   if (isVideoDetailsVisible)
                     Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 70),
                       child: CustomTextField(
+                        textController: videoLinkController,
+                        readOnly: true,
                         onTap: () {
-                          _showWlinkorVlinkSheet(
+                          showWlinkorVlinkSheet(
+                              textController1: videoNameController,
+                              textController2: videoLinkController,
                               fieldName: 'Add Youtube Link',
                               title: 'Add Video Link',
                               context: context);
@@ -1325,7 +1382,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                   ),
                   if (isAwardsDetailsVisible)
                     GestureDetector(
-                      onTap: _showEnterAwardtSheet,
+                      onTap: () => showEnterAwardtSheet(
+                          context: context,
+                          textController1: awardNameController,
+                          textController2: awardAuthorityController),
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 25, right: 25, bottom: 60),
@@ -1385,28 +1445,38 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 25, right: 25, bottom: 60),
-                      child: Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFF2F2F2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Color(0xFF004797),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Enter Products',
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 17),
-                              )
-                            ],
+                      child: GestureDetector(
+                        onTap: () => showProductstSheet(
+                            productNameText: productNameController,
+                            descriptionText: productDescriptionController,
+                            moqText: productMoqController,
+                            actualPriceText: productActualPriceController,
+                            offerPriceText: productOfferPriceController,
+                            context: context,
+                            productPriceType: _productPriceType),
+                        child: Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFF2F2F2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: Color(0xFF004797),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Enter Products',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 17),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -1440,28 +1510,33 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 25, right: 25, bottom: 60),
-                      child: Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFF2F2F2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Color(0xFF004797),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Enter Certificates',
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 17),
-                              )
-                            ],
+                      child: GestureDetector(
+                        onTap: () => showAddCertificateSheet(
+                            textController: certificateNameController,
+                            context: context),
+                        child: Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFF2F2F2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: Color(0xFF004797),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Enter Certificates',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 17),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -1473,7 +1548,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Enter Awards',
+                          'Enter Brochure',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -1495,28 +1570,33 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 25, right: 25, bottom: 60),
-                      child: Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFF2F2F2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Color(0xFF004797),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Enter Brochure',
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 17),
-                              )
-                            ],
+                      child: GestureDetector(
+                        onTap: () => showAddBrochureSheet(
+                            textController: brochureNameController,
+                            context: context),
+                        child: Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFF2F2F2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: Color(0xFF004797),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Enter Brochure',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 17),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -1532,6 +1612,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                 child: SizedBox(
                     height: 50,
                     child: customButton(
+                        fontSize: 16,
                         label: 'Save & Proceed',
                         onPressed: () {
                           _submitData();
@@ -1542,7 +1623,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     );
   }
 
-  Widget _buildImagePickerOptions(BuildContext context) {
+  Widget _buildImagePickerOptions(BuildContext context, String imageType) {
     return Wrap(
       children: [
         ListTile(
@@ -1550,7 +1631,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           title: const Text('Choose from Gallery'),
           onTap: () {
             Navigator.pop(context);
-            _pickImage(ImageSource.gallery);
+            _pickImage(ImageSource.gallery,imageType);
           },
         ),
         ListTile(
@@ -1558,342 +1639,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           title: const Text('Take a Photo'),
           onTap: () {
             Navigator.pop(context);
-            _pickImage(ImageSource.camera);
+            _pickImage(ImageSource.camera,imageType);
           },
         ),
       ],
     );
   }
-
-  void _showEnterAwardtSheet() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Add Awards',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  // Handle image upload
-                },
-                child: Container(
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                        SizedBox(height: 10),
-                        Text(
-                          'Upload Image',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 102, 101, 101)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Add content',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.grey, // Set the border color to light grey
-                      width: 1.0, // You can adjust the width as needed
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 185, 181, 181),
-                      width: 1.0,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 185, 181, 181),
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    // Handle post requirement
-                  },
-                  style: ButtonStyle(
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(const Color(0xFF004797)),
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(const Color(0xFF004797)),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: const BorderSide(color: Color(0xFF004797)),
-                      ),
-                    ),
-                  ),
-                  child: const Text(
-                    'POST REQUIREMENT/UPDATE',
-                    style: TextStyle(color: Colors.white),
-                  )),
-              const SizedBox(
-                height: 10,
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String labelText;
-  final bool readOnly;
-  final int maxLines;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-  final TextEditingController? textController;
-  final VoidCallback? onTap;
-
-  const CustomTextField({
-    Key? key,
-    required this.labelText,
-    this.readOnly = false,
-    this.maxLines = 1,
-    this.prefixIcon,
-    this.onTap,
-    this.suffixIcon,
-    this.textController,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      readOnly: readOnly,
-      controller: textController,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        alignLabelWithHint: true,
-        labelText: labelText,
-        labelStyle: const TextStyle(color: Colors.grey),
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        fillColor: const Color(0xFFF2F2F2),
-        filled: true,
-        prefixIcon: prefixIcon != null && maxLines > 1
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    bottom: 50, left: 10, right: 10, top: 5),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  widthFactor: 1.0,
-                  heightFactor: maxLines > 1 ? null : 1.0,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      width: 42,
-                      height: 42,
-                      child: prefixIcon),
-                ),
-              )
-            : prefixIcon != null
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      widthFactor: 1.0,
-                      heightFactor: maxLines > 1 ? null : 1.0,
-                      child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.white,
-                          ),
-                          width: 42,
-                          height: 42,
-                          child: prefixIcon),
-                    ),
-                  )
-                : null,
-        suffixIcon: suffixIcon != null
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, top: 5, bottom: 5),
-                child: GestureDetector(
-                  onTap: onTap,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      width: 42,
-                      height: 42,
-                      child: suffixIcon),
-                ),
-              )
-            : null,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 223, 220, 220)), // Focused border color
-        ),
-      ),
-    );
-  }
-}
-
-void _showWlinkorVlinkSheet(
-    {required String title,
-    required String fieldName,
-    required BuildContext context}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Stack(
-        clipBehavior: Clip.none, // Allow content to overflow outside the stack
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Add Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 207, 203, 203)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 207, 203, 203)),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: fieldName,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 207, 203, 203)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 207, 203, 203)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                customButton(label: 'SAVE', onPressed: () {}),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 5,
-            top: -50,
-            child: Container(
-              padding: const EdgeInsets.all(0),
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0, 2),
-                    blurRadius: 4.0,
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
 }

@@ -4,8 +4,7 @@ import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
 import '../menu/terms_and_conditions.dart';
-import '../menu/privacy.dart';
-import '../menu/about.dart';
+
 import '../menu/my_subscription.dart'; 
 import '../menu/my_events.dart'; 
 import '../menu/my_transaction.dart'; 
