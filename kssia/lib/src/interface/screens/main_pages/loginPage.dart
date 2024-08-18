@@ -9,9 +9,9 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
-import 'package:kssia/src/data/api_routes/api_routes.dart';
+import 'package:kssia/src/data/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/models/user.dart';
+import 'package:kssia/src/data/models/user_and_product.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';

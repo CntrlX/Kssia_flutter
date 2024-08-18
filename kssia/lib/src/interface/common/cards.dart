@@ -1,6 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:kssia/src/data/models/user.dart';
+import 'package:kssia/src/data/models/user_and_product.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AwardCard extends StatelessWidget {
