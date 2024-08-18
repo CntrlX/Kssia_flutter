@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 
 class ApiRoutes {
@@ -22,12 +24,8 @@ class ApiRoutes {
     return _handleResponse(response);
   }
 
-
-
-
-
   Future<void> editUser(Map<String, dynamic> profileData) async {
-    final url = Uri.parse('$baseUrl/user/edit/$id'); 
+    final url = Uri.parse('$baseUrl/user/edit/$id');
 
     try {
       final response = await http.put(
@@ -50,6 +48,54 @@ class ApiRoutes {
     }
   }
 
+
+
+Future<dynamic> createFileUrl({required File file}) async {
+  final url = Uri.parse('http://43.205.89.79/api/v1/files/upload');
+  final String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI'; // Replace with your Bearer token
+
+  // Determine MIME type
+  String fileName = file.path.split('/').last;
+  String? mimeType;
+  if (fileName.endsWith('.png')) {
+    mimeType = 'image/png';
+  } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+    mimeType = 'image/jpeg';
+  } else if (fileName.endsWith('.pdf')) {
+    mimeType = 'application/pdf';
+  } else {
+    return null; // Return null if the file type is unsupported
+  }
+
+  // Create multipart request
+  final request = http.MultipartRequest('PUT', url)
+    ..headers['Authorization'] = 'Bearer $token'
+    ..headers['accept'] = 'application/json'
+    ..headers['Content-Type'] = 'multipart/form-data'
+    ..files.add(await http.MultipartFile.fromPath(
+      'file',
+      file.path,
+      contentType: MediaType.parse(mimeType),
+    ));
+
+  try {
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+
+      return jsonResponse['data']; // Return the data part of the response
+    } else {
+      final responseBody = await response.stream.bytesToString();
+      print('Error Response Body: $responseBody');
+      return null; // Return null or an error message
+    }
+  } catch (e) {
+    print(e);
+    return null; // Return null or an error message in case of an exception
+  }
+}
 
 
   Map<String, dynamic> _handleResponse(http.Response response) {

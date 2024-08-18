@@ -13,6 +13,7 @@ class User {
   final List<Website> websites;
   final List<Video> video;
   final List<Award> awards;
+  final List<Product> products;
   final List<Certificate> certificates;
   final List<Brochure> brochure;
 
@@ -31,6 +32,7 @@ class User {
     required this.websites,
     required this.video,
     required this.awards,
+    required this.products,
     required this.certificates,
     required this.brochure,
   });
@@ -50,6 +52,7 @@ class User {
     List<Website>? websites,
     List<Video>? video,
     List<Award>? awards,
+    List<Product>? products,
     List<Certificate>? certificates,
     List<Brochure>? brochure,
   }) {
@@ -68,6 +71,7 @@ class User {
       websites: websites ?? this.websites,
       video: video ?? this.video,
       awards: awards ?? this.awards,
+      products: products ?? this.products,
       certificates: certificates ?? this.certificates,
       brochure: brochure ?? this.brochure,
     );
@@ -88,13 +92,17 @@ class User {
       socialMedia: (json['social_media'] as List)
           .map((i) => SocialMedia.fromJson(i))
           .toList(),
-      websites: (json['websites'] as List).map((i) => Website.fromJson(i)).toList(),
+      websites:
+          (json['websites'] as List).map((i) => Website.fromJson(i)).toList(),
       video: (json['video'] as List).map((i) => Video.fromJson(i)).toList(),
       awards: (json['awards'] as List).map((i) => Award.fromJson(i)).toList(),
+      products:
+          (json['products'] as List).map((i) => Product.fromJson(i)).toList(),
       certificates: (json['certificates'] as List)
           .map((i) => Certificate.fromJson(i))
           .toList(),
-      brochure: (json['brochure'] as List).map((i) => Brochure.fromJson(i)).toList(),
+      brochure:
+          (json['brochure'] as List).map((i) => Brochure.fromJson(i)).toList(),
     );
   }
 
@@ -114,6 +122,7 @@ class User {
       'websites': websites.map((i) => i.toJson()).toList(),
       'video': video.map((i) => i.toJson()).toList(),
       'awards': awards.map((i) => i.toJson()).toList(),
+      'products': products.map((i)=> i.toJson()).toList(),
       'certificates': certificates.map((i) => i.toJson()).toList(),
       'brochure': brochure.map((i) => i.toJson()).toList(),
     };
@@ -364,19 +373,15 @@ class Video {
 class Award {
   final String name;
   final String url;
+  final String authorityName;
 
-  Award({
-    required this.name,
-    required this.url,
-  });
+  Award({required this.name, required this.url, required this.authorityName});
 
-  Award copyWith({
-    String? name,
-    String? url,
-  }) {
+  Award copyWith({String? name, String? url, String? authorityName}) {
     return Award(
       name: name ?? this.name,
       url: url ?? this.url,
+      authorityName: authorityName ?? this.authorityName,
     );
   }
 
@@ -384,14 +389,12 @@ class Award {
     return Award(
       name: json['name'],
       url: json['url'],
+      authorityName: json['authority_name'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'url': url,
-    };
+    return {'name': name, 'url': url, 'authority_name': authorityName};
   }
 }
 
@@ -463,3 +466,90 @@ class Brochure {
   }
 }
 
+class Product {
+  final String id;
+  final String sellerId;
+  final String name;
+  final String image;
+  final double price;
+  final double offerPrice;
+  final String description;
+  final int moq;
+  final String units;
+  final String status;
+  final List<String> tags;
+
+  Product({
+    required this.id,
+    required this.sellerId,
+    required this.name,
+    required this.image,
+    required this.price,
+    required this.offerPrice,
+    required this.description,
+    required this.moq,
+    required this.units,
+    required this.status,
+    required this.tags,
+  });
+
+  Product copyWith({
+    String? id,
+    String? sellerId,
+    String? name,
+    String? image,
+    double? price,
+    double? offerPrice,
+    String? description,
+    int? moq,
+    String? units,
+    String? status,
+    List<String>? tags,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      sellerId: sellerId ?? this.sellerId,
+      name: name ?? this.name,
+      image: image ?? this.image,
+      price: price ?? this.price,
+      offerPrice: offerPrice ?? this.offerPrice,
+      description: description ?? this.description,
+      moq: moq ?? this.moq,
+      units: units ?? this.units,
+      status: status ?? this.status,
+      tags: tags ?? this.tags,
+    );
+  }
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['_id'] as String,
+      sellerId: json['seller_id'] as String,
+      name: json['name'] as String,
+      image: json['image'] as String,
+      price: json['price'] as double,
+      offerPrice: json['offer_price'] as double,
+      description: json['description'] as String,
+      moq: json['moq'] as int,
+      units: json['units'] as String,
+      status: json['status'] as String,
+      tags: List<String>.from(json['tags']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'seller_id': sellerId,
+      'name': name,
+      'image': image,
+      'price': price,
+      'offer_price': offerPrice,
+      'description': description,
+      'moq': moq,
+      'units': units,
+      'status': status,
+      'tags': tags,
+    };
+  }
+}

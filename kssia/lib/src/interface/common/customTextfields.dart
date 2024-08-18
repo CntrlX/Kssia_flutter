@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
-class modalSheetTextField extends StatelessWidget {
+class modalSheetTextFormField extends StatelessWidget {
   final TextEditingController textController;
   final String? label;
   final int maxLines;
-  const modalSheetTextField({
+  const modalSheetTextFormField({
     required this.textController,
     required this.label,
     this.maxLines = 1,
@@ -14,7 +14,7 @@ class modalSheetTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(controller: textController,
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: label,
@@ -44,7 +44,14 @@ class modalSheetTextField extends StatelessWidget {
   }
 }
 
-class CustomTextField extends StatelessWidget {
+
+
+
+
+
+
+
+class CustomTextFormField extends StatelessWidget {
   final String labelText;
   final bool readOnly;
   final int maxLines;
@@ -52,8 +59,9 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextEditingController? textController;
   final VoidCallback? onTap;
+  final FormFieldValidator<String>? validator;
 
-  const CustomTextField({
+  const CustomTextFormField({
     Key? key,
     required this.labelText,
     this.readOnly = false,
@@ -62,14 +70,16 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.suffixIcon,
     required this.textController,
+    this.validator,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       readOnly: readOnly,
       controller: textController,
       maxLines: maxLines,
+      validator: validator,
       decoration: InputDecoration(
         alignLabelWithHint: true,
         labelText: labelText,
@@ -134,14 +144,22 @@ class CustomTextField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
+              color: Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 223, 220, 220)), // Focused border color
+              color: Color.fromARGB(255, 223, 220, 220)), // Focused border color
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
+              color: Color.fromARGB(255, 212, 209, 209)), // Same as enabled border
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
+              color: Color.fromARGB(255, 223, 220, 220)), // Same as focused border
         ),
       ),
     );

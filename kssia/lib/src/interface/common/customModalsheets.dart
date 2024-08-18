@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -38,11 +40,15 @@ void showWlinkorVlinkSheet(
                   ),
                 ),
                 const SizedBox(height: 20),
-                modalSheetTextField(label: 'Add name',textController: textController1),
+                modalSheetTextFormField(
+                    label: 'Add name', textController: textController1),
                 const SizedBox(
                   height: 10,
                 ),
-                modalSheetTextField(label: fieldName,textController: textController2,),
+                modalSheetTextFormField(
+                  label: fieldName,
+                  textController: textController2,
+                ),
                 const SizedBox(height: 10),
                 customButton(label: 'SAVE', onPressed: () {}, fontSize: 16),
                 const SizedBox(
@@ -81,382 +87,474 @@ void showWlinkorVlinkSheet(
   );
 }
 
-void showEnterAwardtSheet({required BuildContext context,
-required TextEditingController textController1,
-required TextEditingController textController2}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Awards',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                // Handle image upload
-              },
-              child: Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                      SizedBox(height: 10),
-                      Text(
-                        'Upload Image',
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 102, 101, 101)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            modalSheetTextField(label: 'Add name',textController: textController1,),
-            SizedBox(
-              height: 10,
-            ),
-            modalSheetTextField(label: 'Add Authority name',textController: textController2,),
-            const SizedBox(height: 10),
-            customButton(label: 'SAVE', onPressed: () {}, fontSize: 16),
-            const SizedBox(
-              height: 10,
-            )
-          ],
-        ),
-      );
-    },
-  );
-}
+class ShowEnterAwardtSheet extends StatelessWidget {
+  final TextEditingController textController1;
+  final TextEditingController textController2;
+  final VoidCallback addAwardCard;
+  final String imageType;
+  final File? awardImage;
+  final Future<void> Function({required String imageType}) pickImage;
 
-void showAddCertificateSheet({required BuildContext context,
-required TextEditingController textController,
-}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Certificates',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                // Handle image upload
-              },
-              child: Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                      SizedBox(height: 10),
-                      Text(
-                        'Upload Image',
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 102, 101, 101)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            modalSheetTextField(label: 'Add Name', textController: textController,),
-            const SizedBox(height: 10),
-            customButton(label: 'SAVE', onPressed: () {}, fontSize: 16),
-            const SizedBox(
-              height: 10,
-            )
-          ],
-        ),
-      );
-    },
-  );
-}
+  const ShowEnterAwardtSheet(
+      {required this.textController1,
+      required this.textController2,
+      required this.addAwardCard,
+      required this.pickImage,
+      required this.imageType,
+      required this.awardImage,
+      super.key});
 
-void showAddBrochureSheet({required BuildContext context,
-required TextEditingController textController,
-}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Brochure',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                // Handle image upload
-              },
-              child: Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                      SizedBox(height: 10),
-                      Text(
-                        'Upload Image',
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 102, 101, 101)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            modalSheetTextField(label: 'Add Name',textController: textController,),
-            const SizedBox(height: 10),
-            customButton(label: 'SAVE', onPressed: () {}, fontSize: 16),
-            const SizedBox(
-              height: 10,
-            )
-          ],
-        ),
-      );
-    },
-  );
-}
-
-void showProductstSheet(
-    {required BuildContext context, required String productPriceType,
-    required TextEditingController productNameText,
-required TextEditingController descriptionText,
-required TextEditingController moqText,
-required TextEditingController actualPriceText,
-required TextEditingController offerPriceText,
-}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Add Products',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
+              const Text(
+                'Add Awards',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  // Handle image upload
-                },
-                child: Container(
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () {
+              pickImage(imageType: imageType);
+            },
+            child: Container(
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: awardImage == null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 27, color: Color(0xFF004797)),
+                            SizedBox(height: 10),
+                            Text(
+                              'Upload Image',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 102, 101, 101)),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Image.file(
+                        awardImage!,
+                        fit: BoxFit.cover,
+                        width: 120,
+                        height: 120,
+                      ))),
+          ),
+          const SizedBox(height: 20),
+          modalSheetTextFormField(
+            label: 'Add name',
+            textController: textController1,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          modalSheetTextFormField(
+            label: 'Add Authority name',
+            textController: textController2,
+          ),
+          const SizedBox(height: 10),
+          customButton(
+              label: 'SAVE',
+              onPressed: () {
+                addAwardCard();
+                Navigator.pop(context);
+              },
+              fontSize: 16),
+          const SizedBox(
+            height: 10,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ShowAddCertificateSheet extends StatelessWidget {
+  final TextEditingController textController;
+  final String imageType;
+  final File? certificateImage;
+  final Future<void> Function({required String imageType}) pickImage;
+  final VoidCallback addCertificateCard;
+  ShowAddCertificateSheet({
+    Key? key,
+    required this.textController,
+    required this.imageType,
+    this.certificateImage,
+    required this.pickImage,
+    required this.addCertificateCard,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Add Certificates',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () {
+              pickImage(imageType: 'certificate');
+            },
+            child: Container(
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: certificateImage == null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 27, color: Color(0xFF004797)),
+                            SizedBox(height: 10),
+                            Text(
+                              'Upload Image',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 102, 101, 101)),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Image.file(
+                        certificateImage!,
+                        fit: BoxFit.cover,
+                        width: 120,
+                        height: 120,
+                      ))),
+          ),
+          const SizedBox(height: 20),
+          modalSheetTextFormField(
+            label: 'Add Name',
+            textController: textController,
+          ),
+          const SizedBox(height: 10),
+          customButton(
+            label: 'SAVE',
+            onPressed: () {
+              addCertificateCard();
+              Navigator.pop(context);
+            },
+            fontSize: 16,
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class ShowAddBrochureSheet extends StatelessWidget {
+  final TextEditingController textController;
+  final Future<void> Function({required String imageType}) pickPdf;
+  final VoidCallback addBrochureCard;
+  final String brochureName;
+  final String imageType;
+  const ShowAddBrochureSheet({
+    Key? key,
+    required this.textController,
+    required this.pickPdf,
+    required this.addBrochureCard,
+    required this.brochureName,
+    required this.imageType,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Add Brochure',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () {
+              pickPdf(imageType: imageType);
+            },
+            child: Container(
+              height: 110,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, size: 27, color: Color(0xFF004797)),
+                    SizedBox(height: 10),
+                    Text(
+                      'Upload PDF',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 102, 101, 101)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          modalSheetTextFormField(
+            label: 'Add Name',
+            textController: textController,
+          ),
+          const SizedBox(height: 10),
+          customButton(
+              label: 'SAVE',
+              onPressed: () {
+                addBrochureCard();
+                Navigator.pop(context);
+              },
+              fontSize: 16),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class ShowEnterProductsSheet extends StatelessWidget {
+  String productPriceType;
+  final TextEditingController productNameText;
+  final TextEditingController descriptionText;
+  final TextEditingController moqText;
+  final TextEditingController actualPriceText;
+  final TextEditingController offerPriceText;
+
+  final Future<void> Function({required String productId}) addProductCard;
+  final String imageType;
+  final File? productImage;
+  final Future<void> Function({required String imageType}) pickImage;
+  ShowEnterProductsSheet(
+      {super.key,
+      required this.productPriceType,
+      required this.productNameText,
+      required this.descriptionText,
+      required this.moqText,
+      required this.actualPriceText,
+      required this.offerPriceText,
+      required this.addProductCard,
+      required this.imageType,
+      this.productImage,
+      required this.pickImage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Add Products',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () {
+                pickImage(imageType: imageType);
+              },
+              child: Container(
                   height: 110,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                        SizedBox(height: 10),
-                        Text(
-                          'Upload Image',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 102, 101, 101)),
-                        ),
-                      ],
-                    ),
+                  child: productImage == null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add,
+                                  size: 27, color: Color(0xFF004797)),
+                              SizedBox(height: 10),
+                              Text(
+                                'Upload Image',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 102, 101, 101)),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Center(
+                          child: Image.file(
+                          productImage!,
+                          fit: BoxFit.cover,
+                          width: 120,
+                          height: 120,
+                        ))),
+            ),
+            const SizedBox(height: 20),
+            modalSheetTextFormField(
+              textController: productNameText,
+              label: 'Add name',
+            ),
+            const SizedBox(height: 10),
+            modalSheetTextFormField(
+              textController: descriptionText,
+              label: 'Add description',
+              maxLines: 4,
+            ),
+            const SizedBox(height: 10),
+            modalSheetTextFormField(textController: moqText, label: 'Add MOQ'),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Flexible(
+                    child: modalSheetTextFormField(
+                        textController: actualPriceText,
+                        label: 'Actual price')),
+                const SizedBox(width: 10),
+                Flexible(
+                    child: modalSheetTextFormField(
+                        textController: offerPriceText, label: 'Offer price')),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: const BorderSide(
+                    color: Color.fromARGB(255, 185, 181, 181),
+                    width: 1.0,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              modalSheetTextField(textController: productNameText,
-                label: 'Add name',
-              ),
-              const SizedBox(height: 10),
-              modalSheetTextField(textController: descriptionText,
-                label: 'Add description',
-                maxLines: 4,
-              ),
-              const SizedBox(height: 10),
-            modalSheetTextField(textController: moqText, label: 'Add MOQ'),
-              const SizedBox(height: 10),
-              Row(
+              onPressed: () {
+                _showProductPriceTypeDialog(context).then((value) {
+                  if (value != null) {
+                    // setState(() {
+                    productPriceType = value;
+                    // });
+                  }
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    child: modalSheetTextField(textController: actualPriceText, label: 'Actual price')
+                  Text(
+                    productPriceType,
+                    style:
+                        TextStyle(color: const Color.fromARGB(255, 94, 93, 93)),
                   ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: modalSheetTextField(textController: offerPriceText, label: 'Offer price')
+                  Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.grey,
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: const BorderSide(
-                      color: Color.fromARGB(255, 185, 181, 181),
-                      width: 1.0,
-                    ),
-                  ),
-                ),
+            ),
+            const SizedBox(height: 10),
+            customButton(
+                label: 'Save',
                 onPressed: () {
-                  _showProductPriceTypeDialog(context).then((value) {
-                    if (value != null) {
-                      // setState(() {
-                      productPriceType = value;
-                      // });
-                    }
-                  });
+                  //function for getting product id
+                  addProductCard(productId: '1');
+                  Navigator.pop(context);
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      productPriceType,
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 94, 93, 93)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              customButton(label: 'Save', onPressed: () {}, fontSize: 16),
-              const SizedBox(
-                height: 10,
-              )
-            ],
-          ),
+                fontSize: 16),
+            const SizedBox(
+              height: 10,
+            )
+          ],
         ),
-      );
-    },
-  );
+      ),
+    );
+  }
 }
 
 Future<String?> _showProductPriceTypeDialog(BuildContext context) {
