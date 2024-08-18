@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
+part 'news_api.g.dart';
 const String baseUrl = 'http://43.205.89.79/api/v1/api-docs/';
 
 @riverpod
