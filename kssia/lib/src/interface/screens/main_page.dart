@@ -89,7 +89,7 @@ class _MainPageState extends State<MainPage> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar( 
         items: List.generate(5, (index) {
           return BottomNavigationBarItem(
             icon: IconResolver(
