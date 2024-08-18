@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyEventsPage extends StatelessWidget {
   const MyEventsPage({Key? key}) : super(key: key);
@@ -14,12 +15,19 @@ class MyEventsPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: FaIcon(FontAwesomeIcons.whatsapp),
             onPressed: () {
-              // Implement search functionality
+              // WhatsApp action
             },
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: ListView(
         children: [
@@ -46,69 +54,106 @@ class MyEventsPage extends StatelessWidget {
               const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
               Positioned(
                 top: 10,
-                right: 10,
+                left: 10,
                 child: Container(
-                  color: Colors.red,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  color: const Color(0xFFA9F3C7),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  child: const Text('LIVE', style: TextStyle(color: Color(0xFF0F7036), fontSize: 14)),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'TOPIC',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF3F0A9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_today, size: 20, color: Color(0xFF700F0F)),
+                          const SizedBox(width: 5),
+                          const Text(
+                            '02 Jan 2023',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF700F0F),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFAED0E9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.access_time, size: 20, color: Color(0xFF0E1877)),
+                          const SizedBox(width: 5),
+                          const Text(
+                            '09:00 PM',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF0E1877),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Lorem ipsum dolor sit amet consectetur.',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                Text(
+                const Text(
                   'Lorem ipsum dolor sit amet consectetur. Eget velit sagittis sapien in vitae ut. Lorem cursus sed nunc diam ullamcorper elit.',
                   style: TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 20),
-                    const SizedBox(width: 5),
-                    Text('02 Jan 2023', style: const TextStyle(fontSize: 14)),
-                    const SizedBox(width: 10),
-                    const Icon(Icons.access_time, size: 20),
-                    const SizedBox(width: 5),
-                    Text('09:00 PM', style: const TextStyle(fontSize: 14)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                  const Icon(Icons.calendar_today, size: 20),
-                  const SizedBox(width: 5),
-                  Text('02 Jan 2023', style: TextStyle(fontSize: 14)),
-                  const SizedBox(width: 10),
-                  const Icon(Icons.access_time, size: 20),
-                  const SizedBox(width: 5),
-                  Text('09:00 PM', style: TextStyle(fontSize: 14)),
-                  ],
                 ),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: ElevatedButton(
-                  onPressed: () {
-                    // Join event action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF004797),
-                    shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4), // Adjust the value to make the edge less circular
+                    onPressed: () {
+                      // Join event action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004797),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4), // Adjust the value to make the edge less circular
+                      ),
+                      minimumSize: const Size(150, 40), // Adjust the width of the button
                     ),
-                    minimumSize: const Size(150, 40), // Adjust the width of the button
-                  ),
-                  child: const Text('JOIN', style: TextStyle(color: Colors.white)),
+                    child: const Text('JOIN', style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],

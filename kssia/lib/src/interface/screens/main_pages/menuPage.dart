@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/screens/menu/my_product.dart';
 import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
@@ -8,16 +9,14 @@ import '../menu/terms_and_conditions.dart';
 import '../menu/my_subscription.dart'; 
 import '../menu/my_events.dart'; 
 import '../menu/my_transaction.dart'; 
-
-
-
+import '../menu/my_product.dart'; 
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
+        shape: RoundedRectangleBorder( 
           borderRadius: BorderRadius.circular(20.0),
         ),
         titlePadding: EdgeInsets.all(0),
@@ -283,7 +282,16 @@ class MenuPage extends StatelessWidget {
               },
             ),
 
-            _buildListTile(context, Icons.shopping_bag, 'My Products'),
+            _buildListTile(context, Icons.shopping_bag, 'My Products',
+              onTap: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const MyProductPage()),
+                );
+              }, 
+            ),
+              
+            
 
            _buildListTile(context,Icons.subscriptions,'My Reviews',
               onTap: () {
