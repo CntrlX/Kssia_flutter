@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';  // Import the ViewMoreEventPage
 
 class Event_page extends StatelessWidget {
   @override
@@ -19,14 +20,14 @@ class Event_page extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16),
-        _buildPost(withImage: true),
-        _buildPost(withImage: true),
-        _buildPost(withImage: true),
+        _buildPost(withImage: true, context: context),
+        _buildPost(withImage: true, context: context),
+        _buildPost(withImage: true, context: context),
       ],
     );
   }
 
-  Widget _buildPost({bool withImage = false}) {
+  Widget _buildPost({bool withImage = false, required BuildContext context}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       shape: RoundedRectangleBorder(
@@ -82,28 +83,61 @@ class Event_page extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'TOPIC',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 SizedBox(height: 4),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.calendar_today, size: 14),
-                    SizedBox(width: 4),
                     Text(
-                      '02 Jan 2023',
-                      style: TextStyle(fontSize: 12),
+                      'TOPIC',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(width: 16),
-                    Icon(Icons.access_time, size: 14),
-                    SizedBox(width: 4),
-                    Text(
-                      '09:00 PM',
-                      style: TextStyle(fontSize: 12),
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF3F0A9), // Light red background color for date
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 20, color: Color(0xFF700F0F)),
+                              const SizedBox(width: 5),
+                              const Text(
+                                '02 Jan 2023',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF700F0F),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFAED0E9), // Light blue background color for time
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time, size: 20, color: Color(0xFF0E1877)),
+                              const SizedBox(width: 5),
+                              const Text(
+                                '09:00 PM',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF0E1877),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -129,7 +163,10 @@ class Event_page extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Action for "View more"
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ViewMoreEventPage()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF004797), // Blue color
