@@ -20,7 +20,7 @@ class AboutPage extends StatelessWidget {
           children: [
             Center(
               child: Image.network(
-                'https://placehold.co/600x400/png', // Replace with your image URL
+                'https://placehold.co/600x400/png', 
                 height: 200,
               ),
             ),
