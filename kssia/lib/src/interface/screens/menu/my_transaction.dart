@@ -13,7 +13,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this); // Corrected to match the number of tabs
   }
 
   @override
@@ -36,6 +36,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> with SingleTick
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Approved'),
+            Tab(text: 'Pending'),
             Tab(text: 'Rejected'),
           ],
         ),
@@ -45,6 +46,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> with SingleTick
         children: [
           _transactionList('All'),
           _transactionList('Approved'),
+          _transactionList('Pending'),
           _transactionList('Rejected'),
         ],
       ),
@@ -64,7 +66,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> with SingleTick
                 Text('Type: App subscription'),
                 Text('Date & time: 12th July 2025, 12:20 pm'),
                 Text('Amount paid: ₹2000'),
-                Text('Status: ${status == 'All' ? (index % 2 == 0 ? 'Approved' : 'Rejected') : status}'),
+                Text('Status: ${status == 'All' ? (index % 3 == 0 ? 'Approved' : (index % 3 == 1 ? 'Pending' : 'Rejected')) : status}'),
                 if (status == 'Rejected')
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,3 +88,4 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> with SingleTick
     );
   }
 }
+

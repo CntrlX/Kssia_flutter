@@ -5,22 +5,27 @@ class PrivacyPolicyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Privacy Policy'),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        title: Text('Privacy policy'),
+         leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Text(
-            'Lorem ipsum dolor sit amet consectetur. Lorem non tortor diam lorem viverra at nisl purus. Nec nec velit id proin vitae tempus orci donec tortor. Vehicula morbi ultrices potenti a. Fermentum nec aliquet quam velit netus. Proin eget leo non laoreet risus viverra lorem pharetra enim. Platea massa ornare id tellus nulla id ullamcorper nisl est. Sem quam est at urna feugiat. Tristique porttitor elit ultricies orci egestas vestibulum. Nibh posuere risus a pharetra proin nunc nibh. Neque sit viverra sit pellentesque elementum hendrerit dolor.\n\n'
-            'Id turpis lacus dolor elit suscipit quisque. Pulvinar vitae sed arcu posuere turpis odio. Dui et sit quisque leo consequat congue. Risus mauris scelerisque in habitant id magna lorem volutpat. Orci dictum adipiscing cras odio. Tincidunt arcu nibh maecenas nisi. Commodo dignissim dui ligula leo pulvinar. Vel volutpat pretium lectus porta tincidunt arcu dolor. Enim.',
-            style: TextStyle(fontSize: 16),
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           
+            SizedBox(height: 16),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa.',
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
