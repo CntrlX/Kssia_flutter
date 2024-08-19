@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyReviewsPage extends StatelessWidget {
   const MyReviewsPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class MyReviewsPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: FaIcon(FontAwesomeIcons.whatsapp),
             onPressed: () {
               // Placeholder for search functionality
             },

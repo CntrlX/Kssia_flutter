@@ -7,7 +7,7 @@ class TermsAndConditionsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Terms & Conditions'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.of(context).pop();
           },
