@@ -1,29 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/screens/feed/feed_view.dart';
 import 'package:kssia/src/interface/screens/feed/product_view.dart';
 
-class FeedPage extends StatefulWidget {
-  @override
-  _FeedPageState createState() => _FeedPageState();
-}
+class FeedPage extends StatelessWidget {
+  const FeedPage({Key? key}) : super(key: key);
 
-class _FeedPageState extends State<FeedPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  void _showAddRequirementSheet() {
+  void _showAddRequirementSheet(BuildContext context) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -101,10 +84,10 @@ class _FeedPageState extends State<FeedPage>
                   },
                   style: ButtonStyle(
                     foregroundColor:
-                        WidgetStateProperty.all<Color>(Color(0xFF004797)),
+                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
                     backgroundColor:
-                        WidgetStateProperty.all<Color>(Color(0xFF004797)),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                         side: BorderSide(color: Color(0xFF004797)),
@@ -129,12 +112,12 @@ class _FeedPageState extends State<FeedPage>
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
+      child: Scaffold(backgroundColor: Colors.white,
+        appBar: App_bar(),
         body: Column(
           children: [
             Center(
               child: TabBar(
-                controller: _tabController,
                 isScrollable: false,
                 indicatorColor: const Color(0xFF004797),
                 indicatorWeight: 2.0,
@@ -145,15 +128,14 @@ class _FeedPageState extends State<FeedPage>
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
-                tabs: [
-                  const Tab(text: "FEED"),
-                  const Tab(text: "PRODUCTS"),
+                tabs: const [
+                  Tab(text: "FEED"),
+                  Tab(text: "PRODUCTS"),
                 ],
               ),
             ),
             Expanded(
               child: TabBarView(
-                controller: _tabController,
                 children: [
                   FeedView(),
                   ProductView(),
@@ -163,7 +145,7 @@ class _FeedPageState extends State<FeedPage>
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: _showAddRequirementSheet,
+          onPressed: () => _showAddRequirementSheet(context),
           label: const Text(
             'Add Requirement/update',
             style: TextStyle(color: Colors.white),
@@ -173,15 +155,9 @@ class _FeedPageState extends State<FeedPage>
             color: Colors.white,
             size: 27,
           ),
-          backgroundColor: Color(0xFF004797),
+          backgroundColor: const Color(0xFF004797),
         ),
       ),
     );
   }
 }
-
-// void main() {
-//   runApp(MaterialApp(
-//     home: FeedPage(),
-//   ));
-// }

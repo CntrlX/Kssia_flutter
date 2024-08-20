@@ -1,58 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/api_routes/news_api.dart';
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 
-class NewsPage extends StatefulWidget {
-  @override
-  _NewsPageState createState() => _NewsPageState();
-}
+final currentIndexProvider = StateProvider<int>((ref) => 0);
 
-class _NewsPageState extends State<NewsPage> {
-  int _currentIndex = 0;
+class NewsPage extends StatelessWidget {
+  final List<News> news;
 
-  List<Map<String, String>> _news = [
-    {
-      'title':
-          'Tech Mahindra employees start hashtags on social media on Manish Vyas',
-      'category': 'FINANCE',
-      'image': 'https://placehold.co/600x400/png',
-      'date': 'Sep 07, 2021, 01:28 PM IST',
-      'content': '''Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit..
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit..'''
-    },
-    {
-      'title': 'Another news article',
-      'category': 'TECH',
-      'image': 'https://placehold.co/600x400/png',
-      'date': 'Sep 08, 2021, 02:30 PM IST',
-      'content': 'This is another news article content...'
-    },
-    // Add more news articles here
-  ];
-
-  void _nextNews() {
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % _news.length;
-    });
-  }
-
-  void _previousNews() {
-    setState(() {
-      _currentIndex = (_currentIndex - 1 + _news.length) % _news.length;
-    });
-  }
+  const NewsPage({super.key, required this.news});
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final List<News> news = ref.watch(fetchNewsProvider).value ?? [];
-        print(news);
+        final currentIndex = ref.watch(currentIndexProvider);
+
+        void _nextNews() {
+          ref.read(currentIndexProvider.notifier).state =
+              (currentIndex + 1) % news.length;
+        }
+
+        void _previousNews() {
+          ref.read(currentIndexProvider.notifier).state =
+              (currentIndex - 1 + news.length) % news.length;
+        }
+
         return Scaffold(
           body: Column(
             children: [
@@ -67,9 +41,16 @@ class _NewsPageState extends State<NewsPage> {
                             SizedBox(
                               height: 200,
                               child: Image.network(
-                                news[_currentIndex].image,
-                                fit: BoxFit.cover,
                                 width: double.infinity,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.network(
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      'https://placehold.co/600x400/png');
+                                },
+                                news[currentIndex]
+                                    .image, // Replace with your image URL
+                                fit: BoxFit.cover,
                               ),
                             ),
                             Padding(
@@ -78,23 +59,19 @@ class _NewsPageState extends State<NewsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _news[_currentIndex]['category']!,
+                                    news[currentIndex].category,
                                     style: const TextStyle(
                                         color: Colors.green,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    _news[_currentIndex]['title']!,
+                                    news[currentIndex].title,
                                     style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8),
-                                  Text(
-                                    _news[_currentIndex]['date']!,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
                                   const SizedBox(height: 8),
                                 ],
                               ),
@@ -108,7 +85,7 @@ class _NewsPageState extends State<NewsPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: SingleChildScrollView(
                           child: Text(
-                            _news[_currentIndex]['content']!,
+                            news[currentIndex].content!,
                             style: const TextStyle(fontSize: 16),
                           ),
                         ),
@@ -142,7 +119,7 @@ class _NewsPageState extends State<NewsPage> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     OutlinedButton(
@@ -175,7 +152,6 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 }
-
 // void main() {
 //   runApp(MaterialApp(
 //     home: NewsPage(),

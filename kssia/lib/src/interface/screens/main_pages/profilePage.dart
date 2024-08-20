@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart'; // Import the XCard widget
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: App_bar(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
