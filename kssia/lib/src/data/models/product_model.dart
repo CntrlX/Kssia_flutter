@@ -33,7 +33,7 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['_id'] as String?,
-      sellerId: json['seller_id'] as String?,
+      sellerId: json['seller_id']['_id'] as String?,
       name: json['name'] as String?,
       image: json['image'] as String?,
       price: json['price'] as int?,
@@ -43,8 +43,12 @@ class Product {
       units: json['units'] as int?,
       status: json['status'] as bool?,
       tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 

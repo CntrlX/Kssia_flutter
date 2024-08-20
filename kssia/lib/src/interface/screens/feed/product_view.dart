@@ -122,137 +122,141 @@ class ProductDetailsModal extends StatelessWidget {
         final user =
             ref.watch(fetchUserDetailsProvider(token, product.sellerId!)).value;
         print(user);
-        return Material(
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                SizedBox(height: 16),
-                Container(
-                  width: 60,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Image.network(
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.network(
-                                fit: BoxFit.cover,
-                                'https://placehold.co/600x400/png');
-                          },
-                          product.image!, // Replace with your image URL
-                          fit: BoxFit.cover,
+        return user == null
+            ? Center(child: CircularProgressIndicator())
+            : Material(
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16),
+                      Container(
+                        width: 60,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(3),
                         ),
-                        SizedBox(height: 16),
-                        Text(
-                          product.name!,
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        product.offerPrice != null
-                            ? Text(
-                                'INR ${product.offerPrice} / piece',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              )
-                            : Text(
-                                'INR ${product.price} / piece',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              ),
-                        Text(
-                          'MOQ : ${product.moq}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          product.description!,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: ClipOval(
-                                child: Image.network(
-                                  product.sellerId ??
-                                      'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.network(
-                                      'https://placehold.co/600x400/png',
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.network(
                                       fit: BoxFit.cover,
-                                    );
-                                  },
+                                      'https://placehold.co/600x400/png');
+                                },
+                                product.image!, // Replace with your image URL
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                product.name!,
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                              product.offerPrice != null
+                                  ? Text(
+                                      'INR ${product.offerPrice} / piece',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue),
+                                    )
+                                  : Text(
+                                      'INR ${product.price} / piece',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue),
+                                    ),
+                              Text(
+                                'MOQ : ${product.moq}',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                product.description!,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        product.sellerId ??
+                                            'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Image.network(
+                                            'https://placehold.co/600x400/png',
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          '${user!.name!.firstName} ${user!.name!.middleName} ${user!.name!.lastName}'),
+                                      Text('${user!.companyName}'),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.star, color: Colors.orange),
+                                      Text('4.5'),
+                                      Text('(24 Reviews)'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.remove),
+                                    onPressed: () {},
+                                  ),
+                                  SizedBox(width: 16),
+                                  Text('1,224', style: TextStyle(fontSize: 20)),
+                                  SizedBox(width: 16),
+                                  IconButton(
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () {},
+                                child: Text('Get quote'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 16),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    '${user!.name!.firstName} ${user!.name!.middleName} ${user!.name!.lastName}'),
-                                Text('${user!.companyName}'),
-                              ],
-                            ),
-                            Spacer(),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.orange),
-                                Text('4.5'),
-                                Text('(24 Reviews)'),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.remove),
-                              onPressed: () {},
-                            ),
-                            SizedBox(width: 16),
-                            Text('1,224', style: TextStyle(fontSize: 20)),
-                            SizedBox(width: 16),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Get quote'),
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 16),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        );
+              );
       },
     );
   }
