@@ -1,6 +1,6 @@
 class Product {
   final String? id;
-  final String? sellerId;
+  final SellerId? sellerId;
   final String? name;
   final String? image;
   final int? price;
@@ -29,30 +29,30 @@ class Product {
     this.updatedAt,
   });
 
-  // fromJson method
-  factory Product.fromJson(Map<String, dynamic> json) {
+  factory Product.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Product();
+
     return Product(
-      id: json['_id'] as String?,
-      sellerId: json['seller_id'] as String?,
-      name: json['name'] as String?,
-      image: json['image'] as String?,
-      price: json['price'] as int?,
-      offerPrice: json['offer_price'] as int?,
-      description: json['description'] as String?,
-      moq: json['moq'] as int?,
-      units: json['units'] as int?,
-      status: json['status'] as bool?,
-      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      id: json['_id'],
+      sellerId: SellerId.fromJson(json['seller_id']),
+      name: json['name'],
+      image: json['image'],
+      price: json['price'] as int,
+      offerPrice: json['offer_price'] as int,
+      description: json['description'],
+      moq: json['moq'],
+      units: json['units'],
+      status: json['status'],
+      tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
-  // toJson method
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'seller_id': sellerId,
+      'seller_id': sellerId?.toJson(),
       'name': name,
       'image': image,
       'price': price,
@@ -67,10 +67,9 @@ class Product {
     };
   }
 
-  // copyWith method
   Product copyWith({
     String? id,
-    String? sellerId,
+    SellerId? sellerId,
     String? name,
     String? image,
     int? price,
@@ -97,6 +96,95 @@ class Product {
       tags: tags ?? this.tags,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
+
+class SellerId {
+  final String? id;
+  final SellerName? name;
+  final String? membershipId;
+
+  SellerId({this.id, this.name, this.membershipId});
+
+  factory SellerId.fromJson(dynamic json) {
+    if (json == null) return SellerId();
+
+    if (json is String) {
+      return SellerId(id: json);
+    } else if (json is Map<String, dynamic>) {
+      return SellerId(
+        id: json['_id'],
+        name: json['name'] != null ? SellerName.fromJson(json['name']) : null,
+        membershipId: json['membership_id'],
+      );
+    }
+    throw Exception("Invalid type for seller_id");
+  }
+
+  dynamic toJson() {
+    if (name != null) {
+      return {
+        '_id': id,
+        'name': name?.toJson(),
+        'membership_id': membershipId,
+      };
+    } else {
+      return id;
+    }
+  }
+
+  SellerId copyWith({
+    String? id,
+    SellerName? name,
+    String? membershipId,
+  }) {
+    return SellerId(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      membershipId: membershipId ?? this.membershipId,
+    );
+  }
+}
+
+class SellerName {
+  final String? firstName;
+  final String? middleName;
+  final String? lastName;
+
+  SellerName({
+    this.firstName,
+    this.middleName,
+    this.lastName,
+  });
+
+  factory SellerName.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return SellerName();
+
+    return SellerName(
+      firstName: json['first_name'],
+      middleName: json['middle_name'],
+      lastName: json['last_name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'first_name': firstName,
+      'middle_name': middleName,
+      'last_name': lastName,
+    };
+  }
+
+  SellerName copyWith({
+    String? firstName,
+    String? middleName,
+    String? lastName,
+  }) {
+    return SellerName(
+      firstName: firstName ?? this.firstName,
+      middleName: middleName ?? this.middleName,
+      lastName: lastName ?? this.lastName,
     );
   }
 }

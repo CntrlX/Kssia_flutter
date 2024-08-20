@@ -7,6 +7,8 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -119,9 +121,8 @@ class ProductDetailsModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final user =
-            ref.watch(fetchUserDetailsProvider(token, product.sellerId!)).value;
-        print(user);
+        final asyncUser =
+            ref.watch(fetchUserDetailsProvider(token, product.sellerId!.id!));
         return Material(
           child: SafeArea(
             top: false,
@@ -181,43 +182,56 @@ class ProductDetailsModal extends StatelessWidget {
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: ClipOval(
-                                child: Image.network(
-                                  product.sellerId ??
-                                      'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.network(
-                                      'https://placehold.co/600x400/png',
+                        asyncUser.when(
+                          data: (user) {
+                            print(user);
+                            return Row(
+                              children: [
+                                SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      product.sellerId!.id ??
+                                          'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
                                       fit: BoxFit.cover,
-                                    );
-                                  },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.network(
+                                          'https://placehold.co/600x400/png',
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    '${user!.name!.firstName} ${user!.name!.middleName} ${user!.name!.lastName}'),
-                                Text('${user!.companyName}'),
+                                SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        '${user!.name!.firstName} ${user!.name!.middleName} ${user!.name!.lastName}'),
+                                    Text('${user!.companyName}'),
+                                  ],
+                                ),
+                                Spacer(),
+                                Row(
+                                  children: [
+                                    Icon(Icons.star, color: Colors.orange),
+                                    Text('4.5'),
+                                    Text('(24 Reviews)'),
+                                  ],
+                                )
                               ],
-                            ),
-                            Spacer(),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.orange),
-                                Text('4.5'),
-                                Text('(24 Reviews)'),
-                              ],
-                            ),
-                          ],
+                            );
+                          },
+                          loading: () => Center(child: LoadingAnimation()),
+                          error: (error, stackTrace) {
+                            // Handle error state
+                            return Center(
+                              child: Text('Error loading promotions: $error'),
+                            );
+                          },
                         ),
                         SizedBox(height: 16),
                         Row(
@@ -237,14 +251,8 @@ class ProductDetailsModal extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Get quote'),
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 16),
-                          ),
-                        ),
+                        customButton(
+                            label: 'Get Qoute', onPressed: () {}, fontSize: 16)
                       ],
                     ),
                   ),

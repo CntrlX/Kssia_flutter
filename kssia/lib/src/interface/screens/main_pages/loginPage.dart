@@ -626,17 +626,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     });
     setState(() {
       products.add(Product(
-          id: productId,
-          sellerId: id,
-          name: productNameController.text,
-          image: productUrl,
-          price: int.parse(productActualPriceController.text),
-          offerPrice: int.parse(productOfferPriceController.text),
-          description: productDescriptionController.text,
-          moq: int.parse(productMoqController.text),
-          units: 0,
-          status: true,
-          tags: []));
+        id: productId,
+        sellerId: SellerId(id: id),
+        name: productNameController.text,
+        image: productUrl,
+        price: int.parse(productActualPriceController.text),
+        offerPrice: int.parse(productOfferPriceController.text),
+        description: productDescriptionController.text,
+        moq: int.parse(productMoqController.text),
+        units: 0,
+        status: true,
+        tags: [],
+      ));
     });
   }
 
@@ -943,6 +944,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               );
             },
             data: (user) {
+              for (var award in user.awards!) {
+                awards.add(award);
+                print(award);
+              }
               nameController.text =
                   '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
               designationController.text = user.designation!;
@@ -1436,12 +1441,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   value:
                                       ref.watch(isPhoneNumberVisibleProvider),
                                   onChanged: (bool value) {
-                                    setState(() {
-                                      ref
-                                          .read(isPhoneNumberVisibleProvider
-                                              .notifier)
-                                          .state = value;
-                                    });
+                                    ref
+                                        .read(isPhoneNumberVisibleProvider
+                                            .notifier)
+                                        .state = value;
                                   },
                                 ),
                               ],
@@ -1802,25 +1805,23 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   value:
                                       ref.watch(isAwardsDetailsVisibleProvider),
                                   onChanged: (bool value) {
-                                    setState(() {
-                                      ref
-                                          .read(isAwardsDetailsVisibleProvider
-                                              .notifier)
-                                          .state = value;
-                                    });
-                                    if (value == false) {
-                                      setState(
-                                        () {
-                                          awards = [];
-                                        },
-                                      );
-                                    }
+                                    ref
+                                        .read(isAwardsDetailsVisibleProvider
+                                            .notifier)
+                                        .state = value;
+
+                                    // if (value == false) {
+                                    //   setState(
+                                    //     () {
+                                    //       awards = [];
+                                    //     },
+                                    //   );
+                                    // }
                                   },
                                 ),
                               ],
                             ),
                           ),
-                          
                           Padding(
                             padding: const EdgeInsets.only(
                                 left: 10, bottom: 10, right: 10),
@@ -1837,10 +1838,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 childAspectRatio:
                                     .9, // Aspect ratio for the cards
                               ),
-                              itemCount: user.awards!.length,
+                              itemCount: awards.length,
                               itemBuilder: (context, index) {
                                 return AwardCard(
-                                  award: user.awards![index],
+                                  award: awards[index],
                                   onRemove: () => _removeAwardCard(index),
                                 );
                               },
