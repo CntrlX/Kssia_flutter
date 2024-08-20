@@ -5,10 +5,12 @@ import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
 import '../menu/terms_and_conditions.dart';
-
-import '../menu/my_subscription.dart';
-import '../menu/my_events.dart';
-import '../menu/my_transaction.dart';
+import '../menu/privacy.dart';
+import '../menu/about.dart';
+import '../menu/my_subscription.dart'; 
+import '../menu/my_events.dart'; 
+import '../menu/my_transaction.dart'; 
+import '../menu/my_product.dart'; 
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
@@ -250,7 +252,7 @@ class MenuPage extends StatelessWidget {
 
             // Account Section Label
             Divider(),
-            SizedBox(height: 13),
+            SizedBox(height: 13), 
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
@@ -284,42 +286,30 @@ class MenuPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const MySubscriptionPage()),
+                  MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
                 );
               },
             ),
             Divider(),
-            _buildListTile(
-              context,
-              Icons.shopping_bag,
-              'My Products',
+            _buildListTile(context, Icons.shopping_bag, 'My Products',
+              onTap: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const MyProductPage()),
+                );
+              }, 
+            ),
+            Divider(),
+            _buildListTile(context,Icons.subscriptions,'My Reviews',
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const MyProductPage()),
+                  MaterialPageRoute(builder: (context) => const MyReviewsPage()),
                 );
               },
             ),
             Divider(),
-            _buildListTile(
-              context,
-              Icons.subscriptions,
-              'My Reviews',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MyReviewsPage()),
-                );
-              },
-            ),
-            Divider(),
-            _buildListTile(
-              context,
-              Icons.subscriptions,
-              'My Events',
+            _buildListTile(context,Icons.subscriptions,'My Events',
               onTap: () {
                 Navigator.push(
                   context,
@@ -393,7 +383,7 @@ class MenuPage extends StatelessWidget {
             // Spacing before Logout and Delete
             SizedBox(height: 0.5),
 
-            Divider(),
+             Divider(),
             // Logout and Delete Account
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -407,8 +397,8 @@ class MenuPage extends StatelessWidget {
             ),
             Divider(),
 
-            SizedBox(height: 0.5),
-            Divider(),
+             SizedBox(height: 0.5),
+              Divider(),
 
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -439,8 +429,7 @@ class MenuPage extends StatelessWidget {
   }
 
   ListTile _buildListTile(BuildContext context, IconData icon, String title,
-      {Color textColor = const Color.fromARGB(255, 0, 0, 0),
-      Function()? onTap}) {
+      {Color textColor = const Color.fromARGB(255, 0, 0, 0), Function()? onTap}) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey.shade200,
@@ -460,3 +449,6 @@ class MenuPage extends StatelessWidget {
     );
   }
 }
+
+
+
