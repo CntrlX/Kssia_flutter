@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kssia/src/interface/models/chat_model.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 
 class ChatPage extends StatelessWidget {
