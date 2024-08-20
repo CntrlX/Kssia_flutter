@@ -1,68 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/api_routes/user_api.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/feed/feed_view.dart';
 import 'package:kssia/src/interface/screens/feed/product_view.dart';
+import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
+import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
-class People_Page extends StatefulWidget {
-  @override
-  _People_PageState createState() => _People_PageState();
-}
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class _People_PageState extends State<People_Page>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class PeoplePage extends StatelessWidget {
+  const PeoplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        body: Column(
-          children: [
-            Center(
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: false, // Disable scroll to center the tabs
-                indicatorColor:
-                    Color(0xFF004797), // Set to AppPalette.kPrimaryColor
-                indicatorWeight: 2.0,
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                labelStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+      length: 2, // Number of tabs
+      child: Consumer(
+        builder: (context, ref, child) {
+          final asyncUsers = ref.watch(fetchUsersProvider(token));
+
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              toolbarHeight: 60.0,
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              leadingWidth: 100,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset(
+                    'assets/icons/kssiaLogo.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                tabs: [
-                  Tab(text: "Members"),
-                  Tab(text: "Chat"),
-                ],
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications_none_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => NotificationPage()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              MenuPage()), // Navigate to MenuPage
+                    );
+                  },
+                ),
+              ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(20),
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: 0), // Adjust this value to reduce space
+                  child: SizedBox(
+                    height: 40,
+                    child: const TabBar(
+                      isScrollable: false, // Disable scroll to center the tabs
+                      indicatorColor:
+                          Color(0xFF004797), // Set to AppPalette.kPrimaryColor
+                      indicatorWeight: 2.0,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelColor: Color(0xFF004797),
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      tabs: [
+                        Tab(text: "MEMBERS"),
+                        Tab(text: "CHAT"),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  MembersPage(),
-                  ChatPage(),
-                ],
-              ),
+            body: asyncUsers.when(
+              data: (users) {
+                return Column(
+                  children: [
+                    // Wrap TabBar with a Container to adjust margin
+
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          MembersPage(users: users),
+                          ChatPage(),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) {
+                return Center(
+                  child: Text('Error loading users: $error'),
+                );
+              },
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

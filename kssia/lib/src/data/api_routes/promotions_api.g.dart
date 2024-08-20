@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'news_api.dart';
+part of 'promotions_api.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchNewsHash() => r'164953c336b3ec6cc4c55226a6a94be0f1e33f5a';
+String _$fetchPromotionsHash() => r'7e5b246f6e0e6f282886adfe22740f8a48b65d54';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchNews].
-@ProviderFor(fetchNews)
-const fetchNewsProvider = FetchNewsFamily();
+/// See also [fetchPromotions].
+@ProviderFor(fetchPromotions)
+const fetchPromotionsProvider = FetchPromotionsFamily();
 
-/// See also [fetchNews].
-class FetchNewsFamily extends Family<AsyncValue<List<News>>> {
-  /// See also [fetchNews].
-  const FetchNewsFamily();
+/// See also [fetchPromotions].
+class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
+  /// See also [fetchPromotions].
+  const FetchPromotionsFamily();
 
-  /// See also [fetchNews].
-  FetchNewsProvider call(
+  /// See also [fetchPromotions].
+  FetchPromotionsProvider call(
     String token,
   ) {
-    return FetchNewsProvider(
+    return FetchPromotionsProvider(
       token,
     );
   }
 
   @override
-  FetchNewsProvider getProviderOverride(
-    covariant FetchNewsProvider provider,
+  FetchPromotionsProvider getProviderOverride(
+    covariant FetchPromotionsProvider provider,
   ) {
     return call(
       provider.token,
@@ -68,31 +68,33 @@ class FetchNewsFamily extends Family<AsyncValue<List<News>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchNewsProvider';
+  String? get name => r'fetchPromotionsProvider';
 }
 
-/// See also [fetchNews].
-class FetchNewsProvider extends AutoDisposeFutureProvider<List<News>> {
-  /// See also [fetchNews].
-  FetchNewsProvider(
+/// See also [fetchPromotions].
+class FetchPromotionsProvider
+    extends AutoDisposeFutureProvider<List<Promotion>> {
+  /// See also [fetchPromotions].
+  FetchPromotionsProvider(
     String token,
   ) : this._internal(
-          (ref) => fetchNews(
-            ref as FetchNewsRef,
+          (ref) => fetchPromotions(
+            ref as FetchPromotionsRef,
             token,
           ),
-          from: fetchNewsProvider,
-          name: r'fetchNewsProvider',
+          from: fetchPromotionsProvider,
+          name: r'fetchPromotionsProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchNewsHash,
-          dependencies: FetchNewsFamily._dependencies,
-          allTransitiveDependencies: FetchNewsFamily._allTransitiveDependencies,
+                  : _$fetchPromotionsHash,
+          dependencies: FetchPromotionsFamily._dependencies,
+          allTransitiveDependencies:
+              FetchPromotionsFamily._allTransitiveDependencies,
           token: token,
         );
 
-  FetchNewsProvider._internal(
+  FetchPromotionsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -106,12 +108,12 @@ class FetchNewsProvider extends AutoDisposeFutureProvider<List<News>> {
 
   @override
   Override overrideWith(
-    FutureOr<List<News>> Function(FetchNewsRef provider) create,
+    FutureOr<List<Promotion>> Function(FetchPromotionsRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchNewsProvider._internal(
-        (ref) => create(ref as FetchNewsRef),
+      override: FetchPromotionsProvider._internal(
+        (ref) => create(ref as FetchPromotionsRef),
         from: from,
         name: null,
         dependencies: null,
@@ -123,13 +125,13 @@ class FetchNewsProvider extends AutoDisposeFutureProvider<List<News>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<News>> createElement() {
-    return _FetchNewsProviderElement(this);
+  AutoDisposeFutureProviderElement<List<Promotion>> createElement() {
+    return _FetchPromotionsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchNewsProvider && other.token == token;
+    return other is FetchPromotionsProvider && other.token == token;
   }
 
   @override
@@ -141,17 +143,18 @@ class FetchNewsProvider extends AutoDisposeFutureProvider<List<News>> {
   }
 }
 
-mixin FetchNewsRef on AutoDisposeFutureProviderRef<List<News>> {
+mixin FetchPromotionsRef on AutoDisposeFutureProviderRef<List<Promotion>> {
   /// The parameter `token` of this provider.
   String get token;
 }
 
-class _FetchNewsProviderElement
-    extends AutoDisposeFutureProviderElement<List<News>> with FetchNewsRef {
-  _FetchNewsProviderElement(super.provider);
+class _FetchPromotionsProviderElement
+    extends AutoDisposeFutureProviderElement<List<Promotion>>
+    with FetchPromotionsRef {
+  _FetchPromotionsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchNewsProvider).token;
+  String get token => (origin as FetchPromotionsProvider).token;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -51,5 +51,10 @@
 	<string>We need access to your photo library to select images.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need permission to save photos to your library.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+    	<string>sms</string>
+  		<string>tel</string>
+</array>
 </dict>
 </plist>

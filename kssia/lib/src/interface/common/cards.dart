@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:kssia/src/data/models/user_and_product.dart';
+import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/data/models/user_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AwardCard extends StatelessWidget {
@@ -14,7 +15,7 @@ class AwardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       child: SizedBox(
         height: 150.0, // Set the desired fixed height for the card
         width: double.infinity, // Ensure the card width fits the screen
@@ -27,7 +28,7 @@ class AwardCard extends StatelessWidget {
               children: [
                 // Upper part: Image fitted to the card
                 Container(
-                  height: 100.0, // Adjusted height to fit within the 150px card
+                  height: 120.0, // Adjusted height to fit within the 150px card
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -75,14 +76,14 @@ class AwardCard extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              award.name,
+                              award.name ?? '',
                               style: const TextStyle(
                                   fontSize: 14.0, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                         Text(
-                          award.authorityName,
+                          award.authorityName ?? '',
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14.0,
@@ -102,57 +103,54 @@ class AwardCard extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  final VoidCallback onRemove;
-
+  final VoidCallback? onRemove;
   final Product product;
 
-  const ProductCard({required this.onRemove, required this.product, super.key});
+  const ProductCard({this.onRemove, required this.product, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
       child: SizedBox(
-        height: 150.0, // Set the desired fixed height for the card
-        width: double.infinity, // Ensure the card width fits the screen
+        width: double.infinity,
         child: Column(
-          mainAxisSize:
-              MainAxisSize.max, // Make the column take the full height
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
-                // Upper part: Image fitted to the card
                 Container(
-                  height: 100.0, // Adjusted height to fit within the 150px card
+                  height: 120.0,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(
-                          product.image), // Replace with your image path
+                      image: NetworkImage(product.image!),
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(10.0),
                       topRight: Radius.circular(10.0),
                     ),
                   ),
                 ),
-                // Three-dot menu on the right corner of the image
-                Positioned(
-                  top: 4.0,
-                  right: 10.0,
-                  child: Container(
+                // Display the three-dot icon only if onRemove is not null
+                if (onRemove != null)
+                  Positioned(
+                    top: 4.0,
+                    right: 10.0,
+                    child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: DropDownMenu(onRemove: onRemove),
-                      )),
-                ),
+                        child: DropDownMenu(onRemove: onRemove!),
+                      ),
+                    ),
+                  ),
               ],
             ),
             // Lower part: Text
@@ -168,44 +166,52 @@ class ProductCard extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Flexible(
                           child: Text(
-                            product.name,
+                            product.name!,
                             style: const TextStyle(
                               fontSize: 17.0,
                             ),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              '₹ ${product.price}',
-                              style: const TextStyle(
-                                  decoration: TextDecoration.lineThrough,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            children: [
+                              Text(
+                                '₹ ${product.price}',
+                                style: TextStyle(
+                                  decoration: product.offerPrice != null
+                                      ? TextDecoration.lineThrough
+                                      : null,
                                   fontSize: 17.0,
                                   color: Color.fromARGB(255, 112, 112, 112),
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              '₹ ${product.offerPrice}',
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 41, 141, 222),
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              if (product.offerPrice != null)
+                                Text(
+                                  '₹ ${product.offerPrice}',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 41, 141, 222),
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                         Text(
                           'MOQ: ${product.moq}',
                           style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w500),
+                            color: Colors.grey,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -294,10 +300,10 @@ class BrochureCard extends StatelessWidget {
   const BrochureCard({super.key, required this.brochure});
   Future<void> _downloadPdf(String url) async {
     final Uri uri = Uri.parse(url);
-  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $url';
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {

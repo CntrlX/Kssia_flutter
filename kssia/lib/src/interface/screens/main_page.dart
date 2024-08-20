@@ -57,7 +57,7 @@ class _MainPageState extends State<MainPage> {
     FeedPage(),
     ProfilePage(),
     Event_News_Page(),
-    People_Page(),
+    PeoplePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -85,11 +85,10 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: App_bar(),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar( 
+      bottomNavigationBar: BottomNavigationBar(
         items: List.generate(5, (index) {
           return BottomNavigationBarItem(
             icon: IconResolver(
@@ -98,13 +97,13 @@ class _MainPageState extends State<MainPage> {
             ),
             activeIcon: IconResolver(
               iconPath: _activeIcons[index],
-              color: Colors.blue,
+              color: Color(0xFF004797),
             ),
             label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
           );
         }),
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Color(0xFF004797),
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
         showUnselectedLabels: true,
