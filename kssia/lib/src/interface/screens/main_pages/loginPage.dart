@@ -22,6 +22,7 @@ import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:kssia/src/interface/screens/main_pages/user_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 TextEditingController _mobileController = TextEditingController();
@@ -597,26 +598,73 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
   }
 
-  void _addAwardCard() async {
+  // void _addAwardCard() async {
+  // await api.createFileUrl(file: _awardImageFIle!).then((url) {
+  //   awardUrl = url;
+  //   print((awardUrl));
+  // });
+  //   ref.read(userProvider.notifier).updateAwards([...?ref.read(userProvider).value?.awards, newAward]);
+  // }
+
+  void _addNewAward() async {
     await api.createFileUrl(file: _awardImageFIle!).then((url) {
       awardUrl = url;
       print((awardUrl));
     });
-    setState(() {
-      awards.add(
-        Award(
-          name: awardNameController.text,
-          url: awardUrl,
-          authorityName: awardAuthorityController.text,
-        ),
-      );
-    });
+    final newAward = Award(
+      name: awardNameController.text,
+      url: awardUrl,
+      authorityName: awardAuthorityController.text,
+    );
+
+    ref
+        .read(userProvider.notifier)
+        .updateAwards([...?ref.read(userProvider).value?.awards, newAward]);
   }
 
-  void _removeAwardCard(int index) {
-    setState(() {
-      awards.removeAt(index);
-    });
+  void _removeAward(int index) async {
+    await api.deleteFile(
+        token, ref.read(userProvider).value!.awards![index].url!);
+    ref
+        .read(userProvider.notifier)
+        .removeAward(ref.read(userProvider).value!.awards![index]);
+  }
+
+  _addNewProduct() async {
+    final createdProduct = await api.uploadProduct(
+        token,
+        productNameController.text,
+        productActualPriceController.text,
+        productDescriptionController.text,
+        productMoqController.text,
+        _productImageFIle!,
+        id);
+    if (createdProduct == null) {
+      print('couldnt create new product');
+    } else {
+      // add more product details if want
+      final newProduct = Product(
+          id: createdProduct.id,
+          name: productNameController.text,
+          image: productUrl,
+          description: productDescriptionController.text,
+          moq: int.parse(productMoqController.text) ,
+          offerPrice: int.parse(productOfferPriceController.text),
+          price: int.parse(productActualPriceController.text),
+          sellerId: SellerId(id: id),
+          status: true,       
+          );
+      ref.read(userProvider.notifier).updateProduct(
+          [...?ref.read(userProvider).value?.products, newProduct]);
+    }
+  }
+
+  void _removeProduct(int index) async {
+    await api.deleteFile(
+        token, ref.read(userProvider).value!.awards![index].url!);
+    ref
+        .read(userProvider.notifier)
+        .removeAward(ref.read(userProvider).value!.awards![index]);
   }
 
   Future<void> _addProductCard({required String productId}) async {
@@ -878,7 +926,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         if (sheet == 'award') {
           return ShowEnterAwardtSheet(
             pickImage: _pickFile,
-            addAwardCard: _addAwardCard,
+            addAwardCard: _addNewAward,
             imageType: sheet,
             awardImage: _awardImageFIle,
             textController1: awardNameController,
@@ -917,9 +965,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncUser =
-        ref.watch(fetchUserDetailsProvider(token, '66c38e4db9aa147c230339bf'));
-
+    final asyncUser = ref.watch(userProvider);
     final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
     final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
     final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
@@ -944,10 +990,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               );
             },
             data: (user) {
-              for (var award in user.awards!) {
-                awards.add(award);
-                print(award);
-              }
+              print(user);
+              print(user.awards);
               nameController.text =
                   '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
               designationController.text = user.designation!;
@@ -1838,11 +1882,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 childAspectRatio:
                                     .9, // Aspect ratio for the cards
                               ),
-                              itemCount: awards.length,
+                              itemCount: user.awards!.length,
                               itemBuilder: (context, index) {
                                 return AwardCard(
-                                  award: awards[index],
-                                  onRemove: () => _removeAwardCard(index),
+                                  award: user.awards![index],
+                                  onRemove: () => _removeAward(index),
                                 );
                               },
                             ),

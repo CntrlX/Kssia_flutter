@@ -33,7 +33,7 @@ class AwardCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                          award.url), // Replace with your image path
+                          award.url!), // Replace with your image path
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.only(
@@ -259,7 +259,7 @@ class CertificateCard extends StatelessWidget {
                     topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                 image: DecorationImage(
                   image: NetworkImage(
-                      certificate.url), // Replace with your image path
+                      certificate.url!), // Replace with your image path
                   fit: BoxFit.cover,
                 ),
               ),
@@ -276,7 +276,7 @@ class CertificateCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        certificate.name,
+                        certificate.name!,
                         style: const TextStyle(
                             fontSize: 20.0, fontWeight: FontWeight.w600),
                       ),
@@ -324,12 +324,12 @@ class BrochureCard extends StatelessWidget {
               Icons.picture_as_pdf,
               color: Colors.red,
             ),
-            title: Text(brochure.name),
+            title: Text(brochure.name!),
             trailing: IconButton(
               icon: Icon(Icons.download),
               onPressed: () {
                 // Replace this with the actual download URL
-                String downloadUrl = brochure.url;
+                String downloadUrl = brochure.url!;
                 // _downloadPdf(downloadUrl);
               },
             ),

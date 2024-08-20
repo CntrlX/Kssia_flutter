@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_api.g.dart';
 
@@ -96,6 +98,82 @@ class ApiRoutes {
     } catch (e) {
       print(e);
       return null; // Return null or an error message in case of an exception
+    }
+  }
+
+  Future<void> deleteFile(String token, String fileUrl) async {
+    final url = Uri.parse(
+        'http://43.205.89.79/api/v1/files/delete/images_20240820_d810d54f6caf3f66e1fe7af93f8ea321.jpeg');
+    final response = await http.delete(
+      url,
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Image deleted successfully');
+    } else {
+      print('Failed to delete image: ${response.statusCode}');
+    }
+  }
+
+  Future<Product?> uploadProduct(
+      String token,
+      String name,
+      String price,
+      String description,
+      String moq,
+      File productImage,
+      String sellerId) async {
+    final url = Uri.parse('$baseUrl/products');
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', url);
+
+    // Add headers
+    request.headers.addAll({
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add fields
+    request.fields['name'] = name;
+    request.fields['price'] = price;
+    request.fields['offer_price'] = price;
+    request.fields['description'] = description;
+    request.fields['moq'] = moq;
+    request.fields['seller_id'] = sellerId;
+
+    // Add the image file
+    var stream = http.ByteStream(productImage.openRead());
+    stream.cast();
+    var length = await productImage.length();
+    var multipartFile = http.MultipartFile(
+      'image',
+      stream,
+      length,
+      filename: basename(productImage.path),
+      contentType: MediaType('image', 'png'),
+    );
+
+    request.files.add(multipartFile);
+
+    // Send the request
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Product uploaded successfully');
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      final Product product = Product.fromJson(jsonResponse);
+
+      return product;
+    } else {
+      print('Failed to upload product: ${response.statusCode}');
+      return null;
     }
   }
 
