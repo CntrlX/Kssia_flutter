@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/interface/common/loading.dart';
-import 'package:kssia/src/interface/screens/main_pages/user_provider.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 
 class TestApi extends StatelessWidget {
   const TestApi({super.key});

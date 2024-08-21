@@ -22,7 +22,7 @@ import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:kssia/src/interface/screens/main_pages/user_provider.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 TextEditingController _mobileController = TextEditingController();
@@ -654,13 +654,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
   }
 
-  void _removeProduct(int index) async {
-    await api.deleteFile(
-        token, ref.read(userProvider).value!.products![index].image!);
-    ref
-        .read(userProvider.notifier)
-        .removeProduct(ref.read(userProvider).value!.products![index]);
-  }
 
   void _addNewCertificate() async {
     await api
@@ -751,6 +744,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             user.phoneNumbers!.whatsappBusinessNumber ?? 0,
       },
       "designation": user.designation,
+            "company_logo": user.companyLogo,
       "company_name": user.companyName,
       "company_email": user.companyEmail,
       "company_address": user.companyAddress,
@@ -1074,24 +1068,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               height: 120,
                                               color: const Color.fromARGB(
                                                   255, 255, 255, 255),
-                                              child: user.profilePicture == null
-                                                  ? const Icon(
-                                                      Icons.person,
-                                                      size: 50,
-                                                      color: Colors.grey,
-                                                    )
-                                                  : Image.network(
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Icon(
-                                                          Icons.person,
-                                                          size: 50,
-                                                          color: Colors.grey,
-                                                        );
-                                                      },
-                                                      user.profilePicture!, // Replace with your image URL
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                              child: Image.network(
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Icon(Icons.person);
+                                                },
+                                                user.profilePicture!, // Replace with your image URL
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1236,7 +1220,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           ),
                           FormField<File>(
                             validator: (value) {
-                              if (_profileImageFile == null) {
+                              if (user.companyLogo == null) {
                                 return 'Please select a company logo';
                               }
                               return null;
@@ -1259,8 +1243,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               height: 100,
                                               color: const Color.fromARGB(
                                                   255, 255, 255, 255),
-                                              child: _companyImageFile == null
-                                                  ? const Center(
+                                              child: Image.network(
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
                                                       child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1318,13 +1303,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                           ],
                                                         ),
                                                       ],
-                                                    ))
-                                                  : Image.file(
-                                                      _companyImageFile!,
-                                                      fit: BoxFit.cover,
-                                                      width: 120,
-                                                      height: 120,
-                                                    ),
+                                                    ));
+                            },
+                            user.companyLogo!, // Replace with your image URL
+                            fit: BoxFit.cover,
+                          ),
+                                              
+                                              
+                                            
                                             ),
                                           ),
                                         ),
@@ -1905,28 +1891,25 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, bottom: 10, right: 10),
-                              child: GridView.builder(
-                                shrinkWrap:
-                                    true, // Let GridView take up only as much space as it needs
-                                physics:
-                                    NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2, // Number of columns
-                                  crossAxisSpacing:
-                                      8.0, // Space between columns
-                                  mainAxisSpacing: 8.0, // Space between rows
-                                  childAspectRatio:
-                                      .8, // Aspect ratio for the cards
-                                ),
-                                itemCount: user.products!.length,
-                                itemBuilder: (context, index) {
-                                  return ProductCard(
-                                    product: user.products![index],
-                                    onRemove: () => _removeProduct(index),
-                                  );
-                                },
-                              ),
+                              child:  GridView.builder(
+                  shrinkWrap:
+                      true, // Let GridView take up only as much space as it needs
+                  physics:
+                      NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns
+                    crossAxisSpacing: 1.0, // Space between columns
+                    mainAxisSpacing: 2.0, // Space between rows
+                    childAspectRatio: .943, // Aspect ratio for the cards
+                  ),
+                  itemCount: user.products!.length,
+                  itemBuilder: (context, index) {
+                    return ProductCard(
+                      product: user.products![index],
+                      onRemove: null,
+                    );
+                  },
+                ),
                             ),
                           if (isProductsDetailsVisible)
                             Padding(

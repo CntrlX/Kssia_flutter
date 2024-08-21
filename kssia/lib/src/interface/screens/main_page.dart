@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -45,6 +48,8 @@ class IconResolver extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -52,13 +57,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    FeedPage(),
-    ProfilePage(),
-    Event_News_Page(),
-    PeoplePage(),
-  ];
+  static List<Widget> _widgetOptions = <Widget>[];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -66,48 +65,85 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  final List<String> _inactiveIcons = [
-    'assets/icons/home_inactive.svg',
-    'assets/icons/feed_inactive.svg',
-    'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg',
-    'assets/icons/news_inactive.svg',
-    'assets/icons/people_inactive.svg',
-  ];
-
-  final List<String> _activeIcons = [
-    'assets/icons/home_active.svg',
-    'assets/icons/feed_active.svg',
-    'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg',
-    'assets/icons/news_active.svg',
-    'assets/icons/people_active.svg',
-  ];
+  List<String> _inactiveIcons = [];
+  List<String> _activeIcons = [];
+  void _initialize({required User user}) {
+    _widgetOptions = <Widget>[
+      HomePage(),
+      FeedPage(),
+      ProfilePage(user: user),
+      Event_News_Page(),
+      PeoplePage(),
+    ];
+    _inactiveIcons = [
+      'assets/icons/home_inactive.svg',
+      'assets/icons/feed_inactive.svg',
+      user.profilePicture!,
+      'assets/icons/news_inactive.svg',
+      'assets/icons/people_inactive.svg',
+    ];
+    _activeIcons = [
+      'assets/icons/home_active.svg',
+      'assets/icons/feed_active.svg',
+      user.profilePicture!,
+      'assets/icons/news_active.svg',
+      'assets/icons/people_active.svg',
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: List.generate(5, (index) {
-          return BottomNavigationBarItem(
-            icon: IconResolver(
-              iconPath: _inactiveIcons[index],
-              color: _selectedIndex == index ? Colors.blue : Colors.grey,
-            ),
-            activeIcon: IconResolver(
-              iconPath: _activeIcons[index],
-              color: Color(0xFF004797),
-            ),
-            label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
+    return Consumer(builder: (context, ref, child) {
+      final asyncUser = ref.watch(userProvider);
+      return asyncUser.when(
+        loading: () => Center(child: LoadingAnimation()),
+        error: (error, stackTrace) {
+          return Center(
+            child: Text('Error loading promotions: $error'),
           );
-        }),
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF004797),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        showUnselectedLabels: true,
-      ),
-    );
+        },
+        data: (user) {
+          print(user.profilePicture);
+          _initialize(user: user);
+          return Scaffold(
+            body: Center(
+              child: _widgetOptions.elementAt(_selectedIndex),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: List.generate(5, (index) {
+                return BottomNavigationBarItem(
+  backgroundColor: Colors.white,
+  icon: index == 2 // Assuming profile is the third item
+      ? CircleAvatar(
+          backgroundImage: NetworkImage(user.profilePicture!),
+          radius: 15,
+        )
+      : IconResolver(
+          iconPath: _inactiveIcons[index],
+          color: _selectedIndex == index ? Colors.blue : Colors.grey,
+        ),
+  activeIcon: index == 2
+      ? CircleAvatar(
+          backgroundImage: NetworkImage(user.profilePicture!),
+          radius: 15,
+        )
+      : IconResolver(
+          iconPath: _activeIcons[index],
+          color: Color(0xFF004797),
+        ),
+  label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
+);
+
+              }),
+              currentIndex: _selectedIndex,
+              selectedItemColor: Color(0xFF004797),
+              unselectedItemColor: Colors.grey,
+              onTap: _onItemTapped,
+              showUnselectedLabels: true,
+            ),
+          );
+        },
+      );
+    });
   }
 }

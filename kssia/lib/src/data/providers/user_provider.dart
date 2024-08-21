@@ -3,7 +3,7 @@ import 'package:kssia/src/data/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 
-import '../../../data/globals.dart';
+import '../globals.dart';
 
 class UserNotifier extends StateNotifier<AsyncValue<User>> {
   final StateNotifierProviderRef<UserNotifier, AsyncValue<User>> ref;

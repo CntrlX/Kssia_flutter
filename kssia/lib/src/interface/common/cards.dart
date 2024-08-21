@@ -5,7 +5,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AwardCard extends StatelessWidget {
-  final VoidCallback onRemove;
+  final VoidCallback? onRemove;
 
   final Award award;
 
@@ -42,20 +42,20 @@ class AwardCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Three-dot menu on the right corner of the image
-                Positioned(
-                  top: 4.0,
-                  right: 10.0,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: DropDownMenu(onRemove: onRemove),
-                      )),
-                ),
+                if (onRemove != null)
+                  Positioned(
+                    top: 4.0,
+                    right: 10.0,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: DropDownMenu(onRemove: onRemove!),
+                        )),
+                  ),
               ],
             ),
             // Lower part: Text
@@ -112,17 +112,17 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8),
       child: SizedBox(
         width: double.infinity,
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min, // Adjust main axis size to minimum
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
                 Container(
-                  height: 120.0,
+                  height: 120.0, // Reduced height for the image
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -135,7 +135,6 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Display the three-dot icon only if onRemove is not null
                 if (onRemove != null)
                   Positioned(
                     top: 4.0,
@@ -153,68 +152,67 @@ class ProductCard extends StatelessWidget {
                   ),
               ],
             ),
-            // Lower part: Text
-            Expanded(
+            // Remove Expanded, replace with Flexible
+            Flexible(
+              fit: FlexFit.loose, // Take up only necessary space
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: const Color(0xFFF2F2F2),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            product.name!,
-                            style: const TextStyle(
-                              fontSize: 17.0,
-                            ),
-                          ),
+                  padding: const EdgeInsets.all(6.0), // Reduced padding
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min, // Adjust main axis size
+                    children: [
+                      Text(
+                        product.name!,
+                        maxLines: 1, // Limit text to one line
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15.0, // Reduced font size
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Row(
-                            children: [
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          children: [
+                            Text(
+                              '₹ ${product.price}',
+                              style: TextStyle(
+                                decoration: product.offerPrice != null
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                                fontSize: 15.0, // Reduced font size
+                                color: const Color.fromARGB(255, 112, 112, 112),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            if (product.offerPrice != null)
                               Text(
-                                '₹ ${product.price}',
-                                style: TextStyle(
-                                  decoration: product.offerPrice != null
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                  fontSize: 17.0,
-                                  color: Color.fromARGB(255, 112, 112, 112),
+                                '₹ ${product.offerPrice}',
+                                style: const TextStyle(
+                                  color: Color(0xFF004797),
+                                  fontSize: 15.0, // Reduced font size
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              if (product.offerPrice != null)
-                                Text(
-                                  '₹ ${product.offerPrice}',
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 41, 141, 222),
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                            ],
-                          ),
+                          ],
                         ),
-                        Text(
-                          'MOQ: ${product.moq}',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      Text(
+                        'MOQ: ${product.moq}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0, // Reduced font size
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -227,7 +225,7 @@ class ProductCard extends StatelessWidget {
 }
 
 class CertificateCard extends StatelessWidget {
-  final VoidCallback onRemove;
+  final VoidCallback? onRemove;
 
   final Certificate certificate;
 
@@ -238,7 +236,7 @@ class CertificateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      margin: const EdgeInsets.only(bottom: 16, left: 10, right: 10),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -272,18 +270,30 @@ class CertificateCard extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        certificate.name!,
-                        style: const TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w600),
-                      ),
-                      IconButton(
-                          onPressed: () => onRemove(), icon: Icon(Icons.close))
-                    ],
-                  ),
+                  child: onRemove != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              certificate.name!,
+                              style: const TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.w600),
+                            ),
+                            IconButton(
+                                onPressed: () => onRemove!(),
+                                icon: Icon(Icons.close))
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              certificate.name!,
+                              style: const TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                 ),
               ),
             ),
