@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 void showWlinkorVlinkSheet(
     {required String title,
@@ -393,7 +394,7 @@ class ShowEnterProductsSheet extends StatelessWidget {
   final TextEditingController actualPriceText;
   final TextEditingController offerPriceText;
 
-  final Future<void> Function({required String productId}) addProductCard;
+  final VoidCallback addProductCard;
   final String imageType;
   final File? productImage;
   final Future<void> Function({required String imageType}) pickImage;
@@ -441,9 +442,24 @@ class ShowEnterProductsSheet extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             GestureDetector(
-              onTap: () {
-                pickImage(imageType: imageType);
-              },
+     onTap: () async {
+  // Show loading screen
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Center(
+        child: LoadingAnimation(),
+      );
+    },
+  );
+
+  // Run the pickImage function
+  await pickImage(imageType: imageType);
+
+  // Dismiss the loading screen
+  Navigator.of(context).pop();
+},
               child: Container(
                   height: 110,
                   decoration: BoxDecoration(
@@ -543,7 +559,7 @@ class ShowEnterProductsSheet extends StatelessWidget {
                 label: 'Save',
                 onPressed: () {
                   //function for getting product id
-                  addProductCard(productId: '1');
+                  addProductCard();
                   Navigator.pop(context);
                 },
                 fontSize: 16),

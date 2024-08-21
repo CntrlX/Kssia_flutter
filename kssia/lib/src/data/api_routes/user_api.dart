@@ -11,7 +11,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_api.g.dart';
 
 class ApiRoutes {
-  final String baseUrl = 'http://43.205.89.79/api/v1/';
+  final String baseUrl = 'http://43.205.89.79/api/v1';
   Future<Map<String, dynamic>> sendOtp(String mobile) async {
     final response = await http.get(
       Uri.parse('$baseUrl/users/sendOtp/$mobile'),
@@ -32,31 +32,31 @@ class ApiRoutes {
   Future<void> editUser(Map<String, dynamic> profileData) async {
     final url = Uri.parse('$baseUrl/user/edit/$id');
 
-    try {
+    
       final response = await http.put(
         url,
         headers: {
-          'Content-Type': 'application/json',
-        },
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
         body: jsonEncode(profileData),
       );
 
       if (response.statusCode == 200) {
         print('Profile updated successfully');
       } else {
+            print(json.decode(response.body)['message']);
         print('Failed to update profile. Status code: ${response.statusCode}');
         throw Exception('Failed to update profile');
       }
-    } catch (e) {
-      print('Unexpected error: $e');
-      throw Exception('An unexpected error occurred');
-    }
+   
+      
+   
   }
 
-  Future<dynamic> createFileUrl({required File file}) async {
-    final url = Uri.parse('http://43.205.89.79/api/v1/files/upload');
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI'; // Replace with your Bearer token
+  Future<dynamic> createFileUrl({required File file,required token}) async {
+    final url = Uri.parse('$baseUrl/files/upload');
+   
 
     // Determine MIME type
     String fileName = file.path.split('/').last;
@@ -101,13 +101,20 @@ class ApiRoutes {
     }
   }
 
+  String removeBaseUrl(String url) {
+  String baseUrl = 'https://kssia.s3.ap-south-1.amazonaws.com/';
+  return url.replaceFirst(baseUrl, '');
+}
+
   Future<void> deleteFile(String token, String fileUrl) async {
-    final url = Uri.parse(
-        'http://43.205.89.79/api/v1/files/delete/images_20240820_d810d54f6caf3f66e1fe7af93f8ea321.jpeg');
+     final reqfileUrl = removeBaseUrl(fileUrl);
+    print(reqfileUrl);
+    final url = Uri.parse('$baseUrl/files/delete/$reqfileUrl');
+    print('requesting url:$url');
     final response = await http.delete(
       url,
       headers: {
-        'accept': 'application/json',
+        'Content-type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
@@ -115,6 +122,8 @@ class ApiRoutes {
     if (response.statusCode == 200) {
       print('Image deleted successfully');
     } else {
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse['message']);
       print('Failed to delete image: ${response.statusCode}');
     }
   }
@@ -168,10 +177,14 @@ class ApiRoutes {
       print('Product uploaded successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
-      final Product product = Product.fromJson(jsonResponse);
+      print(jsonResponse['message']);
+      final Product product = Product.fromJson(jsonResponse['data']);
 
       return product;
     } else {
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      print(jsonResponse['message']);
       print('Failed to upload product: ${response.statusCode}');
       return null;
     }

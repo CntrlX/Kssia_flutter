@@ -38,7 +38,7 @@ class Product {
       name: json['name'],
       image: json['image'],
       price: json['price'] as int,
-      offerPrice: json['offer_price'] as int,
+      offerPrice: json['offer_price']!=null?  json['offer_price'] as int:0,
       description: json['description'],
       moq: json['moq'],
       units: json['units'],

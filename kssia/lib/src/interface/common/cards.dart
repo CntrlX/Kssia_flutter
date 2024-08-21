@@ -298,10 +298,9 @@ class BrochureCard extends StatelessWidget {
   final Brochure brochure;
 
   const BrochureCard({super.key, required this.brochure});
-  Future<void> _downloadPdf(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw 'Could not launch $url';
+  Future<void> _launchUrl({required url}) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
     }
   }
 
@@ -330,7 +329,7 @@ class BrochureCard extends StatelessWidget {
               onPressed: () {
                 // Replace this with the actual download URL
                 String downloadUrl = brochure.url!;
-                // _downloadPdf(downloadUrl);
+                _launchUrl(url: downloadUrl);
               },
             ),
           ),
