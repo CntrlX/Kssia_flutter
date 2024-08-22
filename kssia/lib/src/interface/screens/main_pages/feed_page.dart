@@ -2,162 +2,96 @@ import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/screens/feed/feed_view.dart';
 import 'package:kssia/src/interface/screens/feed/product_view.dart';
+import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
+import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({Key? key}) : super(key: key);
 
-  void _showAddRequirementSheet(BuildContext context) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Post a Requirement/update',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  // Handle image upload
-                },
-                child: Container(
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                        SizedBox(height: 10),
-                        Text(
-                          'Upload Image',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 102, 101, 101)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                maxLines: ((MediaQuery.sizeOf(context).height) / 200).toInt(),
-                decoration: InputDecoration(
-                  hintText: 'Add content',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    // Handle post requirement
-                  },
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(color: Color(0xFF004797)),
-                      ),
-                    ),
-                  ),
-                  child: const Text(
-                    'POST REQUIREMENT/UPDATE',
-                    style: TextStyle(color: Colors.white),
-                  )),
-              const SizedBox(
-                height: 10,
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
-      child: Scaffold(backgroundColor: Colors.white,
-        appBar: App_bar(),
-        body: Column(
-          children: [
-            Center(
-              child: TabBar(
-                isScrollable: false,
-                indicatorColor: const Color(0xFF004797),
-                indicatorWeight: 2.0,
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                labelStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+        length: 2,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            toolbarHeight: 60.0,
+            backgroundColor: Colors.white,
+            scrolledUnderElevation: 0,
+            leadingWidth: 100,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.asset(
+                  'assets/icons/kssiaLogo.png',
+                  fit: BoxFit.contain,
                 ),
-                tabs: const [
-                  Tab(text: "FEED"),
-                  Tab(text: "PRODUCTS"),
-                ],
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  FeedView(),
-                  ProductView(),
-                ],
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.notifications_none_outlined,
+                  size: 21,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  size: 21,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MenuPage()), // Navigate to MenuPage
+                  );
+                },
+              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(20),
+              child: Container(
+                margin: EdgeInsets.only(
+                    top: 0), // Adjust this value to reduce space
+                child: const SizedBox(
+                  height: 40,
+                  child: TabBar(
+                    isScrollable: false, // Disable scroll to center the tabs
+                    indicatorColor:
+                        Color(0xFF004797), // Set to AppPalette.kPrimaryColor
+                    indicatorWeight: 3.0,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: Color(0xFF004797),
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    tabs: [
+                      Tab(text: "FEED"),
+                      Tab(text: "PRODUCTS"),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => _showAddRequirementSheet(context),
-          label: const Text(
-            'Add Requirement/update',
-            style: TextStyle(color: Colors.white),
           ),
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 27,
-          ),
-          backgroundColor: const Color(0xFF004797),
-        ),
-      ),
-    );
+          body: TabBarView(
+            children: [
+              FeedView(),
+              ProductView(),
+            ],
+          )
+        ));
   }
 }

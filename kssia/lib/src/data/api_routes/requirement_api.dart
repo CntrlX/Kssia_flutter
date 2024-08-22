@@ -1,16 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:kssia/src/data/models/product_model.dart';
-import 'package:path/path.dart';
+import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'products_api.g.dart';
+part 'requirement_api.g.dart';
+
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
-Future<List<Product>> fetchProducts(FetchProductsRef ref, String token) async {
-  final url = Uri.parse('$baseUrl/products');
+Future<List<Requirement>> fetchRequirements(
+    FetchRequirementsRef ref, String token) async {
+  final url = Uri.parse('$baseUrl/requirements');
   print('Requesting URL: $url');
   final response = await http.get(
     url,
@@ -24,18 +24,16 @@ Future<List<Product>> fetchProducts(FetchProductsRef ref, String token) async {
   if (response.statusCode == 200) {
     final List<dynamic> data = json.decode(response.body)['data'];
     print(response.body);
-    List<Product> products = [];
+    List<Requirement> events = [];
 
     for (var item in data) {
-      products.add(Product.fromJson(item));
+      events.add(Requirement.fromJson(item));
     }
-    print(products);
-    return products;
+    print(events);
+    return events;
   } else {
     print(json.decode(response.body)['message']);
 
     throw Exception(json.decode(response.body)['message']);
   }
 }
-
-

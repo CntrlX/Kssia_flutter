@@ -5,11 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/api_routes/products_api.dart';
 import 'package:kssia/src/data/api_routes/promotions_api.dart';
+import 'package:kssia/src/data/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/promotions_model.dart';
+import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../main_page.dart';
@@ -64,6 +67,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       child: AppBar(
+                        toolbarHeight: 45.0,
                         scrolledUnderElevation: 0,
                         backgroundColor: Colors.white,
                         elevation: 0,
@@ -375,96 +379,24 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainPage()),
-                );
-              },
-              child: GestureDetector(
-                onTap: () => _launchUrl(url: notice.noticeLink),
-                child: const Row(
-                  children: [
-                    Text(
-                      'Know More',
-                      style: TextStyle(
-                        color: Color(0xFF040F4F), // Change the color here
-                      ),
+              onPressed: () => notice.noticeLink.contains('http')? _launchUrl(url: notice.noticeLink): null,
+              child: const Row(
+                children: [
+                  Text(
+                    'Know More',
+                    style: TextStyle(
+                      color: Color(0xFF040F4F), // Change the color here
                     ),
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Color(0xFF040F4F), // Change the icon color here
-                    ),
-                  ],
-                ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Color(0xFF040F4F), // Change the icon color here
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget customVideo(
-      {required BuildContext context, required Promotion video}) {
-    final videoUrl =
-        video.ytLink; // Assuming 'url' is the key containing the video URL
-
-    final ytController = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(videoUrl)!,
-      flags: const YoutubePlayerFlags(
-        disableDragSeek: true,
-        autoPlay: false,
-        mute: false,
-      ),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(video.videoTitle,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              width:
-                  MediaQuery.of(context).size.width - 32, // Full-screen width
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.transparent, // Transparent background
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.0),
-                child: YoutubePlayer(
-                  controller: ytController,
-                  showVideoProgressIndicator: true,
-                  onReady: () {
-                    ytController.addListener(() {
-                      if (ytController.value.playerState == PlayerState.ended) {
-                        ytController.seekTo(Duration.zero);
-                        ytController
-                            .pause(); // Pause the video to prevent it from autoplaying again
-                      }
-                    });
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

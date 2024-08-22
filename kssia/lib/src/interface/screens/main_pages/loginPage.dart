@@ -22,6 +22,7 @@ import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 TextEditingController _mobileController = TextEditingController();
@@ -551,16 +552,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   final _formKey = GlobalKey<FormState>();
   ApiRoutes api = ApiRoutes();
-  String awardUrl = '';
-  String profileUrl = '';
-  String companyUrl = '';
+
   String productUrl = '';
-  String certificateUrl = '';
-  String brochureUrl = '';
-  List<Award> awards = [];
-  List<Product> products = [];
-  List<Certificate> certificates = [];
-  List<Brochure> brochures = [];
 
   Future<void> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -572,8 +565,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       if (imageType == 'profile') {
         setState(() {
           _profileImageFile = File(result.files.single.path!);
-          api.createFileUrl(file: _profileImageFile!).then((url) {
-            profileUrl = url;
+          api.createFileUrl(file: _profileImageFile!, token: token).then((url) {
+            String profileUrl = url;
+            ref.read(userProvider.notifier).updateProfilePicture(profileUrl);
             print((profileUrl));
           });
         });
@@ -586,9 +580,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       } else if (imageType == 'company') {
         setState(() {
           _companyImageFile = File(result.files.single.path!);
-          api.createFileUrl(file: _companyImageFile!).then((url) {
-            companyUrl = url;
-            print((companyUrl));
+          api.createFileUrl(file: _companyImageFile!, token: token).then((url) {
+            String companyUrl = url;
+            ref.read(userProvider.notifier).updateCompanyLogo(companyUrl);
+            print(companyUrl);
           });
         });
       } else {
@@ -597,91 +592,107 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
   }
 
-  void _addAwardCard() async {
-    await api.createFileUrl(file: _awardImageFIle!).then((url) {
-      awardUrl = url;
-      print((awardUrl));
-    });
-    setState(() {
-      awards.add(
-        Award(
-          name: awardNameController.text,
-          url: awardUrl,
-          authorityName: awardAuthorityController.text,
-        ),
+  // void _addAwardCard() async {
+  // await api.createFileUrl(file: _awardImageFIle!).then((url) {
+  //   awardUrl = url;
+  //   print((awardUrl));
+  // });
+  //   ref.read(userProvider.notifier).updateAwards([...?ref.read(userProvider).value?.awards, newAward]);
+  // }
+
+  void _addNewAward() async {
+    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+      final String awardUrl = url;
+      final newAward = Award(
+        name: awardNameController.text,
+        url: awardUrl,
+        authorityName: awardAuthorityController.text,
       );
+
+      ref
+          .read(userProvider.notifier)
+          .updateAwards([...?ref.read(userProvider).value?.awards, newAward]);
     });
   }
 
-  void _removeAwardCard(int index) {
-    setState(() {
-      awards.removeAt(index);
-    });
+  void _removeAward(int index) async {
+    await api
+        .deleteFile(token, ref.read(userProvider).value!.awards![index].url!)
+        .then(
+          (value) => ref
+              .read(userProvider.notifier)
+              .removeAward(ref.read(userProvider).value!.awards![index]),
+        );
   }
 
-  Future<void> _addProductCard({required String productId}) async {
-    await api.createFileUrl(file: _productImageFIle!).then((url) {
-      productUrl = url;
-      print((awardUrl));
-    });
-    setState(() {
-      products.add(Product(
-          id: productId,
-          sellerId: id,
-          name: productNameController.text,
-          image: productUrl,
-          price: int.parse(productActualPriceController.text),
-          offerPrice: int.parse(productOfferPriceController.text),
-          description: productDescriptionController.text,
-          moq: int.parse(productMoqController.text),
-          units: 0,
-          status: true,
-          tags: []));
-    });
-  }
-
-  void _removeProductCard(int index) {
-    setState(() {
-      products.removeAt(index);
-    });
-  }
-
-  void _addCertificateCard() async {
-    await api.createFileUrl(file: _certificateImageFIle!).then((url) {
-      certificateUrl = url;
-      print((certificateUrl));
-    });
-    setState(() {
-      certificates.add(
-        Certificate(
-          name: certificateNameController.text,
-          url: certificateUrl,
-        ),
+  _addNewProduct() async {
+    final createdProduct = await api.uploadProduct(
+        token,
+        productNameController.text,
+        productActualPriceController.text,
+        productDescriptionController.text,
+        productMoqController.text,
+        _productImageFIle!,
+        id);
+    if (createdProduct == null) {
+      print('couldnt create new product');
+    } else {
+      // add more product details if want
+      final newProduct = Product(
+        id: createdProduct.id,
+        name: productNameController.text,
+        image: productUrl,
+        description: productDescriptionController.text,
+        moq: int.parse(productMoqController.text),
+        offerPrice: int.parse(productOfferPriceController.text),
+        price: int.parse(productActualPriceController.text),
+        sellerId: SellerId(id: id),
+        status: true,
       );
+      ref.read(userProvider.notifier).updateProduct(
+          [...?ref.read(userProvider).value?.products, newProduct]);
+    }
+  }
+
+
+  void _addNewCertificate() async {
+    await api
+        .createFileUrl(file: _certificateImageFIle!, token: token)
+        .then((url) {
+      final String certificateUrl = url;
+      final newCertificate = Certificate(
+          name: certificateNameController.text, url: certificateUrl);
+
+      ref.read(userProvider.notifier).updateCertificate(
+          [...?ref.read(userProvider).value?.certificates, newCertificate]);
     });
   }
 
-  void _removeCertificateCard(int index) {
-    setState(() {
-      certificates.removeAt(index);
+  void _removeCertificate(int index) async {
+    await api
+        .deleteFile(
+            token, ref.read(userProvider).value!.certificates![index].url!)
+        .then((value) => ref.read(userProvider.notifier).removeCertificate(
+            ref.read(userProvider).value!.certificates![index]));
+  }
+
+  void _addNewBrochure() async {
+    await api.createFileUrl(file: _brochurePdfFile!, token: token).then((url) {
+      final String brochureUrl = url;
+      final newBrochure =
+          Brochure(name: brochureNameController.text, url: brochureUrl);
+
+      ref.read(userProvider.notifier).updateBrochure(
+          [...?ref.read(userProvider).value?.brochure, newBrochure]);
     });
   }
 
-  void _addBrochureCard() async {
-    await api.createFileUrl(file: _brochurePdfFile!).then((url) {
-      brochureUrl = url;
-      print((brochureUrl));
-    });
-    setState(() {
-      brochures
-          .add(Brochure(name: brochureNameController.text, url: brochureUrl));
-    });
-  }
-
-  void _removeBrochureCard(int index) {
-    setState(() {
-      brochures.removeAt(index);
-    });
+  void _removeBrochure(int index) async {
+    await api
+        .deleteFile(
+            token, ref.read(userProvider).value!.certificates![index].url!)
+        .then((value) => ref.read(userProvider.notifier).removeCertificate(
+            ref.read(userProvider).value!.certificates![index]));
   }
 
   @override
@@ -705,38 +716,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     super.dispose();
   }
 
-  void _submitData() {
-    String fullName = nameController.text;
+  Future<void> _submitData({required User user}) async {
+    String fullName =
+        '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
 
     List<String> nameParts = fullName.split(' ');
 
     String firstName = nameParts[0];
     String middleName = nameParts.length > 2 ? nameParts[1] : ' ';
     String lastName = nameParts.length > 1 ? nameParts.last : ' ';
-    String address =
-        addressController.text.trim().replaceAll(RegExp(r'\s*\.\s*$'), '');
-    final RegExp regex = RegExp(
-      r'^\s*(?<street>[^,.\s]+(?:\s+[^,.\s]+)*),\s*(?<city>[^,.\s]+(?:\s+[^,.\s]+)*),\s*(?<state>[^,.\s]+(?:\s+[^,.\s]+)*),\s*(?<zip>\d{5,6})\s*$',
-    );
-
-    final match = regex.firstMatch(address);
-    String? street;
-    String? city;
-    String? state;
-    String? zip;
-    if (match != null) {
-      street = match.namedGroup('street')?.trim();
-      city = match.namedGroup('city')?.trim();
-      state = match.namedGroup('state')?.trim();
-      zip = match.namedGroup('zip')?.trim();
-
-      print('Street: $street');
-      print('City: $city');
-      print('State: $state');
-      print('Zip: $zip');
-    } else {
-      print('Address format is invalid.');
-    }
 
     final Map<String, dynamic> profileData = {
       "name": {
@@ -744,72 +732,64 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "middle_name": middleName,
         "last_name": lastName,
       },
-      "blood_group": bloodGroupController.text,
-      "email": emailController.text,
-      "profile_picture": profilePictureController.text,
+      "blood_group": user.bloodGroup,
+      "email": user.email,
+      "profile_picture": user.profilePicture,
       "phone_numbers": {
-        "personal": int.tryParse(personalPhoneController.text) ?? 0,
-        "landline": int.tryParse(landlineController.text) ?? 0,
-        "company_phone_number": int.tryParse(companyPhoneController.text) ?? 0,
-        "whatsapp_number": int.tryParse(whatsappController.text) ?? 0,
+        "personal": user.phoneNumbers!.personal ?? 0,
+        "landline": user.phoneNumbers!.landline ?? 0,
+        "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? 0,
+        "whatsapp_number": user.phoneNumbers!.whatsappNumber ?? 0,
         "whatsapp_business_number":
-            int.tryParse(whatsappBusinessController.text) ?? 0,
+            user.phoneNumbers!.whatsappBusinessNumber ?? 0,
       },
-      "designation": designationController.text,
-      "company_name": companyNameController.text,
-      "company_email": companyEmailController.text,
-      "company_address": companyEmailController.text,
-      "bio": bioController.text,
-      "address": {
-        "street": street,
-        "city": city,
-        "state": state,
-        "zip": zip,
-        "social_media": [
-          {"platform": "string", "url": igController.text}
-        ],
-        "websites": [
-          {"name": websiteNameController.text, "url": websiteLinkController}
-        ],
-        "video": [
-          {"name": videoNameController, "url": videoLinkController}
-        ],
-        "awards": [
+      "designation": user.designation,
+            "company_logo": user.companyLogo,
+      "company_name": user.companyName,
+      "company_email": user.companyEmail,
+      "company_address": user.companyAddress,
+      "bio": user.bio,
+      "address": user.address,
+      "social_media": [
+        for (var i in user.socialMedia!)
+          {"platform": "${i.platform}", "url": i.url}
+      ],
+      "websites": [
+        for (var i in user.websites!) {"name": i.name, "url": i.url}
+      ],
+      "video": [
+        for (var i in user.video!) {"name": i.name, "url": i.url}
+      ],
+      "awards": [
+        for (var i in user.awards!)
+          {"name": i.name, "url": i.url, "authority_name": i.authorityName}
+      ],
+      "certificates": [
+        for (var i in user.certificates!) {"name": i.name, "url": i.url}
+      ],
+      "brochure": [
+        for (var i in user.brochure!) {"name": i.name, "url": i.url}
+      ],
+      "products": [
+        for (var i in user.products!)
           {
-            "name": awardNameController,
-            "url": "string",
-            "authority_name": "string"
-          }
-        ],
-        "certificates": [
-          {"name": certificateNameController, "url": "string"}
-        ],
-        "brochure": [
-          {"name": brochureNameController, "url": "string"}
-        ],
-        "product": [
-          {
-            "_id": "string",
-            "seller_id": "string",
-            "name": "string",
-            "image": "string",
-            "price": 0,
-            "offer_price": 0,
-            "description": "string",
-            "moq": 0,
-            "units": "string",
-            "status": "string",
+            "_id": i.id,
+            "seller_id": i.sellerId,
+            "name": i.name,
+            "image": i.image,
+            "price": i.price,
+            "offer_price": i.offerPrice,
+            "description": i.description,
+            "moq": i.moq ?? 0,
+            "units": i.units ?? 0,
+            "status": i.status,
             "tags": ["string"]
           }
-        ]
-      },
+      ]
     };
-
-    // ApiRoutes apiRoutes = ApiRoutes();
-    // apiRoutes.editUser(profileData);
+    await api.editUser(profileData);
     print(profileData);
   }
-
   // Future<void> _selectImageFile(ImageSource source, String imageType) async {
   //   final XFile? image = await _picker.pickImage(source: source);
   //   print('$image');
@@ -877,7 +857,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         if (sheet == 'award') {
           return ShowEnterAwardtSheet(
             pickImage: _pickFile,
-            addAwardCard: _addAwardCard,
+            addAwardCard: _addNewAward,
             imageType: sheet,
             awardImage: _awardImageFIle,
             textController1: awardNameController,
@@ -888,7 +868,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               productImage: _productImageFIle,
               imageType: sheet,
               pickImage: _pickFile,
-              addProductCard: _addProductCard,
+              addProductCard: _addNewProduct,
               productNameText: productNameController,
               descriptionText: productDescriptionController,
               moqText: productMoqController,
@@ -898,7 +878,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         } else if (sheet == 'certificate') {
           return ShowAddCertificateSheet(
               certificateImage: _certificateImageFIle,
-              addCertificateCard: _addCertificateCard,
+              addCertificateCard: _addNewCertificate,
               textController: certificateNameController,
               imageType: sheet,
               pickImage: _pickFile);
@@ -908,7 +888,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               textController: brochureNameController,
               pickPdf: _pickFile,
               imageType: sheet,
-              addBrochureCard: _addBrochureCard);
+              addBrochureCard: _addNewBrochure);
         }
       },
     );
@@ -916,9 +896,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncUser =
-        ref.watch(fetchUserDetailsProvider(token, '66c38e4db9aa147c230339bf'));
-
+    final asyncUser = ref.watch(userProvider);
     final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
     final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
     final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
@@ -943,6 +921,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               );
             },
             data: (user) {
+              print(user);
+              print(user.awards);
               nameController.text =
                   '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
               designationController.text = user.designation!;
@@ -1066,7 +1046,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           const SizedBox(height: 35),
                           FormField<File>(
                             validator: (value) {
-                              if (_profileImageFile == null) {
+                              if (user.profilePicture == null) {
                                 return 'Please select a profile image';
                               }
                               return null;
@@ -1088,18 +1068,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               height: 120,
                                               color: const Color.fromARGB(
                                                   255, 255, 255, 255),
-                                              child: _profileImageFile == null
-                                                  ? const Icon(
-                                                      Icons.person,
-                                                      size: 50,
-                                                      color: Colors.grey,
-                                                    )
-                                                  : Image.file(
-                                                      _profileImageFile!,
-                                                      fit: BoxFit.cover,
-                                                      width: 120,
-                                                      height: 120,
-                                                    ),
+                                              child: Image.network(
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Icon(Icons.person);
+                                                },
+                                                user.profilePicture!, // Replace with your image URL
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1244,7 +1220,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           ),
                           FormField<File>(
                             validator: (value) {
-                              if (_profileImageFile == null) {
+                              if (user.companyLogo == null) {
                                 return 'Please select a company logo';
                               }
                               return null;
@@ -1267,8 +1243,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               height: 100,
                                               color: const Color.fromARGB(
                                                   255, 255, 255, 255),
-                                              child: _companyImageFile == null
-                                                  ? const Center(
+                                              child: Image.network(
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
                                                       child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1326,13 +1303,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                           ],
                                                         ),
                                                       ],
-                                                    ))
-                                                  : Image.file(
-                                                      _companyImageFile!,
-                                                      fit: BoxFit.cover,
-                                                      width: 120,
-                                                      height: 120,
-                                                    ),
+                                                    ));
+                            },
+                            user.companyLogo!, // Replace with your image URL
+                            fit: BoxFit.cover,
+                          ),
+                                              
+                                              
+                                            
                                             ),
                                           ),
                                         ),
@@ -1436,12 +1414,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   value:
                                       ref.watch(isPhoneNumberVisibleProvider),
                                   onChanged: (bool value) {
-                                    setState(() {
-                                      ref
-                                          .read(isPhoneNumberVisibleProvider
-                                              .notifier)
-                                          .state = value;
-                                    });
+                                    ref
+                                        .read(isPhoneNumberVisibleProvider
+                                            .notifier)
+                                        .state = value;
                                   },
                                 ),
                               ],
@@ -1802,50 +1778,50 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   value:
                                       ref.watch(isAwardsDetailsVisibleProvider),
                                   onChanged: (bool value) {
-                                    setState(() {
-                                      ref
-                                          .read(isAwardsDetailsVisibleProvider
-                                              .notifier)
-                                          .state = value;
-                                    });
-                                    if (value == false) {
-                                      setState(
-                                        () {
-                                          awards = [];
-                                        },
-                                      );
-                                    }
+                                    ref
+                                        .read(isAwardsDetailsVisibleProvider
+                                            .notifier)
+                                        .state = value;
+
+                                    // if (value == false) {
+                                    //   setState(
+                                    //     () {
+                                    //       awards = [];
+                                    //     },
+                                    //   );
+                                    // }
                                   },
                                 ),
                               ],
                             ),
                           ),
-                          
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, bottom: 10, right: 10),
-                            child: GridView.builder(
-                              shrinkWrap:
-                                  true, // Let GridView take up only as much space as it needs
-                              physics:
-                                  NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2, // Number of columns
-                                crossAxisSpacing: 8.0, // Space between columns
-                                mainAxisSpacing: 8.0, // Space between rows
-                                childAspectRatio:
-                                    .9, // Aspect ratio for the cards
+                          if (isAwardsDetailsVisible)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, bottom: 10, right: 10),
+                              child: GridView.builder(
+                                shrinkWrap:
+                                    true, // Let GridView take up only as much space as it needs
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, // Number of columns
+                                  crossAxisSpacing:
+                                      8.0, // Space between columns
+                                  mainAxisSpacing: 8.0, // Space between rows
+                                  childAspectRatio:
+                                      .9, // Aspect ratio for the cards
+                                ),
+                                itemCount: user.awards!.length,
+                                itemBuilder: (context, index) {
+                                  return AwardCard(
+                                    award: user.awards![index],
+                                    onRemove: () => _removeAward(index),
+                                  );
+                                },
                               ),
-                              itemCount: user.awards!.length,
-                              itemBuilder: (context, index) {
-                                return AwardCard(
-                                  award: user.awards![index],
-                                  onRemove: () => _removeAwardCard(index),
-                                );
-                              },
                             ),
-                          ),
                           if (isAwardsDetailsVisible)
                             GestureDetector(
                               onTap: () {
@@ -1906,44 +1882,34 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               .notifier)
                                           .state = value;
                                     });
-                                    if (value == false) {
-                                      setState(
-                                        () {
-                                          products = [];
-                                        },
-                                      );
-                                    }
                                   },
                                 ),
                               ],
                             ),
                           ),
-                          if (user.products != null)
+                          if (user.products != null && isProductsDetailsVisible)
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, bottom: 10, right: 10),
-                              child: GridView.builder(
-                                shrinkWrap:
-                                    true, // Let GridView take up only as much space as it needs
-                                physics:
-                                    NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2, // Number of columns
-                                  crossAxisSpacing:
-                                      8.0, // Space between columns
-                                  mainAxisSpacing: 8.0, // Space between rows
-                                  childAspectRatio:
-                                      .9, // Aspect ratio for the cards
-                                ),
-                                itemCount: user.products!.length,
-                                itemBuilder: (context, index) {
-                                  return ProductCard(
-                                    product: user.products![index],
-                                    onRemove: () => _removeProductCard(index),
-                                  );
-                                },
-                              ),
+                              child:  GridView.builder(
+                  shrinkWrap:
+                      true, // Let GridView take up only as much space as it needs
+                  physics:
+                      NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns
+                    crossAxisSpacing: 1.0, // Space between columns
+                    mainAxisSpacing: 2.0, // Space between rows
+                    childAspectRatio: .943, // Aspect ratio for the cards
+                  ),
+                  itemCount: user.products!.length,
+                  itemBuilder: (context, index) {
+                    return ProductCard(
+                      product: user.products![index],
+                      onRemove: null,
+                    );
+                  },
+                ),
                             ),
                           if (isProductsDetailsVisible)
                             Padding(
@@ -2006,33 +1972,26 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                   .notifier)
                                           .state = value;
                                     });
-                                    if (value == false) {
-                                      setState(
-                                        () {
-                                          certificates = [];
-                                        },
-                                      );
-                                    }
                                   },
                                 ),
                               ],
                             ),
                           ),
-                          if (certificates.isNotEmpty)
+                          if (user.certificates!.isNotEmpty &&
+                              isCertificateDetailsVisible)
                             ListView.builder(
                               shrinkWrap:
                                   true, // Let ListView take up only as much space as it needs
                               physics:
                                   NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                              itemCount: certificates.length,
+                              itemCount: user.certificates!.length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 4.0), // Space between items
                                   child: CertificateCard(
-                                    certificate: certificates[index],
-                                    onRemove: () =>
-                                        _removeCertificateCard(index),
+                                    certificate: user.certificates![index],
+                                    onRemove: () => _removeCertificate(index),
                                   ),
                                 );
                               },
@@ -2094,31 +2053,25 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               .notifier)
                                           .state = value;
                                     });
-                                    if (value == false) {
-                                      setState(
-                                        () {
-                                          brochures = [];
-                                        },
-                                      );
-                                    }
                                   },
                                 ),
                               ],
                             ),
                           ),
-                          if (brochures.isNotEmpty)
+                          if (user.brochure!.isNotEmpty &&
+                              isBrochureDetailsVisible)
                             ListView.builder(
                               shrinkWrap:
                                   true, // Let ListView take up only as much space as it needs
                               physics:
                                   NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                              itemCount: brochures.length,
+                              itemCount: user.brochure!.length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 4.0), // Space between items
                                   child: BrochureCard(
-                                    brochure: brochures[index],
+                                    brochure: user.brochure![index],
                                     // onRemove: () => _removeCertificateCard(index),
                                   ),
                                 );
@@ -2174,13 +2127,16 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                               label: 'Save & Proceed',
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Perform actions if the form is valid
+                                  _submitData(user: user);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Form is valid')),
+                                    const SnackBar(content: Text('Success')),
                                   );
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MainPage()));
                                 }
-                                _submitData();
                               }))),
                 ],
               );

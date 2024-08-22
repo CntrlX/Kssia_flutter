@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/providers/chat_providers.dart';
 import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
+import 'package:kssia/src/data/api_routes/chat_api.dart';
 
-class IndividualPage extends StatefulWidget {
+class IndividualPage extends ConsumerStatefulWidget {
   IndividualPage({required this.chatModel, required this.sourchat, super.key});
   final ChatModel chatModel;
   final ChatModel sourchat;
@@ -14,39 +17,71 @@ class IndividualPage extends StatefulWidget {
   _IndividualPageState createState() => _IndividualPageState();
 }
 
-class _IndividualPageState extends State<IndividualPage> {
+class _IndividualPageState extends ConsumerState<IndividualPage> {
   bool show = false;
   FocusNode focusNode = FocusNode();
-  List<MessageModel> messages = [];
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
-  void sendMessage(String message, int sourceId, int targetId) {
-    setMessage("source", message);
+  @override
+  void initState() {
+    super.initState();
+    final webSocketClient = ref.read(webSocketClientProvider);
+    webSocketClient.connect(widget.chatModel.id);
+  }
+
+  @override
+  void dispose() {
+    // final webSocketClient = ref.read(webSocketClientProvider);
+    // webSocketClient.disconnect();
+    _controller.dispose();
+    _scrollController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  void sendMessage() {
+    if (_controller.text.isNotEmpty) {
+      ref.read(webSocketClientProvider).sendMessage(
+            widget.sourchat.id,
+            _controller.text,
+          );
+      setMessage("source", _controller.text);
+      _controller.clear();
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void setMessage(String type, String message) {
-    MessageModel messageModel = MessageModel(
-        type: type,
-        message: message,
-        time: DateTime.now().toString().substring(10, 16));
-    print(messages);
+    final messageModel = MessageModel(
+      type: type,
+      message: message,
+      time: DateTime.now().toString().substring(10, 16),
+    );
 
-    setState(() {
-      messages.add(messageModel);
-    });
+    ref.read(chatMessagesProvider.notifier).state = [
+      ...ref.read(chatMessagesProvider),
+      messageModel,
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final messages = ref.watch(chatMessagesProvider);
+    final incomingMessage = ref.watch(messageStreamProvider).when(
+          data: (message) {
+            setMessage("destination", message.message);
+          },
+          loading: () => null,
+          error: (err, stack) => null,
+        );
+
     return Stack(
       children: [
-        // Image.asset(
-        //   "assets/whatsapp_Back.png",
-        //   height: MediaQuery.of(context).size.height,
-        //   width: MediaQuery.of(context).size.width,
-        //   fit: BoxFit.cover,
-        // ),
         Scaffold(
           backgroundColor: Color(0xFFFCFCFC),
           appBar: PreferredSize(
@@ -55,7 +90,7 @@ class _IndividualPageState extends State<IndividualPage> {
                 elevation: 1,
                 shadowColor: Colors.white,
                 backgroundColor: Colors.white,
-                leadingWidth: 90, // Adjusted to accommodate the entire row
+                leadingWidth: 90,
                 titleSpacing: 0,
                 leading: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -98,7 +133,6 @@ class _IndividualPageState extends State<IndividualPage> {
               child: Column(
                 children: [
                   Expanded(
-                    // height: MediaQuery.of(context).size.height - 150,
                     child: ListView.builder(
                       shrinkWrap: true,
                       controller: _scrollController,
@@ -196,21 +230,7 @@ class _IndividualPageState extends State<IndividualPage> {
                                       Icons.send,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {
-                                      if (_controller.text.isNotEmpty) {
-                                        _scrollController.animateTo(
-                                            _scrollController
-                                                .position.maxScrollExtent,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            curve: Curves.easeOut);
-                                        sendMessage(
-                                            _controller.text,
-                                            widget.sourchat.id,
-                                            widget.chatModel.id);
-                                        _controller.clear();
-                                      }
-                                    },
+                                    onPressed: sendMessage,
                                   ),
                                 ),
                               ),
@@ -299,7 +319,6 @@ class _IndividualPageState extends State<IndividualPage> {
             backgroundColor: color,
             child: Icon(
               icons,
-              // semanticLabel: "Help",
               size: 29,
               color: Colors.white,
             ),
@@ -311,7 +330,6 @@ class _IndividualPageState extends State<IndividualPage> {
             text,
             style: TextStyle(
               fontSize: 12,
-              // fontWeight: FontWeight.w100,
             ),
           )
         ],

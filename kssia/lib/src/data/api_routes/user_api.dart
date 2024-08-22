@@ -5,12 +5,14 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_api.g.dart';
 
 class ApiRoutes {
-  final String baseUrl = 'http://43.205.89.79/api/v1/';
+  final String baseUrl = 'http://43.205.89.79/api/v1';
   Future<Map<String, dynamic>> sendOtp(String mobile) async {
     final response = await http.get(
       Uri.parse('$baseUrl/users/sendOtp/$mobile'),
@@ -31,31 +33,31 @@ class ApiRoutes {
   Future<void> editUser(Map<String, dynamic> profileData) async {
     final url = Uri.parse('$baseUrl/user/edit/$id');
 
-    try {
+    
       final response = await http.put(
         url,
         headers: {
-          'Content-Type': 'application/json',
-        },
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
         body: jsonEncode(profileData),
       );
 
       if (response.statusCode == 200) {
         print('Profile updated successfully');
       } else {
+            print(json.decode(response.body)['message']);
         print('Failed to update profile. Status code: ${response.statusCode}');
         throw Exception('Failed to update profile');
       }
-    } catch (e) {
-      print('Unexpected error: $e');
-      throw Exception('An unexpected error occurred');
-    }
+   
+      
+   
   }
 
-  Future<dynamic> createFileUrl({required File file}) async {
-    final url = Uri.parse('http://43.205.89.79/api/v1/files/upload');
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI'; // Replace with your Bearer token
+  Future<dynamic> createFileUrl({required File file,required token}) async {
+    final url = Uri.parse('$baseUrl/files/upload');
+   
 
     // Determine MIME type
     String fileName = file.path.split('/').last;
@@ -97,6 +99,95 @@ class ApiRoutes {
     } catch (e) {
       print(e);
       return null; // Return null or an error message in case of an exception
+    }
+  }
+
+  String removeBaseUrl(String url) {
+  String baseUrl = 'https://kssia.s3.ap-south-1.amazonaws.com/';
+  return url.replaceFirst(baseUrl, '');
+}
+
+  Future<void> deleteFile(String token, String fileUrl) async {
+     final reqfileUrl = removeBaseUrl(fileUrl);
+    print(reqfileUrl);
+    final url = Uri.parse('$baseUrl/files/delete/$reqfileUrl');
+    print('requesting url:$url');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Image deleted successfully');
+    } else {
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse['message']);
+      print('Failed to delete image: ${response.statusCode}');
+    }
+  }
+
+  Future<Product?> uploadProduct(
+      String token,
+      String name,
+      String price,
+      String description,
+      String moq,
+      File productImage,
+      String sellerId) async {
+    final url = Uri.parse('$baseUrl/products');
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', url);
+
+    // Add headers
+    request.headers.addAll({
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add fields
+    request.fields['name'] = name;
+    request.fields['price'] = price;
+    request.fields['offer_price'] = price;
+    request.fields['description'] = description;
+    request.fields['moq'] = moq;
+    request.fields['seller_id'] = sellerId;
+
+    // Add the image file
+    var stream = http.ByteStream(productImage.openRead());
+    stream.cast();
+    var length = await productImage.length();
+    var multipartFile = http.MultipartFile(
+      'image',
+      stream,
+      length,
+      filename: basename(productImage.path),
+      contentType: MediaType('image', 'png'),
+    );
+
+    request.files.add(multipartFile);
+
+    // Send the request
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Product uploaded successfully');
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      print(jsonResponse['message']);
+      final Product product = Product.fromJson(jsonResponse['data']);
+
+      return product;
+    } else {
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      print(jsonResponse['message']);
+      print('Failed to upload product: ${response.statusCode}');
+      return null;
     }
   }
 

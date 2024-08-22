@@ -1,137 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class MyProductPage extends StatelessWidget {
   const MyProductPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'My Products',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              // WhatsApp icon action
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                _InfoCard(title: 'Products', count: '30'),
-                _InfoCard(title: 'Messages', count: '30'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return _ProductCard(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        isScrollControlled: true,
-                        builder: (context) {
-                          return const _ProductDetailSheet();
-                        },
-                      );
-                    },
-                    onMorePressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Center(
-                            child: Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const _ProductOptionsSheet(),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUser = ref.watch(userProvider);
+        return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: SizedBox(
-                width: 170,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (context) {
-                        return const _AddProductSheet();
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  label: const Text(
-                    'Add Products',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004797),
-                    minimumSize: const Size(double.infinity, 55),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
+              title: const Text(
+                'My Products',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed: () {
+                    // WhatsApp icon action
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+            body: asyncUser.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                // Handle error state
+                return Center(
+                  child: Text('Error loading promotions: $error'),
+                );
+              },
+              data: (user) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _InfoCard(
+                              title: 'Products',
+                              count: user.products!.length.toString()),
+                          _InfoCard(title: 'Messages', count: '30'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          hintText: 'Search',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: GridView.builder(
+                          shrinkWrap:
+                              true, // Let GridView take up only as much space as it needs
+                          physics:
+                              NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns
+                            crossAxisSpacing: 1.0, // Space between columns
+                            mainAxisSpacing: 2.0, // Space between rows
+                            childAspectRatio: .95, // Aspect ratio for the cards
+                          ),
+                          itemCount: user.products!.length,
+                          itemBuilder: (context, index) {
+                            return ProductCard(
+                              product: user.products![index],
+                              onRemove: null,
+                            );
+                          },
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return const _ProductDetailSheet();
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Products'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // Button color
+                          minimumSize:
+                              const Size(double.infinity, 48), // Smaller height
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 }
@@ -196,95 +184,95 @@ class _ProductCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      child: InkWell(
-        onTap: onPressed,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 120,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
+                  color: Colors.grey[300], // Placeholder for image
+                ),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Container(
+                  padding: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                    color: Colors.grey[300],
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Color.fromARGB(255, 0, 0, 0).withOpacity(0.00003),
+                        spreadRadius: 0.002,
+                        blurRadius: 0.002,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      // More options action
+                    },
+                    iconSize: 14,
+                    padding: EdgeInsets.zero, // Remove default padding
+                    constraints: const BoxConstraints(),
                   ),
                 ),
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: Container(
-                    padding: const EdgeInsets.all(0.005),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(0, 0, 0, 0).withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: onMorePressed,
-                      iconSize: 20,
-                      constraints: const BoxConstraints(),
-                    ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                SizedBox(height: 4),
+                Text(
+                  'Plastic Cartons',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+                SizedBox(height: 4),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '₹2000 ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '₹1224',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'MOQ: 100',
+                  style: TextStyle(fontSize: 14),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  SizedBox(height: 4),
-                  Text(
-                    'Plastic Cartons',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '₹2000 ',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                            decorationColor: Colors.red,
-                            decorationStyle: TextDecorationStyle.solid,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ₹1224',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF004797),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'MOQ: 100',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -358,7 +346,7 @@ class _ProductDetailSheet extends StatelessWidget {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               Spacer(),
-             
+
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
@@ -369,7 +357,6 @@ class _ProductDetailSheet extends StatelessWidget {
                 '24 Reviews',
                 style: TextStyle(fontSize: 14),
               ),
-
             ],
           ),
           const SizedBox(height: 16),
@@ -380,9 +367,13 @@ class _ProductDetailSheet extends StatelessWidget {
                 radius: 18,
                 backgroundColor: Colors.white,
                 child: IconButton(
-                  icon: Icon(Icons.remove, color: Colors.black,),
+                  icon: Icon(
+                    Icons.remove,
+                    color: Colors.black,
+                  ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
+                    backgroundColor: Color.fromARGB(
+                        255, 114, 111, 111), // Light grey fill color
                     side: BorderSide(color: Colors.black), // Black outline
                   ),
                   onPressed: () {
@@ -410,11 +401,13 @@ class _ProductDetailSheet extends StatelessWidget {
                 radius: 18,
                 backgroundColor: Colors.white,
                 child: IconButton(
-                 icon: Icon(Icons.add, color: Colors.black), // Black icon color
-                      style: IconButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
-                        side: BorderSide(color: Colors.black), // Black outline
-                      ),
+                  icon:
+                      Icon(Icons.add, color: Colors.black), // Black icon color
+                  style: IconButton.styleFrom(
+                    backgroundColor: Color.fromARGB(
+                        255, 114, 111, 111), // Light grey fill color
+                    side: BorderSide(color: Colors.black), // Black outline
+                  ),
                   onPressed: () {
                     // Increment functionality
                   },

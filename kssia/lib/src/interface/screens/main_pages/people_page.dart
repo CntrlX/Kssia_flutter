@@ -45,7 +45,10 @@ class PeoplePage extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.notifications_none_outlined),
+                  icon: Icon(
+                    Icons.notifications_none_outlined,
+                    size: 21,
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -55,7 +58,10 @@ class PeoplePage extends StatelessWidget {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: Icon(
+                    Icons.menu,
+                    size: 21,
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -71,13 +77,13 @@ class PeoplePage extends StatelessWidget {
                 child: Container(
                   margin: EdgeInsets.only(
                       top: 0), // Adjust this value to reduce space
-                  child: SizedBox(
+                  child: const SizedBox(
                     height: 40,
-                    child: const TabBar(
+                    child: TabBar(
                       isScrollable: false, // Disable scroll to center the tabs
                       indicatorColor:
                           Color(0xFF004797), // Set to AppPalette.kPrimaryColor
-                      indicatorWeight: 2.0,
+                      indicatorWeight: 3.0,
                       indicatorSize: TabBarIndicatorSize.tab,
                       labelColor: Color(0xFF004797),
                       unselectedLabelColor: Colors.grey,
@@ -113,6 +119,7 @@ class PeoplePage extends StatelessWidget {
               },
               loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stackTrace) {
+                print(stackTrace);
                 return Center(
                   child: Text('Error loading users: $error'),
                 );

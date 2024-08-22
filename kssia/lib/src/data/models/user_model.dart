@@ -88,7 +88,8 @@ class PhoneNumbers {
       landline: landline ?? this.landline,
       companyPhoneNumber: companyPhoneNumber ?? this.companyPhoneNumber,
       whatsappNumber: whatsappNumber ?? this.whatsappNumber,
-      whatsappBusinessNumber: whatsappBusinessNumber ?? this.whatsappBusinessNumber,
+      whatsappBusinessNumber:
+          whatsappBusinessNumber ?? this.whatsappBusinessNumber,
     );
   }
 }
@@ -168,8 +169,8 @@ class SocialMedia {
 }
 
 class Video {
-  final String name;
-  final String url;
+  final String? name;
+  final String? url;
 
   Video({
     required this.name,
@@ -202,9 +203,9 @@ class Video {
 }
 
 class Award {
-  final String name;
-  final String url;
-  final String authorityName;
+  final String? name;
+  final String? url;
+  final String? authorityName;
 
   Award({required this.name, required this.url, required this.authorityName});
 
@@ -230,8 +231,8 @@ class Award {
 }
 
 class Certificate {
-  final String name;
-  final String url;
+  final String? name;
+  final String? url;
 
   Certificate({
     required this.name,
@@ -264,8 +265,8 @@ class Certificate {
 }
 
 class Brochure {
-  final String name;
-  final String url;
+  final String? name;
+  final String? url;
 
   Brochure({
     required this.name,
@@ -297,7 +298,6 @@ class Brochure {
   }
 }
 
-
 class User {
   final String? id;
   final String? membershipId;
@@ -322,6 +322,7 @@ class User {
   final List<Award>? awards;
   final List<Certificate>? certificates;
   final List<Brochure>? brochure;
+  final List<Review>? reviews; // Added reviews field
   final String? createdAt;
   final String? updatedAt;
   final String? companyAddress;
@@ -353,6 +354,7 @@ class User {
     this.awards,
     this.certificates,
     this.brochure,
+    this.reviews, // Initialize reviews
     this.createdAt,
     this.updatedAt,
     this.companyAddress,
@@ -366,7 +368,9 @@ class User {
       id: json['_id'] as String?,
       membershipId: json['membership_id'] as String?,
       name: json['name'] != null ? Name.fromJson(json['name']) : null,
-      phoneNumbers: json['phone_numbers'] != null ? PhoneNumbers.fromJson(json['phone_numbers']) : null,
+      phoneNumbers: json['phone_numbers'] != null
+          ? PhoneNumbers.fromJson(json['phone_numbers'])
+          : null,
       bloodGroup: json['blood_group'] as String?,
       email: json['email'] as String?,
       designation: json['designation'] as String?,
@@ -376,22 +380,39 @@ class User {
       subCategory: json['sub_category'] as String?,
       bio: json['bio'] as String?,
       address: json['address'] as String?,
-      websites: (json['websites'] as List<dynamic>?)?.map((e) => Website.fromJson(e as Map<String, dynamic>)).toList(),
+      websites: (json['websites'] as List<dynamic>?)
+          ?.map((e) => Website.fromJson(e as Map<String, dynamic>))
+          .toList(),
       status: json['status'] as String?,
       isActive: json['is_active'] as bool?,
       isDeleted: json['is_deleted'] as bool?,
       selectedTheme: json['selectedTheme'] as String?,
-      socialMedia: (json['social_media'] as List<dynamic>?)?.map((e) => SocialMedia.fromJson(e as Map<String, dynamic>)).toList(),
-      video: (json['video'] as List<dynamic>?)?.map((e) => Video.fromJson(e as Map<String, dynamic>)).toList(),
-      awards: (json['awards'] as List<dynamic>?)?.map((e) => Award.fromJson(e as Map<String, dynamic>)).toList(),
-      certificates: (json['certificates'] as List<dynamic>?)?.map((e) => Certificate.fromJson(e as Map<String, dynamic>)).toList(),
-      brochure: (json['brochure'] as List<dynamic>?)?.map((e) => Brochure.fromJson(e as Map<String, dynamic>)).toList(),
+      socialMedia: (json['social_media'] as List<dynamic>?)
+          ?.map((e) => SocialMedia.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      video: (json['video'] as List<dynamic>?)
+          ?.map((e) => Video.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      awards: (json['awards'] as List<dynamic>?)
+          ?.map((e) => Award.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      certificates: (json['certificates'] as List<dynamic>?)
+          ?.map((e) => Certificate.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      brochure: (json['brochure'] as List<dynamic>?)
+          ?.map((e) => Brochure.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      reviews: (json['reviews'] as List<dynamic>?)
+          ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
+          .toList(), // Parse reviews
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
       companyAddress: json['company_address'] as String?,
       companyLogo: json['company_logo'] as String?,
       profilePicture: json['profile_picture'] as String?,
-      products: (json['products'] as List<dynamic>?)?.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList(),
+      products: (json['products'] as List<dynamic>?)
+          ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -420,6 +441,7 @@ class User {
       'awards': awards?.map((e) => e.toJson()).toList(),
       'certificates': certificates?.map((e) => e.toJson()).toList(),
       'brochure': brochure?.map((e) => e.toJson()).toList(),
+      'reviews': reviews?.map((e) => e.toJson()).toList(), // Serialize reviews
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'company_address': companyAddress,
@@ -453,6 +475,7 @@ class User {
     List<Award>? awards,
     List<Certificate>? certificates,
     List<Brochure>? brochure,
+    List<Review>? reviews, // Add reviews parameter
     String? createdAt,
     String? updatedAt,
     String? companyAddress,
@@ -484,12 +507,65 @@ class User {
       awards: awards ?? this.awards,
       certificates: certificates ?? this.certificates,
       brochure: brochure ?? this.brochure,
+      reviews: reviews ?? this.reviews, // Assign reviews
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       companyAddress: companyAddress ?? this.companyAddress,
       companyLogo: companyLogo ?? this.companyLogo,
       profilePicture: profilePicture ?? this.profilePicture,
       products: products ?? this.products,
+    );
+  }
+}
+
+class Review {
+  final String? reviewer;
+  final String? content;
+  final int? rating;
+  final String? id;
+  final String? createdAt;
+
+  Review({
+    this.reviewer,
+    this.content,
+    this.rating,
+    this.id,
+    this.createdAt,
+  });
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      reviewer: json['reviewer'] as String?,
+      content: json['content'] as String?,
+      rating: json['rating'] as int?,
+      id: json['_id'] as String?,
+      createdAt: json['created_at'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'reviewer': reviewer,
+      'content': content,
+      'rating': rating,
+      '_id': id,
+      'created_at': createdAt,
+    };
+  }
+
+  Review copyWith({
+    String? reviewer,
+    String? content,
+    int? rating,
+    String? id,
+    String? createdAt,
+  }) {
+    return Review(
+      reviewer: reviewer ?? this.reviewer,
+      content: content ?? this.content,
+      rating: rating ?? this.rating,
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
