@@ -101,3 +101,92 @@ class Product {
     );
   }
 }
+
+class SellerId {
+  final String? id;
+  final SellerName? name;
+  final String? membershipId;
+
+  SellerId({this.id, this.name, this.membershipId});
+
+  factory SellerId.fromJson(dynamic json) {
+    if (json == null) return SellerId();
+
+    if (json is String) {
+      return SellerId(id: json);
+    } else if (json is Map<String, dynamic>) {
+      return SellerId(
+        id: json['_id'],
+        name: json['name'] != null ? SellerName.fromJson(json['name']) : null,
+        membershipId: json['membership_id'],
+      );
+    }
+    throw Exception("Invalid type for seller_id");
+  }
+
+  dynamic toJson() {
+    if (name != null) {
+      return {
+        '_id': id,
+        'name': name?.toJson(),
+        'membership_id': membershipId,
+      };
+    } else {
+      return id;
+    }
+  }
+
+  SellerId copyWith({
+    String? id,
+    SellerName? name,
+    String? membershipId,
+  }) {
+    return SellerId(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      membershipId: membershipId ?? this.membershipId,
+    );
+  }
+}
+
+class SellerName {
+  final String? firstName;
+  final String? middleName;
+  final String? lastName;
+
+  SellerName({
+    this.firstName,
+    this.middleName,
+    this.lastName,
+  });
+
+  factory SellerName.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return SellerName();
+
+    return SellerName(
+      firstName: json['first_name'],
+      middleName: json['middle_name'],
+      lastName: json['last_name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'first_name': firstName,
+      'middle_name': middleName,
+      'last_name': lastName,
+    };
+  }
+
+  SellerName copyWith({
+    String? firstName,
+    String? middleName,
+    String? lastName,
+  }) {
+    return SellerName(
+      firstName: firstName ?? this.firstName,
+      middleName: middleName ?? this.middleName,
+      lastName: lastName ?? this.lastName,
+    );
+  }
+}
