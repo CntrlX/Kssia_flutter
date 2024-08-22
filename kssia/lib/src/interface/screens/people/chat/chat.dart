@@ -8,7 +8,7 @@ class ChatPage extends StatelessWidget {
       icon: 'https://via.placeholder.com/150',
       time: '6:11',
       currentMessage: 'awawbarwb',
-      id: 9,
+      id: '66c43d09e6647052a892263e',
       unreadMessages: 4);
 
   final List<ChatModel> chats = [
@@ -17,23 +17,18 @@ class ChatPage extends StatelessWidget {
         icon: 'https://via.placeholder.com/150',
         time: '6:15',
         currentMessage: 'Hey whats goin on',
-        id: 1,
+        id: '66c38e4db9aa147c230339bf',
         unreadMessages: 2),
     ChatModel(
-        name: 'Person 2',
+        name: 'Nihal',
         icon: 'https://via.placeholder.com/150',
         time: '6:15',
         currentMessage: 'Hey whats goin on',
-        id: 2,
-        unreadMessages: 3),
-    ChatModel(
-        name: 'Person 3',
-        icon: 'https://via.placeholder.com/150',
-        time: '6:15',
-        currentMessage: 'Hey whats goin on',
-        id: 3,
-        unreadMessages: 1)
+        id: '66c43d09e6647052a892263e',
+        unreadMessages: 2),
   ];
+
+  ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {

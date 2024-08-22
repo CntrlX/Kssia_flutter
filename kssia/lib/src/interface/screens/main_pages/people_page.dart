@@ -113,6 +113,7 @@ class PeoplePage extends StatelessWidget {
               },
               loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stackTrace) {
+                print(stackTrace);
                 return Center(
                   child: Text('Error loading users: $error'),
                 );

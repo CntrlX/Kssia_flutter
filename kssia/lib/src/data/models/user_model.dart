@@ -88,7 +88,8 @@ class PhoneNumbers {
       landline: landline ?? this.landline,
       companyPhoneNumber: companyPhoneNumber ?? this.companyPhoneNumber,
       whatsappNumber: whatsappNumber ?? this.whatsappNumber,
-      whatsappBusinessNumber: whatsappBusinessNumber ?? this.whatsappBusinessNumber,
+      whatsappBusinessNumber:
+          whatsappBusinessNumber ?? this.whatsappBusinessNumber,
     );
   }
 }
@@ -265,7 +266,7 @@ class Certificate {
 
 class Brochure {
   final String? name;
-  final String ?url;
+  final String? url;
 
   Brochure({
     required this.name,
@@ -296,7 +297,6 @@ class Brochure {
     };
   }
 }
-
 
 class User {
   final String? id;
@@ -368,7 +368,9 @@ class User {
       id: json['_id'] as String?,
       membershipId: json['membership_id'] as String?,
       name: json['name'] != null ? Name.fromJson(json['name']) : null,
-      phoneNumbers: json['phone_numbers'] != null ? PhoneNumbers.fromJson(json['phone_numbers']) : null,
+      phoneNumbers: json['phone_numbers'] != null
+          ? PhoneNumbers.fromJson(json['phone_numbers'])
+          : null,
       bloodGroup: json['blood_group'] as String?,
       email: json['email'] as String?,
       designation: json['designation'] as String?,
@@ -378,23 +380,39 @@ class User {
       subCategory: json['sub_category'] as String?,
       bio: json['bio'] as String?,
       address: json['address'] as String?,
-      websites: (json['websites'] as List<dynamic>?)?.map((e) => Website.fromJson(e as Map<String, dynamic>)).toList(),
+      websites: (json['websites'] as List<dynamic>?)
+          ?.map((e) => Website.fromJson(e as Map<String, dynamic>))
+          .toList(),
       status: json['status'] as String?,
       isActive: json['is_active'] as bool?,
       isDeleted: json['is_deleted'] as bool?,
       selectedTheme: json['selectedTheme'] as String?,
-      socialMedia: (json['social_media'] as List<dynamic>?)?.map((e) => SocialMedia.fromJson(e as Map<String, dynamic>)).toList(),
-      video: (json['video'] as List<dynamic>?)?.map((e) => Video.fromJson(e as Map<String, dynamic>)).toList(),
-      awards: (json['awards'] as List<dynamic>?)?.map((e) => Award.fromJson(e as Map<String, dynamic>)).toList(),
-      certificates: (json['certificates'] as List<dynamic>?)?.map((e) => Certificate.fromJson(e as Map<String, dynamic>)).toList(),
-      brochure: (json['brochure'] as List<dynamic>?)?.map((e) => Brochure.fromJson(e as Map<String, dynamic>)).toList(),
-      reviews: (json['reviews'] as List<dynamic>?)?.map((e) => Review.fromJson(e as Map<String, dynamic>)).toList(), // Parse reviews
+      socialMedia: (json['social_media'] as List<dynamic>?)
+          ?.map((e) => SocialMedia.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      video: (json['video'] as List<dynamic>?)
+          ?.map((e) => Video.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      awards: (json['awards'] as List<dynamic>?)
+          ?.map((e) => Award.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      certificates: (json['certificates'] as List<dynamic>?)
+          ?.map((e) => Certificate.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      brochure: (json['brochure'] as List<dynamic>?)
+          ?.map((e) => Brochure.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      reviews: (json['reviews'] as List<dynamic>?)
+          ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
+          .toList(), // Parse reviews
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
       companyAddress: json['company_address'] as String?,
       companyLogo: json['company_logo'] as String?,
       profilePicture: json['profile_picture'] as String?,
-      products: (json['products'] as List<dynamic>?)?.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList(),
+      products: (json['products'] as List<dynamic>?)
+          ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -499,7 +517,6 @@ class User {
     );
   }
 }
-
 
 class Review {
   final String? reviewer;
