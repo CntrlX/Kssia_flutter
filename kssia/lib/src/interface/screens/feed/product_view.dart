@@ -64,9 +64,9 @@ class ProductView extends StatelessWidget {
                           NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // Number of columns
-                        crossAxisSpacing: 8.0, // Space between columns
-                        mainAxisSpacing: 8.0, // Space between rows
-                        childAspectRatio: .8, // Aspect ratio for the cards
+                        crossAxisSpacing: 1.0, // Space between columns
+                        mainAxisSpacing: 2.0, // Space between rows
+                        childAspectRatio: .914, // Aspect ratio for the cards
                       ),
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {

@@ -1,94 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class MyProductPage extends StatelessWidget {
   const MyProductPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'My Products',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              // WhatsApp icon action
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                _InfoCard(title: 'Products', count: '30'),
-                _InfoCard(title: 'Messages', count: '30'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return const _ProductCard();
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUser = ref.watch(userProvider);
+        return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return const _ProductDetailSheet();
-                  },
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Products'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Button color
-                minimumSize: const Size(double.infinity, 48), // Smaller height
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              title: const Text(
+                'My Products',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed: () {
+                    // WhatsApp icon action
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+            body: asyncUser.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                // Handle error state
+                return Center(
+                  child: Text('Error loading promotions: $error'),
+                );
+              },
+              data: (user) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _InfoCard(
+                              title: 'Products',
+                              count: user.products!.length.toString()),
+                          _InfoCard(title: 'Messages', count: '30'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          hintText: 'Search',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: GridView.builder(
+                          shrinkWrap:
+                              true, // Let GridView take up only as much space as it needs
+                          physics:
+                              NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns
+                            crossAxisSpacing: 1.0, // Space between columns
+                            mainAxisSpacing: 2.0, // Space between rows
+                            childAspectRatio: .95, // Aspect ratio for the cards
+                          ),
+                          itemCount: user.products!.length,
+                          itemBuilder: (context, index) {
+                            return ProductCard(
+                              product: user.products![index],
+                              onRemove: null,
+                            );
+                          },
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return const _ProductDetailSheet();
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Products'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // Button color
+                          minimumSize:
+                              const Size(double.infinity, 48), // Smaller height
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 }
@@ -152,7 +183,8 @@ class _ProductCard extends StatelessWidget {
               Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
                   color: Colors.grey[300], // Placeholder for image
                 ),
               ),
@@ -161,19 +193,20 @@ class _ProductCard extends StatelessWidget {
                 right: 4,
                 child: Container(
                   padding: const EdgeInsets.all(1),
-                    decoration: BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                      color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.00003),
-                      spreadRadius: 0.002,
-                      blurRadius: 0.002,
-                      offset: Offset(0, 3),
+                        color:
+                            Color.fromARGB(255, 0, 0, 0).withOpacity(0.00003),
+                        spreadRadius: 0.002,
+                        blurRadius: 0.002,
+                        offset: Offset(0, 3),
                       ),
                     ],
-                    ),
-                    child: IconButton(
+                  ),
+                  child: IconButton(
                     icon: const Icon(Icons.more_vert),
                     onPressed: () {
                       // More options action
@@ -181,7 +214,7 @@ class _ProductCard extends StatelessWidget {
                     iconSize: 14,
                     padding: EdgeInsets.zero, // Remove default padding
                     constraints: const BoxConstraints(),
-                    ),
+                  ),
                 ),
               ),
             ],

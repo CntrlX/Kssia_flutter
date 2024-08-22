@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/api_routes/requirement_api.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/requirement_model.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class FeedView extends StatelessWidget {
   void _showAddRequirementSheet(BuildContext context) {
@@ -105,113 +111,161 @@ class FeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  hintText: 'Search your Products and requirements',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Color.fromARGB(255, 226, 224, 224),
-                    ),
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncRequirements = ref.watch(fetchRequirementsProvider(token));
+        return Scaffold(
+          body: asyncRequirements.when(
+            loading: () => Center(child: LoadingAnimation()),
+            error: (error, stackTrace) {
+              // Handle error state
+              return Center(
+                child: Text('Error loading promotions: $error'),
+              );
+            },
+            data: (requirements) {
+              print(requirements);
+              return ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search your Products and requirements',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 226, 224, 224),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      )),
+                  SizedBox(height: 16),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: requirements.length,
+                    itemBuilder: (context, index) {
+                      final requirement = requirements[index];
+                      if (requirement.status == 'approved') {
+                        return _buildPost(
+                          withImage: requirement.image != null &&
+                              requirement.image!.isNotEmpty,
+                          requirement: requirement,
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    },
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              )),
-          SizedBox(height: 16),
-          _buildPost(),
-          _buildPost(withImage: true),
-          _buildPost(withImage: true),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddRequirementSheet(context),
-        label: const Text(
-          'Add Requirement/update',
-          style: TextStyle(color: Colors.white),
-        ),
-        icon: const Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 27,
-        ),
-        backgroundColor: const Color(0xFF004797),
-      ),
+                ],
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => _showAddRequirementSheet(context),
+            label: const Text(
+              'Add Requirement/update',
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 27,
+            ),
+            backgroundColor: const Color(0xFF004797),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildPost({bool withImage = false}) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. '
-              'Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              style: TextStyle(fontSize: 14),
+  Widget _buildPost(
+      {bool withImage = false, required Requirement requirement}) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUser = ref.watch(userProvider);
+        return Card(
+            margin: const EdgeInsets.only(bottom: 16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
             ),
-            if (withImage) ...[
-              SizedBox(height: 16),
-              Image(
-                  image: NetworkImage(
-                      'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
-            ],
-            SizedBox(height: 16),
-            const Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(
-                      'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
-                  radius: 16,
-                ),
-                SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'John Kappa',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    Text(
-                      'Company name',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Text(
-                  '12:30 PM - Apr 21, 2021',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+            child: asyncUser.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                // Handle error state
+                return Center(
+                  child: Text('Error loading promotions: $error'),
+                );
+              },
+              data: (user) {
+                print(user);
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        requirement.content!,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      if (withImage) ...[
+                        SizedBox(height: 16),
+                        Image(
+                            image: NetworkImage(
+                                'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
+                      ],
+                      SizedBox(height: 16),
+                      const Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: AssetImage(
+                                'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
+                            radius: 16,
+                          ),
+                          SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'John Kappa',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
+                              ),
+                              Text(
+                                'Company name',
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Text(
+                            '12:30 PM - Apr 21, 2021',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 }
