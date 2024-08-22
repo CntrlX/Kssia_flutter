@@ -4,7 +4,7 @@ class ChatModel {
   String time;
   String currentMessage;
   bool select = false;
-  int id;
+  String id;
   int unreadMessages;
   ChatModel({
     required this.name,
