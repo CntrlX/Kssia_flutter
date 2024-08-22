@@ -86,14 +86,12 @@ class FeedPage extends StatelessWidget {
               ),
             ),
           ),
-          body: Expanded(
-            child: TabBarView(
-              children: [
-                FeedView(),
-                ProductView(),
-              ],
-            ),
-          ),
+          body: TabBarView(
+            children: [
+              FeedView(),
+              ProductView(),
+            ],
+          )
         ));
   }
 }
