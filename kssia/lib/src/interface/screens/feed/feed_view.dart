@@ -172,6 +172,9 @@ class FeedView extends StatelessWidget {
                       }
                     },
                   ),
+                  SizedBox(
+                    height: 40,
+                  )
                 ],
               );
             },
