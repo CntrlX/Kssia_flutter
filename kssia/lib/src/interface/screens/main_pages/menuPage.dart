@@ -5,18 +5,18 @@ import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
 import '../menu/terms_and_conditions.dart';
-
-import '../menu/my_subscription.dart'; 
-import '../menu/my_events.dart'; 
-import '../menu/my_transaction.dart'; 
-import '../menu/my_product.dart'; 
+import '../menu/privacy.dart';
+import '../menu/about.dart';
+import '../menu/my_subscription.dart';
+import '../menu/my_events.dart';
+import '../menu/my_transaction.dart';
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder( 
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
         titlePadding: EdgeInsets.all(0),
@@ -210,6 +210,7 @@ class MenuPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Profile and Edit Section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -246,8 +247,11 @@ class MenuPage extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(height: 10), // Add space below profile section
+
+            // Account Section Label
             Divider(),
-            SizedBox(height: 10), // Add space here
+            SizedBox(height: 13), 
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
@@ -258,7 +262,10 @@ class MenuPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10), // Add space here
+            SizedBox(height: 13), // Add space here
+            Divider(),
+
+            // Menu List
             _buildListTile(
               context,
               Icons.credit_card,
@@ -270,6 +277,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.subscriptions,
@@ -281,7 +289,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
-
+            Divider(),
             _buildListTile(context, Icons.shopping_bag, 'My Products',
               onTap: () {
                 Navigator.push(
@@ -290,10 +298,8 @@ class MenuPage extends StatelessWidget {
                 );
               }, 
             ),
-              
-            
-
-           _buildListTile(context,Icons.subscriptions,'My Reviews',
+            Divider(),
+            _buildListTile(context,Icons.subscriptions,'My Reviews',
               onTap: () {
                 Navigator.push(
                   context,
@@ -301,7 +307,8 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
-             _buildListTile(context,Icons.subscriptions,'My Events',
+            Divider(),
+            _buildListTile(context,Icons.subscriptions,'My Events',
               onTap: () {
                 Navigator.push(
                   context,
@@ -309,6 +316,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.monetization_on,
@@ -320,6 +328,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.notifications,
@@ -331,6 +340,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.info,
@@ -342,6 +352,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.privacy_tip,
@@ -353,6 +364,7 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
+            Divider(),
             _buildListTile(
               context,
               Icons.rule,
@@ -365,23 +377,42 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 10), // Add space here
-            _buildListTile(
-              context,
-              Icons.logout,
-              'Logout',
-              textColor: Colors.black,
-              onTap: () => showLogoutDialog(context),
+            Divider(),
+
+            // Spacing before Logout and Delete
+            SizedBox(height: 0.5),
+
+             Divider(),
+            // Logout and Delete Account
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: _buildListTile(
+                context,
+                Icons.logout,
+                'Logout',
+                textColor: Colors.black,
+                onTap: () => showLogoutDialog(context),
+              ),
             ),
-            SizedBox(height: 10), // Add space here
-            _buildListTile(
-              context,
-              Icons.delete,
-              'Delete account',
-              textColor: Colors.red,
-              onTap: () => showDeleteAccountDialog(context),
+            Divider(),
+
+             SizedBox(height: 0.5),
+              Divider(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: _buildListTile(
+                context,
+                Icons.delete,
+                'Delete account',
+                textColor: Colors.red,
+                onTap: () => showDeleteAccountDialog(context),
+              ),
             ),
+            Divider(),
             SizedBox(height: 20),
+
+            // Version and Playstore Rating
             Center(
               child: Text(
                 'Version 1.32\nRate us on Playstore',
@@ -397,9 +428,12 @@ class MenuPage extends StatelessWidget {
   }
 
   ListTile _buildListTile(BuildContext context, IconData icon, String title,
-      {Color textColor = Colors.black, Function()? onTap}) {
+      {Color textColor = const Color.fromARGB(255, 0, 0, 0), Function()? onTap}) {
     return ListTile(
-      leading: Icon(icon),
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey.shade200,
+        child: Icon(icon, color: textColor),
+      ),
       title: Text(title, style: TextStyle(color: textColor)),
       trailing: SvgPicture.asset(
         'assets/icons/polygon.svg',
@@ -415,124 +449,5 @@ class MenuPage extends StatelessWidget {
   }
 }
 
-class PrivacyPolicyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Privacy policy'),
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/icons/polygon.svg',
-            height: 16,
-            width: 16,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Privacy Policy',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa.',
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class AboutPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('About'),
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/icons/polygon.svg',
-            height: 16,
-            width: 16,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network('https://placehold.co/600x400/png'),
-            SizedBox(height: 16),
-            Text(
-              'ABOUT THE COMPANY',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(Icons.phone, color: Colors.blue),
-                SizedBox(width: 10),
-                Text('9425726433', style: TextStyle(fontSize: 16)),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Icon(Icons.email, color: Colors.blue),
-                SizedBox(width: 10),
-                Text('kssia@gmail.com', style: TextStyle(fontSize: 16)),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Icon(Icons.location_on, color: Colors.blue),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            Image.network('https://placehold.co/600x400/png'),
-          ],
-        ),
-      ),
-    );
-  }
-}
+

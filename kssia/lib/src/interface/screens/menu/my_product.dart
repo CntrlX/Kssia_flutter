@@ -137,7 +137,7 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       width: 150,
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -149,14 +149,16 @@ class _InfoCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             count,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -167,7 +169,14 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _ProductCard extends StatelessWidget {
-  const _ProductCard({super.key});
+  final VoidCallback onPressed;
+  final VoidCallback onMorePressed;
+
+  const _ProductCard({
+    required this.onPressed,
+    required this.onMorePressed,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -275,14 +284,14 @@ class _ProductDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 200,
-            color: Colors.grey[300], // Placeholder for image
+            color: Colors.grey[300],
           ),
           const SizedBox(height: 16),
           Text(
@@ -299,13 +308,15 @@ class _ProductDetailSheet extends StatelessWidget {
                     fontSize: 14,
                     color: Colors.grey,
                     decoration: TextDecoration.lineThrough,
+                    decorationColor: Colors.red,
+                    decorationStyle: TextDecorationStyle.solid,
                   ),
                 ),
                 TextSpan(
-                  text: ' INR 1499.00 / piece',
+                  text: ' INR 1499.00 / piece  ',
                   style: const TextStyle(
                     fontSize: 16,
-                    color: Colors.black,
+                    color: Color.fromARGB(255, 255, 255, 255),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -327,7 +338,7 @@ class _ProductDetailSheet extends StatelessWidget {
             children: const [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.grey, // Placeholder for user image
+                backgroundColor: Colors.grey,
               ),
               SizedBox(width: 8),
               Text(
@@ -335,25 +346,186 @@ class _ProductDetailSheet extends StatelessWidget {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               Spacer(),
+             
+              Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
+              Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
+              Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
+              Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
+              // Icon(Icons.star_half, color: Color(0xFFF5B358), size: 16),
+
               Text(
                 '24 Reviews',
                 style: TextStyle(fontSize: 14),
               ),
+
             ],
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-              Icon(Icons.message, color: Colors.blue, size: 20),
-              SizedBox(width: 4),
-              Text(
-                '3 messages',
-                style: TextStyle(fontSize: 14, color: Colors.blue),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: IconButton(
+                  icon: Icon(Icons.remove, color: Colors.black,),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
+                    side: BorderSide(color: Colors.black), // Black outline
+                  ),
+                  onPressed: () {
+                    // Decrement functionality
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 120, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Color.fromARGB(255, 214, 213, 213)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '1,224',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: IconButton(
+                 icon: Icon(Icons.add, color: Colors.black), // Black icon color
+                      style: IconButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
+                        side: BorderSide(color: Colors.black), // Black outline
+                      ),
+                  onPressed: () {
+                    // Increment functionality
+                  },
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                // Get quote functionality
+              },
+              child: const Text(
+                'Get quote',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF004797),
+                minimumSize: const Size(double.infinity, 55),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _AddProductSheet extends StatelessWidget {
+  const _AddProductSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Post a Requirement/update',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            height: 150,
+            color: Colors.grey[300],
+            child: const Center(
+              child: Icon(Icons.add, size: 50),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Add content',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'POST REQUIREMENT/UPDATE',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF004797),
+                minimumSize: const Size(double.infinity, 55),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProductOptionsSheet extends StatelessWidget {
+  const _ProductOptionsSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: const Text('Edit'),
+          onTap: () {
+            Navigator.pop(context);
+            // Edit functionality
+          },
+        ),
+        ListTile(
+          title: const Text(
+            'Delete',
+            style: TextStyle(color: Colors.red),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            // Delete functionality
+          },
+        ),
+      ],
     );
   }
 }

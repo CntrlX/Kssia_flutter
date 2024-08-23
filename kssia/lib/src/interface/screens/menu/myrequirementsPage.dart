@@ -67,22 +67,25 @@ class MyRequirementsPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 10),
-            Text(
-              messages,
-              style: TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              timestamp,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  messages,
+                  style: TextStyle(
+                    color: Color(0xFF004797),
+                  ),
+                ),
+                Text(
+                  timestamp,
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
             ),
             SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFEB5860),
+                backgroundColor: Color(0xFFEB5757),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
@@ -95,7 +98,7 @@ class MyRequirementsPage extends StatelessWidget {
                 'DELETE',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
+                  fontSize: 10,
                 ),
               ),
             ),
@@ -135,10 +138,10 @@ class MyRequirementsPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('No', style: TextStyle(color: Colors.blue)),
+                    child: Text('No', style: TextStyle(color: Color(0xFF0E1877))),
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(backgroundColor: Color(0xFFEB5860)),
+                    style: TextButton.styleFrom(backgroundColor: Color(0xFFEB5757)),
                     onPressed: () {
                       // Handle the deletion logic
                       Navigator.of(context).pop();
