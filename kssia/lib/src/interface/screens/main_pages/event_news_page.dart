@@ -3,16 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/api_routes/events_api.dart';
 import 'package:kssia/src/data/api_routes/news_api.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/models/events_model.dart';
-import 'package:kssia/src/data/models/news_model.dart';
-import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/event.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
-import 'package:kssia/src/interface/screens/people/chat/chat.dart';
-import 'package:kssia/src/interface/screens/people/members.dart';
+
 
 class Event_News_Page extends StatefulWidget {
   @override
