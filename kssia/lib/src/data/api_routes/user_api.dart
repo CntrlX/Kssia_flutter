@@ -127,6 +127,23 @@ class ApiRoutes {
       print('Failed to delete image: ${response.statusCode}');
     }
   }
+  Future<void> markNotificationAsRead(String notificationId) async {
+  final url = Uri.parse('http://43.205.89.79/api/v1/notification/in-app/$notificationId/read/$id');
+  
+  final response = await http.put(
+    url,
+    headers: {
+      'accept': 'application/json',
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    print('Notification marked as read successfully.');
+  } else {
+    print('Failed to mark notification as read. Status code: ${response.statusCode}');
+  }
+}
 
   Future<Product?> uploadProduct(
       String token,

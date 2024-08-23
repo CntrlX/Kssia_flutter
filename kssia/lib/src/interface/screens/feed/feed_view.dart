@@ -132,24 +132,25 @@ class FeedView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: TextField(
                         decoration: InputDecoration(
+                          fillColor: Colors.white,
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Search your Products and requirements',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide(
-                              color: Color.fromARGB(255, 226, 224, 224),
+                              color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide(
-                              color: Colors.grey,
+                              color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide(
-                              color: Colors.grey,
+                              color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                         ),
@@ -203,9 +204,12 @@ class FeedView extends StatelessWidget {
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
         return Card(
+            color: Colors.white,
+            elevation: 0,
             margin: const EdgeInsets.only(bottom: 16.0),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
+              side: BorderSide(color: Color.fromARGB(255, 213, 208, 208)),
+              borderRadius: BorderRadius.circular(6.0),
             ),
             child: asyncUser.when(
               loading: () => Center(child: LoadingAnimation()),
@@ -222,35 +226,55 @@ class FeedView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (withImage) ...[
+                        SizedBox(height: 16),
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          child: Image.network(
+                            fit: BoxFit.cover,
+                            requirement.image!,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.network(
+                                  fit: BoxFit.cover,
+                                  'https://placehold.co/600x400');
+                            },
+                          ),
+                        )
+                      ],
+                      SizedBox(height: 16),
                       Text(
                         requirement.content!,
                         style: TextStyle(fontSize: 14),
                       ),
-                      if (withImage) ...[
-                        SizedBox(height: 16),
-                        Image(
-                            image: NetworkImage(
-                                'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
-                      ],
                       SizedBox(height: 16),
-                      const Row(
+                      Row(
                         children: [
-                          CircleAvatar(
-                            backgroundImage: AssetImage(
-                                'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
-                            radius: 16,
+                          ClipOval(
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              child: Image.network(
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.person);
+                                },
+                                user.profilePicture!, // Replace with your image URL
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'John Kappa',
+                                '${requirement.author!.name!.firstName} ${requirement.author!.name!.middleName} ${requirement.author!.name!.lastName}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                               Text(
-                                'Company name',
+                                user.companyName!,
                                 style:
                                     TextStyle(color: Colors.grey, fontSize: 12),
                               ),
@@ -258,7 +282,7 @@ class FeedView extends StatelessWidget {
                           ),
                           Spacer(),
                           Text(
-                            '12:30 PM - Apr 21, 2021',
+                            requirement.createdAt.toString(),
                             style: TextStyle(color: Colors.grey, fontSize: 12),
                           ),
                         ],

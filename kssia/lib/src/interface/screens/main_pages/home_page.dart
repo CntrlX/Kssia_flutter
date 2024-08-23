@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   promotions.where((promo) => promo.type == 'notice').toList();
               final videos =
                   promotions.where((promo) => promo.type == 'video').toList();
-
+final filteredVideos = videos.where((video) => video.ytLink.startsWith('http')).toList();
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,19 +202,20 @@ class _HomePageState extends State<HomePage> {
 
                     // Videos
                     const SizedBox(height: 8),
-                    if (videos.isNotEmpty)
-                      SizedBox(
-                        height: 300,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: videos.length,
-                          physics: const PageScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return customVideo(
-                                context: context, video: videos[index]);
-                          },
-                        ),
-                      ),
+ 
+
+if (filteredVideos.isNotEmpty)
+  SizedBox(
+    height: 300,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: filteredVideos.length,
+      physics: const PageScrollPhysics(),
+      itemBuilder: (context, index) {
+        return customVideo(context: context, video: filteredVideos[index]);
+      },
+    ),
+  ),
                   ],
                 ),
               );
@@ -379,7 +380,9 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () => notice.noticeLink.contains('http')? _launchUrl(url: notice.noticeLink): null,
+              onPressed: () => notice.noticeLink.contains('http')
+                  ? _launchUrl(url: notice.noticeLink)
+                  : null,
               child: const Row(
                 children: [
                   Text(
