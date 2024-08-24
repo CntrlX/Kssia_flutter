@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
@@ -24,20 +25,7 @@ class ProfilePreview extends StatelessWidget {
 
   final ValueNotifier<int> _currentVideo = ValueNotifier<int>(0);
 
-  Map<int, int> getRatingDistribution(User user) {
-    Map<int, int> distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-    for (var review in user.reviews!) {
-      distribution[review.rating!] = (distribution[review.rating] ?? 0) + 1;
-    }
-    return distribution;
-  }
 
-  double getAverageRating(User user) {
-    if (user.reviews!.isEmpty) return 0.0;
-    int totalRating =
-        user.reviews!.fold(0, (sum, review) => sum + review.rating!);
-    return totalRating / user.reviews!.length;
-  }
 
   @override
   Widget build(BuildContext context) {

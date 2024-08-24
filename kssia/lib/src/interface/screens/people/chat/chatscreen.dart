@@ -6,7 +6,7 @@ import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
-import 'package:kssia/src/data/api_routes/chat_api.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 
 class IndividualPage extends ConsumerStatefulWidget {
   IndividualPage({required this.chatModel, required this.sourchat, super.key});

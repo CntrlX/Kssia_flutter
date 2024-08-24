@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
 
 class RequestNFCPage extends StatelessWidget {
   @override
@@ -38,7 +39,7 @@ class RequestNFCPage extends StatelessWidget {
               'Lorem ipsum dolor sit amet consectetur. Justo facilisis mattis tincidunt vitae quam quis. Nec nisi duis amet aenean arcu tristique et et eleifend.',
               style: TextStyle(
                 fontSize: 16,
-                color: Color(0xFF828282), 
+                color: Color(0xFF828282),
               ),
             ),
             SizedBox(height: 24),
@@ -50,28 +51,8 @@ class RequestNFCPage extends StatelessWidget {
             ),
             SizedBox(height: 69),
             Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Add your request NFC card logic here
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF004797), // Dark blue color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0), // Rectangle shape
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 100.0), // Increase the horizontal length here
-                  child: Text(
-                    'REQUEST NFC CARD',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white, // Set the color to white
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                child: customButton(
+                    label: 'REQUEST NFC', onPressed: () {}, fontSize: 16)),
           ],
         ),
       ),

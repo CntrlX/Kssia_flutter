@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kssia/src/data/api_routes/notification_api.dart';
+import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 

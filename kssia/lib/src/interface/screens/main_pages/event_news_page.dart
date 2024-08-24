@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kssia/src/data/api_routes/events_api.dart';
-import 'package:kssia/src/data/api_routes/news_api.dart';
+import 'package:kssia/src/data/services/api_routes/events_api.dart';
+import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/event.dart';

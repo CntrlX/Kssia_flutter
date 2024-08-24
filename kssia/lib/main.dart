@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
       ), // Remove the debug banner
       home: Scaffold(
         body: Center(
-          child: LoginPage(),
+          child: MainPage(),
         ),
       ),
     );
