@@ -43,18 +43,36 @@ class ProductView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search your Products and requirements',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    onChanged: (query) {
-                      ref.read(searchQueryProvider.notifier).state = query;
-                    },
-                  ),
+                  Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextField(
+                        onChanged: (query) {
+                          ref.read(searchQueryProvider.notifier).state = query;
+                        },
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search your Products',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 211, 211),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 211, 211),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 216, 211, 211),
+                            ),
+                          ),
+                        ),
+                      )),
                   SizedBox(height: 16),
                   if (filteredProducts.isNotEmpty)
                     GridView.builder(

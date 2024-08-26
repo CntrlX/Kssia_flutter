@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
 import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import '../menu/requestNFC.dart';
@@ -237,7 +238,15 @@ class MenuPage extends StatelessWidget {
                   Spacer(),
                   TextButton(
                     onPressed: () {
-                      // Edit profile action
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => DetailsPage(),
+                          transitionDuration: Duration(milliseconds: 500),
+                          transitionsBuilder: (_, a, __, c) =>
+                              FadeTransition(opacity: a, child: c),
+                        ),
+                      );
                     },
                     child: Text(
                       'Edit',
@@ -247,23 +256,29 @@ class MenuPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10), // Add space below profile section
 
             // Account Section Label
-            Divider(),
-            SizedBox(height: 13), 
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                'ACCOUNT',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+
+            SizedBox(height: 13),
+            Container(
+              height: 50,
+              width: double.infinity,
+              color: Color(0xFFF2F2F2),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Row(
+                  children: [
+                    Text(
+                      'ACCOUNT',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: 13), // Add space here
-            Divider(),
 
             // Menu List
             _buildListTile(
@@ -285,30 +300,42 @@ class MenuPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const MySubscriptionPage()),
                 );
               },
             ),
             Divider(),
-            _buildListTile(context, Icons.shopping_bag, 'My Products',
-              onTap: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => const MyProductPage()),
-                );
-              }, 
-            ),
-            Divider(),
-            _buildListTile(context,Icons.subscriptions,'My Reviews',
+            _buildListTile(
+              context,
+              Icons.shopping_bag,
+              'My Products',
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyReviewsPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const MyProductPage()),
                 );
               },
             ),
             Divider(),
-            _buildListTile(context,Icons.subscriptions,'My Events',
+            _buildListTile(
+              context,
+              Icons.subscriptions,
+              'My Reviews',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MyReviewsPage()),
+                );
+              },
+            ),
+            Divider(),
+            _buildListTile(
+              context,
+              Icons.subscriptions,
+              'My Events',
               onTap: () {
                 Navigator.push(
                   context,
@@ -377,50 +404,48 @@ class MenuPage extends StatelessWidget {
                 );
               },
             ),
-            Divider(),
 
             // Spacing before Logout and Delete
-            SizedBox(height: 0.5),
+            Container(color: Color(0xFFF2F2F2), height: 15),
 
-             Divider(),
             // Logout and Delete Account
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: _buildListTile(
-                context,
-                Icons.logout,
-                'Logout',
-                textColor: Colors.black,
-                onTap: () => showLogoutDialog(context),
+            _buildListTile(
+              context,
+              Icons.logout,
+              'Logout',
+              textColor: Colors.black,
+              onTap: () => showLogoutDialog(context),
+            ),
+            Container(color: Color(0xFFF2F2F2), height: 15),
+
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(),
+                  child: _buildListTile(
+                    context,
+                    Icons.delete,
+                    'Delete account',
+                    textColor: Colors.red,
+                    onTap: () => showDeleteAccountDialog(context),
+                  ),
+                ),
+              ],
+            ),
+
+            Container(color: Color(0xFFF2F2F2), height: 20),
+
+            Container(
+              color: Color(0xFFF2F2F2),
+              child: Center(
+                child: Text(
+                  'Version 1.32\nRate us on Playstore',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
             ),
-            Divider(),
-
-             SizedBox(height: 0.5),
-              Divider(),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: _buildListTile(
-                context,
-                Icons.delete,
-                'Delete account',
-                textColor: Colors.red,
-                onTap: () => showDeleteAccountDialog(context),
-              ),
-            ),
-            Divider(),
-            SizedBox(height: 20),
-
-            // Version and Playstore Rating
-            Center(
-              child: Text(
-                'Version 1.32\nRate us on Playstore',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            SizedBox(height: 20),
+            Container(color: Color(0xFFF2F2F2), height: 20),
           ],
         ),
       ),
@@ -428,18 +453,19 @@ class MenuPage extends StatelessWidget {
   }
 
   ListTile _buildListTile(BuildContext context, IconData icon, String title,
-      {Color textColor = const Color.fromARGB(255, 0, 0, 0), Function()? onTap}) {
+      {Color textColor = const Color.fromARGB(255, 0, 0, 0),
+      Function()? onTap}) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade200,
-        child: Icon(icon, color: textColor),
+        backgroundColor: Colors.white,
+        child: Icon(icon, color: const Color.fromARGB(255, 121, 116, 116)),
       ),
       title: Text(title, style: TextStyle(color: textColor)),
       trailing: SvgPicture.asset(
         'assets/icons/polygon.svg',
         height: 16,
         width: 16,
-        color: textColor,
+        color: Color(0xFFC4C4C4),
       ),
       onTap: onTap ??
           () {
@@ -448,6 +474,3 @@ class MenuPage extends StatelessWidget {
     );
   }
 }
-
-
-

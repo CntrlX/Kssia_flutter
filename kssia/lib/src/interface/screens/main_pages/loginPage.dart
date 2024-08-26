@@ -492,6 +492,9 @@ class DetailsPage extends ConsumerStatefulWidget {
 class _DetailsPageState extends ConsumerState<DetailsPage> {
   String _productPriceType = 'Price per unit';
   final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
+
+  final isLandlineVisibleProvider = StateProvider<bool>((ref) => false);
+
   final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
   final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
   final isWebsiteDetailsVisibleProvider = StateProvider<bool>((ref) => false);
@@ -503,13 +506,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
 
   final TextEditingController nameController = TextEditingController();
-
+  final TextEditingController landlineController = TextEditingController();
   final TextEditingController bloodGroupController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController profilePictureController =
       TextEditingController();
   final TextEditingController personalPhoneController = TextEditingController();
-  final TextEditingController landlineController = TextEditingController();
   final TextEditingController companyPhoneController = TextEditingController();
   final TextEditingController whatsappController = TextEditingController();
   final TextEditingController whatsappBusinessController =
@@ -555,7 +557,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   String productUrl = '';
 
-  Future<void> _pickFile({required String imageType}) async {
+  Future<File?> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
@@ -571,12 +573,16 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             print((profileUrl));
           });
         });
+        return _profileImageFile;
       } else if (imageType == 'award') {
         _awardImageFIle = File(result.files.single.path!);
+        return _awardImageFIle;
       } else if (imageType == 'product') {
         _productImageFIle = File(result.files.single.path!);
+        return _productImageFIle;
       } else if (imageType == 'certificate') {
         _certificateImageFIle = File(result.files.single.path!);
+        return _certificateImageFIle;
       } else if (imageType == 'company') {
         setState(() {
           _companyImageFile = File(result.files.single.path!);
@@ -586,10 +592,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             print(companyUrl);
           });
         });
+        return _companyImageFile;
       } else {
         _brochurePdfFile = File(result.files.single.path!);
+        return _brochurePdfFile;
       }
     }
+    return null;
   }
 
   // void _addAwardCard() async {
@@ -637,7 +646,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {
-      // add more product details if want
       final newProduct = Product(
         id: createdProduct.id,
         name: productNameController.text,
@@ -653,7 +661,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           [...?ref.read(userProvider).value?.products, newProduct]);
     }
   }
-
 
   void _addNewCertificate() async {
     await api
@@ -744,7 +751,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             user.phoneNumbers!.whatsappBusinessNumber ?? 0,
       },
       "designation": user.designation,
-            "company_logo": user.companyLogo,
+      "company_logo": user.companyLogo,
       "company_name": user.companyName,
       "company_email": user.companyEmail,
       "company_address": user.companyAddress,
@@ -852,10 +859,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   void _openModalSheet(
       {required String sheet, String brochureName = 'Sample'}) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) {
         if (sheet == 'award') {
           return ShowEnterAwardtSheet(
+            context1: context,
             pickImage: _pickFile,
             addAwardCard: _addNewAward,
             imageType: sheet,
@@ -865,6 +874,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           );
         } else if (sheet == 'product') {
           return ShowEnterProductsSheet(
+              context1: context,
               productImage: _productImageFIle,
               imageType: sheet,
               pickImage: _pickFile,
@@ -903,6 +913,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
     final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
     final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
+    final isLandlineVisible = ref.watch(isLandlineVisibleProvider);
     final isProductsDetailsVisible =
         ref.watch(isProductsDetailsVisibleProvider);
     final isCertificateDetailsVisible =
@@ -1244,73 +1255,71 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               color: const Color.fromARGB(
                                                   255, 255, 255, 255),
                                               child: Image.network(
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return const Center(
                                                       child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              'Upload',
-                                                              style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              'Company',
-                                                              style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              'Logo',
-                                                              style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ));
-                            },
-                            user.companyLogo!, // Replace with your image URL
-                            fit: BoxFit.cover,
-                          ),
-                                              
-                                              
-                                            
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Upload',
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Company',
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Logo',
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ));
+                                                },
+                                                user.companyLogo!, // Replace with your image URL
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1440,54 +1449,55 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                     color: Color(0xFF004797)),
                               ),
                             ),
-                          if (isPhoneNumberVisible)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 20, bottom: 50),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'Add more',
-                                    style: TextStyle(
-                                        color: Color(0xFF004797),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
-                                  ),
-                                  Icon(
-                                    Icons.add,
-                                    color: Color(0xFF004797),
-                                    size: 18,
-                                  )
-                                ],
+                          if (isPhoneNumberVisible && !isLandlineVisible)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 20, bottom: 50),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    ref
+                                        .read(
+                                            isLandlineVisibleProvider.notifier)
+                                        .state = !isLandlineVisible;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Text(
+                                      'Add more',
+                                      style: TextStyle(
+                                          color: Color(0xFF004797),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
+                                    ),
+                                    Icon(
+                                      Icons.add,
+                                      color: Color(0xFF004797),
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 20, bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Contact Details',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                CustomSwitch(
-                                  value: ref
-                                      .watch(isContactDetailsVisibleProvider),
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      ref
-                                          .read(isContactDetailsVisibleProvider
-                                              .notifier)
-                                          .state = value;
-                                    });
-                                  },
-                                ),
-                              ],
+                          if (isPhoneNumberVisible && isLandlineVisible)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 20, right: 20, top: 10, bottom: 20),
+                              child: CustomTextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please Enter Your Landline Number';
+                                  }
+                                  return null;
+                                },
+                                textController: landlineController,
+                                labelText: 'Enter landline number',
+                                prefixIcon: const Icon(Icons.phone_in_talk,
+                                    color: Color(0xFF004797)),
+                              ),
                             ),
-                          ),
                           if (isContactDetailsVisible)
                             Padding(
                               padding: const EdgeInsets.only(
@@ -1891,25 +1901,28 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, bottom: 10, right: 10),
-                              child:  GridView.builder(
-                  shrinkWrap:
-                      true, // Let GridView take up only as much space as it needs
-                  physics:
-                      NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Number of columns
-                    crossAxisSpacing: 1.0, // Space between columns
-                    mainAxisSpacing: 2.0, // Space between rows
-                    childAspectRatio: .943, // Aspect ratio for the cards
-                  ),
-                  itemCount: user.products!.length,
-                  itemBuilder: (context, index) {
-                    return ProductCard(
-                      product: user.products![index],
-                      onRemove: null,
-                    );
-                  },
-                ),
+                              child: GridView.builder(
+                                shrinkWrap:
+                                    true, // Let GridView take up only as much space as it needs
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, // Number of columns
+                                  crossAxisSpacing:
+                                      1.0, // Space between columns
+                                  mainAxisSpacing: 2.0, // Space between rows
+                                  childAspectRatio:
+                                      .943, // Aspect ratio for the cards
+                                ),
+                                itemCount: user.products!.length,
+                                itemBuilder: (context, index) {
+                                  return ProductCard(
+                                    product: user.products![index],
+                                    onRemove: null,
+                                  );
+                                },
+                              ),
                             ),
                           if (isProductsDetailsVisible)
                             Padding(
@@ -2072,7 +2085,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       vertical: 4.0), // Space between items
                                   child: BrochureCard(
                                     brochure: user.brochure![index],
-                                    // onRemove: () => _removeCertificateCard(index),
+                                    onRemove: () => _removeBrochure(index),
                                   ),
                                 );
                               },

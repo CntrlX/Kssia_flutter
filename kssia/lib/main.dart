@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 
-
 void main() {
   runApp(ProviderScope(child: MainApp()));
 }
@@ -22,7 +21,7 @@ class MainApp extends StatelessWidget {
       ), // Remove the debug banner
       home: Scaffold(
         body: Center(
-          child: MainPage(),
+          child: LoginPage(),
         ),
       ),
     );

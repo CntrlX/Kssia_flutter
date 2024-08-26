@@ -106,34 +106,42 @@ class _MainPageState extends State<MainPage> {
           print(user.profilePicture);
           _initialize(user: user);
           return Scaffold(
+         
             body: Center(
               child: _widgetOptions.elementAt(_selectedIndex),
             ),
             bottomNavigationBar: BottomNavigationBar(
               items: List.generate(5, (index) {
                 return BottomNavigationBarItem(
-  backgroundColor: Colors.white,
-  icon: index == 2 // Assuming profile is the third item
-      ? CircleAvatar(
-          backgroundImage: NetworkImage(user.profilePicture!),
-          radius: 15,
-        )
-      : IconResolver(
-          iconPath: _inactiveIcons[index],
-          color: _selectedIndex == index ? Colors.blue : Colors.grey,
-        ),
-  activeIcon: index == 2
-      ? CircleAvatar(
-          backgroundImage: NetworkImage(user.profilePicture!),
-          radius: 15,
-        )
-      : IconResolver(
-          iconPath: _activeIcons[index],
-          color: Color(0xFF004797),
-        ),
-  label: ['Home', 'Feed', 'Profile', 'Events/news', 'People'][index],
-);
-
+                  backgroundColor: Colors.white,
+                  icon: index == 2 // Assuming profile is the third item
+                      ? CircleAvatar(
+                          backgroundImage: NetworkImage(user.profilePicture!),
+                          radius: 15,
+                        )
+                      : IconResolver(
+                          iconPath: _inactiveIcons[index],
+                          color: _selectedIndex == index
+                              ? Colors.blue
+                              : Colors.grey,
+                        ),
+                  activeIcon: index == 2
+                      ? CircleAvatar(
+                          backgroundImage: NetworkImage(user.profilePicture!),
+                          radius: 15,
+                        )
+                      : IconResolver(
+                          iconPath: _activeIcons[index],
+                          color: Color(0xFF004797),
+                        ),
+                  label: [
+                    'Home',
+                    'Feed',
+                    'Profile',
+                    'Events/news',
+                    'People'
+                  ][index],
+                );
               }),
               currentIndex: _selectedIndex,
               selectedItemColor: Color(0xFF004797),

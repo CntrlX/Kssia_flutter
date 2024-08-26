@@ -1,112 +1,61 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-class FeedView extends StatelessWidget {
-  void _showAddRequirementSheet(BuildContext context) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Post a Requirement/update',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  // Handle image upload
-                },
-                child: Container(
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                        SizedBox(height: 10),
-                        Text(
-                          'Upload Image',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 102, 101, 101)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                maxLines: ((MediaQuery.sizeOf(context).height) / 200).toInt(),
-                decoration: InputDecoration(
-                  hintText: 'Add content',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    // Handle post requirement
-                  },
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF004797)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(color: Color(0xFF004797)),
-                      ),
-                    ),
-                  ),
-                  child: const Text(
-                    'POST REQUIREMENT/UPDATE',
-                    style: TextStyle(color: Colors.white),
-                  )),
-              const SizedBox(
-                height: 10,
-              )
-            ],
-          ),
-        );
-      },
+class FeedView extends StatefulWidget {
+  FeedView({super.key});
+
+  @override
+  State<FeedView> createState() => _FeedViewState();
+}
+
+class _FeedViewState extends State<FeedView> {
+  final TextEditingController requirementContentController =
+      TextEditingController();
+
+  File? _requirementImage;
+  ApiRoutes api = ApiRoutes();
+
+  Future<File?> _pickFile({required String imageType}) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'png',
+        'jpg',
+        'jpeg',
+      ],
     );
+
+    if (result != null) {
+      setState(() {
+        _requirementImage = File(result.files.single.path!);
+      });
+      return _requirementImage;
+    }
+  }
+
+  void _openModalSheet({required String sheet}) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return ShowAddRequirementSheet(
+            pickImage: _pickFile,
+            context1: context,
+            textController: requirementContentController,
+            imageType: 'requirement',
+            requirementImage: _requirementImage,
+          );
+        });
   }
 
   @override
@@ -134,7 +83,7 @@ class FeedView extends StatelessWidget {
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           prefixIcon: Icon(Icons.search),
-                          hintText: 'Search your Products and requirements',
+                          hintText: 'Search your requirements',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide(
@@ -181,7 +130,7 @@ class FeedView extends StatelessWidget {
             },
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showAddRequirementSheet(context),
+            onPressed: () => _openModalSheet(sheet: 'requirement'),
             label: const Text(
               'Add Requirement/update',
               style: TextStyle(color: Colors.white),

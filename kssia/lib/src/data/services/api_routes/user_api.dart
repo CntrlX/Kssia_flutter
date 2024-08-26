@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,31 +33,26 @@ class ApiRoutes {
   Future<void> editUser(Map<String, dynamic> profileData) async {
     final url = Uri.parse('$baseUrl/user/edit/$id');
 
-    
-      final response = await http.put(
-        url,
-        headers: {
+    final response = await http.put(
+      url,
+      headers: {
         'Content-type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-        body: jsonEncode(profileData),
-      );
+      body: jsonEncode(profileData),
+    );
 
-      if (response.statusCode == 200) {
-        print('Profile updated successfully');
-      } else {
-            print(json.decode(response.body)['message']);
-        print('Failed to update profile. Status code: ${response.statusCode}');
-        throw Exception('Failed to update profile');
-      }
-   
-      
-   
+    if (response.statusCode == 200) {
+      print('Profile updated successfully');
+    } else {
+      print(json.decode(response.body)['message']);
+      print('Failed to update profile. Status code: ${response.statusCode}');
+      throw Exception('Failed to update profile');
+    }
   }
 
-  Future<dynamic> createFileUrl({required File file,required token}) async {
+  Future<dynamic> createFileUrl({required File file, required token}) async {
     final url = Uri.parse('$baseUrl/files/upload');
-   
 
     // Determine MIME type
     String fileName = file.path.split('/').last;
@@ -102,12 +98,12 @@ class ApiRoutes {
   }
 
   String removeBaseUrl(String url) {
-  String baseUrl = 'https://kssia.s3.ap-south-1.amazonaws.com/';
-  return url.replaceFirst(baseUrl, '');
-}
+    String baseUrl = 'https://kssia.s3.ap-south-1.amazonaws.com/';
+    return url.replaceFirst(baseUrl, '');
+  }
 
   Future<void> deleteFile(String token, String fileUrl) async {
-     final reqfileUrl = removeBaseUrl(fileUrl);
+    final reqfileUrl = removeBaseUrl(fileUrl);
     print(reqfileUrl);
     final url = Uri.parse('$baseUrl/files/delete/$reqfileUrl');
     print('requesting url:$url');
@@ -127,23 +123,27 @@ class ApiRoutes {
       print('Failed to delete image: ${response.statusCode}');
     }
   }
-  Future<void> markNotificationAsRead(String notificationId) async {
-  final url = Uri.parse('http://43.205.89.79/api/v1/notification/in-app/$notificationId/read/$id');
-  
-  final response = await http.put(
-    url,
-    headers: {
-      'accept': 'application/json',
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI',
-    },
-  );
 
-  if (response.statusCode == 200) {
-    print('Notification marked as read successfully.');
-  } else {
-    print('Failed to mark notification as read. Status code: ${response.statusCode}');
+  Future<void> markNotificationAsRead(String notificationId) async {
+    final url = Uri.parse(
+        'http://43.205.89.79/api/v1/notification/in-app/$notificationId/read/$id');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'accept': 'application/json',
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Notification marked as read successfully.');
+    } else {
+      print(
+          'Failed to mark notification as read. Status code: ${response.statusCode}');
+    }
   }
-}
 
   Future<Product?> uploadProduct(
       String token,
@@ -218,6 +218,117 @@ class ApiRoutes {
         "status": false,
         "message": responseBody['message'] ?? 'Unknown error'
       };
+    }
+  }
+
+  Future<String?> uploadRequirement(
+    String token,
+    String author,
+    String content,
+    String status,
+    File file,
+  ) async {
+    const String url = 'http://43.205.89.79/api/v1/requirements';
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    // Add headers
+    request.headers.addAll({
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add fields
+    request.fields['author'] = author;
+    request.fields['content'] = content;
+    request.fields['status'] = status;
+
+    // Add the file
+    var stream = http.ByteStream(file.openRead());
+    stream.cast();
+    var length = await file.length();
+    var multipartFile = http.MultipartFile(
+      'invoice_url',
+      stream,
+      length,
+      filename: basename(file.path),
+      contentType: MediaType('image', 'png'),
+    );
+
+    request.files.add(multipartFile);
+
+    // Send the request
+    var response = await request.send();
+
+    if (response.statusCode == 201) {
+      print('Requirement submitted successfully');
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+
+      return jsonResponse['message'];
+    } else {
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      print(jsonResponse['message']);
+      print('Failed to submit requirement: ${response.statusCode}');
+      return null;
+    }
+  }
+
+  Future<String?> uploadPayment(
+    String token,
+    String category,
+    String remarks,
+    File file,
+  ) async {
+    const String url = 'http://43.205.89.79/api/v1/payments/user';
+
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    // Add headers
+    request.headers.addAll({
+      'accept': 'application/json',
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjY2YzM4ZTRkYjlhYTE0N2MyMzAzMzliZiJ9LCJpYXQiOjE3MjQ0MDE4ODh9.lcLy_lfd606IwPduyoW7geWYsHBjtAtmNcSshQV0eHM',
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add fields
+    request.fields['category'] = category;
+    request.fields['remarks'] = remarks;
+
+    // Add the file
+    var stream = http.ByteStream(file.openRead());
+    stream.cast();
+    var length = await file.length();
+    var multipartFile = http.MultipartFile(
+      'file',
+      stream,
+      length,
+      filename: basename(file.path),
+      contentType: MediaType('image', 'png'),
+    );
+
+    request.files.add(multipartFile);
+
+    // Send the request
+    var response = await request.send();
+
+    if (response.statusCode == 201) {
+      print('Payment submitted successfully');
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+
+      return jsonResponse['message'];
+    } else {
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = json.decode(responseData);
+      print(jsonResponse['message']);
+      print('Failed to submit Payment: ${response.statusCode}');
+      return 'Failed';
     }
   }
 }

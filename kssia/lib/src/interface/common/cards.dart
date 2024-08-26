@@ -306,8 +306,8 @@ class CertificateCard extends StatelessWidget {
 
 class BrochureCard extends StatelessWidget {
   final Brochure brochure;
-
-  const BrochureCard({super.key, required this.brochure});
+  final VoidCallback? onRemove;
+  const BrochureCard({super.key, required this.brochure, this.onRemove});
   Future<void> _launchUrl({required url}) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');

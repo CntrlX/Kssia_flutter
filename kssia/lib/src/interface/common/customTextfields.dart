@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
-class modalSheetTextFormField extends StatelessWidget {
+class ModalSheetTextFormField extends StatelessWidget {
   final TextEditingController textController;
   final String? label;
   final int maxLines;
-  const modalSheetTextFormField({
+  final String? Function(String?)? validator;
+
+  const ModalSheetTextFormField({
     required this.textController,
     required this.label,
     this.maxLines = 1,
+    this.validator,
     super.key,
   });
 
@@ -17,6 +20,7 @@ class modalSheetTextFormField extends StatelessWidget {
     return TextFormField(
       controller: textController,
       maxLines: maxLines,
+      validator: validator,
       decoration: InputDecoration(
         hintText: label,
         border: OutlineInputBorder(

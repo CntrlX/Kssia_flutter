@@ -59,7 +59,7 @@ class NotificationPage extends StatelessWidget {
                       );
                     },
                   ),
-                  asyncUnreadNotification.when(
+                  asyncreadNotification.when(
                     data: (readNotifications) {
                       return ListView.builder(
                         shrinkWrap: true, // Added this line
@@ -100,38 +100,41 @@ class NotificationPage extends StatelessWidget {
       required String content,
       required DateTime dateTime}) {
     String time = timeAgo(dateTime);
-    return Card(
-      elevation: 1,
-      color: readed ? const Color.fromARGB(255, 232, 228, 228) : Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                if (!readed) Icon(Icons.circle, color: Colors.blue, size: 12),
-                SizedBox(width: 8),
-                Text(
-                  subject,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+      child: Card(
+        elevation: 1,
+        color: readed ? Color(0xFFF2F2F2) : Colors.white,
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  if (!readed) Icon(Icons.circle, color: Colors.blue, size: 12),
+                  SizedBox(width: 8),
+                  Text(
+                    subject,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Text(
-              content,
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 8),
-            Text(
-              time,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
+                ],
+              ),
+              SizedBox(height: 8),
+              Text(
+                content,
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+              SizedBox(height: 8),
+              Text(
+                time,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );
