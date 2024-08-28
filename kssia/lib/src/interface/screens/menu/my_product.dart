@@ -346,7 +346,7 @@ class _ProductDetailSheet extends StatelessWidget {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               Spacer(),
-             
+
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
               Icon(Icons.star, color: Color(0xFFF5B358), size: 16),
@@ -357,7 +357,6 @@ class _ProductDetailSheet extends StatelessWidget {
                 '24 Reviews',
                 style: TextStyle(fontSize: 14),
               ),
-
             ],
           ),
           const SizedBox(height: 16),
@@ -368,9 +367,13 @@ class _ProductDetailSheet extends StatelessWidget {
                 radius: 18,
                 backgroundColor: Colors.white,
                 child: IconButton(
-                  icon: Icon(Icons.remove, color: Colors.black,),
+                  icon: Icon(
+                    Icons.remove,
+                    color: Colors.black,
+                  ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
+                    backgroundColor: Color.fromARGB(
+                        255, 114, 111, 111), // Light grey fill color
                     side: BorderSide(color: Colors.black), // Black outline
                   ),
                   onPressed: () {
@@ -398,11 +401,13 @@ class _ProductDetailSheet extends StatelessWidget {
                 radius: 18,
                 backgroundColor: Colors.white,
                 child: IconButton(
-                 icon: Icon(Icons.add, color: Colors.black), // Black icon color
-                      style: IconButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 114, 111, 111), // Light grey fill color
-                        side: BorderSide(color: Colors.black), // Black outline
-                      ),
+                  icon:
+                      Icon(Icons.add, color: Colors.black), // Black icon color
+                  style: IconButton.styleFrom(
+                    backgroundColor: Color.fromARGB(
+                        255, 114, 111, 111), // Light grey fill color
+                    side: BorderSide(color: Colors.black), // Black outline
+                  ),
                   onPressed: () {
                     // Increment functionality
                   },

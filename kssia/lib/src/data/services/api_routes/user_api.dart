@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -382,7 +383,7 @@ Future<User> fetchUserDetails(
     },
   );
   print('hello');
-  print(json.decode(response.body)['status']);
+  print(response.body);
   if (response.statusCode == 200) {
     final dynamic data = json.decode(response.body)['data'];
     print(data['products']);

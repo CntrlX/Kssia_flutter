@@ -38,14 +38,16 @@ class Product {
       name: json['name'],
       image: json['image'],
       price: json['price'] as int,
-      offerPrice: json['offer_price']!=null?  json['offer_price'] as int:0,
+      offerPrice: json['offer_price'] != null ? json['offer_price'] as int : 0,
       description: json['description'],
       moq: json['moq'],
       units: json['units'],
       status: json['status'],
       tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
