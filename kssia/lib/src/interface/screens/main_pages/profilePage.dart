@@ -131,11 +131,13 @@ class ProfilePage extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                             user.profilePicture!=null?     CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage:
-                                        NetworkImage(user.profilePicture!),
-                                  ):Icon(Icons.person),
+                                  user.profilePicture != null
+                                      ? CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: NetworkImage(
+                                              user.profilePicture!),
+                                        )
+                                      : Icon(Icons.person),
                                   const SizedBox(height: 10),
                                   Text(
                                     '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}',
@@ -154,6 +156,10 @@ class ProfilePage extends StatelessWidget {
                                             borderRadius:
                                                 BorderRadius.circular(9),
                                             child: Image.network(
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Image.network('https://placehold.co/400');
+                                              },
                                               user.companyLogo!,
                                               height: 33,
                                               width: 40,

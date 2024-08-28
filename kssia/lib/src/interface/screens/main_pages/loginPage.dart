@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -24,6 +25,7 @@ import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TextEditingController _mobileController = TextEditingController();
 TextEditingController _otpController = TextEditingController();
@@ -65,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
 class PhoneNumberScreen extends StatelessWidget {
   final VoidCallback onNext;
 
-  PhoneNumberScreen({required this.onNext});
+  const PhoneNumberScreen({required this.onNext});
 
   @override
   Widget build(BuildContext context) {
@@ -167,27 +169,29 @@ class PhoneNumberScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: SizedBox(
-                height: 47,
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: onNext,
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          side: const BorderSide(color: Color(0xFF004797)),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'GENERATE OTP',
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ),
+                  height: 47,
+                  width: double.infinity,
+                  child: customButton(
+                      label: 'GENERATE OTP',
+                      onPressed: () async {
+                        if (_mobileController.text.length != 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content:
+                                  Text('Please Enter Valid Phone number')));
+                        }
+                        ApiRoutes userApi = ApiRoutes();
+                        String? response = await userApi.sendOtp(
+                            _mobileController.text, context);
+                        if (response != null) {
+                          onNext();
+                        }
+
+                        final SharedPreferences preferences =
+                            await SharedPreferences.getInstance();
+                        preferences.setString(
+                            'mobile', _mobileController.text.toString());
+                      },
+                      fontSize: 16)),
             ),
           ],
         ),
@@ -273,7 +277,7 @@ class _OTPScreenState extends State<OTPScreen> {
               readOnly: true,
               controller: _otpController,
               decoration: const InputDecoration(
-                hintText: '00000',
+                hintText: '000000',
                 hintStyle: TextStyle(
                   color: Colors.grey,
                   letterSpacing: 5.0,
@@ -309,7 +313,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildbutton(label: '1', model: 'otp'),
-                    _buildbutton(label: '3', model: 'otp'),
+                    _buildbutton(label: '2', model: 'otp'),
                     _buildbutton(label: '3', model: 'otp')
                   ],
                 ),
@@ -345,27 +349,32 @@ class _OTPScreenState extends State<OTPScreen> {
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: SizedBox(
-                height: 47,
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: widget.onNext,
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          side: const BorderSide(color: Color(0xFF004797)),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'NEXT',
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ),
+                  height: 47,
+                  width: double.infinity,
+                  child: customButton(
+                      label: 'NEXT',
+                      onPressed: () async {
+                        print(_otpController.text);
+                        ApiRoutes userApi = ApiRoutes();
+                        List<dynamic> credentials = await userApi.verifyUser(
+                            _mobileController.text,
+                            _otpController.text,
+                            context);
+                        final SharedPreferences preferences =
+                            await SharedPreferences.getInstance();
+                        if (credentials.isNotEmpty) {
+                          preferences.setString(
+                              'token', credentials[0]['token']!);
+                          preferences.setString(
+                              'id', credentials[0]['userId']!);
+                          token = preferences.getString('token')!;
+                          id = preferences.getString('id')!;
+                          widget.onNext();
+                          _mobileController.clear();
+                          _otpController.clear();
+                        }
+                      },
+                      fontSize: 16)),
             ),
           ],
         ),
@@ -424,7 +433,7 @@ _onbuttonTap(var value, String model) {
             _otpController.text.substring(0, _otpController.text.length - 1);
       }
     } else {
-      if (_otpController.text.length < 5) {
+      if (_otpController.text.length < 6) {
         _otpController.text += value;
         if (_otpController.text.length == 5) {}
       } else {}
@@ -762,7 +771,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           {"platform": "${i.platform}", "url": i.url}
       ],
       "websites": [
-        for (var i in user.websites!) {"name": i.name, "url": i.url}
+        for (var i in user.websites!) {"name": i.name.toString(), "url": i.url}
       ],
       "video": [
         for (var i in user.video!) {"name": i.name, "url": i.url}
@@ -795,7 +804,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       ]
     };
     await api.editUser(profileData);
-    print(profileData);
+    log(profileData.toString());
   }
   // Future<void> _selectImageFile(ImageSource source, String imageType) async {
   //   final XFile? image = await _picker.pickImage(source: source);
@@ -864,7 +873,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       builder: (context) {
         if (sheet == 'award') {
           return ShowEnterAwardtSheet(
-            context1: context,
             pickImage: _pickFile,
             addAwardCard: _addNewAward,
             imageType: sheet,
@@ -874,7 +882,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           );
         } else if (sheet == 'product') {
           return ShowEnterProductsSheet(
-              context1: context,
               productImage: _productImageFIle,
               imageType: sheet,
               pickImage: _pickFile,
@@ -928,11 +935,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             loading: () => Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               return Center(
-                child: Text('Error loading User: $error'),
+                child: Text('Error loading User: $error '),
               );
             },
             data: (user) {
-              print(user);
               print(user.awards);
               nameController.text =
                   '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';

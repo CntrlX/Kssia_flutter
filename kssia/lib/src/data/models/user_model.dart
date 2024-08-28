@@ -410,9 +410,11 @@ class User {
       companyAddress: json['company_address'] as String?,
       companyLogo: json['company_logo'] as String?,
       profilePicture: json['profile_picture'] as String?,
-      products: (json['products'] as List<dynamic>?)
-          ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      products: json['products'] == 'Seller has no products'
+          ? []
+          : (json['products'] as List<dynamic>?)
+              ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
+              .toList(),
     );
   }
 

@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
 class ModalSheetTextFormField extends StatelessWidget {
@@ -73,40 +77,65 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      readOnly: readOnly,
-      controller: textController,
-      maxLines: maxLines,
-      validator: validator,
-      decoration: InputDecoration(
-        alignLabelWithHint: true,
-        labelText: labelText,
-        labelStyle: const TextStyle(color: Colors.grey),
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        fillColor: const Color(0xFFF2F2F2),
-        filled: true,
-        prefixIcon: prefixIcon != null && maxLines > 1
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    bottom: 50, left: 10, right: 10, top: 5),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  widthFactor: 1.0,
-                  heightFactor: maxLines > 1 ? null : 1.0,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      width: 42,
-                      height: 42,
-                      child: prefixIcon),
-                ),
-              )
-            : prefixIcon != null
+    return Consumer(
+      builder: (context, ref, child) {
+        return TextFormField(
+          onChanged: (value) {
+            switch (labelText) {
+              case 'Enter your Full name':
+                List<String> nameParts = textController!.text.split(' ');
+
+                String firstName = nameParts[0];
+                String middleName = nameParts.length > 2 ? nameParts[1] : ' ';
+                String lastName = nameParts.length > 1 ? nameParts.last : ' ';
+                ref.read(userProvider.notifier).updateName(
+                    firstName: firstName,
+                    middleName: middleName,
+                    lastName: lastName);
+                break;
+              case 'Designation':
+                ref
+                    .read(userProvider.notifier)
+                    .updateDesignation(textController!.text);
+              case 'Bio':
+                ref.read(userProvider.notifier).updateBio(textController!.text);
+              case 'Enter Company Name':
+                ref
+                    .read(userProvider.notifier)
+                    .updateCompanyName(textController!.text);
+              case 'Enter Company Address':
+                ref
+                    .read(userProvider.notifier)
+                    .updateCompanyAddress(textController!.text);
+              case 'Enter phone number':
+                ref.read(userProvider.notifier).updatePhoneNumbers(
+                    personal: int.parse(textController!.text));
+              case 'Enter landline number':
+                ref.read(userProvider.notifier).updatePhoneNumbers(
+                    landline: int.parse(textController!.text));
+              // case 'Enter Ig':
+              //   ref.read(userProvider.notifier).updateSocialMedia(
+              //     );
+
+              default:
+            }
+          },
+          onEditingComplete: () {},
+          readOnly: readOnly,
+          controller: textController,
+          maxLines: maxLines,
+          validator: validator,
+          decoration: InputDecoration(
+            alignLabelWithHint: true,
+            labelText: labelText,
+            labelStyle: const TextStyle(color: Colors.grey),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            fillColor: const Color(0xFFF2F2F2),
+            filled: true,
+            prefixIcon: prefixIcon != null && maxLines > 1
                 ? Padding(
                     padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
+                        bottom: 50, left: 10, right: 10, top: 5),
                     child: Align(
                       alignment: Alignment.topCenter,
                       widthFactor: 1.0,
@@ -121,49 +150,69 @@ class CustomTextFormField extends StatelessWidget {
                           child: prefixIcon),
                     ),
                   )
+                : prefixIcon != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          widthFactor: 1.0,
+                          heightFactor: maxLines > 1 ? null : 1.0,
+                          child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white,
+                              ),
+                              width: 42,
+                              height: 42,
+                              child: prefixIcon),
+                        ),
+                      )
+                    : null,
+            suffixIcon: suffixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: GestureDetector(
+                      onTap: onTap,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white,
+                          ),
+                          width: 42,
+                          height: 42,
+                          child: suffixIcon),
+                    ),
+                  )
                 : null,
-        suffixIcon: suffixIcon != null
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, top: 5, bottom: 5),
-                child: GestureDetector(
-                  onTap: onTap,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      width: 42,
-                      height: 42,
-                      child: suffixIcon),
-                ),
-              )
-            : null,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 223, 220, 220)), // Focused border color
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 212, 209, 209)), // Same as enabled border
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 223, 220, 220)), // Same as focused border
-        ),
-      ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 212, 209, 209)), // Unfocused border color
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 223, 220, 220)), // Focused border color
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 212, 209, 209)), // Same as enabled border
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(
+                      255, 223, 220, 220)), // Same as focused border
+            ),
+          ),
+        );
+      },
     );
   }
 }

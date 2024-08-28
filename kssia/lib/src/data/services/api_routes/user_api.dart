@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
-import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,21 +14,51 @@ part 'user_api.g.dart';
 
 class ApiRoutes {
   final String baseUrl = 'http://43.205.89.79/api/v1';
-  Future<Map<String, dynamic>> sendOtp(String mobile) async {
+  Future<String?> sendOtp(String mobile, context) async {
+    print(mobile);
     final response = await http.get(
-      Uri.parse('$baseUrl/users/sendOtp/$mobile'),
+      Uri.parse('$baseUrl/user/login/$mobile'),
       headers: {"Content-Type": "application/json"},
     );
-    return _handleResponse(response);
+    final Map<String, dynamic> responseBody = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print(responseBody['message']);
+      print(responseBody['data']);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Success')));
+      return responseBody['message'];
+    } else if (response.statusCode == 400) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Invalid Mobile Number')));
+      return null;
+    } else {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return null;
+    }
   }
 
-  Future<Map<String, dynamic>> verifyUser(String mobile, String otp) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/users/login/$mobile'),
+  Future<List<dynamic>> verifyUser(String mobile, String otp, context) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/user/login'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"otp": otp}),
+      body: jsonEncode({"otp": int.parse(otp), "mobile": mobile}),
     );
-    return _handleResponse(response);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Success')));
+      return responseBody['data'];
+    } else if (response.statusCode == 400) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Invalid OTP')));
+      return [];
+    } else {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return [];
+    }
   }
 
   Future<void> editUser(Map<String, dynamic> profileData) async {
@@ -44,6 +75,7 @@ class ApiRoutes {
 
     if (response.statusCode == 200) {
       print('Profile updated successfully');
+      print(json.decode(response.body)['message']);
     } else {
       print(json.decode(response.body)['message']);
       print('Failed to update profile. Status code: ${response.statusCode}');
@@ -211,9 +243,11 @@ class ApiRoutes {
     final Map<String, dynamic> responseBody = jsonDecode(response.body);
     if (response.statusCode == 200) {
       print(responseBody['message']);
+      print(responseBody['data']);
       return {"status": true, "data": responseBody};
     } else {
       print(responseBody['message']);
+
       return {
         "status": false,
         "message": responseBody['message'] ?? 'Unknown error'
@@ -351,7 +385,7 @@ Future<User> fetchUserDetails(
   print(json.decode(response.body)['status']);
   if (response.statusCode == 200) {
     final dynamic data = json.decode(response.body)['data'];
-    print(data);
+    print(data['products']);
 
     return User.fromJson(data);
   } else {

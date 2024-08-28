@@ -146,6 +146,9 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
     void updateProduct(List<Product> products) {
     state = state.whenData((user) => user.copyWith(products: products));
   }
+      void updateSocialMedia(List<SocialMedia> socialmedias) {
+    state = state.whenData((user) => user.copyWith(socialMedia: socialmedias));
+  }
 
   void removeAward(Award awardToRemove) {
   state = state.whenData((user) {

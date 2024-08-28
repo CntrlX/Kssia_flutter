@@ -119,111 +119,170 @@ void showWlinkorVlinkSheet(
   );
 }
 
-class ShowEnterAwardtSheet extends StatelessWidget {
+class ShowEnterAwardtSheet extends StatefulWidget {
   final TextEditingController textController1;
-  final BuildContext context1;
   final TextEditingController textController2;
   final VoidCallback addAwardCard;
   final String imageType;
-  final File? awardImage;
-  final Future<void> Function({required String imageType}) pickImage;
+  File? awardImage;
+  final Future<File?> Function({required String imageType}) pickImage;
 
-  const ShowEnterAwardtSheet(
-      {required this.textController1,
-      required this.textController2,
-      required this.addAwardCard,
-      required this.pickImage,
-      required this.imageType,
-      required this.awardImage,
-      super.key,
-      required this.context1});
+  ShowEnterAwardtSheet({
+    required this.textController1,
+    required this.textController2,
+    required this.addAwardCard,
+    required this.pickImage,
+    required this.imageType,
+    this.awardImage,
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context1) {
+  State<ShowEnterAwardtSheet> createState() => _ShowEnterAwardtSheetState();
+}
+
+class _ShowEnterAwardtSheetState extends State<ShowEnterAwardtSheet> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context1).viewInsets.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Add Awards',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Add Awards',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context1).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () {
-              pickImage(imageType: imageType);
-            },
-            child: Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                child: awardImage == null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                            SizedBox(height: 10),
-                            Text(
-                              'Upload Image',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 102, 101, 101)),
-                            ),
-                          ],
+              ],
+            ),
+            const SizedBox(height: 10),
+            FormField<File>(
+              initialValue: widget.awardImage,
+              validator: (value) {
+                if (value == null) {
+                  return 'Please upload an image';
+                }
+                return null;
+              },
+              builder: (FormFieldState<File> state) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final pickedFile =
+                            await widget.pickImage(imageType: widget.imageType);
+                        setState(() {
+                          widget.awardImage = pickedFile;
+                          state
+                              .didChange(pickedFile); // Update form field state
+                        });
+                      },
+                      child: Container(
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          border: state.hasError
+                              ? Border.all(color: Colors.red)
+                              : null,
                         ),
-                      )
-                    : Center(
-                        child: Image.file(
-                        awardImage!,
-                        fit: BoxFit.cover,
-                        width: 120,
-                        height: 120,
-                      ))),
-          ),
-          const SizedBox(height: 20),
-          ModalSheetTextFormField(
-            label: 'Add name',
-            textController: textController1,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          ModalSheetTextFormField(
-            label: 'Add Authority name',
-            textController: textController2,
-          ),
-          const SizedBox(height: 10),
-          customButton(
+                        child: widget.awardImage == null
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add,
+                                        size: 27, color: Color(0xFF004797)),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Upload Image',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 102, 101, 101)),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Center(
+                                child: Image.file(
+                                widget.awardImage!,
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 120,
+                              )),
+                      ),
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          state.errorText!,
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            ModalSheetTextFormField(
+              label: 'Add name',
+              textController: widget.textController1,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            ModalSheetTextFormField(
+              label: 'Add Authority name',
+              textController: widget.textController2,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the authority name';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            customButton(
               label: 'SAVE',
               onPressed: () {
-                addAwardCard();
-                Navigator.pop(context1);
+                if (_formKey.currentState!.validate()) {
+                  widget.addAwardCard();
+                  Navigator.pop(context);
+                }
               },
-              fontSize: 16),
-          const SizedBox(
-            height: 10,
-          )
-        ],
+              fontSize: 16,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
@@ -251,110 +310,7 @@ class ShowAddCertificateSheet extends StatefulWidget {
 }
 
 class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Add Certificates',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () async {
-              final pickedFile =
-                  await widget.pickImage(imageType: 'certificate');
-              setState(() {
-                widget.certificateImage = pickedFile;
-              });
-            },
-            child: Container(
-              height: 110,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: widget.certificateImage == null
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                          SizedBox(height: 10),
-                          Text(
-                            'Upload Image',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 102, 101, 101)),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Center(
-                      child: Image.file(
-                        widget.certificateImage!,
-                        fit: BoxFit.cover,
-                        width: 120,
-                        height: 120,
-                      ),
-                    ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ModalSheetTextFormField(
-            label: 'Add Name',
-            textController: widget.textController,
-          ),
-          const SizedBox(height: 10),
-          customButton(
-            label: 'SAVE',
-            onPressed: () {
-              widget.addCertificateCard();
-              Navigator.pop(context);
-            },
-            fontSize: 16,
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-}
-
-class ShowAddBrochureSheet extends StatelessWidget {
-  final TextEditingController textController;
-  final Future<void> Function({required String imageType}) pickPdf;
-  final VoidCallback addBrochureCard;
-  final String brochureName;
-  final String imageType;
-  const ShowAddBrochureSheet({
-    Key? key,
-    required this.textController,
-    required this.pickPdf,
-    required this.addBrochureCard,
-    required this.brochureName,
-    required this.imageType,
-  }) : super(key: key);
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -365,108 +321,8 @@ class ShowAddBrochureSheet extends StatelessWidget {
         top: 16,
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Add Brochure',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () {
-              pickPdf(imageType: imageType);
-            },
-            child: Container(
-              height: 110,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                    SizedBox(height: 10),
-                    Text(
-                      'Upload PDF',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 102, 101, 101)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ModalSheetTextFormField(
-            label: 'Add Name',
-            textController: textController,
-          ),
-          const SizedBox(height: 10),
-          customButton(
-              label: 'SAVE',
-              onPressed: () {
-                addBrochureCard();
-                Navigator.pop(context);
-              },
-              fontSize: 16),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-}
-
-class ShowEnterProductsSheet extends StatelessWidget {
-  String productPriceType;
-  final TextEditingController productNameText;
-  final TextEditingController descriptionText;
-  final TextEditingController moqText;
-  final TextEditingController actualPriceText;
-  final TextEditingController offerPriceText;
-  final BuildContext context1;
-  final VoidCallback addProductCard;
-  final String imageType;
-  final File? productImage;
-  final Future<void> Function({required String imageType}) pickImage;
-  ShowEnterProductsSheet(
-      {super.key,
-      required this.productPriceType,
-      required this.productNameText,
-      required this.descriptionText,
-      required this.moqText,
-      required this.actualPriceText,
-      required this.offerPriceText,
-      required this.addProductCard,
-      required this.imageType,
-      this.productImage,
-      required this.pickImage,
-      required this.context1});
-
-  @override
-  Widget build(BuildContext context1) {
-    return Padding(
-      padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context1).viewInsets.bottom),
-      child: SingleChildScrollView(
+      child: Form(
+        key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -475,7 +331,7 @@ class ShowEnterProductsSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Add Products',
+                  'Add Certificates',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -483,137 +339,535 @@ class ShowEnterProductsSheet extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context1).pop(),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () async {
-                // Show loading screen
-                showDialog(
-                  context: context1,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: LoadingAnimation(),
-                    );
-                  },
-                );
-
-                // Run the pickImage function
-                await pickImage(imageType: imageType);
-
-                // Dismiss the loading screen
-                Navigator.of(context1).pop();
+            FormField<File>(
+              initialValue: widget.certificateImage,
+              validator: (value) {
+                if (value == null) {
+                  return 'Please upload an image';
+                }
+                return null;
               },
-              child: Container(
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: productImage == null
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add,
-                                  size: 27, color: Color(0xFF004797)),
-                              SizedBox(height: 10),
-                              Text(
-                                'Upload Image',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 102, 101, 101)),
+              builder: (FormFieldState<File> state) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final pickedFile =
+                            await widget.pickImage(imageType: widget.imageType);
+                        setState(() {
+                          widget.certificateImage = pickedFile;
+                          state
+                              .didChange(pickedFile); // Update form field state
+                        });
+                      },
+                      child: Container(
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          border: state.hasError
+                              ? Border.all(color: Colors.red)
+                              : null,
+                        ),
+                        child: widget.certificateImage == null
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.add,
+                                        size: 27, color: Color(0xFF004797)),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Upload Image',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 102, 101, 101)),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Center(
+                                child: Image.file(
+                                  widget.certificateImage!,
+                                  fit: BoxFit.cover,
+                                  width: 120,
+                                  height: 120,
+                                ),
                               ),
-                            ],
+                      ),
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          state.errorText!,
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
                           ),
-                        )
-                      : Center(
-                          child: Image.file(
-                          productImage!,
-                          fit: BoxFit.cover,
-                          width: 120,
-                          height: 120,
-                        ))),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 20),
             ModalSheetTextFormField(
-              textController: productNameText,
-              label: 'Add name',
-            ),
-            const SizedBox(height: 10),
-            ModalSheetTextFormField(
-              textController: descriptionText,
-              label: 'Add description',
-              maxLines: 4,
-            ),
-            const SizedBox(height: 10),
-            ModalSheetTextFormField(textController: moqText, label: 'Add MOQ'),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Flexible(
-                    child: ModalSheetTextFormField(
-                        textController: actualPriceText,
-                        label: 'Actual price')),
-                const SizedBox(width: 10),
-                Flexible(
-                    child: ModalSheetTextFormField(
-                        textController: offerPriceText, label: 'Offer price')),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  side: const BorderSide(
-                    color: Color.fromARGB(255, 185, 181, 181),
-                    width: 1.0,
-                  ),
-                ),
-              ),
-              onPressed: () {
-                _showProductPriceTypeDialog(context1).then((value) {
-                  if (value != null) {
-                    // setState(() {
-                    productPriceType = value;
-                    // });
-                  }
-                });
+              label: 'Add Name',
+              textController: widget.textController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
               },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    productPriceType,
-                    style:
-                        TextStyle(color: const Color.fromARGB(255, 94, 93, 93)),
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 10),
             customButton(
+              label: 'SAVE',
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  widget.addCertificateCard();
+                  Navigator.pop(context);
+                }
+              },
+              fontSize: 16,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShowAddBrochureSheet extends StatefulWidget {
+  final TextEditingController textController;
+  final Future<File?> Function({required String imageType}) pickPdf;
+  final VoidCallback addBrochureCard;
+  final String brochureName;
+  String imageType;
+
+  ShowAddBrochureSheet({
+    super.key,
+    required this.textController,
+    required this.pickPdf,
+    required this.addBrochureCard,
+    required this.brochureName,
+    required this.imageType,
+  });
+
+  @override
+  State<ShowAddBrochureSheet> createState() => _ShowAddBrochureSheetState();
+}
+
+class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
+  final _formKey = GlobalKey<FormState>();
+  File? brochurePdf;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Add Brochure',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            FormField<File>(
+              initialValue: brochurePdf,
+              validator: (value) {
+                if (value == null) {
+                  return 'Please upload a PDF';
+                }
+                return null;
+              },
+              builder: (FormFieldState<File> state) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final pickedFile =
+                            await widget.pickPdf(imageType: widget.imageType);
+                        setState(() {
+                          brochurePdf = pickedFile;
+                          state.didChange(pickedFile);
+                        });
+                      },
+                      child: brochurePdf == null
+                          ? Container(
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                                border: state.hasError
+                                    ? Border.all(color: Colors.red)
+                                    : null,
+                              ),
+                              child: const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add,
+                                        size: 27, color: Color(0xFF004797)),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Upload PDF',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 102, 101, 101)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : const Center(
+                              child: Text(
+                                'PDF ADDED',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ),
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          state.errorText!,
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            ModalSheetTextFormField(
+              label: 'Add Name',
+              textController: widget.textController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a name for the brochure';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            customButton(
+              label: 'SAVE',
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  widget.addBrochureCard();
+                  Navigator.pop(context);
+                }
+              },
+              fontSize: 16,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShowEnterProductsSheet extends StatefulWidget {
+  String productPriceType;
+  final TextEditingController productNameText;
+  final TextEditingController descriptionText;
+  final TextEditingController moqText;
+  final TextEditingController actualPriceText;
+  final TextEditingController offerPriceText;
+
+  final VoidCallback addProductCard;
+  final String imageType;
+  File? productImage;
+  final Future<File?> Function({required String imageType}) pickImage;
+
+  ShowEnterProductsSheet({
+    super.key,
+    required this.productPriceType,
+    required this.productNameText,
+    required this.descriptionText,
+    required this.moqText,
+    required this.actualPriceText,
+    required this.offerPriceText,
+    required this.addProductCard,
+    required this.imageType,
+    this.productImage,
+    required this.pickImage,
+  });
+
+  @override
+  State<ShowEnterProductsSheet> createState() => _ShowEnterProductsSheetState();
+}
+
+class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add Products',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FormField<File>(
+                initialValue: widget.productImage,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please upload an image';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<File> state) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: LoadingAnimation(),
+                              );
+                            },
+                          );
+
+                          final pickedFile = await widget.pickImage(
+                              imageType: widget.imageType);
+                          setState(() {
+                            widget.productImage = pickedFile;
+                            state.didChange(pickedFile); // Update form state
+                          });
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: 110,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                            border: state.hasError
+                                ? Border.all(color: Colors.red)
+                                : null,
+                          ),
+                          child: widget.productImage == null
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add,
+                                          size: 27, color: Color(0xFF004797)),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Upload Image',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 102, 101, 101)),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Center(
+                                  child: Image.file(
+                                    widget.productImage!,
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (state.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            state.errorText!,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              ModalSheetTextFormField(
+                textController: widget.productNameText,
+                label: 'Add name',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a product name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              ModalSheetTextFormField(
+                textController: widget.descriptionText,
+                label: 'Add description',
+                maxLines: 4,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              ModalSheetTextFormField(
+                textController: widget.moqText,
+                label: 'Add MOQ',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the MOQ';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Flexible(
+                    child: ModalSheetTextFormField(
+                      textController: widget.actualPriceText,
+                      label: 'Actual price',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the actual price';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: ModalSheetTextFormField(
+                      textController: widget.offerPriceText,
+                      label: 'Offer price',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the offer price';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: const BorderSide(
+                      color: Color.fromARGB(255, 185, 181, 181),
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  _showProductPriceTypeDialog(context).then((value) {
+                    if (value != null) {
+                      widget.productPriceType = value;
+                    }
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.productPriceType,
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 94, 93, 93)),
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              customButton(
                 label: 'Save',
                 onPressed: () {
-                  //function for getting product id
-                  addProductCard();
-                  Navigator.pop(context1);
+                  if (_formKey.currentState!.validate()) {
+                    widget.addProductCard();
+                    Navigator.pop(context);
+                  }
                 },
-                fontSize: 16),
-            const SizedBox(
-              height: 10,
-            )
-          ],
+                fontSize: 16,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -855,6 +1109,7 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
           ),
           const SizedBox(height: 20),
           TextField(
+            controller: widget.textController,
             maxLines: 1,
             decoration: InputDecoration(
               hintText: 'Remarks',

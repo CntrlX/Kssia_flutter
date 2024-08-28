@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+     
         final asyncPromotions = ref.watch(fetchPromotionsProvider(token));
 
         return Scaffold(
@@ -50,7 +51,9 @@ class _HomePageState extends State<HomePage> {
                   promotions.where((promo) => promo.type == 'notice').toList();
               final videos =
                   promotions.where((promo) => promo.type == 'video').toList();
-final filteredVideos = videos.where((video) => video.ytLink.startsWith('http')).toList();
+              final filteredVideos = videos
+                  .where((video) => video.ytLink.startsWith('http'))
+                  .toList();
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,20 +205,20 @@ final filteredVideos = videos.where((video) => video.ytLink.startsWith('http')).
 
                     // Videos
                     const SizedBox(height: 8),
- 
 
-if (filteredVideos.isNotEmpty)
-  SizedBox(
-    height: 300,
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: filteredVideos.length,
-      physics: const PageScrollPhysics(),
-      itemBuilder: (context, index) {
-        return customVideo(context: context, video: filteredVideos[index]);
-      },
-    ),
-  ),
+                    if (filteredVideos.isNotEmpty)
+                      SizedBox(
+                        height: 300,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: filteredVideos.length,
+                          physics: const PageScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return customVideo(
+                                context: context, video: filteredVideos[index]);
+                          },
+                        ),
+                      ),
                   ],
                 ),
               );
