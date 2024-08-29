@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/providers/chat_providers.dart';
 import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
@@ -20,20 +21,30 @@ class IndividualPage extends ConsumerStatefulWidget {
 class _IndividualPageState extends ConsumerState<IndividualPage> {
   bool show = false;
   FocusNode focusNode = FocusNode();
+  List<MessageModel> messages = [];
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-
+  late final webSocketClient;
   @override
   void initState() {
     super.initState();
-    final webSocketClient = ref.read(webSocketClientProvider);
-    webSocketClient.connect(widget.chatModel.id);
+    webSocketClient = ref.read(socketIoClientProvider);
+    webSocketClient.connect(widget.chatModel.id, widget.sourchat.id);
+    getMessageHistory();
+  }
+
+  void getMessageHistory() async {
+    final messagesette =
+        await getMessages(widget.chatModel.id, widget.sourchat.id);
+    setState(() {
+      messages.addAll(messagesette);
+    });
   }
 
   @override
   void dispose() {
-    // final webSocketClient = ref.read(webSocketClientProvider);
-    // webSocketClient.disconnect();
+    focusNode.unfocus();
+    webSocketClient.disconnect();
     _controller.dispose();
     _scrollController.dispose();
     focusNode.dispose();
@@ -41,45 +52,39 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
   }
 
   void sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      ref.read(webSocketClientProvider).sendMessage(
-            widget.sourchat.id,
-            _controller.text,
-          );
-      setMessage("source", _controller.text);
-      _controller.clear();
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
+    if (_controller.text.isNotEmpty && mounted) {
+      sendChatMessage(
+        userId: widget.chatModel.id,
+        from: widget.sourchat.id,
+        content: _controller.text,
       );
+      setMessage("sent", _controller.text, widget.sourchat.id);
+      _controller.clear();
+      if (mounted) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     }
   }
 
-  void setMessage(String type, String message) {
+  void setMessage(String type, String message, String fromId) {
     final messageModel = MessageModel(
-      type: type,
+      fromId: fromId,
+      status: type,
       message: message,
       time: DateTime.now().toString().substring(10, 16),
     );
 
-    ref.read(chatMessagesProvider.notifier).state = [
-      ...ref.read(chatMessagesProvider),
-      messageModel,
-    ];
+    setState(() {
+      messages.add(messageModel);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final messages = ref.watch(chatMessagesProvider);
-    final incomingMessage = ref.watch(messageStreamProvider).when(
-          data: (message) {
-            setMessage("destination", message.message);
-          },
-          loading: () => null,
-          error: (err, stack) => null,
-        );
-
     return Stack(
       children: [
         Scaffold(
@@ -143,7 +148,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                             height: 70,
                           );
                         }
-                        if (messages[index].type == "source") {
+                        if (messages[index].fromId == widget.sourchat.id) {
                           return OwnMessageCard(
                             message: messages[index].message,
                             time: messages[index].time,
@@ -230,7 +235,9 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                       Icons.send,
                                       color: Colors.white,
                                     ),
-                                    onPressed: sendMessage,
+                                    onPressed: () {
+                                      sendMessage();
+                                    },
                                   ),
                                 ),
                               ),
@@ -248,6 +255,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                     show = false;
                   });
                 } else {
+                  focusNode.unfocus();
                   Navigator.pop(context);
                 }
                 return Future.value(false);

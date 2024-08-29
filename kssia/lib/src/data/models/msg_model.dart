@@ -1,13 +1,24 @@
 class MessageModel {
-  String type;
+  String status;
   String message;
   String time;
-  MessageModel({required this.message, required this.type, required this.time});
+  String fromId;
+
+  MessageModel(
+      {required this.message,
+      required this.status,
+      required this.fromId,
+      required this.time});
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      message: json['message'],
-      type: json['type'],
-      time: json['time'],
+      message: json['content'],
+      status: json['status'],
+      time: json['timestamp']
+          .toString()
+          .split('T')[1]
+          .split('.')[0]
+          .substring(0, 5),
+      fromId: json['from'],
     );
   }
 }
