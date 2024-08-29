@@ -165,9 +165,10 @@ Future<List<ChatModel>> fetchChatThread(
   if (response.statusCode == 200 || response.statusCode == 201) {
     final data = json.decode(response.body)['data'];
     log('Response data: $data');
-    final chats =
+    final List<ChatModel> chats =
         await data.map<ChatModel>((item) => ChatModel.fromJson(item)).toList();
-    
+    final chat = chats[0].id!;
+    log('Response chat: ${chat}');
 
     return chats;
   } else {

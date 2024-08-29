@@ -491,6 +491,8 @@ class ProfileCompletionScreen extends StatelessWidget {
   }
 }
 
+
+
 class DetailsPage extends ConsumerStatefulWidget {
   const DetailsPage({super.key});
 
@@ -655,6 +657,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {
+      productUrl =
+          await api.createFileUrl(file: _productImageFIle!, token: token);
       final newProduct = Product(
         id: createdProduct.id,
         name: productNameController.text,
@@ -669,6 +673,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       ref.read(userProvider.notifier).updateProduct(
           [...?ref.read(userProvider).value?.products, newProduct]);
     }
+  }
+
+  void _removeProduct(int index) async {
+    await api
+        .deleteFile(
+            token, ref.read(userProvider).value!.products![index].image!)
+        .then((value) => ref
+            .read(userProvider.notifier)
+            .removeProduct(ref.read(userProvider).value!.products![index]));
   }
 
   void _addNewCertificate() async {
@@ -1919,14 +1932,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       1.0, // Space between columns
                                   mainAxisSpacing: 2.0, // Space between rows
                                   childAspectRatio:
-                                      .943, // Aspect ratio for the cards
+                                      .92, // Aspect ratio for the cards
                                 ),
                                 itemCount: user.products!.length,
                                 itemBuilder: (context, index) {
                                   return ProductCard(
-                                    product: user.products![index],
-                                    onRemove: null,
-                                  );
+                                      product: user.products![index],
+                                      onRemove: () => _removeProduct(index));
                                 },
                               ),
                             ),

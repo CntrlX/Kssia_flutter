@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kssia/src/data/api_routes/chat_api.dart';
-import 'package:kssia/src/data/api_routes/news_api.dart';
+
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 
 class ChatPage extends StatelessWidget {
@@ -85,16 +85,3 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-class ChatItem {
-  final String avatar;
-  final String name;
-  final String designation;
-  final int unreadMessages;
-
-  ChatItem({
-    required this.avatar,
-    required this.name,
-    required this.designation,
-    required this.unreadMessages,
-  });
-}

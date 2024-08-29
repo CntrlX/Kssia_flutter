@@ -9,6 +9,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/models/user_requirement_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_api.g.dart';
@@ -156,6 +157,29 @@ class ApiRoutes {
       print('Failed to delete image: ${response.statusCode}');
     }
   }
+    Future<void> deleteRequirement(String token, String requirementId,context) async {
+
+    final url = Uri.parse('$baseUrl/requirements/$requirementId');
+    print('requesting url:$url');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Requirement Deleted Successfully')));
+    } else {
+      final jsonResponse = json.decode(response.body);
+            ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(jsonResponse['message'])));
+      print(jsonResponse['message']);
+      print('Failed to delete image: ${response.statusCode}');
+    }
+  }
 
   Future<void> markNotificationAsRead(String notificationId) async {
     final url = Uri.parse(
@@ -223,7 +247,7 @@ class ApiRoutes {
     // Send the request
     var response = await request.send();
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       print('Product uploaded successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
@@ -368,6 +392,32 @@ class ApiRoutes {
   }
 }
 
+Future<void> markEventAsRSVP(String eventId) async {
+  final String url = 'http://43.205.89.79/api/v1/events/rsvp/$eventId/mark';
+  final String bearerToken = '$token';
+
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $bearerToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Success
+      print('RSVP marked successfully');
+    } else {
+      // Handle error
+      print('Failed to mark RSVP: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Handle exceptions
+    print('An error occurred: $e');
+  }
+}
+
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
@@ -419,6 +469,36 @@ Future<List<User>> fetchUsers(FetchUsersRef ref, String token) async {
     }
     print(events);
     return events;
+  } else {
+    print(json.decode(response.body)['message']);
+
+    throw Exception(json.decode(response.body)['message']);
+  }
+}
+
+@riverpod
+Future<List<UserRequirementModel>> fetchUserRequirements(FetchUserRequirementsRef ref, String token) async {
+  final url = Uri.parse('$baseUrl/requirements/$id');
+  print('Requesting URL: $url');
+  final response = await http.get(
+    url,
+    headers: {
+      "Content-Type": "application/json", 
+      "Authorization": "Bearer $token"
+    },
+  );
+  print('hello');
+  print(json.decode(response.body)['status']);
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body)['data'];
+    print(response.body);
+    List<UserRequirementModel> userRequirements = [];
+
+    for (var item in data) {
+      userRequirements.add(UserRequirementModel.fromJson(item));
+    }
+    print(userRequirements);
+    return userRequirements;
   } else {
     print(json.decode(response.body)['message']);
 

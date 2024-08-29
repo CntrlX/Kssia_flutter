@@ -62,6 +62,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? textController;
   final VoidCallback? onTap;
   final FormFieldValidator<String>? validator;
+  final VoidCallback? onChanged;
 
   const CustomTextFormField({
     Key? key,
@@ -73,12 +74,14 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixIcon,
     required this.textController,
     this.validator,
+    this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        final user = ref.watch(userProvider);
         return TextFormField(
           onChanged: (value) {
             switch (labelText) {
@@ -113,14 +116,26 @@ class CustomTextFormField extends StatelessWidget {
               case 'Enter landline number':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
                     landline: int.parse(textController!.text));
-              // case 'Enter Ig':
-              //   ref.read(userProvider.notifier).updateSocialMedia(
-              //     );
+              case 'Enter Ig':
+                ref.read(userProvider.notifier).updateSocialMedia(
+                    [...?ref.read(userProvider).value?.socialMedia],
+                    'instagram',
+                    textController!.text);
 
+              case 'Enter Linkedin':
+                ref.read(userProvider.notifier).updateSocialMedia(
+                    [...?ref.read(userProvider).value?.socialMedia],
+                    'linkedin',
+                    textController!.text);
+              case 'Enter Twitter':
+                ref.read(userProvider.notifier).updateSocialMedia(
+                    [...?ref.read(userProvider).value?.socialMedia],
+                    'twitter',
+                    textController!.text);
+   
               default:
             }
           },
-          onEditingComplete: () {},
           readOnly: readOnly,
           controller: textController,
           maxLines: maxLines,

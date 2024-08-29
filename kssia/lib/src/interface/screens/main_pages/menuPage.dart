@@ -187,14 +187,12 @@ void showLogoutDialog(BuildContext context) {
                           style: TextStyle(fontSize: 16, color: Colors.red)),
                       onPressed: () async {
                         LoggedIn = false;
-                           final SharedPreferences preferences =
+                        final SharedPreferences preferences =
                             await SharedPreferences.getInstance();
-                 
-                          preferences.setString(
-                              'token', '');
-                          preferences.setString(
-                              'id', '');
-            
+
+                        preferences.setString('token', '');
+                        preferences.setString('id', '');
+
                         Navigator.pushReplacementNamed(
                             context, '/login_screen');
                       },
@@ -219,7 +217,8 @@ class MenuPage extends StatelessWidget {
         return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: Text('Menu'),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
@@ -355,7 +354,7 @@ class MenuPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MyProductPage()),
+                                builder: (context) =>  MyProductPage()),
                           );
                         },
                       ),

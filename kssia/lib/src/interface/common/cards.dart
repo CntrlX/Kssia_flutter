@@ -113,16 +113,17 @@ class ProductCard extends StatelessWidget {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8),
-      child: SizedBox(
+      child: Container(
         width: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Adjust main axis size to minimum
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          // Wrap the entire content in a Stack
           children: [
-            Stack(
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 120.0, // Reduced height for the image
+                  height: 120.0,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -135,88 +136,90 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (onRemove != null)
-                  Positioned(
-                    top: 4.0,
-                    right: 10.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: DropDownMenu(onRemove: onRemove!),
-                      ),
+                Container(
+                  height: 80.0,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
                     ),
+                    color: const Color(0xFFF2F2F2),
                   ),
-              ],
-            ),
-            // Remove Expanded, replace with Flexible
-            Flexible(
-              fit: FlexFit.loose, // Take up only necessary space
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xFFF2F2F2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0), // Reduced padding
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min, // Adjust main axis size
-                    children: [
-                      Text(
-                        product.name!,
-                        maxLines: 1, // Limit text to one line
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15.0, // Reduced font size
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          product.name!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 15.0,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          children: [
-                            Text(
-                              '₹ ${product.price}',
-                              style: TextStyle(
-                                decoration: product.offerPrice != null
-                                    ? TextDecoration.lineThrough
-                                    : null,
-                                fontSize: 15.0, // Reduced font size
-                                color: const Color.fromARGB(255, 112, 112, 112),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            if (product.offerPrice != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            children: [
                               Text(
-                                '₹ ${product.offerPrice}',
-                                style: const TextStyle(
-                                  color: Color(0xFF004797),
-                                  fontSize: 15.0, // Reduced font size
+                                '₹ ${product.price}',
+                                style: TextStyle(
+                                  decoration: product.offerPrice != null
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                  fontSize: 15.0,
+                                  color:
+                                      const Color.fromARGB(255, 112, 112, 112),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                          ],
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              if (product.offerPrice != null)
+                                Text(
+                                  '₹ ${product.offerPrice}',
+                                  style: const TextStyle(
+                                    color: Color(0xFF004797),
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Text(
-                        'MOQ: ${product.moq}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.0, // Reduced font size
-                          fontWeight: FontWeight.w500,
+                        Text(
+                          'MOQ: ${product.moq}',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (onRemove != null)
+              Positioned(
+                top: 4.0,
+                right: 10.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: DropDownMenu(onRemove: onRemove!),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

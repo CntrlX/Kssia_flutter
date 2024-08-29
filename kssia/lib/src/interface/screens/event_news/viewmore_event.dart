@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class ViewMoreEventPage extends StatelessWidget {
                   itemCount: event.speakers!.length,
                   itemBuilder: (context, index) {
                     return _buildSpeakerCard(
-                        event.speakers![index].speakerImage!,
+                        event.speakers![index].speakerImage,
                         event.speakers![index].speakerName!,
                         event.speakers![index].speakerDesignation!);
                   },
@@ -190,7 +191,9 @@ class ViewMoreEventPage extends StatelessWidget {
             right: 16,
             child: customButton(
               label: 'REGISTER EVENT',
-              onPressed: () {},
+              onPressed: () {
+                markEventAsRSVP(event.id!);
+              },
               fontSize: 16,
             ),
           ),
@@ -199,7 +202,7 @@ class ViewMoreEventPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSpeakerCard(String imagePath, String name, String role) {
+  Widget _buildSpeakerCard(String? imagePath, String name, String role) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -211,7 +214,15 @@ class ViewMoreEventPage extends StatelessWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage(imagePath),
+          backgroundColor:
+              Colors.transparent, // Transparent background for the avatar
+          child: Image.network(
+            imagePath.toString(),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Icon(Icons.error, size: 40);
+            },
+          ),
         ),
         title: Text(
           name,

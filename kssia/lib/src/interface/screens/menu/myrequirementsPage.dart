@@ -1,64 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class MyRequirementsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My requirements'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              // Handle WhatsApp button press
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildRequirementCard(
-              context,
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              '3 messages',
-              '12:30 PM · Apr 21, 2021',
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUserRequirments =
+            ref.watch(fetchUserRequirementsProvider(token));
+        return Scaffold(
+            appBar: AppBar(
+              title: Text('My requirements'),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              actions: [
+                IconButton(
+                  icon: FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed: () {
+                    // Handle WhatsApp button press
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            _buildRequirementCard(
-              context,
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              '4 messages',
-              '12:30 PM · Apr 21, 2021',
-              imageUrl: 'https://placehold.co/600x400/png', // Replace with your image URL
-            ),
-          ],
-        ),
-      ),
+            body: asyncUserRequirments.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                // Handle error state
+                return Center(
+                  child: Text('USER HASN\'T POSTED ANYTHING'),
+                );
+              },
+              data: (userRequirements) {
+                print(userRequirements);
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: userRequirements.length,
+                          itemBuilder: (context, index) {
+                            return _buildRequirementCard(
+                                context,
+                                userRequirements[index].content,
+                                '3 messages',
+                                userRequirements[index].createdAt,
+                                userRequirements[index].id,
+                                imageUrl: userRequirements[index].image);
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 
-  Widget _buildRequirementCard(BuildContext context, String description, String messages, String timestamp, {String? imageUrl}) {
+  Widget _buildRequirementCard(BuildContext context, String description,
+      String messages, DateTime timestamp, String requirementId,
+      {String? imageUrl}) {
+    DateTime localDateTime = timestamp.toLocal();
+
+    String formattedDate =
+        DateFormat('h:mm a · MMM d, y').format(localDateTime);
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 3,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: Color.fromARGB(255, 226, 221, 221))),
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (imageUrl != null)
+            if (imageUrl != "")
               Column(
                 children: [
-                  Image.network(imageUrl),
+                  Image.network(imageUrl!),
                   SizedBox(height: 10),
                 ],
               ),
@@ -77,7 +109,7 @@ class MyRequirementsPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  timestamp,
+                  formattedDate.toString(),
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
@@ -92,7 +124,7 @@ class MyRequirementsPage extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                _showDeleteDialog(context);
+                _showDeleteDialog(context, requirementId, imageUrl!);
               },
               child: const Text(
                 'DELETE',
@@ -108,12 +140,13 @@ class MyRequirementsPage extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context) {
+  void _showDeleteDialog(BuildContext context, requirementId, String imageUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -138,15 +171,27 @@ class MyRequirementsPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('No', style: TextStyle(color: Color(0xFF0E1877))),
+                    child:
+                        Text('No', style: TextStyle(color: Color(0xFF0E1877))),
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(backgroundColor: Color(0xFFEB5757)),
-                    onPressed: () {
-                      // Handle the deletion logic
-                      Navigator.of(context).pop();
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFFEB5757)),
+                        onPressed: () {
+                          ref.invalidate(fetchUserRequirementsProvider);
+                          ApiRoutes userApi = ApiRoutes();
+                          userApi.deleteFile(token, imageUrl);
+                          userApi.deleteRequirement(
+                              token, requirementId, context);
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Yes, Delete',
+                            style: TextStyle(color: Colors.white)),
+                      );
                     },
-                    child: Text('Yes, Delete', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

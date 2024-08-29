@@ -65,20 +65,30 @@ class ProfilePage extends StatelessWidget {
               ),
               Container(
                 color: Colors.white,
-                child: const Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Profile',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 4),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Profile',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ),
+                    ),
+                    PreferredSize(
+                      preferredSize: const Size.fromHeight(1.0),
+                      child: Container(
+                        color: const Color.fromARGB(255, 202, 198, 198),
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Divider(),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -158,7 +168,8 @@ class ProfilePage extends StatelessWidget {
                                             child: Image.network(
                                               errorBuilder:
                                                   (context, error, stackTrace) {
-                                                return Image.network('https://placehold.co/400');
+                                                return Image.network(
+                                                    'https://placehold.co/400');
                                               },
                                               user.companyLogo!,
                                               height: 33,

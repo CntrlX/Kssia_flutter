@@ -25,8 +25,6 @@ class ProfilePreview extends StatelessWidget {
 
   final ValueNotifier<int> _currentVideo = ValueNotifier<int>(0);
 
-
-
   @override
   Widget build(BuildContext context) {
     PageController _videoCountController = PageController();
@@ -91,10 +89,12 @@ class ProfilePreview extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundImage: NetworkImage(user.profilePicture!),
-                    ),
+                    user.profilePicture != null
+                        ? CircleAvatar(
+                            radius: 45,
+                            backgroundImage: NetworkImage(user.profilePicture!),
+                          )
+                        : Icon(Icons.person),
                     const SizedBox(height: 10),
                     Text(
                       '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}',
@@ -110,15 +110,17 @@ class ProfilePreview extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(9),
-                              child: Image.network(
-                                user.companyLogo!,
-                                height: 33,
-                                width: 40,
-                                fit: BoxFit.cover,
+                            if (user.companyLogo != null &&
+                                user.companyLogo != '')
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(9),
+                                child: Image.network(
+                                  user.companyLogo!,
+                                  height: 33,
+                                  width: 40,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(width: 10),
@@ -211,11 +213,12 @@ class ProfilePreview extends StatelessWidget {
                       children: [
                         const Icon(Icons.location_on, color: Color(0xFF004797)),
                         const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            user.bio!,
-                          ),
-                        ),
+                        if (user.bio != null)
+                          Expanded(
+                            child: Text(
+                              user.bio!,
+                            ),
+                          )
                       ],
                     ),
                   ],
@@ -343,25 +346,27 @@ class ProfilePreview extends StatelessWidget {
                     ),
                   ],
                 ),
-                GridView.builder(
-                  shrinkWrap:
-                      true, // Let GridView take up only as much space as it needs
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Number of columns
-                    crossAxisSpacing: 1.0, // Space between columns
-                    mainAxisSpacing: 2.0, // Space between rows
-                    childAspectRatio: .943, // Aspect ratio for the cards
+                if (user.products != null)
+                  GridView.builder(
+                    shrinkWrap:
+                        true, // Let GridView take up only as much space as it needs
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Number of columns
+                      crossAxisSpacing: 1.0, // Space between columns
+                      mainAxisSpacing: 2.0, // Space between rows
+                      childAspectRatio: .943, // Aspect ratio for the cards
+                    ),
+                    itemCount: user.products!.length,
+                    itemBuilder: (context, index) {
+                      return ProductCard(
+                        product: user.products![index],
+                        onRemove: null,
+                      );
+                    },
                   ),
-                  itemCount: user.products!.length,
-                  itemBuilder: (context, index) {
-                    return ProductCard(
-                      product: user.products![index],
-                      onRemove: null,
-                    );
-                  },
-                ),
                 const SizedBox(
                   height: 50,
                 ),

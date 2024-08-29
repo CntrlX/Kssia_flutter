@@ -1,14 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -81,10 +87,10 @@ class ProductView extends StatelessWidget {
                       physics:
                           NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Number of columns
-                        crossAxisSpacing: 1.0, // Space between columns
-                        mainAxisSpacing: 2.0, // Space between rows
-                        childAspectRatio: .914, // Aspect ratio for the cards
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 1.0,
+                        mainAxisSpacing: 2.0,
+                        childAspectRatio: .89,
                       ),
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
@@ -131,16 +137,68 @@ class ProductView extends StatelessWidget {
   }
 }
 
-class ProductDetailsModal extends StatelessWidget {
+class ProductDetailsModal extends StatefulWidget {
   final Product product;
+
   const ProductDetailsModal({super.key, required this.product});
+
+  @override
+  _ProductDetailsModalState createState() => _ProductDetailsModalState();
+}
+
+class _ProductDetailsModalState extends State<ProductDetailsModal> {
+  TextEditingController _quantityController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _quantityController.text = '0'; // Initial value
+  }
+
+  @override
+  void dispose() {
+    _quantityController.dispose();
+    super.dispose();
+  }
+
+  void _incrementQuantity() {
+    setState(() {
+      int currentValue = int.tryParse(_quantityController.text) ?? 0;
+      _quantityController.text = (currentValue + 1).toString();
+    });
+  }
+
+  void _decrementQuantity() {
+    setState(() {
+      int currentValue = int.tryParse(_quantityController.text) ?? 0;
+      if (currentValue > 0) {
+        _quantityController.text = (currentValue - 1).toString();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncUser =
-            ref.watch(fetchUserDetailsProvider(token, product.sellerId!.id!));
+        final asyncUser = ref.watch(
+            fetchUserDetailsProvider(token, widget.product.sellerId!.id!));
+
+        ChatModel sourcChat = ChatModel(
+            name: '',
+            icon: '',
+            time: '',
+            currentMessage: '',
+            id: id,
+            unreadMessages: 0);
+        ChatModel receiverChat = ChatModel(
+            name:
+                '${widget.product.sellerId!.name!.firstName!} ${widget.product.sellerId!.name!.middleName!} ${widget.product.sellerId!.name!.lastName!}',
+            icon: '',
+            time: '',
+            currentMessage: '',
+            id: widget.product.sellerId!.id!,
+            unreadMessages: 0);
         return Material(
           child: SafeArea(
             top: false,
@@ -161,48 +219,48 @@ class ProductDetailsModal extends StatelessWidget {
                     child: Column(
                       children: [
                         Image.network(
+                          widget.product.image!, // Replace with your image URL
+                          fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.network(
-                                fit: BoxFit.cover,
-                                'https://placehold.co/600x400/png');
+                              'https://placehold.co/600x400/png',
+                              fit: BoxFit.cover,
+                            );
                           },
-                          product.image!, // Replace with your image URL
-                          fit: BoxFit.cover,
                         ),
                         SizedBox(height: 16),
                         Text(
-                          product.name!,
+                          widget.product.name!,
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        product.offerPrice != null
+                        widget.product.offerPrice != null
                             ? Text(
-                                'INR ${product.offerPrice} / piece',
+                                'INR ${widget.product.offerPrice} / piece',
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue),
                               )
                             : Text(
-                                'INR ${product.price} / piece',
+                                'INR ${widget.product.price} / piece',
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue),
                               ),
                         Text(
-                          'MOQ : ${product.moq}',
+                          'MOQ : ${widget.product.moq}',
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
                         Text(
-                          product.description!,
+                          widget.product.description!,
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
                         asyncUser.when(
                           data: (user) {
-                            print(user);
                             return Row(
                               children: [
                                 SizedBox(
@@ -210,7 +268,7 @@ class ProductDetailsModal extends StatelessWidget {
                                   width: 40,
                                   child: ClipOval(
                                     child: Image.network(
-                                      product.sellerId!.id ??
+                                      widget.product.sellerId!.id ??
                                           'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
                                       fit: BoxFit.cover,
                                       errorBuilder:
@@ -228,8 +286,8 @@ class ProductDetailsModal extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                        '${user!.name!.firstName} ${user!.name!.middleName} ${user!.name!.lastName}'),
-                                    Text('${user!.companyName}'),
+                                        '${user!.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}'),
+                                    Text('${user.companyName}'),
                                   ],
                                 ),
                                 Spacer(),
@@ -243,11 +301,11 @@ class ProductDetailsModal extends StatelessWidget {
                               ],
                             );
                           },
-                          loading: () => Center(child: LoadingAnimation()),
+                          loading: () =>
+                              Center(child: CircularProgressIndicator()),
                           error: (error, stackTrace) {
-                            // Handle error state
                             return Center(
-                              child: Text('Error loading promotions: $error'),
+                              child: Text('Error loading user details: $error'),
                             );
                           },
                         ),
@@ -257,20 +315,69 @@ class ProductDetailsModal extends StatelessWidget {
                           children: [
                             IconButton(
                               icon: Icon(Icons.remove),
-                              onPressed: () {},
+                              onPressed: _decrementQuantity,
                             ),
                             SizedBox(width: 16),
-                            Text('1,224', style: TextStyle(fontSize: 20)),
+                            SizedBox(
+                              height: 40,
+                              width:
+                                  250, // Increase this value to expand the horizontal width
+                              child: TextField(
+                                controller: _quantityController,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 235, 229, 229),
+                                      width: 2.0, // Border width
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 235, 229, 229),
+                                      width: 1.0, // Border width when focused
+                                    ),
+                                  ),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 8.0),
+                                ),
+                                onChanged: (value) {
+                                  if (int.tryParse(value) == null) {
+                                    _quantityController.text = '0';
+                                  }
+                                },
+                              ),
+                            ),
                             SizedBox(width: 16),
                             IconButton(
                               icon: Icon(Icons.add),
-                              onPressed: () {},
+                              onPressed: _incrementQuantity,
                             ),
                           ],
                         ),
                         SizedBox(height: 16),
+
+                        // final chat = chats.firstWhere((chat) =>
+                        //     chat.id == widget.product.sellerId!.id!);
+
                         customButton(
-                            label: 'Get Qoute', onPressed: () {}, fontSize: 16)
+                            label: 'Get Qoute',
+                            onPressed: () async {
+                              await sendChatMessage(
+                                  userId: widget.product.sellerId!.id!,
+                                  from: id,
+                                  content:
+                                      '''I need ${_quantityController.text} of ${widget.product.name} \nLet\'s Connect!''');
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => IndividualPage(
+                                        chatModel: receiverChat,
+                                        sourchat: sourcChat,
+                                      )));
+                            },
+                            fontSize: 16)
                       ],
                     ),
                   ),

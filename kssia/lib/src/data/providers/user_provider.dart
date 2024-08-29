@@ -27,14 +27,15 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }) {
     state = state.whenData((user) {
       final newName = user.name?.copyWith(
-        firstName: firstName ?? user.name?.firstName,
-        middleName: middleName ?? user.name?.middleName,
-        lastName: lastName ?? user.name?.lastName,
-      ) ?? Name(
-        firstName: firstName,
-        middleName: middleName,
-        lastName: lastName,
-      );
+            firstName: firstName ?? user.name?.firstName,
+            middleName: middleName ?? user.name?.middleName,
+            lastName: lastName ?? user.name?.lastName,
+          ) ??
+          Name(
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+          );
       return user.copyWith(name: newName);
     });
   }
@@ -48,18 +49,21 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }) {
     state = state.whenData((user) {
       final newPhoneNumbers = user.phoneNumbers?.copyWith(
-        personal: personal ?? user.phoneNumbers?.personal,
-        landline: landline ?? user.phoneNumbers?.landline,
-        companyPhoneNumber: companyPhoneNumber ?? user.phoneNumbers?.companyPhoneNumber,
-        whatsappNumber: whatsappNumber ?? user.phoneNumbers?.whatsappNumber,
-        whatsappBusinessNumber: whatsappBusinessNumber ?? user.phoneNumbers?.whatsappBusinessNumber,
-      ) ?? PhoneNumbers(
-        personal: personal,
-        landline: landline,
-        companyPhoneNumber: companyPhoneNumber,
-        whatsappNumber: whatsappNumber,
-        whatsappBusinessNumber: whatsappBusinessNumber,
-      );
+            personal: personal ?? user.phoneNumbers?.personal,
+            landline: landline ?? user.phoneNumbers?.landline,
+            companyPhoneNumber:
+                companyPhoneNumber ?? user.phoneNumbers?.companyPhoneNumber,
+            whatsappNumber: whatsappNumber ?? user.phoneNumbers?.whatsappNumber,
+            whatsappBusinessNumber: whatsappBusinessNumber ??
+                user.phoneNumbers?.whatsappBusinessNumber,
+          ) ??
+          PhoneNumbers(
+            personal: personal,
+            landline: landline,
+            companyPhoneNumber: companyPhoneNumber,
+            whatsappNumber: whatsappNumber,
+            whatsappBusinessNumber: whatsappBusinessNumber,
+          );
       return user.copyWith(phoneNumbers: newPhoneNumbers);
     });
   }
@@ -85,7 +89,8 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }
 
   void updateBusinessCategory(String? businessCategory) {
-    state = state.whenData((user) => user.copyWith(businessCategory: businessCategory));
+    state = state
+        .whenData((user) => user.copyWith(businessCategory: businessCategory));
   }
 
   void updateSubCategory(String? subCategory) {
@@ -109,7 +114,8 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }
 
   void updateSelectedTheme(String? selectedTheme) {
-    state = state.whenData((user) => user.copyWith(selectedTheme: selectedTheme));
+    state =
+        state.whenData((user) => user.copyWith(selectedTheme: selectedTheme));
   }
 
   void updateCreatedAt(String? createdAt) {
@@ -121,7 +127,8 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }
 
   void updateCompanyAddress(String? companyAddress) {
-    state = state.whenData((user) => user.copyWith(companyAddress: companyAddress));
+    state =
+        state.whenData((user) => user.copyWith(companyAddress: companyAddress));
   }
 
   void updateCompanyLogo(String? companyLogo) {
@@ -129,7 +136,8 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
   }
 
   void updateProfilePicture(String? profilePicture) {
-    state = state.whenData((user) => user.copyWith(profilePicture: profilePicture));
+    state =
+        state.whenData((user) => user.copyWith(profilePicture: profilePicture));
   }
 
   void updateAwards(List<Award> awards) {
@@ -140,43 +148,78 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
     state = state.whenData((user) => user.copyWith(brochure: brochure));
   }
 
-    void updateCertificate(List<Certificate> certificates) {
+  void updateCertificate(List<Certificate> certificates) {
     state = state.whenData((user) => user.copyWith(certificates: certificates));
   }
-    void updateProduct(List<Product> products) {
+
+  void updateProduct(List<Product> products) {
     state = state.whenData((user) => user.copyWith(products: products));
   }
-      void updateSocialMedia(List<SocialMedia> socialmedias) {
-    state = state.whenData((user) => user.copyWith(socialMedia: socialmedias));
+
+  void updateSocialMedia(
+      List<SocialMedia> socialmedias, String platform, String newUrl) {
+    final index = socialmedias.indexWhere((item) => item.platform == platform);
+    if (index != -1) {
+      final updatedSocialMedia = socialmedias[index].copyWith(url: newUrl);
+      socialmedias[index] = updatedSocialMedia;
+      state =
+          state.whenData((user) => user.copyWith(socialMedia: socialmedias));
+    }
+  }
+
+  void updateVideo(
+    List<Video> videos,
+  ) {
+    state = state.whenData(
+      (user) => user.copyWith(video: videos),
+    );
+  }
+
+  void updateWebsite(
+    List<Website> website,
+  ) {
+    state = state.whenData(
+      (user) => user.copyWith(websites: website),
+    );
   }
 
   void removeAward(Award awardToRemove) {
-  state = state.whenData((user) {
-    final updatedAwards = user.awards!.where((award) => award != awardToRemove).toList();
-    return user.copyWith(awards: updatedAwards);
-  });
-}
+    state = state.whenData((user) {
+      final updatedAwards =
+          user.awards!.where((award) => award != awardToRemove).toList();
+      return user.copyWith(awards: updatedAwards);
+    });
+  }
+
   void removeBrochure(Brochure brochureToRemove) {
-  state = state.whenData((user) {
-    final updatedBrochures = user.brochure!.where((brochure) => brochure != brochureToRemove).toList();
-    return user.copyWith(brochure: updatedBrochures);
-  });
-}
+    state = state.whenData((user) {
+      final updatedBrochures = user.brochure!
+          .where((brochure) => brochure != brochureToRemove)
+          .toList();
+      return user.copyWith(brochure: updatedBrochures);
+    });
+  }
+
   void removeCertificate(Certificate certificateToRemove) {
-  state = state.whenData((user) {
-    final updatedCertificate = user.certificates!.where((certificate) => certificate != certificateToRemove).toList();
-    return user.copyWith(certificates: updatedCertificate);
-  });
-}
+    state = state.whenData((user) {
+      final updatedCertificate = user.certificates!
+          .where((certificate) => certificate != certificateToRemove)
+          .toList();
+      return user.copyWith(certificates: updatedCertificate);
+    });
+  }
+
   void removeProduct(Product productToRemove) {
-  state = state.whenData((user) {
-    final updatedProducts = user.products!.where((product) => product != productToRemove).toList();
-    return user.copyWith(products: updatedProducts);
-  });
+    state = state.whenData((user) {
+      final updatedProducts = user.products!
+          .where((product) => product != productToRemove)
+          .toList();
+      return user.copyWith(products: updatedProducts);
+    });
+  }
 }
 
-  // Additional methods for other fields...
-}
-final userProvider = StateNotifierProvider<UserNotifier, AsyncValue<User>>((ref) {
+final userProvider =
+    StateNotifierProvider<UserNotifier, AsyncValue<User>>((ref) {
   return UserNotifier(ref);
 });

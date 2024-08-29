@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
@@ -71,17 +74,38 @@ void showWlinkorVlinkSheet(
                     textController: textController2,
                   ),
                   const SizedBox(height: 10),
-                  customButton(
-                      label: 'SAVE',
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Saved')),
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
-                      fontSize: 16),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return customButton(
+                          label: 'SAVE',
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (title == 'Add Video Link') {
+                                List<Video> newVideo = [];
+                                newVideo.add(Video(
+                                    name: textController1.text,
+                                    url: textController2.text));
+                                ref
+                                    .read(userProvider.notifier)
+                                    .updateVideo(newVideo);
+                              } else {
+                                List<Website> newWebsite = [];
+                                newWebsite.add(Website(
+                                    name: textController1.text,
+                                    url: textController2.text));
+                                ref
+                                    .read(userProvider.notifier)
+                                    .updateWebsite(newWebsite);
+                              }
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Saved')),
+                            );
+                            Navigator.pop(context);
+                          },
+                          fontSize: 16);
+                    },
+                  ),
                   const SizedBox(
                     height: 10,
                   ),

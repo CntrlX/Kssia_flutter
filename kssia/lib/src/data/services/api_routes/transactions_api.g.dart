@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'promotions_api.dart';
+part of 'transactions_api.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchPromotionsHash() => r'd70199213bd5b17fac3e0d42746409da537901cb';
+String _$fetchTransactionsHash() => r'533479805bec42269ff7f3172b0a05e5dbb86b75';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchPromotions].
-@ProviderFor(fetchPromotions)
-const fetchPromotionsProvider = FetchPromotionsFamily();
+/// See also [fetchTransactions].
+@ProviderFor(fetchTransactions)
+const fetchTransactionsProvider = FetchTransactionsFamily();
 
-/// See also [fetchPromotions].
-class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
-  /// See also [fetchPromotions].
-  const FetchPromotionsFamily();
+/// See also [fetchTransactions].
+class FetchTransactionsFamily extends Family<AsyncValue<List<Transaction>>> {
+  /// See also [fetchTransactions].
+  const FetchTransactionsFamily();
 
-  /// See also [fetchPromotions].
-  FetchPromotionsProvider call(
+  /// See also [fetchTransactions].
+  FetchTransactionsProvider call(
     String token,
   ) {
-    return FetchPromotionsProvider(
+    return FetchTransactionsProvider(
       token,
     );
   }
 
   @override
-  FetchPromotionsProvider getProviderOverride(
-    covariant FetchPromotionsProvider provider,
+  FetchTransactionsProvider getProviderOverride(
+    covariant FetchTransactionsProvider provider,
   ) {
     return call(
       provider.token,
@@ -68,33 +68,33 @@ class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchPromotionsProvider';
+  String? get name => r'fetchTransactionsProvider';
 }
 
-/// See also [fetchPromotions].
-class FetchPromotionsProvider
-    extends AutoDisposeFutureProvider<List<Promotion>> {
-  /// See also [fetchPromotions].
-  FetchPromotionsProvider(
+/// See also [fetchTransactions].
+class FetchTransactionsProvider
+    extends AutoDisposeFutureProvider<List<Transaction>> {
+  /// See also [fetchTransactions].
+  FetchTransactionsProvider(
     String token,
   ) : this._internal(
-          (ref) => fetchPromotions(
-            ref as FetchPromotionsRef,
+          (ref) => fetchTransactions(
+            ref as FetchTransactionsRef,
             token,
           ),
-          from: fetchPromotionsProvider,
-          name: r'fetchPromotionsProvider',
+          from: fetchTransactionsProvider,
+          name: r'fetchTransactionsProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchPromotionsHash,
-          dependencies: FetchPromotionsFamily._dependencies,
+                  : _$fetchTransactionsHash,
+          dependencies: FetchTransactionsFamily._dependencies,
           allTransitiveDependencies:
-              FetchPromotionsFamily._allTransitiveDependencies,
+              FetchTransactionsFamily._allTransitiveDependencies,
           token: token,
         );
 
-  FetchPromotionsProvider._internal(
+  FetchTransactionsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -108,12 +108,12 @@ class FetchPromotionsProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<Promotion>> Function(FetchPromotionsRef provider) create,
+    FutureOr<List<Transaction>> Function(FetchTransactionsRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchPromotionsProvider._internal(
-        (ref) => create(ref as FetchPromotionsRef),
+      override: FetchTransactionsProvider._internal(
+        (ref) => create(ref as FetchTransactionsRef),
         from: from,
         name: null,
         dependencies: null,
@@ -125,13 +125,13 @@ class FetchPromotionsProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<Promotion>> createElement() {
-    return _FetchPromotionsProviderElement(this);
+  AutoDisposeFutureProviderElement<List<Transaction>> createElement() {
+    return _FetchTransactionsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchPromotionsProvider && other.token == token;
+    return other is FetchTransactionsProvider && other.token == token;
   }
 
   @override
@@ -143,18 +143,18 @@ class FetchPromotionsProvider
   }
 }
 
-mixin FetchPromotionsRef on AutoDisposeFutureProviderRef<List<Promotion>> {
+mixin FetchTransactionsRef on AutoDisposeFutureProviderRef<List<Transaction>> {
   /// The parameter `token` of this provider.
   String get token;
 }
 
-class _FetchPromotionsProviderElement
-    extends AutoDisposeFutureProviderElement<List<Promotion>>
-    with FetchPromotionsRef {
-  _FetchPromotionsProviderElement(super.provider);
+class _FetchTransactionsProviderElement
+    extends AutoDisposeFutureProviderElement<List<Transaction>>
+    with FetchTransactionsRef {
+  _FetchTransactionsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchPromotionsProvider).token;
+  String get token => (origin as FetchTransactionsProvider).token;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
