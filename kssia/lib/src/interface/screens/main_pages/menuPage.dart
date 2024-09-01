@@ -176,25 +176,29 @@ void showLogoutDialog(BuildContext context) {
                 Expanded(
                   child: Container(
                     height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      child: Text('Yes, Logout',
-                          style: TextStyle(fontSize: 16, color: Colors.red)),
-                      onPressed: () async {
-                        LoggedIn = false;
-                        final SharedPreferences preferences =
-                            await SharedPreferences.getInstance();
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red.shade100,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          child: Text('Yes, Logout',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.red)),
+                          onPressed: () async {
+                            LoggedIn = false;
+                            final SharedPreferences preferences =
+                                await SharedPreferences.getInstance();
 
-                        preferences.setString('token', '');
-                        preferences.setString('id', '');
-
-                        Navigator.pushReplacementNamed(
-                            context, '/login_screen');
+                            preferences.remove('token');
+                            preferences.remove('id');
+                            Navigator.pushReplacementNamed(
+                                context, '/login_screen');
+                          },
+                        );
                       },
                     ),
                   ),
@@ -275,6 +279,7 @@ class MenuPage extends StatelessWidget {
                             Spacer(),
                             TextButton(
                               onPressed: () {
+                                ref.invalidate(userProvider);
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
@@ -354,7 +359,7 @@ class MenuPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>  MyProductPage()),
+                                builder: (context) => MyProductPage()),
                           );
                         },
                       ),

@@ -106,7 +106,6 @@ class _MainPageState extends State<MainPage> {
           print(user.profilePicture);
           _initialize(user: user);
           return Scaffold(
-         
             body: Center(
               child: _widgetOptions.elementAt(_selectedIndex),
             ),

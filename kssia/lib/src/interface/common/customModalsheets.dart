@@ -143,7 +143,7 @@ void showWlinkorVlinkSheet(
   );
 }
 
-class ShowEnterAwardtSheet extends StatefulWidget {
+class ShowEnterAwardSheet extends StatefulWidget {
   final TextEditingController textController1;
   final TextEditingController textController2;
   final VoidCallback addAwardCard;
@@ -151,7 +151,7 @@ class ShowEnterAwardtSheet extends StatefulWidget {
   File? awardImage;
   final Future<File?> Function({required String imageType}) pickImage;
 
-  ShowEnterAwardtSheet({
+  ShowEnterAwardSheet({
     required this.textController1,
     required this.textController2,
     required this.addAwardCard,
@@ -162,10 +162,10 @@ class ShowEnterAwardtSheet extends StatefulWidget {
   });
 
   @override
-  State<ShowEnterAwardtSheet> createState() => _ShowEnterAwardtSheetState();
+  State<ShowEnterAwardSheet> createState() => _ShowEnterAwardSheetState();
 }
 
-class _ShowEnterAwardtSheetState extends State<ShowEnterAwardtSheet> {
+class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -231,7 +231,7 @@ class _ShowEnterAwardtSheetState extends State<ShowEnterAwardtSheet> {
                               : null,
                         ),
                         child: widget.awardImage == null
-                            ? Center(
+                            ? const Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -261,7 +261,7 @@ class _ShowEnterAwardtSheetState extends State<ShowEnterAwardtSheet> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           state.errorText!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
                           ),
@@ -399,10 +399,10 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                               : null,
                         ),
                         child: widget.certificateImage == null
-                            ? Center(
+                            ? const Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.add,
                                         size: 27, color: Color(0xFF004797)),
                                     SizedBox(height: 10),
@@ -430,7 +430,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           state.errorText!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
                           ),
@@ -588,7 +588,7 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           state.errorText!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
                           ),
@@ -737,7 +737,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                                 : null,
                           ),
                           child: widget.productImage == null
-                              ? Center(
+                              ? const Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -768,7 +768,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             state.errorText!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.red,
                               fontSize: 12,
                             ),
@@ -845,7 +845,8 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
               const SizedBox(height: 10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     side: const BorderSide(
@@ -866,10 +867,10 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                   children: [
                     Text(
                       widget.productPriceType,
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 94, 93, 93)),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 94, 93, 93)),
                     ),
-                    Icon(
+                    const Icon(
                       Icons.arrow_drop_down,
                       color: Colors.grey,
                     ),
@@ -906,18 +907,18 @@ Future<String?> _showProductPriceTypeDialog(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        title: Text('Select an Option'),
+        title: const Text('Select an Option'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: Text('Price per unit'),
+              title: const Text('Price per unit'),
               onTap: () {
                 Navigator.of(context).pop('Price per unit');
               },
             ),
             ListTile(
-              title: Text('Option 2'),
+              title: const Text('Option 2'),
               onTap: () {
                 Navigator.of(context).pop('Option 2');
               },
@@ -929,13 +930,13 @@ Future<String?> _showProductPriceTypeDialog(BuildContext context) {
   );
 }
 
-class ShowAddRequirementSheet extends StatelessWidget {
-  final Future<void> Function({required String imageType}) pickImage;
+class ShowAddRequirementSheet extends StatefulWidget {
+  final Future<File?> Function({required String imageType}) pickImage;
   final TextEditingController textController;
   final String imageType;
-  final File? requirementImage;
+  File? requirementImage;
   final BuildContext context1;
-  const ShowAddRequirementSheet(
+  ShowAddRequirementSheet(
       {super.key,
       required this.textController,
       required this.imageType,
@@ -944,6 +945,12 @@ class ShowAddRequirementSheet extends StatelessWidget {
       required this.context1});
 
   @override
+  State<ShowAddRequirementSheet> createState() =>
+      _ShowAddRequirementSheetState();
+}
+
+class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
+  @override
   Widget build(BuildContext context) {
     ApiRoutes api = ApiRoutes();
     return Padding(
@@ -951,7 +958,7 @@ class ShowAddRequirementSheet extends StatelessWidget {
           left: 16,
           right: 16,
           top: 16,
-          bottom: MediaQuery.of(context1).viewInsets.bottom),
+          bottom: MediaQuery.of(widget.context1).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -974,35 +981,41 @@ class ShowAddRequirementSheet extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () {
-              pickImage(imageType: imageType);
+            onTap: () async {
+              final pickedImage =
+                  await widget.pickImage(imageType: widget.imageType);
+              setState(() {
+                widget.requirementImage = pickedImage;
+              });
             },
             child: Container(
-              height: 110,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 27, color: Color(0xFF004797)),
-                    SizedBox(height: 10),
-                    Text(
-                      'Upload Image',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 102, 101, 101)),
-                    ),
-                  ],
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              ),
-            ),
+                child: widget.requirementImage == null
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 27, color: Color(0xFF004797)),
+                            SizedBox(height: 10),
+                            Text(
+                              'Upload Image',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 102, 101, 101)),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Image.file(widget.requirementImage!)),
           ),
           const SizedBox(height: 20),
           TextField(
-            controller: textController,
-            maxLines: ((MediaQuery.sizeOf(context1).height) / 200).toInt(),
+            controller: widget.textController,
+            maxLines:
+                ((MediaQuery.sizeOf(widget.context1).height) / 200).toInt(),
             decoration: InputDecoration(
               hintText: 'Add content',
               border: OutlineInputBorder(
@@ -1013,18 +1026,19 @@ class ShowAddRequirementSheet extends StatelessWidget {
           const SizedBox(height: 10),
           ElevatedButton(
               onPressed: () {
-                api.uploadRequirement(token, id, textController.text, 'pending',
-                    requirementImage!);
+                api.uploadRequirement(token, id, widget.textController.text,
+                    'pending', widget.requirementImage!);
+                Navigator.pop(context);
               },
               style: ButtonStyle(
                 foregroundColor:
-                    WidgetStateProperty.all<Color>(Color(0xFF004797)),
+                    WidgetStateProperty.all<Color>(const Color(0xFF004797)),
                 backgroundColor:
-                    WidgetStateProperty.all<Color>(Color(0xFF004797)),
+                    WidgetStateProperty.all<Color>(const Color(0xFF004797)),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(color: Color(0xFF004797)),
+                    side: const BorderSide(color: Color(0xFF004797)),
                   ),
                 ),
               ),
@@ -1107,10 +1121,10 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: widget.paymentImage == null
-                  ? Center(
+                  ? const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.add, size: 27, color: Color(0xFF004797)),
                           SizedBox(height: 10),
                           Text(
@@ -1151,6 +1165,114 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
                 Navigator.pop(context);
               },
               fontSize: 16)
+        ],
+      ),
+    );
+  }
+}
+
+class ShowWriteReviewSheet extends StatefulWidget {
+  final String userId;
+  ShowWriteReviewSheet({
+    super.key,
+    required this.userId,
+  });
+
+  @override
+  State<ShowWriteReviewSheet> createState() => _ShowWriteReviewSheetState();
+}
+
+class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
+  TextEditingController feedbackController = TextEditingController();
+  int selectedRating = 0;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'How is your Experience with this Member?',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(5, (index) {
+              return IconButton(
+                icon: Icon(
+                  Icons.star,
+                  color: index < selectedRating ? Colors.amber : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    selectedRating = index + 1;
+                  });
+                },
+              );
+            }),
+          ),
+          SizedBox(height: 20),
+          TextField(
+            controller: feedbackController,
+            decoration: InputDecoration(
+              hintText: 'Leave Your Feedback here',
+              border: OutlineInputBorder(),
+            ),
+            maxLines: 4,
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('CANCEL'),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    return ElevatedButton(
+                      onPressed: () async {
+                        ApiRoutes userApi = ApiRoutes();
+                        await userApi
+                            .postReview(widget.userId, feedbackController.text,
+                                selectedRating, context)
+                            .then(
+                          (value) {
+                            ref.invalidate(userProvider);
+                          },
+                        );
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('SUBMIT'),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -12,8 +12,10 @@ class ViewMoreEventPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String time = DateFormat('hh:mm a').format(event.date!);
-    String date = DateFormat('yyyy-MM-dd').format(event.date!);
+    String startTime = DateFormat('hh:mm a').format(event.startTime!);
+    String startDate = DateFormat('yyyy-MM-dd').format(event.startDate!);
+        String endDate = DateFormat('hh:mm a').format(event.endDate!);
+    String endTime = DateFormat('yyyy-MM-dd').format(event.endTime!);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -103,7 +105,7 @@ class ViewMoreEventPage extends StatelessWidget {
                         Icon(Icons.calendar_today, color: Color(0xFF004797)),
                         SizedBox(width: 8),
                         Text(
-                          date,
+                          startDate,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -118,7 +120,7 @@ class ViewMoreEventPage extends StatelessWidget {
                         Icon(Icons.access_time, color: Color(0xFF004797)),
                         SizedBox(width: 8),
                         Text(
-                          time,
+                          startTime,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -192,7 +194,7 @@ class ViewMoreEventPage extends StatelessWidget {
             child: customButton(
               label: 'REGISTER EVENT',
               onPressed: () {
-                markEventAsRSVP(event.id!);
+                markEventAsRSVP(event.id!,context);
               },
               fontSize: 16,
             ),

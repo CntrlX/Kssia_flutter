@@ -81,7 +81,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final user = ref.watch(userProvider);
+
         return TextFormField(
           onChanged: (value) {
             switch (labelText) {
@@ -116,6 +116,20 @@ class CustomTextFormField extends StatelessWidget {
               case 'Enter landline number':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
                     landline: int.parse(textController!.text));
+              case 'Enter Email':
+                ref
+                    .read(userProvider.notifier)
+                    .updateEmail(textController!.text);
+              case 'Enter Business Whatsapp':
+                ref.read(userProvider.notifier).updatePhoneNumbers(
+                    whatsappBusinessNumber: int.parse(textController!.text));
+              case 'Enter Whatsapp':
+                ref.read(userProvider.notifier).updatePhoneNumbers(
+                    whatsappNumber: int.parse(textController!.text));
+              case 'Enter Address':
+                ref
+                    .read(userProvider.notifier)
+                    .updateAddress(textController!.text);
               case 'Enter Ig':
                 ref.read(userProvider.notifier).updateSocialMedia(
                     [...?ref.read(userProvider).value?.socialMedia],
@@ -132,7 +146,7 @@ class CustomTextFormField extends StatelessWidget {
                     [...?ref.read(userProvider).value?.socialMedia],
                     'twitter',
                     textController!.text);
-   
+
               default:
             }
           },

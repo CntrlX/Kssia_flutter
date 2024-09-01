@@ -41,9 +41,11 @@ class ProductView extends StatelessWidget {
           data: (products) {
             final filteredProducts = products.where((product) {
               return product.name!
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase());
+                      .toLowerCase()
+                      .contains(searchQuery.toLowerCase()) &&
+                  product.sellerId!.id != id;
             }).toList();
+        
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -57,36 +59,36 @@ class ProductView extends StatelessWidget {
                         },
                         decoration: InputDecoration(
                           fillColor: Colors.white,
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           hintText: 'Search your Products',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color.fromARGB(255, 216, 211, 211),
                             ),
                           ),
                         ),
                       )),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   if (filteredProducts.isNotEmpty)
                     GridView.builder(
                       shrinkWrap:
                           true, // Let GridView take up only as much space as it needs
                       physics:
-                          NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 1.0,
                         mainAxisSpacing: 2.0,
@@ -107,18 +109,18 @@ class ProductView extends StatelessWidget {
                   else
                     Column(
                       children: [
-                        SizedBox(height: 100),
+                        const SizedBox(height: 100),
                         SvgPicture.asset(
                           'assets/icons/feed_productBag.svg',
                           height: 120,
                         ),
-                        SizedBox(height: 16),
-                        Text(
+                        const SizedBox(height: 16),
+                        const Text(
                           'Search for Products',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        Text(
+                        const Text(
                           'that you need',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
@@ -129,7 +131,7 @@ class ProductView extends StatelessWidget {
               ),
             );
           },
-          loading: () => Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
         ),
       );
@@ -152,7 +154,7 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
   @override
   void initState() {
     super.initState();
-    _quantityController.text = '0'; // Initial value
+    _quantityController.text = '0'; 
   }
 
   @override
@@ -204,7 +206,7 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
             top: false,
             child: Column(
               children: [
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Container(
                   width: 60,
                   height: 6,
@@ -228,37 +230,37 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                             );
                           },
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           widget.product.name!,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         widget.product.offerPrice != null
                             ? Text(
                                 'INR ${widget.product.offerPrice} / piece',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue),
                               )
                             : Text(
                                 'INR ${widget.product.price} / piece',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue),
                               ),
                         Text(
                           'MOQ : ${widget.product.moq}',
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           widget.product.description!,
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         asyncUser.when(
                           data: (user) {
                             return Row(
@@ -281,7 +283,7 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -290,8 +292,8 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                                     Text('${user.companyName}'),
                                   ],
                                 ),
-                                Spacer(),
-                                Row(
+                                const Spacer(),
+                                const Row(
                                   children: [
                                     Icon(Icons.star, color: Colors.orange),
                                     Text('4.5'),
@@ -302,22 +304,22 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                             );
                           },
                           loading: () =>
-                              Center(child: CircularProgressIndicator()),
+                              const Center(child: CircularProgressIndicator()),
                           error: (error, stackTrace) {
                             return Center(
                               child: Text('Error loading user details: $error'),
                             );
                           },
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                              icon: Icon(Icons.remove),
+                              icon: const Icon(Icons.remove),
                               onPressed: _decrementQuantity,
                             ),
-                            SizedBox(width: 16),
+                            const SizedBox(width: 16),
                             SizedBox(
                               height: 40,
                               width:
@@ -329,20 +331,20 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 235, 229, 229),
                                       width: 2.0, // Border width
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color.fromARGB(255, 235, 229, 229),
                                       width: 1.0, // Border width when focused
                                     ),
                                   ),
                                   contentPadding:
-                                      EdgeInsets.symmetric(vertical: 8.0),
+                                      const EdgeInsets.symmetric(vertical: 8.0),
                                 ),
                                 onChanged: (value) {
                                   if (int.tryParse(value) == null) {
@@ -351,14 +353,14 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
                                 },
                               ),
                             ),
-                            SizedBox(width: 16),
+                            const SizedBox(width: 16),
                             IconButton(
-                              icon: Icon(Icons.add),
+                              icon: const Icon(Icons.add),
                               onPressed: _incrementQuantity,
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
                         // final chat = chats.firstWhere((chat) =>
                         //     chat.id == widget.product.sellerId!.id!);

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/product_model.dart';
@@ -158,13 +160,24 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
 
   void updateSocialMedia(
       List<SocialMedia> socialmedias, String platform, String newUrl) {
-    final index = socialmedias.indexWhere((item) => item.platform == platform);
-    if (index != -1) {
-      final updatedSocialMedia = socialmedias[index].copyWith(url: newUrl);
-      socialmedias[index] = updatedSocialMedia;
+    if (platform != '') {
+      final index =
+          socialmedias.indexWhere((item) => item.platform == platform);
+
+      if (index != -1) {
+        final updatedSocialMedia = socialmedias[index].copyWith(url: newUrl);
+        socialmedias[index] = updatedSocialMedia;
+      } else {
+        final newSocialMedia = SocialMedia(platform: platform, url: newUrl);
+        socialmedias.add(newSocialMedia);
+      }
+
       state =
           state.whenData((user) => user.copyWith(socialMedia: socialmedias));
+    } else {
+      state = state.whenData((user) => user.copyWith(socialMedia: []));
     }
+    log('Updated Social Media $socialmedias');
   }
 
   void updateVideo(

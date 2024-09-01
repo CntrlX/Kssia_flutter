@@ -6,7 +6,7 @@ part of 'user_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchUserDetailsHash() => r'c964d17907640cfd4702c1cfff60a63f2d9ada06';
+String _$fetchUserDetailsHash() => r'87d84b019b683861b347b5a834ba7508fa079757';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -434,5 +434,23 @@ class _FetchUserRequirementsProviderElement
   @override
   String get token => (origin as FetchUserRequirementsProvider).token;
 }
+
+String _$fetchUserRsvpdEventsHash() =>
+    r'15fa659312ed4c3be7c7939a8cfba2b2383c1543';
+
+/// See also [fetchUserRsvpdEvents].
+@ProviderFor(fetchUserRsvpdEvents)
+final fetchUserRsvpdEventsProvider =
+    AutoDisposeFutureProvider<List<Event>>.internal(
+  fetchUserRsvpdEvents,
+  name: r'fetchUserRsvpdEventsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fetchUserRsvpdEventsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

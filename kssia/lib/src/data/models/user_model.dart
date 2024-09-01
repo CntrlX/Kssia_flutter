@@ -46,7 +46,7 @@ class PhoneNumbers {
   final int? landline;
   final int? companyPhoneNumber;
   final int? whatsappNumber;
-  final int? whatsappBusinessNumber;
+   final int? whatsappBusinessNumber;
 
   PhoneNumbers({
     this.personal,

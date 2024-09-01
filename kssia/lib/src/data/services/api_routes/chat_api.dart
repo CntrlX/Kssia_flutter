@@ -167,8 +167,7 @@ Future<List<ChatModel>> fetchChatThread(
     log('Response data: $data');
     final List<ChatModel> chats =
         await data.map<ChatModel>((item) => ChatModel.fromJson(item)).toList();
-    final chat = chats[0].id!;
-    log('Response chat: ${chat}');
+
 
     return chats;
   } else {

@@ -29,7 +29,7 @@ class ChatModel {
 
     if (json['participants'] != null) {
       json['participants'].forEach((element) {
-        if (element['id'] != globals.id) {
+        if (element['_id'] != globals.id) {
           chatName = element['name']['first_name'] ?? '';
           chatIcon = element['profile_picture'] ?? '';
           chatId = element['_id'] ?? '';

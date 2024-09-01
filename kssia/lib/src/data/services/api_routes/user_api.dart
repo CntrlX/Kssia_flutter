@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/models/user_requirement_model.dart';
@@ -35,6 +36,9 @@ class ApiRoutes {
       return null;
     } else {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(responseBody['message'])));
+
       print(responseBody['message']);
       return null;
     }
@@ -157,8 +161,9 @@ class ApiRoutes {
       print('Failed to delete image: ${response.statusCode}');
     }
   }
-    Future<void> deleteRequirement(String token, String requirementId,context) async {
 
+  Future<void> deleteRequirement(
+      String token, String requirementId, context) async {
     final url = Uri.parse('$baseUrl/requirements/$requirementId');
     print('requesting url:$url');
     final response = await http.delete(
@@ -170,11 +175,11 @@ class ApiRoutes {
     );
 
     if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Requirement Deleted Successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Requirement Deleted Successfully')));
     } else {
       final jsonResponse = json.decode(response.body);
-            ScaffoldMessenger.of(context)
+      ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(jsonResponse['message'])));
       print(jsonResponse['message']);
       print('Failed to delete image: ${response.statusCode}');
@@ -189,8 +194,7 @@ class ApiRoutes {
       url,
       headers: {
         'accept': 'application/json',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.gw7m0eu3gxSoavEQa4aIt48YZVQz_EsuZ0nJDrjXKuI',
+        'Authorization': 'Bearer $token',
       },
     );
 
@@ -228,6 +232,7 @@ class ApiRoutes {
     request.fields['offer_price'] = price;
     request.fields['description'] = description;
     request.fields['moq'] = moq;
+    request.fields['status'] = false.toString();
     request.fields['seller_id'] = sellerId;
 
     // Add the image file
@@ -309,7 +314,7 @@ class ApiRoutes {
     stream.cast();
     var length = await file.length();
     var multipartFile = http.MultipartFile(
-      'invoice_url',
+      'file',
       stream,
       length,
       filename: basename(file.path),
@@ -350,8 +355,7 @@ class ApiRoutes {
     // Add headers
     request.headers.addAll({
       'accept': 'application/json',
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjY2YzM4ZTRkYjlhYTE0N2MyMzAzMzliZiJ9LCJpYXQiOjE3MjQ0MDE4ODh9.lcLy_lfd606IwPduyoW7geWYsHBjtAtmNcSshQV0eHM',
+      'Authorization': 'Bearer $token',
       'Content-Type': 'multipart/form-data',
     });
 
@@ -390,9 +394,42 @@ class ApiRoutes {
       return 'Failed';
     }
   }
+
+  Future<void> postReview(
+      String userId, String content, int rating, context) async {
+    final url = Uri.parse('http://43.205.89.79/api/v1/user/$userId/reviews');
+    final headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final body = json.encode({
+      'reviewer': id,
+      'content': content,
+      'rating': rating,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Review posted successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Review posted successfully')));
+      } else {
+        print('Failed to post review: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to post review')));
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 }
 
-Future<void> markEventAsRSVP(String eventId) async {
+Future<void> markEventAsRSVP(String eventId, context) async {
   final String url = 'http://43.205.89.79/api/v1/events/rsvp/$eventId/mark';
   final String bearerToken = '$token';
 
@@ -408,9 +445,13 @@ Future<void> markEventAsRSVP(String eventId) async {
     if (response.statusCode == 200) {
       // Success
       print('RSVP marked successfully');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registered sucessfully successfully')));
     } else {
       // Handle error
       print('Failed to mark RSVP: ${response.statusCode}');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to Register')));
     }
   } catch (e) {
     // Handle exceptions
@@ -432,7 +473,7 @@ Future<User> fetchUserDetails(
       "Authorization": "Bearer $token"
     },
   );
-  print('hello');
+  log('hello');
   print(response.body);
   if (response.statusCode == 200) {
     final dynamic data = json.decode(response.body)['data'];
@@ -477,13 +518,14 @@ Future<List<User>> fetchUsers(FetchUsersRef ref, String token) async {
 }
 
 @riverpod
-Future<List<UserRequirementModel>> fetchUserRequirements(FetchUserRequirementsRef ref, String token) async {
+Future<List<UserRequirementModel>> fetchUserRequirements(
+    FetchUserRequirementsRef ref, String token) async {
   final url = Uri.parse('$baseUrl/requirements/$id');
   print('Requesting URL: $url');
   final response = await http.get(
     url,
     headers: {
-      "Content-Type": "application/json", 
+      "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     },
   );
@@ -503,5 +545,41 @@ Future<List<UserRequirementModel>> fetchUserRequirements(FetchUserRequirementsRe
     print(json.decode(response.body)['message']);
 
     throw Exception(json.decode(response.body)['message']);
+  }
+}
+
+@riverpod
+Future<List<Event>> fetchUserRsvpdEvents(
+  FetchUserRsvpdEventsRef ref,
+) async {
+  final url = Uri.parse('http://43.205.89.79/api/v1/events/user/rsvpd');
+  print(token);
+  final headers = {
+    'accept': 'application/json',
+    'Authorization': 'Bearer $token'
+  };
+
+  try {
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      // Successfully received response
+     final List<dynamic> data = json.decode(response.body)['data'];
+    print(response.body);
+      
+      List<Event> registeredEvents = [];
+      for (var item in data) {
+      registeredEvents.add(Event.fromJson(item));
+    }
+      return registeredEvents;
+     
+    } else {
+      // Handle error response
+      print('Request failed with status: ${response.statusCode}');
+      return [];
+    }
+  } catch (error) {
+    print('Error occurred: $error');
+      return [];
   }
 }

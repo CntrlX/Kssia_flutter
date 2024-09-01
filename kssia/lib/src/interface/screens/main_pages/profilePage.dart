@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
@@ -249,7 +250,8 @@ class ProfilePage extends StatelessWidget {
                           SizedBox(height: 10),
                           Row(
                             children: [
-                              Icon(Icons.person, color: Color(0xFF004797)),
+                              Icon(FontAwesomeIcons.instagram,
+                                  color: Color(0xFF004797)),
                               SizedBox(width: 10),
                               if (user.socialMedia!.isNotEmpty)
                                 Flexible(
@@ -263,7 +265,7 @@ class ProfilePage extends StatelessWidget {
                               SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  user.bio!,
+                                  user.address!,
                                 ),
                               ),
                             ],

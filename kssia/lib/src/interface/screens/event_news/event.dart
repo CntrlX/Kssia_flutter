@@ -49,8 +49,10 @@ class EventPage extends StatelessWidget {
       {bool withImage = false,
       required BuildContext context,
       required Event event}) {
-    String time = DateFormat('hh:mm a').format(event.date!);
-    String date = DateFormat('yyyy-MM-dd').format(event.date!);
+    String startTime = DateFormat('hh:mm a').format(event.startTime!);
+    String startDate = DateFormat('yyyy-MM-dd').format(event.startDate!);
+    String endDate = DateFormat('hh:mm a').format(event.endDate!);
+    String endTime = DateFormat('yyyy-MM-dd').format(event.endTime!);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       shape: RoundedRectangleBorder(
@@ -76,21 +78,20 @@ class EventPage extends StatelessWidget {
                       // Image goes here
                       Positioned.fill(
                         child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
-                          child: Image.network(
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://placehold.co/600x400/png');
-                            },
-                            event.image!, // Replace with your image URL
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                            child: event.image != null 
+                                ? Image.network(
+                                    event.image!, 
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    'https://placehold.co/400', 
+                                    fit: BoxFit.cover,
+                                  )),
                       ),
-                      // Icon placed above the image
+                
                       Center(
                         child: Icon(
                           Icons.play_circle_fill,
@@ -159,7 +160,7 @@ class EventPage extends StatelessWidget {
                                     size: 20, color: Color(0xFF700F0F)),
                                 const SizedBox(width: 5),
                                 Text(
-                                  date,
+                                  startDate,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color.fromARGB(255, 109, 84, 84),
@@ -181,7 +182,7 @@ class EventPage extends StatelessWidget {
                                     size: 20, color: Color(0xFF0E1877)),
                                 const SizedBox(width: 5),
                                 Text(
-                                  time,
+                                  startTime,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF0E1877),
