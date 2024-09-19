@@ -462,7 +462,7 @@ Future<void> markEventAsRSVP(String eventId, context) async {
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
-Future<User> fetchUserDetails(
+Future<UserModel> fetchUserDetails(
     FetchUserDetailsRef ref, String token, String userId) async {
   final url = Uri.parse('$baseUrl/user/$userId');
   print('Requesting URL: $url');
@@ -479,7 +479,7 @@ Future<User> fetchUserDetails(
     final dynamic data = json.decode(response.body)['data'];
     print(data['products']);
 
-    return User.fromJson(data);
+    return UserModel.fromJson(data);
   } else {
     print(json.decode(response.body)['message']);
 
@@ -488,7 +488,7 @@ Future<User> fetchUserDetails(
 }
 
 @riverpod
-Future<List<User>> fetchUsers(FetchUsersRef ref, String token) async {
+Future<List<UserModel>> fetchUsers(FetchUsersRef ref, String token) async {
   final url = Uri.parse('$baseUrl/admin/users');
   print('Requesting URL: $url');
   final response = await http.get(
@@ -503,10 +503,10 @@ Future<List<User>> fetchUsers(FetchUsersRef ref, String token) async {
   if (response.statusCode == 200) {
     final List<dynamic> data = json.decode(response.body)['data'];
     print(response.body);
-    List<User> events = [];
+    List<UserModel> events = [];
 
     for (var item in data) {
-      events.add(User.fromJson(item));
+      events.add(UserModel.fromJson(item));
     }
     print(events);
     return events;

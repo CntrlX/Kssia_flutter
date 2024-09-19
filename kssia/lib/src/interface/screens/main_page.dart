@@ -67,9 +67,9 @@ class _MainPageState extends State<MainPage> {
 
   List<String> _inactiveIcons = [];
   List<String> _activeIcons = [];
-  void _initialize({required User user}) {
+  void _initialize({required UserModel user}) {
     _widgetOptions = <Widget>[
-      HomePage(),
+      HomePage(user: user,),
       FeedPage(),
       ProfilePage(user: user),
       Event_News_Page(),

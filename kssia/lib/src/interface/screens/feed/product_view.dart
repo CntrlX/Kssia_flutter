@@ -45,7 +45,7 @@ class ProductView extends StatelessWidget {
                       .contains(searchQuery.toLowerCase()) &&
                   product.sellerId!.id != id;
             }).toList();
-        
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -88,11 +88,12 @@ class ProductView extends StatelessWidget {
                           true, // Let GridView take up only as much space as it needs
                       physics:
                           const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 1.0,
                         mainAxisSpacing: 2.0,
-                        childAspectRatio: .89,
+                        childAspectRatio: .85,
                       ),
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
@@ -154,7 +155,7 @@ class _ProductDetailsModalState extends State<ProductDetailsModal> {
   @override
   void initState() {
     super.initState();
-    _quantityController.text = '0'; 
+    _quantityController.text = '0';
   }
 
   @override

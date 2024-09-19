@@ -21,6 +21,7 @@ import 'package:kssia/src/interface/common/custom_switch.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/website_video_cards.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
@@ -514,52 +515,18 @@ class DetailsPage extends ConsumerStatefulWidget {
 }
 
 class _DetailsPageState extends ConsumerState<DetailsPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initializeSwitches());
-
-    log('this is initState');
-  }
-
-  Future<void> _initializeSwitches() async {
-    log('im in initialization');
-    SharedPreferences switchPreference = await SharedPreferences.getInstance();
-
-    ref.read(isPhoneNumberVisibleProvider.notifier).state =
-        switchPreference.getBool('phoneSwitch') ?? false;
-    ref.read(isLandlineVisibleProvider.notifier).state =
-        switchPreference.getBool('landlineAddmore') ?? false;
-    ref.read(isContactDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('contactSwitch') ?? false;
-    ref.read(isSocialDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('socialSwitch') ?? false;
-    ref.read(isWebsiteDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('websiteSwitch') ?? false;
-    ref.read(isVideoDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('videoSwitch') ?? false;
-    ref.read(isAwardsDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('awardSwitch') ?? false;
-    ref.read(isProductsDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('productSwitch') ?? false;
-    ref.read(isCertificateDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('certificateSwitch') ?? false;
-    ref.read(isBrochureDetailsVisibleProvider.notifier).state =
-        switchPreference.getBool('brochureSwitch') ?? false;
-  }
-
   String _productPriceType = 'Price per unit';
-  final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
-  final isLandlineVisibleProvider = StateProvider<bool>((ref) => false);
-  final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isWebsiteDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isVideoDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isAwardsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isProductsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isCertificateDetailsVisibleProvider =
-      StateProvider<bool>((ref) => false);
-  final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isLandlineVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isWebsiteDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isVideoDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isAwardsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isProductsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
+  // final isCertificateDetailsVisibleProvider =
+  //     StateProvider<bool>((ref) => false);
+  // final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController landlineController = TextEditingController();
@@ -773,6 +740,40 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         .removeBrochure(ref.read(userProvider).value!.brochure![index]);
   }
 
+  void _addNewWebsite() async {
+    Website newWebsite = Website(
+        url: websiteLinkController.text.toString(),
+        name: websiteNameController.text.toString());
+    log('Hello im in website bug:${ref.read(userProvider).value?.websites}');
+    ref.read(userProvider.notifier).updateWebsite(
+        [...?ref.read(userProvider).value?.websites, newWebsite]);
+    websiteLinkController.clear();
+    websiteNameController.clear();
+  }
+
+  void _removeWebsite(int index) async {
+    ref
+        .read(userProvider.notifier)
+        .removeWebsite(ref.read(userProvider).value!.websites![index]);
+  }
+
+  void _addNewVideo() async {
+    Video newVideo = Video(
+        url: videoLinkController.text.toString(),
+        name: videoNameController.text.toString());
+    ref
+        .read(userProvider.notifier)
+        .updateVideos([...?ref.read(userProvider).value?.video, newVideo]);
+    videoLinkController.clear();
+    videoNameController.clear();
+  }
+
+  void _removeVideo(int index) async {
+    ref
+        .read(userProvider.notifier)
+        .removeVideo(ref.read(userProvider).value!.video![index]);
+  }
+
   @override
   void dispose() {
     // Dispose controllers when the widget is disposed
@@ -794,7 +795,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     super.dispose();
   }
 
-  Future<void> _submitData({required User user}) async {
+  Future<void> _submitData({required UserModel user}) async {
     String fullName =
         '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
 
@@ -828,10 +829,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       "company_address": user.companyAddress,
       "bio": user.bio,
       "address": user.address,
-      "social_media": [
-        for (var i in user.socialMedia!)
-          {"platform": "${i.platform}", "url": i.url}
-      ],
+      if (user.socialMedia != [])
+        "social_media": [
+          for (var i in user.socialMedia!)
+            {"platform": "${i.platform}", "url": i.url}
+        ],
       "websites": [
         for (var i in user.websites!) {"name": i.name.toString(), "url": i.url}
       ],
@@ -976,19 +978,19 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(userProvider);
-    final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
-    final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
-    final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
-    final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
-    final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
-    final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
-    final isLandlineVisible = ref.watch(isLandlineVisibleProvider);
-    final isProductsDetailsVisible =
-        ref.watch(isProductsDetailsVisibleProvider);
-    final isCertificateDetailsVisible =
-        ref.watch(isCertificateDetailsVisibleProvider);
-    final isBrochureDetailsVisible =
-        ref.watch(isBrochureDetailsVisibleProvider);
+    // final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
+    // final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
+    // final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
+    // final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
+    // final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
+    // final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
+    // final isLandlineVisible = ref.watch(isLandlineVisibleProvider);
+    // final isProductsDetailsVisible =
+    //     ref.watch(isProductsDetailsVisibleProvider);
+    // final isCertificateDetailsVisible =
+    //     ref.watch(isCertificateDetailsVisibleProvider);
+    // final isBrochureDetailsVisible =
+    //     ref.watch(isBrochureDetailsVisibleProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -1021,53 +1023,16 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                   ? ''
                   : user.phoneNumbers!.whatsappNumber.toString();
               addressController.text = user.address!;
-              List<TextEditingController> socialLinkControllers = [
-                igController,
-                linkedinController,
-                twtitterController,
-                facebookController
-              ];
 
-              for (int i = 0; i < socialLinkControllers.length; i++) {
-                if (i < user.socialMedia!.length) {
-                  socialLinkControllers[i].text =
-                      user.socialMedia![i].url ?? '';
-                } else {
-                  socialLinkControllers[i].clear();
-                }
-              }
-
-              List<TextEditingController> websiteLinkControllers = [
-                websiteLinkController
-              ];
-              List<TextEditingController> websiteNameControllers = [
-                websiteNameController
-              ];
-
-              for (int i = 0; i < websiteLinkControllers.length; i++) {
-                if (i < user.websites!.length) {
-                  websiteLinkControllers[i].text = user.websites![i].url ?? '';
-                  websiteNameControllers[i].text = user.websites![i].name ?? '';
-                } else {
-                  websiteLinkControllers[i].clear();
-                  websiteNameControllers[i].clear();
-                }
-              }
-
-              List<TextEditingController> videoLinkControllers = [
-                videoLinkController
-              ];
-              List<TextEditingController> videoNameControllers = [
-                videoNameController
-              ];
-
-              for (int i = 0; i < videoLinkControllers.length; i++) {
-                if (i < user.video!.length) {
-                  videoLinkControllers[i].text = user.video![i].url ?? '';
-                  videoNameControllers[i].text = user.video![i].name ?? '';
-                } else {
-                  videoLinkControllers[i].clear();
-                  videoNameControllers[i].clear();
+              for (var i in user.socialMedia!) {
+                if (i.platform == 'instagram') {
+                  igController.text = i.url ?? '';
+                } else if (i.platform == 'linkedin') {
+                  linkedinController.text = i.url ?? '';
+                } else if (i.platform == 'twitter') {
+                  twtitterController.text = i.url ?? '';
+                } else if (i.platform == 'facebook') {
+                  facebookController.text = i.url ?? '';
                 }
               }
 
@@ -1502,93 +1467,93 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref
-                                          .watch(isPhoneNumberVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'phoneSwitch', value);
-                                        ref
-                                            .read(isPhoneNumberVisibleProvider
-                                                .notifier)
-                                            .state = value;
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value: ref
+                                    //       .watch(isPhoneNumberVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'phoneSwitch', value);
+                                    //     ref
+                                    //         .read(isPhoneNumberVisibleProvider
+                                    //             .notifier)
+                                    //         .state = value;
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (isPhoneNumberVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 0, bottom: 10),
-                                  child: CustomTextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Your Phone Number';
-                                      }
-                                      return null;
-                                    },
-                                    textController: personalPhoneController,
-                                    labelText: 'Enter phone number',
-                                    prefixIcon: const Icon(Icons.phone,
-                                        color: Color(0xFF004797)),
-                                  ),
+                              // if (isPhoneNumberVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 0, bottom: 10),
+                                child: CustomTextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please Enter Your Phone Number';
+                                    }
+                                    return null;
+                                  },
+                                  textController: personalPhoneController,
+                                  labelText: 'Enter phone number',
+                                  prefixIcon: const Icon(Icons.phone,
+                                      color: Color(0xFF004797)),
                                 ),
-                              if (isPhoneNumberVisible && !isLandlineVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 20, bottom: 50),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      SharedPreferences switchPreference =
-                                          await SharedPreferences.getInstance();
-                                      switchPreference.setBool(
-                                          'landlineAddmore',
-                                          !isLandlineVisible);
-                                      ref
-                                          .read(isLandlineVisibleProvider
-                                              .notifier)
-                                          .state = !isLandlineVisible;
-                                    },
-                                    child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          'Add more',
-                                          style: TextStyle(
-                                              color: Color(0xFF004797),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 15),
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          color: Color(0xFF004797),
-                                          size: 18,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                              ),
+                              // if (isPhoneNumberVisible && !isLandlineVisible)
+                              // Padding(
+                              //   padding: const EdgeInsets.only(
+                              //       right: 20, bottom: 50),
+                              //   child: GestureDetector(
+                              //     onTap: () async {
+                              //       SharedPreferences switchPreference =
+                              //           await SharedPreferences.getInstance();
+                              //       switchPreference.setBool(
+                              //           'landlineAddmore',
+                              //           !isLandlineVisible);
+                              //       ref
+                              //           .read(isLandlineVisibleProvider
+                              //               .notifier)
+                              //           .state = !isLandlineVisible;
+                              //     },
+                              //     child: const Row(
+                              //       mainAxisAlignment: MainAxisAlignment.end,
+                              //       children: [
+                              //         Text(
+                              //           'Add more',
+                              //           style: TextStyle(
+                              //               color: Color(0xFF004797),
+                              //               fontWeight: FontWeight.w600,
+                              //               fontSize: 15),
+                              //         ),
+                              //         Icon(
+                              //           Icons.add,
+                              //           color: Color(0xFF004797),
+                              //           size: 18,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
+                              // if (isPhoneNumberVisible && isLandlineVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 10, bottom: 20),
+                                child: CustomTextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please Enter Your Landline Number';
+                                    }
+                                    return null;
+                                  },
+                                  textController: landlineController,
+                                  labelText: 'Enter landline number',
+                                  prefixIcon: const Icon(Icons.phone_in_talk,
+                                      color: Color(0xFF004797)),
                                 ),
-                              if (isPhoneNumberVisible && isLandlineVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 10, bottom: 20),
-                                  child: CustomTextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Your Landline Number';
-                                      }
-                                      return null;
-                                    },
-                                    textController: landlineController,
-                                    labelText: 'Enter landline number',
-                                    prefixIcon: const Icon(Icons.phone_in_talk,
-                                        color: Color(0xFF004797)),
-                                  ),
-                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, bottom: 20),
@@ -1602,116 +1567,115 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isContactDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'contactSwitch', value);
-                                        ref
-                                            .read(
-                                                isContactDetailsVisibleProvider
-                                                    .notifier)
-                                            .state = value;
-                                        if (value == false) {
-                                          emailController.clear();
-                                          ref
-                                              .read(userProvider.notifier)
-                                              .updatePhoneNumbers(
-                                                  whatsappBusinessNumber: 0,
-                                                  companyPhoneNumber: 0,
-                                                  landline: int.parse(
-                                                      landlineController.text),
-                                                  personal: int.parse(
-                                                      personalPhoneController
-                                                          .text),
-                                                  whatsappNumber: 0);
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isContactDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'contactSwitch', value);
+                                    //     ref
+                                    //         .read(
+                                    //             isContactDetailsVisibleProvider
+                                    //                 .notifier)
+                                    //         .state = value;
+                                    //     if (value == false) {
+                                    //       emailController.clear();
+                                    //       ref
+                                    //           .read(userProvider.notifier)
+                                    //           .updatePhoneNumbers(
+                                    //               whatsappBusinessNumber: 0,
+                                    //               companyPhoneNumber: 0,
+                                    //               landline: int.parse(
+                                    //                   landlineController.text),
+                                    //               personal: int.parse(
+                                    //                   personalPhoneController
+                                    //                       .text),
+                                    //               whatsappNumber: 0);
 
-                                          whatsappBusinessController.clear();
-                                          whatsappController.clear();
-                                        }
-                                      },
-                                    ),
+                                    //       whatsappBusinessController.clear();
+                                    //       whatsappController.clear();
+                                    //     }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (isContactDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 0, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: emailController,
-                                    labelText: 'Enter Email',
-                                    prefixIcon: const Icon(Icons.email,
-                                        color: Color(0xFF004797)),
+                              // if (isContactDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 0, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: emailController,
+                                  labelText: 'Enter Email',
+                                  prefixIcon: const Icon(Icons.email,
+                                      color: Color(0xFF004797)),
+                                ),
+                              ),
+                              // if (isContactDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: whatsappBusinessController,
+                                  labelText: 'Enter Business Whatsapp',
+                                  prefixIcon: const SvgIcon(
+                                    assetName:
+                                        'assets/icons/whatsapp-business.svg',
+                                    color: Color(0xFF004797),
+                                    size: 10,
                                   ),
                                 ),
-                              if (isContactDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: whatsappBusinessController,
-                                    labelText: 'Enter Business Whatsapp',
-                                    prefixIcon: const SvgIcon(
-                                      assetName:
-                                          'assets/icons/whatsapp-business.svg',
-                                      color: Color(0xFF004797),
-                                      size: 10,
+                              ),
+                              // if (isContactDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: whatsappController,
+                                  labelText: 'Enter Whatsapp',
+                                  prefixIcon: const SvgIcon(
+                                    assetName: 'assets/icons/whatsapp.svg',
+                                    color: Color(0xFF004797),
+                                    size: 13,
+                                  ),
+                                ),
+                              ),
+                              // if (isContactDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: addressController,
+                                  labelText: 'Enter Address',
+                                  maxLines: 3,
+                                  prefixIcon: const Icon(Icons.location_on,
+                                      color: Color(0xFF004797)),
+                                ),
+                              ),
+                              // if (isContactDetailsVisible)
+                              const Padding(
+                                padding: EdgeInsets.only(right: 20, bottom: 50),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'Add more',
+                                      style: TextStyle(
+                                          color: Color(0xFF004797),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
                                     ),
-                                  ),
-                                ),
-                              if (isContactDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: whatsappController,
-                                    labelText: 'Enter Whatsapp',
-                                    prefixIcon: const SvgIcon(
-                                      assetName: 'assets/icons/whatsapp.svg',
+                                    Icon(
+                                      Icons.add,
                                       color: Color(0xFF004797),
-                                      size: 13,
-                                    ),
-                                  ),
+                                      size: 18,
+                                    )
+                                  ],
                                 ),
-                              if (isContactDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: addressController,
-                                    labelText: 'Enter Address',
-                                    maxLines: 3,
-                                    prefixIcon: const Icon(Icons.location_on,
-                                        color: Color(0xFF004797)),
-                                  ),
-                                ),
-                              if (isContactDetailsVisible)
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.only(right: 20, bottom: 50),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Add more',
-                                        style: TextStyle(
-                                            color: Color(0xFF004797),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15),
-                                      ),
-                                      Icon(
-                                        Icons.add,
-                                        color: Color(0xFF004797),
-                                        size: 18,
-                                      )
-                                    ],
-                                  ),
-                                ),
+                              ),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(left: 20, right: 20),
@@ -1725,165 +1689,149 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isSocialDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'socialSwitch', value);
-                                        ref
-                                            .read(isSocialDetailsVisibleProvider
-                                                .notifier)
-                                            .state = value;
-                                        if (value == false) {
-                                          ref
-                                              .read(userProvider.notifier)
-                                              .updateSocialMedia([], '', '');
-                                          log(user.socialMedia.toString());
-                                        }
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isSocialDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'socialSwitch', value);
+                                    //     ref
+                                    //         .read(isSocialDetailsVisibleProvider
+                                    //             .notifier)
+                                    //         .state = value;
+                                    //     if (value == false) {
+                                    //       ref
+                                    //           .read(userProvider.notifier)
+                                    //           .updateSocialMedia([], '', '');
+                                    //       log(user.socialMedia.toString());
+                                    //     }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (isSocialDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: igController,
-                                    labelText: 'Enter Ig',
-                                    prefixIcon: const SvgIcon(
-                                      assetName: 'assets/icons/instagram.svg',
-                                      size: 10,
-                                      color: Color(0xFF004797),
-                                    ),
-                                  ),
-                                ),
-                              if (isSocialDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: linkedinController,
-                                    labelText: 'Enter Linkedin',
-                                    prefixIcon: const SvgIcon(
-                                      assetName: 'assets/icons/linkedin.svg',
-                                      color: Color(0xFF004797),
-                                      size: 10,
-                                    ),
-                                  ),
-                                ),
-                              if (isSocialDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: twtitterController,
-                                    labelText: 'Enter Twitter',
-                                    prefixIcon: const SvgIcon(
-                                      assetName: 'assets/icons/twitter.svg',
-                                      color: Color(0xFF004797),
-                                      size: 13,
-                                    ),
-                                  ),
-                                ),
-                              if (isSocialDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, top: 20, bottom: 10),
-                                  child: CustomTextFormField(
-                                    textController: facebookController,
-                                    labelText: 'Enter Facebook',
-                                    prefixIcon: const Icon(
-                                      Icons.facebook,
-                                      color: Color(0xFF004797),
-                                      size: 28,
-                                    ),
-                                  ),
-                                ),
-                              if (isSocialDetailsVisible)
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.only(right: 20, bottom: 50),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Add more',
-                                        style: TextStyle(
-                                            color: Color(0xFF004797),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15),
-                                      ),
-                                      Icon(
-                                        Icons.add,
-                                        color: Color(0xFF004797),
-                                        size: 18,
-                                      )
-                                    ],
-                                  ),
-                                ),
+                              // if (isSocialDetailsVisible)
                               Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Add Website',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isWebsiteDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'websiteSwitch', value);
-                                        ref
-                                            .read(
-                                                isWebsiteDetailsVisibleProvider
-                                                    .notifier)
-                                            .state = value;
-                                      },
-                                    ),
-                                  ],
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: igController,
+                                  labelText: 'Enter Ig',
+                                  prefixIcon: const SvgIcon(
+                                    assetName: 'assets/icons/instagram.svg',
+                                    size: 10,
+                                    color: Color(0xFF004797),
+                                  ),
                                 ),
                               ),
-                              if (isWebsiteDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 20,
+                              // if (isSocialDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: linkedinController,
+                                  labelText: 'Enter Linkedin',
+                                  prefixIcon: const SvgIcon(
+                                    assetName: 'assets/icons/linkedin.svg',
+                                    color: Color(0xFF004797),
+                                    size: 10,
                                   ),
-                                  child: CustomTextFormField(
-                                    textController: websiteLinkController,
-                                    readOnly: true,
-                                    labelText: 'Enter Website Link',
-                                    suffixIcon: const Icon(
+                                ),
+                              ),
+                              // if (isSocialDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: twtitterController,
+                                  labelText: 'Enter Twitter',
+                                  prefixIcon: const SvgIcon(
+                                    assetName: 'assets/icons/twitter.svg',
+                                    color: Color(0xFF004797),
+                                    size: 13,
+                                  ),
+                                ),
+                              ),
+                              // if (isSocialDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 10),
+                                child: CustomTextFormField(
+                                  textController: facebookController,
+                                  labelText: 'Enter Facebook',
+                                  prefixIcon: const Icon(
+                                    Icons.facebook,
+                                    color: Color(0xFF004797),
+                                    size: 28,
+                                  ),
+                                ),
+                              ),
+                              // if (isSocialDetailsVisible)
+                              const Padding(
+                                padding: EdgeInsets.only(right: 20, bottom: 50),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'Add more',
+                                      style: TextStyle(
+                                          color: Color(0xFF004797),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
+                                    ),
+                                    Icon(
                                       Icons.add,
                                       color: Color(0xFF004797),
-                                    ),
-                                    onTap: () {
-                                      showWlinkorVlinkSheet(
-                                          textController1:
-                                              websiteNameController,
-                                          textController2:
-                                              websiteLinkController,
-                                          fieldName: 'Add Website Link',
-                                          title: 'Add Website',
-                                          context: context);
-                                    },
-                                  ),
+                                      size: 18,
+                                    )
+                                  ],
                                 ),
+                              ),
+                              ListView.builder(
+                                shrinkWrap:
+                                    true, // Let ListView take up only as much space as it needs
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                itemCount: user.websites?.length,
+                                itemBuilder: (context, index) {
+                                  log('Websites count: ${user.websites?.length}');
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0), // Space between items
+                                    child: customWebsiteCard(
+                                        onRemove: () => _removeWebsite(index),
+                                        website: user.websites?[index]),
+                                  );
+                                },
+                              ),
+                              // if (isWebsiteDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                ),
+                                child: CustomTextFormField(
+                                  textController: websiteLinkController,
+                                  readOnly: true,
+                                  labelText: 'Enter Website Link',
+                                  suffixIcon: const Icon(
+                                    Icons.add,
+                                    color: Color(0xFF004797),
+                                  ),
+                                  onTap: () {
+                                    showWebsiteSheet(
+                                        addWebsite: _addNewWebsite,
+                                        textController1: websiteNameController,
+                                        textController2: websiteLinkController,
+                                        fieldName: 'Add Website Link',
+                                        title: 'Add Website',
+                                        context: context);
+                                  },
+                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.all(20),
                                 child: Row(
@@ -1896,46 +1844,64 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref
-                                          .watch(isVideoDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'videoSwitch', value);
-                                        ref
-                                            .read(isVideoDetailsVisibleProvider
-                                                .notifier)
-                                            .state = value;
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value:
+                                    //       ref.watch(isVideoDetailsVisibleProvider),
+                                    //   onChanged: (bool value) {
+                                    //     setState(() {
+                                    //       ref
+                                    //           .read(isVideoDetailsVisibleProvider
+                                    //               .notifier)
+                                    //           .state = value;
+                                    //     });
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (isVideoDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, bottom: 70),
-                                  child: CustomTextFormField(
-                                    textController: videoLinkController,
-                                    readOnly: true,
-                                    onTap: () {
-                                      showWlinkorVlinkSheet(
-                                          textController1: videoNameController,
-                                          textController2: videoLinkController,
-                                          fieldName: 'Add Youtube Link',
-                                          title: 'Add Video Link',
-                                          context: context);
-                                    },
-                                    labelText: 'Enter Video Link',
-                                    suffixIcon: const Icon(
-                                      Icons.add,
-                                      color: Color(0xFF004797),
-                                    ),
+                              ListView.builder(
+                                shrinkWrap:
+                                    true, // Let ListView take up only as much space as it needs
+                                physics:
+                                    NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                itemCount: user.video?.length,
+                                itemBuilder: (context, index) {
+                                  log('video count: ${user.video?.length}');
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0), // Space between items
+                                    child: customVideoCard(
+                                        onRemove: () => _removeVideo(index),
+                                        video: user.video?[index]),
+                                  );
+                                },
+                              ),
+                              // if (isVideoDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 70),
+                                child: CustomTextFormField(
+                                  textController: videoLinkController,
+                                  readOnly: true,
+                                  onTap: () {
+                                    showVideoLinkSheet(
+                                        addVideo: _addNewVideo,
+                                        textController1: videoNameController,
+                                        textController2: videoLinkController,
+                                        fieldName: 'Add Youtube Link',
+                                        title: 'Add Video Link',
+                                        context: context);
+                                  },
+                                  labelText: 'Enter Video Link',
+                                  suffixIcon: const Icon(
+                                    Icons.add,
+                                    color: Color(0xFF004797),
                                   ),
                                 ),
+                              ),
+
+                              // if (isVideoDetailsVisible)
+
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10, bottom: 20),
@@ -1949,100 +1915,99 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isAwardsDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'awardSwitch', value);
-                                        ref
-                                            .read(isAwardsDetailsVisibleProvider
-                                                .notifier)
-                                            .state = value;
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isAwardsDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'awardSwitch', value);
+                                    //     ref
+                                    //         .read(isAwardsDetailsVisibleProvider
+                                    //             .notifier)
+                                    //         .state = value;
 
-                                        // if (value == false) {
-                                        //   setState(
-                                        //     () {
-                                        //       awards = [];
-                                        //     },
-                                        //   );
-                                        // }
-                                      },
-                                    ),
+                                    //     // if (value == false) {
+                                    //     //   setState(
+                                    //     //     () {
+                                    //     //       awards = [];
+                                    //     //     },
+                                    //     //   );
+                                    //     // }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (isAwardsDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, bottom: 10, right: 10),
-                                  child: GridView.builder(
-                                    shrinkWrap:
-                                        true, // Let GridView take up only as much space as it needs
-                                    physics:
-                                        const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2, // Number of columns
-                                      crossAxisSpacing:
-                                          8.0, // Space between columns
-                                      mainAxisSpacing:
-                                          8.0, // Space between rows
-                                      childAspectRatio:
-                                          .9, // Aspect ratio for the cards
-                                    ),
-                                    itemCount: user.awards!.length,
-                                    itemBuilder: (context, index) {
-                                      return AwardCard(
-                                        award: user.awards![index],
-                                        onRemove: () => _removeAward(index),
-                                      );
-                                    },
+                              // if (isAwardsDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, bottom: 10, right: 10),
+                                child: GridView.builder(
+                                  shrinkWrap:
+                                      true, // Let GridView take up only as much space as it needs
+                                  physics:
+                                      const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, // Number of columns
+                                    crossAxisSpacing:
+                                        8.0, // Space between columns
+                                    mainAxisSpacing: 8.0, // Space between rows
+                                    childAspectRatio:
+                                        .9, // Aspect ratio for the cards
                                   ),
-                                ),
-                              if (isAwardsDetailsVisible)
-                                GestureDetector(
-                                  onTap: () {
-                                    _openModalSheet(
-                                      sheet: 'award',
+                                  itemCount: user.awards!.length,
+                                  itemBuilder: (context, index) {
+                                    return AwardCard(
+                                      award: user.awards![index],
+                                      onRemove: () => _removeAward(index),
                                     );
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25, right: 25, bottom: 60),
-                                    child: Container(
-                                      height: 120,
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add,
-                                              color: Color(0xFF004797),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              'Enter Awards',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 17),
-                                            )
-                                          ],
-                                        ),
+                                ),
+                              ),
+                              // if (isAwardsDetailsVisible)
+                              GestureDetector(
+                                onTap: () {
+                                  _openModalSheet(
+                                    sheet: 'award',
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25, right: 25, bottom: 60),
+                                  child: Container(
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF2F2F2),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            color: Color(0xFF004797),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Enter Awards',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 17),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10, bottom: 20),
@@ -2056,94 +2021,92 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isProductsDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'productSwitch', value);
-                                        ref
-                                            .read(
-                                                isProductsDetailsVisibleProvider
-                                                    .notifier)
-                                            .state = value;
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isProductsDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'productSwitch', value);
+                                    //     ref
+                                    //         .read(
+                                    //             isProductsDetailsVisibleProvider
+                                    //                 .notifier)
+                                    //         .state = value;
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (user.products != null &&
-                                  isProductsDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, bottom: 10, right: 10),
-                                  child: GridView.builder(
-                                    shrinkWrap:
-                                        true, // Let GridView take up only as much space as it needs
-                                    physics:
-                                        const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2, // Number of columns
-                                      crossAxisSpacing:
-                                          1.0, // Space between columns
-                                      mainAxisSpacing:
-                                          2.0, // Space between rows
-                                      childAspectRatio:
-                                          .92, // Aspect ratio for the cards
-                                    ),
-                                    itemCount: user.products!.length,
-                                    itemBuilder: (context, index) {
-                                      return ProductCard(
-                                          product: user.products![index],
-                                          onRemove: () =>
-                                              _removeProduct(index));
-                                    },
+                              // if (user.products != null &&
+                              //     isProductsDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, bottom: 10, right: 10),
+                                child: GridView.builder(
+                                  shrinkWrap:
+                                      true, // Let GridView take up only as much space as it needs
+                                  physics:
+                                      const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, // Number of columns
+                                    crossAxisSpacing:
+                                        1.0, // Space between columns
+                                    mainAxisSpacing: 2.0, // Space between rows
+                                    childAspectRatio:
+                                        .879, // Aspect ratio for the cards
                                   ),
+                                  itemCount: user.products!.length,
+                                  itemBuilder: (context, index) {
+                                    return ProductCard(
+                                        product: user.products![index],
+                                        onRemove: () => _removeProduct(index));
+                                  },
                                 ),
-                              if (isProductsDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25, right: 25, bottom: 60),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _openModalSheet(
-                                        sheet: 'product',
-                                      );
-                                    },
-                                    child: Container(
-                                      height: 120,
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add,
-                                              color: Color(0xFF004797),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              'Enter Products',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 17),
-                                            )
-                                          ],
-                                        ),
+                              ),
+                              // if (isProductsDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25, right: 25, bottom: 60),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _openModalSheet(
+                                      sheet: 'product',
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF2F2F2),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            color: Color(0xFF004797),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Enter Products',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 17),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10, bottom: 20),
@@ -2157,82 +2120,81 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isCertificateDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'certificateSwitch', value);
-                                        ref
-                                            .read(
-                                                isCertificateDetailsVisibleProvider
-                                                    .notifier)
-                                            .state = value;
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isCertificateDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'certificateSwitch', value);
+                                    //     ref
+                                    //         .read(
+                                    //             isCertificateDetailsVisibleProvider
+                                    //                 .notifier)
+                                    //         .state = value;
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (user.certificates!.isNotEmpty &&
-                                  isCertificateDetailsVisible)
-                                ListView.builder(
-                                  shrinkWrap:
-                                      true, // Let ListView take up only as much space as it needs
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                  itemCount: user.certificates!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0), // Space between items
-                                      child: CertificateCard(
-                                        certificate: user.certificates![index],
-                                        onRemove: () =>
-                                            _removeCertificate(index),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              if (isCertificateDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25, right: 25, bottom: 60),
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        _openModalSheet(sheet: 'certificate'),
-                                    child: Container(
-                                      height: 120,
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add,
-                                              color: Color(0xFF004797),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              'Enter Certificates',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 17),
-                                            )
-                                          ],
-                                        ),
+                              // if (user.certificates!.isNotEmpty &&
+                              //     isCertificateDetailsVisible)
+                              ListView.builder(
+                                shrinkWrap:
+                                    true, // Let ListView take up only as much space as it needs
+                                physics:
+                                    const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                itemCount: user.certificates!.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0), // Space between items
+                                    child: CertificateCard(
+                                      certificate: user.certificates![index],
+                                      onRemove: () => _removeCertificate(index),
+                                    ),
+                                  );
+                                },
+                              ),
+                              // if (isCertificateDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25, right: 25, bottom: 60),
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      _openModalSheet(sheet: 'certificate'),
+                                  child: Container(
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF2F2F2),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            color: Color(0xFF004797),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Enter Certificates',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 17),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10, bottom: 20),
@@ -2246,81 +2208,81 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                    CustomSwitch(
-                                      value: ref.watch(
-                                          isBrochureDetailsVisibleProvider),
-                                      onChanged: (bool value) async {
-                                        SharedPreferences switchPreference =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        switchPreference.setBool(
-                                            'brochureSwitch', value);
-                                        ref
-                                            .read(
-                                                isBrochureDetailsVisibleProvider
-                                                    .notifier)
-                                            .state = value;
-                                      },
-                                    ),
+                                    // CustomSwitch(
+                                    //   value: ref.watch(
+                                    //       isBrochureDetailsVisibleProvider),
+                                    //   onChanged: (bool value) async {
+                                    //     SharedPreferences switchPreference =
+                                    //         await SharedPreferences
+                                    //             .getInstance();
+                                    //     switchPreference.setBool(
+                                    //         'brochureSwitch', value);
+                                    //     ref
+                                    //         .read(
+                                    //             isBrochureDetailsVisibleProvider
+                                    //                 .notifier)
+                                    //         .state = value;
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
-                              if (user.brochure!.isNotEmpty &&
-                                  isBrochureDetailsVisible)
-                                ListView.builder(
-                                  shrinkWrap:
-                                      true, // Let ListView take up only as much space as it needs
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                  itemCount: user.brochure!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0), // Space between items
-                                      child: BrochureCard(
-                                        brochure: user.brochure![index],
-                                        onRemove: () => _removeBrochure(index),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              if (isBrochureDetailsVisible)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25, right: 25, bottom: 60),
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        _openModalSheet(sheet: 'brochure'),
-                                    child: Container(
-                                      height: 120,
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFF2F2F2),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add,
-                                              color: Color(0xFF004797),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              'Enter Brochure',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 17),
-                                            )
-                                          ],
-                                        ),
+                              // if (user.brochure!.isNotEmpty &&
+                              //     isBrochureDetailsVisible)
+                              ListView.builder(
+                                shrinkWrap:
+                                    true, // Let ListView take up only as much space as it needs
+                                physics:
+                                    const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                itemCount: user.brochure!.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0), // Space between items
+                                    child: BrochureCard(
+                                      brochure: user.brochure![index],
+                                      onRemove: () => _removeBrochure(index),
+                                    ),
+                                  );
+                                },
+                              ),
+                              // if (isBrochureDetailsVisible)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25, right: 25, bottom: 60),
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      _openModalSheet(sheet: 'brochure'),
+                                  child: Container(
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF2F2F2),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            color: Color(0xFF004797),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Enter Brochure',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 17),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
+                              ),
                               const SizedBox(height: 60),
                             ],
                           ),

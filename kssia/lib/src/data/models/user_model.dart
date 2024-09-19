@@ -298,7 +298,7 @@ class Brochure {
   }
 }
 
-class User {
+class UserModel {
   final String? id;
   final String? membershipId;
   final Name? name;
@@ -330,7 +330,7 @@ class User {
   final String? profilePicture;
   final List<Product>? products;
 
-  User({
+  UserModel({
     this.id,
     this.membershipId,
     this.name,
@@ -363,8 +363,8 @@ class User {
     this.products,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       id: json['_id'] as String?,
       membershipId: json['membership_id'] as String?,
       name: json['name'] != null ? Name.fromJson(json['name']) : null,
@@ -453,7 +453,7 @@ class User {
     };
   }
 
-  User copyWith({
+  UserModel copyWith({
     String? id,
     String? membershipId,
     Name? name,
@@ -485,7 +485,7 @@ class User {
     String? profilePicture,
     List<Product>? products,
   }) {
-    return User(
+    return UserModel(
       id: id ?? this.id,
       membershipId: membershipId ?? this.membershipId,
       name: name ?? this.name,

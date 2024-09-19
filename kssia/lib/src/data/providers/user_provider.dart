@@ -7,16 +7,17 @@ import 'package:kssia/src/data/models/user_model.dart';
 
 import '../globals.dart';
 
-class UserNotifier extends StateNotifier<AsyncValue<User>> {
-  final StateNotifierProviderRef<UserNotifier, AsyncValue<User>> ref;
+class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
+  final StateNotifierProviderRef<UserNotifier, AsyncValue<UserModel>> ref;
 
   UserNotifier(this.ref) : super(const AsyncValue.loading()) {
     _initializeUser();
   }
   Future<void> _initializeUser() async {
     try {
+      log('user provider token');
       final user = await ref.read(fetchUserDetailsProvider(token, id).future);
-      state = AsyncValue.data(user ?? User());
+      state = AsyncValue.data(user ?? UserModel());
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
@@ -41,6 +42,33 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
       return user.copyWith(name: newName);
     });
   }
+
+   void updateVideos(List<Video> videos) {
+    state = state.whenData((user) => user.copyWith(video: videos));
+  }
+
+  void removeVideo(Video videoToRemove) {
+    state = state.whenData((user) {
+      final updatedVideo =
+          user.video!.where((video) => video != videoToRemove).toList();
+      return user.copyWith(video: updatedVideo);
+    });
+  }
+
+  void updateWebsite(List<Website> websites) {
+    state = state.whenData((user) => user.copyWith(websites: websites));
+    log('website count in updation ${websites.length}');
+  }
+
+  void removeWebsite(Website websiteToRemove) {
+    state = state.whenData((user) {
+      final updatedWebsites = user.websites!
+          .where((website) => website != websiteToRemove)
+          .toList();
+      return user.copyWith(websites: updatedWebsites);
+    });
+  }
+
 
   void updatePhoneNumbers({
     int? personal,
@@ -188,13 +216,6 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
     );
   }
 
-  void updateWebsite(
-    List<Website> website,
-  ) {
-    state = state.whenData(
-      (user) => user.copyWith(websites: website),
-    );
-  }
 
   void removeAward(Award awardToRemove) {
     state = state.whenData((user) {
@@ -230,9 +251,13 @@ class UserNotifier extends StateNotifier<AsyncValue<User>> {
       return user.copyWith(products: updatedProducts);
     });
   }
+
+
+
+  
 }
 
 final userProvider =
-    StateNotifierProvider<UserNotifier, AsyncValue<User>>((ref) {
+    StateNotifierProvider<UserNotifier, AsyncValue<UserModel>>((ref) {
   return UserNotifier(ref);
 });

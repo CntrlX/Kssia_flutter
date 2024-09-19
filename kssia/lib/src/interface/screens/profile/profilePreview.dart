@@ -12,6 +12,7 @@ import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -30,7 +31,7 @@ final reviewsProvider = StateNotifierProvider<ReviewsState, int>((ref) {
 });
 
 class ProfilePreview extends ConsumerWidget {
-  final User user;
+  final UserModel user;
   ProfilePreview({Key? key, required this.user}) : super(key: key);
 
   final List<String> svgIcons = [
@@ -148,21 +149,25 @@ class ProfilePreview extends ConsumerWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  user.designation!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Color.fromARGB(255, 42, 41, 41),
+                                if (user.designation != null &&
+                                    user.designation != '')
+                                  Text(
+                                    user.designation!,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Color.fromARGB(255, 42, 41, 41),
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  user.companyName!,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
+                                if (user.companyName != null &&
+                                    user.companyName != '')
+                                  Text(
+                                    user.companyName ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ],
@@ -218,19 +223,6 @@ class ProfilePreview extends ConsumerWidget {
                             const Icon(Icons.email, color: Color(0xFF004797)),
                             const SizedBox(width: 10),
                             Text(user.email!),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            if (user.socialMedia!.isNotEmpty)
-                              const Column(
-                                children: [
-                                  Icon(FontAwesomeIcons.instagram,
-                                      color: Color(0xFF004797)),
-                                  // Flexible(child: Text(user.socialMedia![0].url!)),
-                                ],
-                              ),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -325,28 +317,11 @@ class ProfilePreview extends ConsumerWidget {
                         },
                         child: Text('View More'),
                       ),
-                    const Row(
-                      children: [
-                        Text(
-                          'Social Media',
-                          style: TextStyle(
-                              color: Color(0xFF2C2829),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                    for (int index = 0;
-                        index < user.socialMedia!.length;
-                        index++)
-                      customProfilePreviewLinks(index,
-                          social: user.socialMedia![index]),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 50),
-                      child: Row(
+                    if (user.socialMedia!.isNotEmpty)
+                      const Row(
                         children: [
                           Text(
-                            'Websites & Links',
+                            'Social Media',
                             style: TextStyle(
                                 color: Color(0xFF2C2829),
                                 fontSize: 17,
@@ -354,9 +329,28 @@ class ProfilePreview extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ),
+                    for (int index = 0;
+                        index < user.socialMedia!.length;
+                        index++)
+                      customSocialPreview(index,
+                          social: user.socialMedia![index]),
+                    if (user.websites!.isNotEmpty)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Websites & Links',
+                              style: TextStyle(
+                                  color: Color(0xFF2C2829),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
                     for (int index = 0; index < user.websites!.length; index++)
-                      customProfilePreviewLinks(index,
+                      customWebsitePreview(index,
                           website: user.websites![index]),
                     const SizedBox(
                       height: 30,
@@ -420,7 +414,7 @@ class ProfilePreview extends ConsumerWidget {
                           crossAxisCount: 2, // Number of columns
                           crossAxisSpacing: 1.0, // Space between columns
                           mainAxisSpacing: 2.0, // Space between rows
-                          childAspectRatio: .943, // Aspect ratio for the cards
+                          childAspectRatio: .879, // Aspect ratio for the cards
                         ),
                         itemCount: user.products!.length,
                         itemBuilder: (context, index) {
