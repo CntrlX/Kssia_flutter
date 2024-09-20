@@ -4,44 +4,60 @@ import 'package:intl/intl.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart'; // Import the ViewMoreEventPage
 
+
 class EventPage extends StatelessWidget {
-  final List<Event> events;
-  const EventPage({super.key, required this.events});
+  const EventPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: TextField(
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: 'Search for Events',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            return _buildPost(
-              withImage: true,
-              context: context,
-              event: events[
-                  index], // Assuming your _buildPost takes an event parameter
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncEvents = ref.watch(fetchEventsProvider(token));
+        return asyncEvents.when(
+          data: (events) {
+            return ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                // Container(
+                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       prefixIcon: Icon(Icons.search),
+                //       hintText: 'Search for Events',
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(8.0),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 16),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    return _buildPost(
+                      withImage: true,
+                      context: context,
+                      event: events[
+                          index], // Assuming your _buildPost takes an event parameter
+                    );
+                  },
+                ),
+              ],
             );
           },
-        ),
-      ],
+          loading: () => Center(child: LoadingAnimation()),
+          error: (error, stackTrace) {
+            return Center(
+              child: Text('NO EVENTS'),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -49,10 +65,8 @@ class EventPage extends StatelessWidget {
       {bool withImage = false,
       required BuildContext context,
       required Event event}) {
-    String startTime = DateFormat('hh:mm a').format(event.startTime!);
-    String startDate = DateFormat('yyyy-MM-dd').format(event.startDate!);
-    String endDate = DateFormat('hh:mm a').format(event.endDate!);
-    String endTime = DateFormat('yyyy-MM-dd').format(event.endTime!);
+    String time = DateFormat('hh:mm a').format(event.startTime!);
+    String date = DateFormat('yyyy-MM-dd').format(event.startDate!);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       shape: RoundedRectangleBorder(
@@ -78,20 +92,21 @@ class EventPage extends StatelessWidget {
                       // Image goes here
                       Positioned.fill(
                         child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(12),
-                            ),
-                            child: event.image != null 
-                                ? Image.network(
-                                    event.image!, 
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.network(
-                                    'https://placehold.co/400', 
-                                    fit: BoxFit.cover,
-                                  )),
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                          child: Image.network(
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.network(
+                                  fit: BoxFit.cover,
+                                  'https://placehold.co/600x400/png');
+                            },
+                            event.image!, // Replace with your image URL
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                
+                      // Icon placed above the image
                       Center(
                         child: Icon(
                           Icons.play_circle_fill,
@@ -112,9 +127,9 @@ class EventPage extends StatelessWidget {
                             0xFFA9F3C7), // Greenish background for LIVE label
                         borderRadius: BorderRadius.circular(3),
                       ),
-                      child: event.activate!
-                          ? const Text(
-                              'LIVE',
+                      child: event.status != null && event.status != ''
+                          ? Text(
+                              event.status!,
                               style: TextStyle(
                                 color:
                                     Color(0xFF0F7036), // Darker green for text
@@ -160,7 +175,7 @@ class EventPage extends StatelessWidget {
                                     size: 20, color: Color(0xFF700F0F)),
                                 const SizedBox(width: 5),
                                 Text(
-                                  startDate,
+                                  date,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color.fromARGB(255, 109, 84, 84),
@@ -182,7 +197,7 @@ class EventPage extends StatelessWidget {
                                     size: 20, color: Color(0xFF0E1877)),
                                 const SizedBox(width: 5),
                                 Text(
-                                  startTime,
+                                  time,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF0E1877),
@@ -205,39 +220,40 @@ class EventPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. '
-                    'Amet hac bibendum dignissim eget pretium turpis in non cum.',
+                    event.description ?? '',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
                   SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ViewMoreEventPage(
-                                    event: event,
-                                  )),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF004797), // Blue color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewMoreEventPage(
+                                      event: event,
+                                    )),
+                          );
+                          ref.invalidate(fetchEventsProvider);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFE30613), // Blue color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'View more',
-                        style: TextStyle(
-                          color: Colors.white,
+                        child: Text(
+                          'View more',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -94,7 +94,7 @@ class ProfilePage extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(
-                    height: 50,
+                    height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -279,14 +279,21 @@ class ProfilePage extends StatelessWidget {
                                     const Icon(Icons.location_on,
                                         color: Color(0xFF004797)),
                                     if (user.address != null)
-                                      Text(user.address ?? ''),
-                                    const SizedBox(width: 10),
-                                    if (user.bio != null)
-                                      Expanded(
-                                        child: Text(
-                                          user.bio ?? '',
-                                        ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(user.address ?? ''),
+                                        ],
                                       ),
+                                    const SizedBox(width: 10),
+                                    // if (user.bio != null)
+                                    //   Expanded(
+                                    //     child: Text(
+                                    //       user.bio ?? '',
+                                    //     ),
+                                    //   ),
                                   ],
                                 ),
                             ],
@@ -312,24 +319,20 @@ class ProfilePage extends StatelessWidget {
                             ],
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Member ID: ',
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: user.membershipId,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
+                              SizedBox(
+                                width: 80,
+                                height: 40,
+                                child: Image.asset(
+                                  'assets/icons/kssiaLogo.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Text(
+                                'Member ID: ${user.membershipId}',
+                                style: TextStyle(
+                                  color: Colors.grey,
                                 ),
                               ),
                             ],
@@ -361,8 +364,9 @@ class ProfilePage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProfileCard(), // Navigate to CardPage
+                                    builder: (context) => ProfileCard(
+                                      user: user,
+                                    ), // Navigate to CardPage
                                   ),
                                 );
                               },

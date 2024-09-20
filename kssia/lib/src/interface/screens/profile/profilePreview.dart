@@ -16,7 +16,7 @@ import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class ReviewsState extends StateNotifier<int> {
   ReviewsState() : super(2);
@@ -517,7 +517,7 @@ class ProfilePreview extends ConsumerWidget {
           ),
           if (user.id != id)
             Positioned(
-                bottom: 20,
+                bottom: 40,
                 left: 20,
                 right: 20,
                 child: SizedBox(
@@ -527,13 +527,21 @@ class ProfilePreview extends ConsumerWidget {
                       children: [
                         Flexible(
                           child: customButton(
-                              fontSize: 16, label: 'SAY HI', onPressed: () {}),
+                              buttonHeight: 60,
+                              fontSize: 16,
+                              label: 'SAY HI',
+                              onPressed: () {}),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Flexible(
                           child: customButton(
+                              sideColor:
+                                  const Color.fromARGB(255, 219, 217, 217),
+                              labelColor: Color(0xFF2C2829),
+                              buttonColor: Color.fromARGB(255, 222, 218, 218),
+                              buttonHeight: 60,
                               fontSize: 16,
                               label: 'SAVE CONTACT',
                               onPressed: () {}),
@@ -548,12 +556,15 @@ class ProfilePreview extends ConsumerWidget {
   Widget profileVideo({required BuildContext context, required Video video}) {
     final videoUrl = video.url;
 
-    final ytController = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(videoUrl!)!,
-      flags: const YoutubePlayerFlags(
-        disableDragSeek: true,
-        autoPlay: false,
+    final ytController = YoutubePlayerController.fromVideoId(
+      videoId: YoutubePlayerController.convertUrlToId(videoUrl ?? '')!,
+      autoPlay: false,
+      params: const YoutubePlayerParams(
+        enableJavaScript: true,
+        loop: true,
         mute: false,
+        showControls: true,
+        showFullscreenButton: true,
       ),
     );
 
@@ -588,16 +599,7 @@ class ProfilePreview extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(16.0),
                 child: YoutubePlayer(
                   controller: ytController,
-                  showVideoProgressIndicator: true,
-                  onReady: () {
-                    ytController.addListener(() {
-                      if (ytController.value.playerState == PlayerState.ended) {
-                        ytController.seekTo(Duration.zero);
-                        ytController
-                            .pause(); // Pause the video to prevent it from autoplaying again
-                      }
-                    });
-                  },
+                  aspectRatio: 16 / 9,
                 ),
               ),
             ),

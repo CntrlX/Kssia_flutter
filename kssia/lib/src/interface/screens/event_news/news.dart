@@ -3,33 +3,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 final currentIndexProvider = StateProvider<int>((ref) => 0);
 
 class NewsPage extends StatelessWidget {
-  final List<News> news;
-
-  const NewsPage({super.key, required this.news});
+  const NewsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider);
+        final asyncNews = ref.watch(fetchNewsProvider(token));
+        return asyncNews.when(
+          data: (news) {
+            if (news.isNotEmpty) {
+              final currentIndex = ref.watch(currentIndexProvider);
 
-        void _nextNews() {
-          ref.read(currentIndexProvider.notifier).state =
-              (currentIndex + 1) % news.length;
-        }
+              void _nextNews() {
+                ref.read(currentIndexProvider.notifier).state =
+                    (currentIndex + 1) % news.length;
+              }
 
-        void _previousNews() {
-          ref.read(currentIndexProvider.notifier).state =
-              (currentIndex - 1 + news.length) % news.length;
-        }
+              void _previousNews() {
+                ref.read(currentIndexProvider.notifier).state =
+                    (currentIndex - 1 + news.length) % news.length;
+              }
 
-        return Scaffold(
-          body: news.isNotEmpty
-              ? Column(
+              return Scaffold(
+                body: Column(
                   children: [
                     Expanded(
                       child: CustomScrollView(
@@ -50,7 +52,8 @@ class NewsPage extends StatelessWidget {
                                             fit: BoxFit.cover,
                                             'https://placehold.co/600x400/png');
                                       },
-                                      news[currentIndex].image,
+                                      news[currentIndex].image ??
+                                          'https://placehold.co/600x400/png', // Replace with your image URL
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -61,14 +64,14 @@ class NewsPage extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          news[currentIndex].category,
+                                          news[currentIndex].category ?? '',
                                           style: const TextStyle(
                                               color: Colors.green,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          news[currentIndex].title,
+                                          news[currentIndex].title ?? '',
                                           style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
@@ -79,7 +82,7 @@ class NewsPage extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ]),
                           ),
                           SliverFillRemaining(
@@ -115,10 +118,10 @@ class NewsPage extends StatelessWidget {
                             child: const Row(
                               children: [
                                 Icon(Icons.arrow_back,
-                                    color: Color(0xFF004797)),
+                                    color: Color(0xFFE30613)),
                                 SizedBox(width: 8),
                                 Text('Previous',
-                                    style: TextStyle(color: Color(0xFF004797))),
+                                    style: TextStyle(color: Color(0xFFE30613))),
                               ],
                             ),
                           ),
@@ -139,10 +142,10 @@ class NewsPage extends StatelessWidget {
                             child: const Row(
                               children: [
                                 Text('Next',
-                                    style: TextStyle(color: Color(0xFF004797))),
+                                    style: TextStyle(color: Color(0xFFE30613))),
                                 SizedBox(width: 8),
                                 Icon(Icons.arrow_forward,
-                                    color: Color(0xFF004797)),
+                                    color: Color(0xFFE30613)),
                               ],
                             ),
                           ),
@@ -150,13 +153,27 @@ class NewsPage extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
-              : Center(
-                  child: Text('NO NEWS'),
                 ),
+              );
+            } else {
+              return Center(
+                child: Text('No News'),
+              );
+            }
+          },
+          loading: () => Center(child: LoadingAnimation()),
+          error: (error, stackTrace) {
+            return Center(
+              child: Text('Error loading promotions: $error'),
+            );
+          },
         );
       },
     );
   }
 }
-
+// void main() {
+//   runApp(MaterialApp(
+//     home: NewsPage(),
+//   ));
+// }

@@ -15,7 +15,7 @@ import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 import '../main_page.dart';
 import 'dart:async';
 import 'dart:developer';

@@ -9,7 +9,6 @@ import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 
-
 class Event_News_Page extends StatefulWidget {
   @override
   _Event_News_PageState createState() => _Event_News_PageState();
@@ -35,9 +34,6 @@ class _Event_News_PageState extends State<Event_News_Page>
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final newsAsyncValue = ref.watch(fetchNewsProvider(token));
-        final eventsAsyncValue = ref.watch(fetchEventsProvider(token));
-
         return DefaultTabController(
           length: 2,
           child: Scaffold(
@@ -118,27 +114,13 @@ class _Event_News_PageState extends State<Event_News_Page>
             body: Column(
               children: [
                 Expanded(
-                  child: newsAsyncValue.when(
-                    data: (news) => eventsAsyncValue.when(
-                      data: (events) {
-                        return TabBarView(
-                          children: [
-                            NewsPage(news: news),
-                            EventPage(events: events),
-                          ],
-                        );
-                      },
-                      loading: () => Center(child: LoadingAnimation()),
-                      error: (error, stack) => Center(
-                        child: Text('Error loading events: $error'),
-                      ),
-                    ),
-                    loading: () => Center(child: LoadingAnimation()),
-                    error: (error, stack) => Center(
-                      child: Text('Error loading news: $error'),
-                    ),
+                  child: TabBarView(
+                    children: [
+                      NewsPage(),
+                      EventPage(),
+                    ],
                   ),
-                ),
+                )
               ],
             ),
           ),
