@@ -269,21 +269,21 @@ class ApiRoutes {
     }
   }
 
-  Map<String, dynamic> _handleResponse(http.Response response) {
-    final Map<String, dynamic> responseBody = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      print(responseBody['message']);
-      print(responseBody['data']);
-      return {"status": true, "data": responseBody};
-    } else {
-      print(responseBody['message']);
+  // Map<String, dynamic> _handleResponse(http.Response response) {
+  //   final Map<String, dynamic> responseBody = jsonDecode(response.body);
+  //   if (response.statusCode == 200) {
+  //     print(responseBody['message']);
+  //     print(responseBody['data']);
+  //     return {"status": true, "data": responseBody};
+  //   } else {
+  //     print(responseBody['message']);
 
-      return {
-        "status": false,
-        "message": responseBody['message'] ?? 'Unknown error'
-      };
-    }
-  }
+  //     return {
+  //       "status": false,
+  //       "message": responseBody['message'] ?? 'Unknown error'
+  //     };
+  //   }
+  // }
 
   Future<String?> uploadRequirement(
     String token,
@@ -427,6 +427,69 @@ class ApiRoutes {
       print('Error: $e');
     }
   }
+
+  Future<void> blockUser(String userId, String reason, context) async {
+    final String url = 'http://43.205.89.79/api/v1/user/block/$userId';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({"reason": reason}),
+      );
+
+      if (response.statusCode == 200) {
+        // Success
+        print('User Blocked successfully');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('User Blocked ')));
+      } else {
+        // Handle error
+        print('Failed to Block: ${response.statusCode}');
+        final dynamic message = json.decode(response.body)['message'];
+        log(message);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to Block')));
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('An error occurred: $e');
+    }
+  }
+
+  Future<void> unBlockUser(String userId, String reason, context) async {
+    final String url = 'http://43.205.89.79/api/v1/user/unblock/$userId';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success
+        print('User unBlocked successfully');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('User unblocked ')));
+      } else {
+        // Handle error
+        print('Failed to Block: ${response.statusCode}');
+        final dynamic message = json.decode(response.body)['message'];
+        log(message);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to unblock')));
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('An error occurred: $e');
+    }
+  }
 }
 
 Future<void> markEventAsRSVP(String eventId, context) async {
@@ -474,7 +537,7 @@ Future<UserModel> fetchUserDetails(
     },
   );
   log('hello');
-  print(response.body);
+  log(response.body);
   if (response.statusCode == 200) {
     final dynamic data = json.decode(response.body)['data'];
     print(data['products']);
@@ -488,32 +551,25 @@ Future<UserModel> fetchUserDetails(
 }
 
 @riverpod
-Future<List<UserModel>> fetchUsers(FetchUsersRef ref, String token) async {
-  final url = Uri.parse('$baseUrl/admin/users');
-  print('Requesting URL: $url');
+Future<List<UserModel>> fetchUsers(FetchUsersRef ref,
+    {int pageNo = 1, int limit = 10}) async {
   final response = await http.get(
-    url,
+    Uri.parse('$baseUrl/admin/users?pageNo=$pageNo&limit=$limit'),
     headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"
     },
   );
-  print('hello');
-  print(json.decode(response.body)['status']);
+
   if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body)['data'];
-    print(response.body);
-    List<UserModel> events = [];
+    final data = json.decode(response.body);
+    final usersJson = data['data'] as List<dynamic>? ?? [];
 
-    for (var item in data) {
-      events.add(UserModel.fromJson(item));
-    }
-    print(events);
-    return events;
+    return usersJson.map((user) => UserModel.fromJson(user)).toList();
   } else {
-    print(json.decode(response.body)['message']);
-
-    throw Exception(json.decode(response.body)['message']);
+    final data = json.decode(response.body);
+    log(data['message']);
+    throw Exception('Failed to load users');
   }
 }
 
@@ -564,15 +620,14 @@ Future<List<Event>> fetchUserRsvpdEvents(
 
     if (response.statusCode == 200) {
       // Successfully received response
-     final List<dynamic> data = json.decode(response.body)['data'];
-    print(response.body);
-      
+      final List<dynamic> data = json.decode(response.body)['data'];
+      print(response.body);
+
       List<Event> registeredEvents = [];
       for (var item in data) {
-      registeredEvents.add(Event.fromJson(item));
-    }
+        registeredEvents.add(Event.fromJson(item));
+      }
       return registeredEvents;
-     
     } else {
       // Handle error response
       print('Request failed with status: ${response.statusCode}');
@@ -580,6 +635,6 @@ Future<List<Event>> fetchUserRsvpdEvents(
     }
   } catch (error) {
     print('Error occurred: $error');
-      return [];
+    return [];
   }
 }

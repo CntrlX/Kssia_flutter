@@ -6,7 +6,7 @@ part of 'user_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchUserDetailsHash() => r'9176e3c314313cd877d7ba056646cf546a1bc8c4';
+String _$fetchUserDetailsHash() => r'8546032eb9a76ed770b4149f5926fc1a34e91649';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -173,7 +173,7 @@ class _FetchUserDetailsProviderElement
   String get userId => (origin as FetchUserDetailsProvider).userId;
 }
 
-String _$fetchUsersHash() => r'6fea100e9626f66bf461c993f0a6b18cfb1927ff';
+String _$fetchUsersHash() => r'f44086922f071d00193f07802fbcd29560f3dcd6';
 
 /// See also [fetchUsers].
 @ProviderFor(fetchUsers)
@@ -185,11 +185,13 @@ class FetchUsersFamily extends Family<AsyncValue<List<UserModel>>> {
   const FetchUsersFamily();
 
   /// See also [fetchUsers].
-  FetchUsersProvider call(
-    String token,
-  ) {
+  FetchUsersProvider call({
+    int pageNo = 1,
+    int limit = 10,
+  }) {
     return FetchUsersProvider(
-      token,
+      pageNo: pageNo,
+      limit: limit,
     );
   }
 
@@ -198,7 +200,8 @@ class FetchUsersFamily extends Family<AsyncValue<List<UserModel>>> {
     covariant FetchUsersProvider provider,
   ) {
     return call(
-      provider.token,
+      pageNo: provider.pageNo,
+      limit: provider.limit,
     );
   }
 
@@ -220,12 +223,14 @@ class FetchUsersFamily extends Family<AsyncValue<List<UserModel>>> {
 /// See also [fetchUsers].
 class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
   /// See also [fetchUsers].
-  FetchUsersProvider(
-    String token,
-  ) : this._internal(
+  FetchUsersProvider({
+    int pageNo = 1,
+    int limit = 10,
+  }) : this._internal(
           (ref) => fetchUsers(
             ref as FetchUsersRef,
-            token,
+            pageNo: pageNo,
+            limit: limit,
           ),
           from: fetchUsersProvider,
           name: r'fetchUsersProvider',
@@ -236,7 +241,8 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
           dependencies: FetchUsersFamily._dependencies,
           allTransitiveDependencies:
               FetchUsersFamily._allTransitiveDependencies,
-          token: token,
+          pageNo: pageNo,
+          limit: limit,
         );
 
   FetchUsersProvider._internal(
@@ -246,10 +252,12 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.token,
+    required this.pageNo,
+    required this.limit,
   }) : super.internal();
 
-  final String token;
+  final int pageNo;
+  final int limit;
 
   @override
   Override overrideWith(
@@ -264,7 +272,8 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        token: token,
+        pageNo: pageNo,
+        limit: limit,
       ),
     );
   }
@@ -276,21 +285,27 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
 
   @override
   bool operator ==(Object other) {
-    return other is FetchUsersProvider && other.token == token;
+    return other is FetchUsersProvider &&
+        other.pageNo == pageNo &&
+        other.limit == limit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, pageNo.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin FetchUsersRef on AutoDisposeFutureProviderRef<List<UserModel>> {
-  /// The parameter `token` of this provider.
-  String get token;
+  /// The parameter `pageNo` of this provider.
+  int get pageNo;
+
+  /// The parameter `limit` of this provider.
+  int get limit;
 }
 
 class _FetchUsersProviderElement
@@ -299,7 +314,9 @@ class _FetchUsersProviderElement
   _FetchUsersProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchUsersProvider).token;
+  int get pageNo => (origin as FetchUsersProvider).pageNo;
+  @override
+  int get limit => (origin as FetchUsersProvider).limit;
 }
 
 String _$fetchUserRequirementsHash() =>

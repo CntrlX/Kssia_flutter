@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
@@ -153,171 +154,133 @@ class _FeedViewState extends State<FeedView> {
     return Consumer(
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
-        return Card(
-            color: Colors.white,
-            elevation: 0,
-            margin: const EdgeInsets.only(bottom: 16.0),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Color.fromARGB(255, 213, 208, 208)),
-              borderRadius: BorderRadius.circular(6.0),
-            ),
-            child: asyncUser.when(
-              loading: () => Center(child: LoadingAnimation()),
-              error: (error, stackTrace) {
-                // Handle error state
-                return Center(
-                  child: Text('Error loading promotions: $error'),
-                );
+        final asyncRequirementOwner =
+            ref.watch(fetchUserDetailsProvider(token, requirement.author!.id!));
+        return asyncRequirementOwner.when(
+          data: (requirementOwner) {
+            final receiver = Participant(
+                firstName: requirementOwner.name?.firstName ?? '',
+                middleName: requirementOwner.name?.middleName ?? '',
+                lastName: requirementOwner.name?.lastName ?? '',
+                id: requirementOwner.id,
+                profilePicture: requirementOwner.profilePicture);
+            return GestureDetector(
+              onTap: () {
+                requirementModalSheet(
+                    context: context,
+                    onButtonPressed: () {},
+                    buttonText: 'MESSAGE',
+                    requirement: requirement,
+                    sender: Participant(id: id),
+                    receiver: receiver);
               },
-              data: (user) {
-                print(user);
-                if (requirement.author != null)
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (withImage) ...[
-                          SizedBox(height: 16),
-                          Container(
-                            height: 200,
-                            width: double.infinity,
-                            child: Image.network(
-                              fit: BoxFit.cover,
-                              requirement.image!,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.network(
-                                    fit: BoxFit.cover,
-                                    'https://placehold.co/600x400');
-                              },
-                            ),
-                          )
-                        ],
-                        SizedBox(height: 16),
-                        Text(
-                          requirement.content!,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          children: [
-                            ClipOval(
-                              child: Container(
-                                width: 30,
-                                height: 30,
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                child: Image.network(
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.person);
-                                  },
-                                  user.profilePicture!, // Replace with your image URL
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${requirement.author!.name!.firstName} ${requirement.author!.name!.middleName} ${requirement.author!.name!.lastName}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12),
-                                ),
-                                Text(
-                                  user.companyName!,
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            Text(
-                              requirement.createdAt.toString(),
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                else
-                  return Center(
-                    child: Text('No requirements'),
-                  );
-              },
-            ));
-      },
-    );  
-  }
-}
-
-class PostWidget extends StatelessWidget {
-  final String authorName;
-  final String companyName;
-  final String timestamp;
-  final String content;
-  final String imagePath;
-
-  PostWidget({
-    required this.authorName,
-    required this.companyName,
-    required this.timestamp,
-    required this.content,
-    required this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            content,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 8),
-          Image(image: NetworkImage(imagePath)),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(
-                    'assets/images/avatar.png'), // Replace with your avatar image path
-              ),
-              SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    authorName,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              child: Card(
+                  color: Colors.white,
+                  elevation: 0,
+                  margin: const EdgeInsets.only(bottom: 16.0),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Color.fromARGB(255, 213, 208, 208)),
+                    borderRadius: BorderRadius.circular(6.0),
                   ),
-                  Text(companyName),
-                ],
-              ),
-              Spacer(),
-              Text(timestamp),
-            ],
-          ),
-        ],
-      ),
+                  child: asyncUser.when(
+                    loading: () => Center(child: LoadingAnimation()),
+                    error: (error, stackTrace) {
+                      // Handle error state
+                      return Center(
+                        child: Text('Error loading promotions: $error'),
+                      );
+                    },
+                    data: (user) {
+                      print(user);
+                      if (requirement.author != null) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (withImage) ...[
+                                SizedBox(height: 16),
+                                Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    fit: BoxFit.cover,
+                                    requirement.image!,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.network(
+                                          fit: BoxFit.cover,
+                                          'https://placehold.co/600x400');
+                                    },
+                                  ),
+                                )
+                              ],
+                              SizedBox(height: 16),
+                              Text(
+                                requirement.content!,
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  ClipOval(
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      child: Image.network(
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Icon(Icons.person);
+                                        },
+                                        user.profilePicture!, // Replace with your image URL
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${requirement.author!.name!.firstName} ${requirement.author!.name!.middleName} ${requirement.author!.name!.lastName}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12),
+                                      ),
+                                      Text(
+                                        user.companyName!,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    requirement.createdAt.toString(),
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      } else
+                        return SizedBox();
+                    },
+                  )),
+            );
+          },
+          loading: () => Center(child: LoadingAnimation()),
+          error: (error, stackTrace) {
+            return Center(
+              child: Text('NO PROMOTIONS YET'),
+            );
+          },
+        );
+      },
     );
   }
 }

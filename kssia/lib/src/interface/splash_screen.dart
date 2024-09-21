@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -31,8 +32,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> checktoken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? savedtoken = preferences.getString('token');
+    log(savedtoken.toString());
     String? savedId = preferences.getString('id');
-    if (savedtoken != null && savedtoken.isNotEmpty && savedId!=null) {
+    if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
       setState(() {
         LoggedIn = true;
         token = savedtoken;

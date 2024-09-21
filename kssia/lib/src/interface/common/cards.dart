@@ -137,7 +137,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: 90.0,
+                  height: 80.0,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(

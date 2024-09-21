@@ -19,7 +19,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class ReviewsState extends StateNotifier<int> {
-  ReviewsState() : super(2);
+  ReviewsState() : super(1);
 
   void showMoreReviews(int totalReviews) {
     state = (state + 2).clamp(0, totalReviews);

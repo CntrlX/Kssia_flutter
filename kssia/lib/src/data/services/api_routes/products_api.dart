@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,8 +10,8 @@ part 'products_api.g.dart';
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
-Future<List<Product>> fetchProducts(FetchProductsRef ref, String token) async {
-  final url = Uri.parse('$baseUrl/products');
+Future<List<Product>> fetchProducts(FetchProductsRef ref, {int pageNo = 1, int limit = 10}) async {
+  final url = Uri.parse('$baseUrl/products?pageNo=$pageNo&limit=$limit');
   print('Requesting URL: $url');
   final response = await http.get(
     url,

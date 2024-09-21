@@ -3,26 +3,47 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:kssia/src/data/models/chat_model.dart';
-import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/data/notifiers/products_notifier.dart';
+
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
-import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/models/product_model.dart';
-import 'package:kssia/src/data/models/user_model.dart';
-import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/interface/common/cards.dart';
-import 'package:kssia/src/interface/common/custom_button.dart';
-import 'package:kssia/src/interface/common/loading.dart';
-import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:kssia/src/interface/common/customModalsheets.dart';
+
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-class ProductView extends StatelessWidget {
+class ProductView extends ConsumerStatefulWidget {
   const ProductView({super.key});
+
+  @override
+  ConsumerState<ProductView> createState() => _ProductViewState();
+}
+
+class _ProductViewState extends ConsumerState<ProductView> {
+    final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+
+    _fetchInitialFeeds();
+  }
+
+  Future<void> _fetchInitialFeeds() async {
+    await ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
+    }
+  }
   void _showProductDetails({required BuildContext context, required product}) {
-    showCupertinoModalBottomSheet(
+    showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) => ProductDetailsModal(
         product: product,
@@ -34,7 +55,7 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       final searchQuery = ref.watch(searchQueryProvider);
-      final productsAsyncValue = ref.watch(fetchProductsProvider(token));
+      final productsAsyncValue = ref.watch(fetchProductsProvider());
 
       return Scaffold(
         body: productsAsyncValue.when(
@@ -83,17 +104,17 @@ class ProductView extends StatelessWidget {
                       )),
                   const SizedBox(height: 16),
                   if (filteredProducts.isNotEmpty)
-                    GridView.builder(
+                    GridView.builder(controller: _scrollController,
                       shrinkWrap:
                           true, // Let GridView take up only as much space as it needs
                       physics:
                           const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisExtent: 212,
                         crossAxisCount: 2,
-                        crossAxisSpacing: 1.0,
-                        mainAxisSpacing: 2.0,
-                        childAspectRatio: .85,
+                        crossAxisSpacing: 0.0,
+                        mainAxisSpacing: 20.0,
                       ),
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
@@ -140,256 +161,3 @@ class ProductView extends StatelessWidget {
   }
 }
 
-class ProductDetailsModal extends StatefulWidget {
-  final Product product;
-
-  const ProductDetailsModal({super.key, required this.product});
-
-  @override
-  _ProductDetailsModalState createState() => _ProductDetailsModalState();
-}
-
-class _ProductDetailsModalState extends State<ProductDetailsModal> {
-  TextEditingController _quantityController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _quantityController.text = '0';
-  }
-
-  @override
-  void dispose() {
-    _quantityController.dispose();
-    super.dispose();
-  }
-
-  void _incrementQuantity() {
-    setState(() {
-      int currentValue = int.tryParse(_quantityController.text) ?? 0;
-      _quantityController.text = (currentValue + 1).toString();
-    });
-  }
-
-  void _decrementQuantity() {
-    setState(() {
-      int currentValue = int.tryParse(_quantityController.text) ?? 0;
-      if (currentValue > 0) {
-        _quantityController.text = (currentValue - 1).toString();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final asyncUser = ref.watch(
-            fetchUserDetailsProvider(token, widget.product.sellerId!.id!));
-
-        ChatModel sourcChat = ChatModel(
-            name: '',
-            icon: '',
-            time: '',
-            currentMessage: '',
-            id: id,
-            unreadMessages: 0);
-        ChatModel receiverChat = ChatModel(
-            name:
-                '${widget.product.sellerId!.name!.firstName!} ${widget.product.sellerId!.name!.middleName!} ${widget.product.sellerId!.name!.lastName!}',
-            icon: '',
-            time: '',
-            currentMessage: '',
-            id: widget.product.sellerId!.id!,
-            unreadMessages: 0);
-        return Material(
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                Container(
-                  width: 60,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Image.network(
-                          widget.product.image!, // Replace with your image URL
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.network(
-                              'https://placehold.co/600x400/png',
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          widget.product.name!,
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        widget.product.offerPrice != null
-                            ? Text(
-                                'INR ${widget.product.offerPrice} / piece',
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              )
-                            : Text(
-                                'INR ${widget.product.price} / piece',
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              ),
-                        Text(
-                          'MOQ : ${widget.product.moq}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          widget.product.description!,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 16),
-                        asyncUser.when(
-                          data: (user) {
-                            return Row(
-                              children: [
-                                SizedBox(
-                                  height: 40,
-                                  width: 40,
-                                  child: ClipOval(
-                                    child: Image.network(
-                                      widget.product.sellerId!.id ??
-                                          'https://placehold.co/600x400/png', // Fallback URL if sellerId is null
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.network(
-                                          'https://placehold.co/600x400/png',
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        '${user!.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}'),
-                                    Text('${user.companyName}'),
-                                  ],
-                                ),
-                                const Spacer(),
-                                const Row(
-                                  children: [
-                                    Icon(Icons.star, color: Colors.orange),
-                                    Text('4.5'),
-                                    Text('(24 Reviews)'),
-                                  ],
-                                )
-                              ],
-                            );
-                          },
-                          loading: () =>
-                              const Center(child: CircularProgressIndicator()),
-                          error: (error, stackTrace) {
-                            return Center(
-                              child: Text('Error loading user details: $error'),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: _decrementQuantity,
-                            ),
-                            const SizedBox(width: 16),
-                            SizedBox(
-                              height: 40,
-                              width:
-                                  250, // Increase this value to expand the horizontal width
-                              child: TextField(
-                                controller: _quantityController,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: const BorderSide(
-                                      color: Color.fromARGB(255, 235, 229, 229),
-                                      width: 2.0, // Border width
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: const BorderSide(
-                                      color: Color.fromARGB(255, 235, 229, 229),
-                                      width: 1.0, // Border width when focused
-                                    ),
-                                  ),
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                ),
-                                onChanged: (value) {
-                                  if (int.tryParse(value) == null) {
-                                    _quantityController.text = '0';
-                                  }
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: _incrementQuantity,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-
-                        // final chat = chats.firstWhere((chat) =>
-                        //     chat.id == widget.product.sellerId!.id!);
-
-                        customButton(
-                            label: 'Get Qoute',
-                            onPressed: () async {
-                              await sendChatMessage(
-                                  userId: widget.product.sellerId!.id!,
-                                  from: id,
-                                  content:
-                                      '''I need ${_quantityController.text} of ${widget.product.name} \nLet\'s Connect!''');
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => IndividualPage(
-                                        chatModel: receiverChat,
-                                        sourchat: sourcChat,
-                                      )));
-                            },
-                            fontSize: 16)
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}

@@ -3,101 +3,176 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/notifiers/people_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
 
-class MembersPage extends StatelessWidget {
-  final List<UserModel> users;
-  const MembersPage({super.key, required this.users});
+class MembersPage extends ConsumerStatefulWidget {
+  const MembersPage({super.key});
 
-  // final List<Member> members = [
-  //   Member('Alice', 'Software Engineer', 'https://example.com/avatar1.png'),
-  //   Member('Bob', 'Product Manager', 'https://example.com/avatar2.png'),
-  //   Member('Charlie', 'Designer', 'https://example.com/avatar3.png'),
-  // ];
+  @override
+  ConsumerState<MembersPage> createState() => _MembersPageState();
+}
+
+class _MembersPageState extends ConsumerState<MembersPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  late final webSocketClient;
+  @override
+  void initState() {
+    super.initState();
+    webSocketClient = ref.read(socketIoClientProvider);
+    webSocketClient.connect(id, ref);
+    _scrollController.addListener(_onScroll);
+
+    _fetchInitialUsers();
+  }
+
+  Future<void> _fetchInitialUsers() async {
+    await ref.read(peopleNotifierProvider.notifier).fetchMoreUsers();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      ref.read(peopleNotifierProvider.notifier).fetchMoreUsers();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final chats = ref
-                .watch(fetchChatThreadProvider(token))
-                .value
-                ?.where((chat) => chat.id != id)
-                .toList() ??
-            [
-              ChatModel(
-                name: 'Loading...',
-                icon: '',
-                time: '',
-                currentMessage: '',
-                id: '',
-                unreadMessages: 0,
-              ),
-            ];
-
-        log(chats.toString());
-        ChatModel sourcChat = ChatModel(
-            name: '',
-            icon: '',
-            time: '',
-            currentMessage: '',
-            id: id,
-            unreadMessages: 0);
-        return Scaffold(
+    final users = ref.watch(peopleNotifierProvider);
+    final isLoading = ref.read(peopleNotifierProvider.notifier).isLoading;
+    final asyncChats = ref.watch(fetchChatThreadProvider(token));
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        ref.invalidate(fetchChatThreadProvider);
+      },
+      child: Scaffold(
           backgroundColor: Colors.white,
-          body: ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ProfilePreview(
-                            user: users[index],
-                          )));
-                },
-                child: ListTile(
-                    leading: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: ClipOval(
-                        child: Image.network(
-                          users[index].profilePicture ??
-                              'https://placehold.co/600x400/png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.network(
-                              'https://placehold.co/600x400/png',
-                              fit: BoxFit.cover,
+          body: users.isEmpty
+              ? Center(child: LoadingAnimation()) // Show loader when no data
+              : asyncChats.when(
+                  data: (chats) {
+                    log('im inside chat');
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount:
+                          users.length, // Add 1 for the loading indicator
+                      itemBuilder: (context, index) {
+                        var chatForUser = chats.firstWhere(
+                          (chat) =>
+                              chat.participants?.any((participant) =>
+                                  participant.id == users[index].id) ??
+                              false,
+                          orElse: () => ChatModel(
+                            participants: [
+                              Participant(
+                                id: users[index].id,
+                                firstName: users[index].name?.firstName ?? '',
+                                middleName: users[index].name?.middleName ?? '',
+                                lastName: users[index].name?.lastName ?? '',
+                                profilePicture: users[index].profilePicture,
+                              ),
+                              Participant(
+                                  id: id), // You can replace this with a default sender (current user)
+                            ],
+                          ),
+                        );
+
+                        // Get the receiver and sender for the chat
+                        var receiver = chatForUser.participants?.firstWhere(
+                          (participant) => participant.id != id,
+                          orElse: () => Participant(
+                            id: users[index].id,
+                            firstName: users[index].name?.firstName ?? '',
+                            middleName: users[index].name?.firstName ?? '',
+                            lastName: users[index].name?.firstName ?? '',
+                            profilePicture: users[index].profilePicture,
+                          ),
+                        );
+
+                        var sender = chatForUser.participants?.firstWhere(
+                          (participant) => participant.id == id,
+                          orElse: () => Participant(),
+                        );
+                        if (index == users.length) {
+                          return isLoading
+                              ? Center(
+                                  child:
+                                      LoadingAnimation()) // Show loading when fetching more users
+                              : SizedBox.shrink(); // Hide when done
+                        }
+
+                        final user = users[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ProfilePreview(
+                                  user: user,
+                                ),
+                              ),
                             );
                           },
-                        ),
-                      ),
-                    ),
-                    title: Text('${users[index].name!.firstName}'),
-                    subtitle: Text(users[index].designation!),
-                    trailing: users[index].id != id
-                        ? IconButton(
-                            icon: const Icon(Icons.chat),
-                            onPressed: () {
-                              log(index.toString());
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => IndividualPage(
-                                        chatModel: chats[index],
-                                        sourchat: sourcChat,
-                                      )));
-                            },
-                          )
-                        : SizedBox()),
-              );
-            },
-          ),
-        );
-      },
+                          child: ListTile(
+                            leading: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: ClipOval(
+                                child: Image.network(
+                                  user.profilePicture ??
+                                      'https://placehold.co/600x400/png',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.network(
+                                      'https://placehold.co/600x400/png',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                                '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
+                            subtitle: user.designation != null
+                                ? Text(user.designation!)
+                                : null,
+                            trailing: IconButton(
+                              icon: Icon(Icons.chat),
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => IndividualPage(
+                                          receiver: receiver!,
+                                          sender: sender!,
+                                        )));
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  loading: () => Center(child: LoadingAnimation()),
+                  error: (error, stackTrace) {
+                    return Center(
+                      child: Text('Error loading promotions: $error'),
+                    );
+                  },
+                )),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+    webSocketClient.disconnect();
   }
 }

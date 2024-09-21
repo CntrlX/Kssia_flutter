@@ -46,7 +46,7 @@ class PhoneNumbers {
   final int? landline;
   final int? companyPhoneNumber;
   final int? whatsappNumber;
-   final int? whatsappBusinessNumber;
+  final int? whatsappBusinessNumber;
 
   PhoneNumbers({
     this.personal,
@@ -329,39 +329,40 @@ class UserModel {
   final String? companyLogo;
   final String? profilePicture;
   final List<Product>? products;
+  final List<BlockedUser>? blockedUsers;
 
-  UserModel({
-    this.id,
-    this.membershipId,
-    this.name,
-    this.phoneNumbers,
-    this.bloodGroup,
-    this.email,
-    this.designation,
-    this.companyName,
-    this.companyEmail,
-    this.businessCategory,
-    this.subCategory,
-    this.bio,
-    this.address,
-    this.websites,
-    this.status,
-    this.isActive,
-    this.isDeleted,
-    this.selectedTheme,
-    this.socialMedia,
-    this.video,
-    this.awards,
-    this.certificates,
-    this.brochure,
-    this.reviews, // Initialize reviews
-    this.createdAt,
-    this.updatedAt,
-    this.companyAddress,
-    this.companyLogo,
-    this.profilePicture,
-    this.products,
-  });
+  UserModel(
+      {this.id,
+      this.membershipId,
+      this.name,
+      this.phoneNumbers,
+      this.bloodGroup,
+      this.email,
+      this.designation,
+      this.companyName,
+      this.companyEmail,
+      this.businessCategory,
+      this.subCategory,
+      this.bio,
+      this.address,
+      this.websites,
+      this.status,
+      this.isActive,
+      this.isDeleted,
+      this.selectedTheme,
+      this.socialMedia,
+      this.video,
+      this.awards,
+      this.certificates,
+      this.brochure,
+      this.reviews, // Initialize reviews
+      this.createdAt,
+      this.updatedAt,
+      this.companyAddress,
+      this.companyLogo,
+      this.profilePicture,
+      this.products,
+      this.blockedUsers});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -415,6 +416,9 @@ class UserModel {
           : (json['products'] as List<dynamic>?)
               ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
               .toList(),
+      blockedUsers: (json['blocked_users'] as List<dynamic>?)
+          ?.map((e) => BlockedUser.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -450,6 +454,7 @@ class UserModel {
       'company_logo': companyLogo,
       'profile_picture': profilePicture,
       'products': products?.map((e) => e.toJson()).toList(),
+      'blocked_users': blockedUsers
     };
   }
 
@@ -484,39 +489,40 @@ class UserModel {
     String? companyLogo,
     String? profilePicture,
     List<Product>? products,
+    List<BlockedUser>? blockedUsers,
   }) {
     return UserModel(
-      id: id ?? this.id,
-      membershipId: membershipId ?? this.membershipId,
-      name: name ?? this.name,
-      phoneNumbers: phoneNumbers ?? this.phoneNumbers,
-      bloodGroup: bloodGroup ?? this.bloodGroup,
-      email: email ?? this.email,
-      designation: designation ?? this.designation,
-      companyName: companyName ?? this.companyName,
-      companyEmail: companyEmail ?? this.companyEmail,
-      businessCategory: businessCategory ?? this.businessCategory,
-      subCategory: subCategory ?? this.subCategory,
-      bio: bio ?? this.bio,
-      address: address ?? this.address,
-      websites: websites ?? this.websites,
-      status: status ?? this.status,
-      isActive: isActive ?? this.isActive,
-      isDeleted: isDeleted ?? this.isDeleted,
-      selectedTheme: selectedTheme ?? this.selectedTheme,
-      socialMedia: socialMedia ?? this.socialMedia,
-      video: video ?? this.video,
-      awards: awards ?? this.awards,
-      certificates: certificates ?? this.certificates,
-      brochure: brochure ?? this.brochure,
-      reviews: reviews ?? this.reviews, // Assign reviews
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      companyAddress: companyAddress ?? this.companyAddress,
-      companyLogo: companyLogo ?? this.companyLogo,
-      profilePicture: profilePicture ?? this.profilePicture,
-      products: products ?? this.products,
-    );
+        id: id ?? this.id,
+        membershipId: membershipId ?? this.membershipId,
+        name: name ?? this.name,
+        phoneNumbers: phoneNumbers ?? this.phoneNumbers,
+        bloodGroup: bloodGroup ?? this.bloodGroup,
+        email: email ?? this.email,
+        designation: designation ?? this.designation,
+        companyName: companyName ?? this.companyName,
+        companyEmail: companyEmail ?? this.companyEmail,
+        businessCategory: businessCategory ?? this.businessCategory,
+        subCategory: subCategory ?? this.subCategory,
+        bio: bio ?? this.bio,
+        address: address ?? this.address,
+        websites: websites ?? this.websites,
+        status: status ?? this.status,
+        isActive: isActive ?? this.isActive,
+        isDeleted: isDeleted ?? this.isDeleted,
+        selectedTheme: selectedTheme ?? this.selectedTheme,
+        socialMedia: socialMedia ?? this.socialMedia,
+        video: video ?? this.video,
+        awards: awards ?? this.awards,
+        certificates: certificates ?? this.certificates,
+        brochure: brochure ?? this.brochure,
+        reviews: reviews ?? this.reviews, // Assign reviews
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        companyAddress: companyAddress ?? this.companyAddress,
+        companyLogo: companyLogo ?? this.companyLogo,
+        profilePicture: profilePicture ?? this.profilePicture,
+        products: products ?? this.products,
+        blockedUsers: blockedUsers ?? this.blockedUsers);
   }
 }
 
@@ -569,5 +575,35 @@ class Review {
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
     );
+  }
+}
+
+class BlockedUser {
+  final String userId;
+  final String reason;
+  final String id;
+
+  BlockedUser({
+    required this.userId,
+    required this.reason,
+    required this.id,
+  });
+
+  // Factory constructor to create a BlockedUser instance from a JSON object
+  factory BlockedUser.fromJson(Map<String, dynamic> json) {
+    return BlockedUser(
+      userId: json['userId'] as String,
+      reason: json['reason'] as String,
+      id: json['_id'] as String,
+    );
+  }
+
+  // Method to convert a BlockedUser instance to a JSON object
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'reason': reason,
+      '_id': id,
+    };
   }
 }

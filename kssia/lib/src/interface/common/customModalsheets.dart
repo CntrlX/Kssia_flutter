@@ -6,15 +6,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/validate_urls.dart';
-
-
 
 void showWebsiteSheet({
   required VoidCallback addWebsite,
@@ -252,9 +255,6 @@ void showVideoLinkSheet({
     },
   );
 }
-
-
-
 
 void showWlinkorVlinkSheet(
     {required String title,
@@ -1520,4 +1520,391 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
       ),
     );
   }
+}
+
+class ProductDetailsModal extends StatefulWidget {
+  final Product product;
+
+  const ProductDetailsModal({super.key, required this.product});
+
+  @override
+  _ProductDetailsModalState createState() => _ProductDetailsModalState();
+}
+
+class _ProductDetailsModalState extends State<ProductDetailsModal> {
+  TextEditingController _quantityController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _quantityController.text = '0';
+  }
+
+  @override
+  void dispose() {
+    _quantityController.dispose();
+    super.dispose();
+  }
+
+  void _incrementQuantity() {
+    setState(() {
+      int currentValue = int.tryParse(_quantityController.text) ?? 0;
+      _quantityController.text = (currentValue + 1).toString();
+    });
+  }
+
+  void _decrementQuantity() {
+    setState(() {
+      int currentValue = int.tryParse(_quantityController.text) ?? 0;
+      if (currentValue > 0) {
+        _quantityController.text = (currentValue - 1).toString();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUser = ref.watch(
+            fetchUserDetailsProvider(token, widget.product.sellerId!.id!));
+
+        // ChatModel sourcChat = ChatModel(
+        //     name: '',
+        //     icon: '',
+        //     time: '',
+        //     currentMessage: '',
+        //     id: id,
+        //     unreadMessages: 0);
+        // ChatModel receiverChat = ChatModel(
+        //     name:
+        //         '${widget.product.sellerId!.name!.firstName!} ${widget.product.sellerId!.name!.middleName!} ${widget.product.sellerId!.name!.lastName!}',
+        //     icon: '',
+        //     time: '',
+        //     currentMessage: '',
+        //     id: widget.product.sellerId!.id!,
+        //     unreadMessages: 0);
+
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(
+                      20), // Set the desired radius for the top left corner
+                  topRight: Radius.circular(
+                      20), // Set the desired radius for the top right corner
+                ),
+                child: Image.network(
+                  widget.product.image!, // Replace with your image URL
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      'https://placehold.co/600x400/png',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      widget.product.name!,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              widget.product.offerPrice != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            'INR ${widget.product.price} / piece',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(color: Colors.black),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
+                              child: Text(
+                                'INR ${widget.product.offerPrice?.toDouble()} / piece',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Text(
+                      'INR ${widget.product.price} / piece',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+              if (widget.product.moq != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        'MOQ : ${widget.product.moq}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      widget.product.description!,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              asyncUser.when(
+                data: (user) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: ClipOval(
+                            child: Image.network(
+                              widget.product.sellerId!.id ??
+                                  'https://placehold.co/600x400/png',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.network(
+                                  'https://placehold.co/600x400/png',
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                '${user!.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}'),
+                            Text('${user.companyName}'),
+                          ],
+                        ),
+                        const Spacer(),
+                        const Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.orange),
+                            Text('4.5'),
+                            Text('(24 Reviews)'),
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) {
+                  return Center(
+                    child: Text('Error loading user details: $error'),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: _decrementQuantity,
+                  ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    height: 40,
+                    width:
+                        250, // Increase this value to expand the horizontal width
+                    child: TextField(
+                      controller: _quantityController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 235, 229, 229),
+                            width: 2.0, // Border width
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 235, 229, 229),
+                            width: 1.0, // Border width when focused
+                          ),
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 8.0),
+                      ),
+                      onChanged: (value) {
+                        if (int.tryParse(value) == null) {
+                          _quantityController.text = '0';
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: _incrementQuantity,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: customButton(
+                    label: 'Get Quote',
+                    onPressed: () async {
+                      await sendChatMessage(
+                        productId: widget.product.id,
+                        userId: widget.product.sellerId!.id!,
+                        // content:
+                        //     '''I need ${_quantityController.text} of ${widget.product.name} \nLet\'s Connect!'''
+                      );
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => IndividualPage(
+                      //           chatModel: receiverChat,
+                      //           sourchat: sourcChat,
+                      //         )));
+                    },
+                    fontSize: 16),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+void requirementModalSheet({
+  required BuildContext context,
+  required VoidCallback onButtonPressed,
+  required String buttonText,
+  required Requirement requirement,
+  required Participant sender,
+  required Participant receiver,
+  // Made imageUrl optional
+}) {
+  showModalBottomSheet(
+    isScrollControlled: true,
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+    ),
+    builder: (context) {
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Conditionally render the image
+              if (requirement.image != null && requirement.image != '')
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20.0)),
+                  child: Image.network(
+                    requirement.image!,
+                    width: double.infinity,
+                    height: 200, // Adjust the height as needed
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              // Add spacing only if image is displayed
+              if (requirement.image != null && requirement.image != '')
+                const SizedBox(height: 20),
+              Text(requirement.content ?? ''),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    return customButton(
+                      label: buttonText,
+                      onPressed: () async {
+                        await sendChatMessage(
+                            userId: requirement.author!.id!,
+                            content: requirement.content!,
+                            requirementId: requirement.id);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => IndividualPage(
+                                  receiver: receiver,
+                                  sender: sender,
+                                )));
+                      },
+                      fontSize: 16,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+          // Close button positioned at the top-right of the sheet
+          Positioned(
+            right: 5,
+            top: -50,
+            child: Container(
+              padding: const EdgeInsets.all(0),
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(0, 2),
+                    blurRadius: 4.0,
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }

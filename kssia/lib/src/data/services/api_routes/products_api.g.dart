@@ -6,7 +6,7 @@ part of 'products_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchProductsHash() => r'db49508765242d1f16be03b49e207ab9eead216f';
+String _$fetchProductsHash() => r'99b429d2217f68e38bf995bbbd7992e6ed137b3b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,11 +39,13 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
   const FetchProductsFamily();
 
   /// See also [fetchProducts].
-  FetchProductsProvider call(
-    String token,
-  ) {
+  FetchProductsProvider call({
+    int pageNo = 1,
+    int limit = 10,
+  }) {
     return FetchProductsProvider(
-      token,
+      pageNo: pageNo,
+      limit: limit,
     );
   }
 
@@ -52,7 +54,8 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
     covariant FetchProductsProvider provider,
   ) {
     return call(
-      provider.token,
+      pageNo: provider.pageNo,
+      limit: provider.limit,
     );
   }
 
@@ -74,12 +77,14 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
 /// See also [fetchProducts].
 class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
   /// See also [fetchProducts].
-  FetchProductsProvider(
-    String token,
-  ) : this._internal(
+  FetchProductsProvider({
+    int pageNo = 1,
+    int limit = 10,
+  }) : this._internal(
           (ref) => fetchProducts(
             ref as FetchProductsRef,
-            token,
+            pageNo: pageNo,
+            limit: limit,
           ),
           from: fetchProductsProvider,
           name: r'fetchProductsProvider',
@@ -90,7 +95,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
           dependencies: FetchProductsFamily._dependencies,
           allTransitiveDependencies:
               FetchProductsFamily._allTransitiveDependencies,
-          token: token,
+          pageNo: pageNo,
+          limit: limit,
         );
 
   FetchProductsProvider._internal(
@@ -100,10 +106,12 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.token,
+    required this.pageNo,
+    required this.limit,
   }) : super.internal();
 
-  final String token;
+  final int pageNo;
+  final int limit;
 
   @override
   Override overrideWith(
@@ -118,7 +126,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        token: token,
+        pageNo: pageNo,
+        limit: limit,
       ),
     );
   }
@@ -130,21 +139,27 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
 
   @override
   bool operator ==(Object other) {
-    return other is FetchProductsProvider && other.token == token;
+    return other is FetchProductsProvider &&
+        other.pageNo == pageNo &&
+        other.limit == limit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, pageNo.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin FetchProductsRef on AutoDisposeFutureProviderRef<List<Product>> {
-  /// The parameter `token` of this provider.
-  String get token;
+  /// The parameter `pageNo` of this provider.
+  int get pageNo;
+
+  /// The parameter `limit` of this provider.
+  int get limit;
 }
 
 class _FetchProductsProviderElement
@@ -153,7 +168,9 @@ class _FetchProductsProviderElement
   _FetchProductsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchProductsProvider).token;
+  int get pageNo => (origin as FetchProductsProvider).pageNo;
+  @override
+  int get limit => (origin as FetchProductsProvider).limit;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

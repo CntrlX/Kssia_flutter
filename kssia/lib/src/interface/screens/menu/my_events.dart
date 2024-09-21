@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 class MyEventsPage extends StatelessWidget {
@@ -185,7 +186,7 @@ class MyEventsPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Join event action
+                      launchURL(event.meetingLink ?? '');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF004797),

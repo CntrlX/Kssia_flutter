@@ -1,71 +1,131 @@
-import 'package:kssia/src/data/globals.dart' as globals;
+class Participant {
+  final String? id;
+  final String? firstName;
+  final String? middleName;
+  final String? lastName;
+  final String? profilePicture;
+
+  Participant({
+    this.id,
+    this.firstName,
+    this.middleName,
+    this.lastName,
+    this.profilePicture,
+  });
+
+  factory Participant.fromJson(Map<String, dynamic> json) {
+    return Participant(
+      id: json['_id'] ?? '',
+      firstName: json['name']?['first_name'] ?? '',
+      middleName: json['name']?['middle_name'] ?? '',
+      lastName: json['name']?['last_name'] ?? '',
+      profilePicture: json['profile_picture'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id ?? '',
+      'name': {
+        'first_name': firstName ?? '',
+        'middle_name': middleName ?? '',
+        'last_name': lastName ?? '',
+      },
+      'profile_picture': profilePicture ?? '',
+    };
+  }
+}
+
+class Message {
+  final String? id;
+  final String? from;
+  final String? to;
+  final String? content;
+  final List<dynamic>? attachments;
+  final String? status;
+  final DateTime? timestamp;
+
+  Message({
+    this.id,
+    this.from,
+    this.to,
+    this.content,
+    this.attachments,
+    this.status,
+    this.timestamp,
+  });
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      id: json['_id'] ?? '',
+      from: json['from'] ?? '',
+      to: json['to'] ?? '',
+      content: json['content'] ?? '',
+      attachments: json['attachments'] ?? [],
+      status: json['status'] ?? '',
+      timestamp: json['timestamp'] != null
+          ? DateTime.tryParse(json['timestamp']) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id ?? '',
+      'from': from ?? '',
+      'to': to ?? '',
+      'content': content ?? '',
+      'attachments': attachments ?? [],
+      'status': status ?? '',
+      'timestamp': timestamp?.toIso8601String() ?? DateTime.now().toIso8601String(),
+    };
+  }
+}
 
 class ChatModel {
-  String name;
-  String icon;
-  String time;
-  String currentMessage;
-  bool select;
-  String id;
-  int unreadMessages;
+  final String? id;
+  final List<Participant>? participants;
+  final List<Message>? lastMessage;
+  final Map<String, int>? unreadCount;
+  final DateTime? createdAt;
+  final int? version;
 
   ChatModel({
-    required this.name,
-    required this.icon,
-    required this.time,
-    required this.currentMessage,
-    this.select = false,
-    required this.id,
-    required this.unreadMessages,
+    this.id,
+    this.participants,
+    this.lastMessage,
+    this.unreadCount,
+    this.createdAt,
+    this.version,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
-    String chatName = '';
-    String chatIcon = '';
-    String chatId = '';
-    String currentMessage = '';
-    int unreadMessages = 0;
-    String time = '';
-
-    if (json['participants'] != null) {
-      json['participants'].forEach((element) {
-        if (element['_id'] != globals.id) {
-          chatName = element['name']['first_name'] ?? '';
-          chatIcon = element['profile_picture'] ?? '';
-          chatId = element['_id'] ?? '';
-        }
-      });
-    }
-
-    if (json['lastMessage'] != null && json['lastMessage'].isNotEmpty) {
-      currentMessage = json['lastMessage'][0]['content'] ?? '';
-      time = json['lastMessage'][0]['timestamp']
-              .toString()
-              .split('T')[1]
-              .split('.')[0]
-              .substring(0, 5) ??
-          '';
-    } else {
-      time = json['createdAt']
-              .toString()
-              .split('T')[1]
-              .split('.')[0]
-              .substring(0, 5) ??
-          '';
-    }
-
-    if (json['unreadCount'] != null &&
-        json['unreadCount'][globals.id] != null) {
-      unreadMessages = json['unreadCount'][globals.id];
-    }
-
     return ChatModel(
-      name: chatName,
-      icon: chatIcon,
-      time: time,
-      currentMessage: currentMessage,
-      id: chatId,
-      unreadMessages: unreadMessages,
+      id: json['_id'] ?? '',
+      participants: (json['participants'] as List?)
+              ?.map((participant) => Participant.fromJson(participant))
+              .toList() ??
+          [],
+      lastMessage: (json['lastMessage'] as List?)
+              ?.map((message) => Message.fromJson(message))
+              .toList() ??
+          [],
+      unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
+      version: json['__v'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id ?? '',
+      'participants': participants?.map((p) => p.toJson()).toList() ?? [],
+      'lastMessage': lastMessage?.map((m) => m.toJson()).toList() ?? [],
+      'unreadCount': unreadCount ?? {},
+      'createdAt': createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      '__v': version ?? 0,
+    };
   }
 }
