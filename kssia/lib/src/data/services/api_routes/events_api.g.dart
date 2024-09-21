@@ -6,7 +6,7 @@ part of 'events_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchEventsHash() => r'50f4b9eda1283649b52ae63d4979eb04344205d1';
+String _$fetchEventsHash() => r'af0ab19d0d00ebfbede1afa70c3298842591da8d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,11 +39,13 @@ class FetchEventsFamily extends Family<AsyncValue<List<Event>>> {
   const FetchEventsFamily();
 
   /// See also [fetchEvents].
-  FetchEventsProvider call(
-    String token,
-  ) {
+  FetchEventsProvider call({
+    int pageNo = 1,
+    int limit = 10,
+  }) {
     return FetchEventsProvider(
-      token,
+      pageNo: pageNo,
+      limit: limit,
     );
   }
 
@@ -52,7 +54,8 @@ class FetchEventsFamily extends Family<AsyncValue<List<Event>>> {
     covariant FetchEventsProvider provider,
   ) {
     return call(
-      provider.token,
+      pageNo: provider.pageNo,
+      limit: provider.limit,
     );
   }
 
@@ -74,12 +77,14 @@ class FetchEventsFamily extends Family<AsyncValue<List<Event>>> {
 /// See also [fetchEvents].
 class FetchEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
   /// See also [fetchEvents].
-  FetchEventsProvider(
-    String token,
-  ) : this._internal(
+  FetchEventsProvider({
+    int pageNo = 1,
+    int limit = 10,
+  }) : this._internal(
           (ref) => fetchEvents(
             ref as FetchEventsRef,
-            token,
+            pageNo: pageNo,
+            limit: limit,
           ),
           from: fetchEventsProvider,
           name: r'fetchEventsProvider',
@@ -90,7 +95,8 @@ class FetchEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
           dependencies: FetchEventsFamily._dependencies,
           allTransitiveDependencies:
               FetchEventsFamily._allTransitiveDependencies,
-          token: token,
+          pageNo: pageNo,
+          limit: limit,
         );
 
   FetchEventsProvider._internal(
@@ -100,10 +106,12 @@ class FetchEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.token,
+    required this.pageNo,
+    required this.limit,
   }) : super.internal();
 
-  final String token;
+  final int pageNo;
+  final int limit;
 
   @override
   Override overrideWith(
@@ -118,7 +126,8 @@ class FetchEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        token: token,
+        pageNo: pageNo,
+        limit: limit,
       ),
     );
   }
@@ -130,21 +139,27 @@ class FetchEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
 
   @override
   bool operator ==(Object other) {
-    return other is FetchEventsProvider && other.token == token;
+    return other is FetchEventsProvider &&
+        other.pageNo == pageNo &&
+        other.limit == limit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, pageNo.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin FetchEventsRef on AutoDisposeFutureProviderRef<List<Event>> {
-  /// The parameter `token` of this provider.
-  String get token;
+  /// The parameter `pageNo` of this provider.
+  int get pageNo;
+
+  /// The parameter `limit` of this provider.
+  int get limit;
 }
 
 class _FetchEventsProviderElement
@@ -152,7 +167,9 @@ class _FetchEventsProviderElement
   _FetchEventsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchEventsProvider).token;
+  int get pageNo => (origin as FetchEventsProvider).pageNo;
+  @override
+  int get limit => (origin as FetchEventsProvider).limit;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

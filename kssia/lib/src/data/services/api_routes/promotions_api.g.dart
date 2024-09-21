@@ -6,7 +6,7 @@ part of 'promotions_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchPromotionsHash() => r'd70199213bd5b17fac3e0d42746409da537901cb';
+String _$fetchPromotionsHash() => r'599633bb6f7458fb7080c78cda7cd21ffb5e8d3b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,11 +39,13 @@ class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
   const FetchPromotionsFamily();
 
   /// See also [fetchPromotions].
-  FetchPromotionsProvider call(
-    String token,
-  ) {
+  FetchPromotionsProvider call({
+    int pageNo = 1,
+    int limit = 10,
+  }) {
     return FetchPromotionsProvider(
-      token,
+      pageNo: pageNo,
+      limit: limit,
     );
   }
 
@@ -52,7 +54,8 @@ class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
     covariant FetchPromotionsProvider provider,
   ) {
     return call(
-      provider.token,
+      pageNo: provider.pageNo,
+      limit: provider.limit,
     );
   }
 
@@ -75,12 +78,14 @@ class FetchPromotionsFamily extends Family<AsyncValue<List<Promotion>>> {
 class FetchPromotionsProvider
     extends AutoDisposeFutureProvider<List<Promotion>> {
   /// See also [fetchPromotions].
-  FetchPromotionsProvider(
-    String token,
-  ) : this._internal(
+  FetchPromotionsProvider({
+    int pageNo = 1,
+    int limit = 10,
+  }) : this._internal(
           (ref) => fetchPromotions(
             ref as FetchPromotionsRef,
-            token,
+            pageNo: pageNo,
+            limit: limit,
           ),
           from: fetchPromotionsProvider,
           name: r'fetchPromotionsProvider',
@@ -91,7 +96,8 @@ class FetchPromotionsProvider
           dependencies: FetchPromotionsFamily._dependencies,
           allTransitiveDependencies:
               FetchPromotionsFamily._allTransitiveDependencies,
-          token: token,
+          pageNo: pageNo,
+          limit: limit,
         );
 
   FetchPromotionsProvider._internal(
@@ -101,10 +107,12 @@ class FetchPromotionsProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.token,
+    required this.pageNo,
+    required this.limit,
   }) : super.internal();
 
-  final String token;
+  final int pageNo;
+  final int limit;
 
   @override
   Override overrideWith(
@@ -119,7 +127,8 @@ class FetchPromotionsProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        token: token,
+        pageNo: pageNo,
+        limit: limit,
       ),
     );
   }
@@ -131,21 +140,27 @@ class FetchPromotionsProvider
 
   @override
   bool operator ==(Object other) {
-    return other is FetchPromotionsProvider && other.token == token;
+    return other is FetchPromotionsProvider &&
+        other.pageNo == pageNo &&
+        other.limit == limit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, pageNo.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin FetchPromotionsRef on AutoDisposeFutureProviderRef<List<Promotion>> {
-  /// The parameter `token` of this provider.
-  String get token;
+  /// The parameter `pageNo` of this provider.
+  int get pageNo;
+
+  /// The parameter `limit` of this provider.
+  int get limit;
 }
 
 class _FetchPromotionsProviderElement
@@ -154,7 +169,9 @@ class _FetchPromotionsProviderElement
   _FetchPromotionsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchPromotionsProvider).token;
+  int get pageNo => (origin as FetchPromotionsProvider).pageNo;
+  @override
+  int get limit => (origin as FetchPromotionsProvider).limit;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

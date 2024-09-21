@@ -173,7 +173,7 @@ class _FetchUserDetailsProviderElement
   String get userId => (origin as FetchUserDetailsProvider).userId;
 }
 
-String _$fetchUsersHash() => r'f44086922f071d00193f07802fbcd29560f3dcd6';
+String _$fetchUsersHash() => r'4671c31e68f2e465ba953796cb24a3a7f30dd6f6';
 
 /// See also [fetchUsers].
 @ProviderFor(fetchUsers)
@@ -187,7 +187,7 @@ class FetchUsersFamily extends Family<AsyncValue<List<UserModel>>> {
   /// See also [fetchUsers].
   FetchUsersProvider call({
     int pageNo = 1,
-    int limit = 10,
+    int limit = 20,
   }) {
     return FetchUsersProvider(
       pageNo: pageNo,
@@ -225,7 +225,7 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
   /// See also [fetchUsers].
   FetchUsersProvider({
     int pageNo = 1,
-    int limit = 10,
+    int limit = 20,
   }) : this._internal(
           (ref) => fetchUsers(
             ref as FetchUsersRef,

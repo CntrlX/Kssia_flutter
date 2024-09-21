@@ -86,10 +86,10 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
 
   void setMessage(String type, String message, String fromId) {
     final messageModel = MessageModel(
-      fromId: fromId,
+      from: fromId,
       status: type,
-      message: message,
-      time: DateTime.now(),
+      content: message,
+      timestamp: DateTime.now(),
     );
 
     setState(() {
@@ -103,8 +103,8 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
 
     messageStream.whenData((newMessage) {
       bool messageExists = messages.any((message) =>
-          message.time == newMessage.time &&
-          message.message == newMessage.message);
+          message.timestamp == newMessage.timestamp &&
+          message.content == newMessage.content);
 
       if (!messageExists) {
         setState(() {
@@ -192,20 +192,25 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                         final message = messages[messages.length -
                             1 -
                             index]; // Reverse the index to get the latest message first
-                        if (message.fromId == widget.sender.id) {
+                        if (message.from == widget.sender.id) {
                           return OwnMessageCard(
+                            requirement: message.requirement,
                             status: message.status!,
                             product: message.product,
-                            message: message.message ?? '',
+                            message: message.content ?? '',
                             time: DateFormat('h:mm a').format(
-                              DateTime.parse(message.time.toString()).toLocal(),
+                              DateTime.parse(message.timestamp.toString())
+                                  .toLocal(),
                             ),
                           );
                         } else {
                           return ReplyCard(
-                            message: message.message ?? '',
+                            requirement: message.requirement,
+                            product: message.product,
+                            message: message.content ?? '',
                             time: DateFormat('h:mm a').format(
-                              DateTime.parse(message.time.toString()).toLocal(),
+                              DateTime.parse(message.timestamp.toString())
+                                  .toLocal(),
                             ),
                           );
                         }

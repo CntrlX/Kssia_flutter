@@ -1,48 +1,106 @@
 class MessageModel {
-  String status;
-  String message;
-  DateTime? time;
-  String fromId;
-  final ChatProduct? product;
-  MessageModel(
-      {required this.message,
-      required this.status,
-      required this.fromId,
-      required this.time,
-          this.product,});
-  factory MessageModel.fromJson(Map<String, dynamic> json) {
-    return MessageModel(      product: json['product'] != null ? ChatProduct.fromJson(json['product']) : null,
-      message: json['content'],
-      status: json['status'],
-      time:  json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
-      fromId: json['from'],
-    );
-  }
-}
+  String? id;
+  String? from;
+  String? to;
+  String? content;
+  List<String>? attachments;
+  String? status;
+  DateTime? timestamp;
+  ChatRequirement? requirement;
+  ChatProduct? product;
+  int? version;
 
-
-class ChatProduct {
-  final String? id;
-  final String? media;
-
-  ChatProduct({
+  MessageModel({
     this.id,
-    this.media,
+    this.from,
+    this.to,
+    this.content,
+    this.attachments,
+    this.status,
+    this.timestamp,
+    this.requirement,
+    this.product,
+    this.version,
   });
 
-  // fromJson method
-  factory ChatProduct.fromJson(Map<String, dynamic> json) {
-    return ChatProduct(
-      id: json['_id'] as String?,
-      media: json['media'] as String?,
+  factory MessageModel.fromJson(Map<String, dynamic> json) {
+    return MessageModel(
+      id: json['_id'],
+      from: json['from'],
+      to: json['to'],
+      content: json['content'],
+      attachments: json['attachments'] != null ? List<String>.from(json['attachments']) : null,
+      status: json['status'],
+      timestamp: json['timestamp'] != null ? DateTime.tryParse(json['timestamp']) : null,
+      requirement: json['requirement'] != null ? ChatRequirement.fromJson(json['requirement']) : null,
+      product: json['product'] != null ? ChatProduct.fromJson(json['product']) : null,
+      version: json['__v'],
     );
   }
 
-  // toJson method
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'media': media,
+      'from': from,
+      'to': to,
+      'content': content,
+      'attachments': attachments,
+      'status': status,
+      'timestamp': timestamp?.toIso8601String(),
+      'requirement': requirement?.toJson(),
+      'product': product?.toJson(),
+      '__v': version,
+    };
+  }
+}
+
+class ChatRequirement {
+  String? id;
+  String? image;
+  String? content;
+
+  ChatRequirement({this.id, this.image, this.content});
+
+  factory ChatRequirement.fromJson(Map<String, dynamic> json) {
+    return ChatRequirement(
+      id: json['_id'],
+      image: json['image'],
+      content: json['content'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'image': image,
+      'content': content,
+    };
+  }
+}
+
+class ChatProduct {
+  String? id;
+  String? name;
+  String? image;
+  double? price;
+
+  ChatProduct({this.id, this.name, this.image, this.price});
+
+  factory ChatProduct.fromJson(Map<String, dynamic> json) {
+    return ChatProduct(
+      id: json['_id'],
+      name: json['name'],
+      image: json['image'],
+      price: (json['price'] as num?)?.toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'image': image,
+      'price': price,
     };
   }
 }

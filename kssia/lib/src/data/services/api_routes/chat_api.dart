@@ -150,7 +150,7 @@ Future<List<MessageModel>> getMessages(
     final messages = json.decode(response.body)['data'];
     // Handle the messages data as per your needs
 
-    print(messages);
+    log(messages.toString());
 
     return messages
         .map<MessageModel>((item) => MessageModel.fromJson(item))

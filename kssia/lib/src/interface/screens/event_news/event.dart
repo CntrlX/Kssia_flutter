@@ -1,64 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:kssia/src/data/notifiers/events_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart'; // Import the ViewMoreEventPage
 
-
-class EventPage extends StatelessWidget {
+class EventPage extends ConsumerStatefulWidget {
   const EventPage({super.key});
+
+  @override
+  ConsumerState<EventPage> createState() => _EventPageState();
+}
+
+class _EventPageState extends ConsumerState<EventPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _fetchInitialFeeds();
+  }
+
+  Future<void> _fetchInitialFeeds() async {
+    await ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncEvents = ref.watch(fetchEventsProvider(token));
-        return asyncEvents.when(
-          data: (events) {
-            return ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                // Container(
-                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                //   child: TextField(
-                //     decoration: InputDecoration(
-                //       prefixIcon: Icon(Icons.search),
-                //       hintText: 'Search for Events',
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(8.0),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                SizedBox(height: 16),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: events.length,
-                  itemBuilder: (context, index) {
-                    return _buildPost(
-                      withImage: true,
-                      context: context,
-                      event: events[
-                          index], // Assuming your _buildPost takes an event parameter
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-          loading: () => Center(child: LoadingAnimation()),
-          error: (error, stackTrace) {
-            return Center(
-              child: Text('NO EVENTS'),
-            );
-          },
-        );
+        final events = ref.watch(eventsNotifierProvider);
+        final isLoading = ref.read(eventsNotifierProvider.notifier).isLoading;
+        if (!isLoading) {
+          return ListView(
+            controller:
+                _scrollController, // Attach controller to outer ListView
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              // Commented out search field, but you can add it back if needed
+              // Container(
+              //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: TextField(
+              //     decoration: InputDecoration(
+              //       prefixIcon: Icon(Icons.search),
+              //       hintText: 'Search for Events',
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(8.0),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics:
+                    const NeverScrollableScrollPhysics(), // No scrolling inside
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  return _buildPost(
+                    withImage: true,
+                    context: context,
+                    event: events[index], // Passing event parameter
+                  );
+                },
+              ),
+            ],
+          );
+        } else {
+          return LoadingAnimation();
+        }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Widget _buildPost(

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "730513867054",
+    "firebase_url": "https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "kssia-fcde5",
+    "storage_bucket": "kssia-fcde5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730513867054:android:c8d1a3fade5f0f53777abf",
+        "android_client_info": {
+          "package_name": "com.skybertech.kssia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMfXTmc3190afjNkYm6to0MhJ772qTUxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:kssia/src/data/notifiers/loading_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
@@ -56,161 +57,297 @@ class _LoginPageState extends State<LoginPage> {
         physics: const NeverScrollableScrollPhysics(), // Disable swiping
         children: [
           PhoneNumberScreen(onNext: _nextPage),
-          OTPScreen(onNext: _nextPage),
-          ProfileCompletionScreen(onNext: _nextPage),
-          const DetailsPage(),
         ],
       ),
     );
   }
 }
 
-class PhoneNumberScreen extends StatelessWidget {
+final countryCodeProvider = StateProvider<String?>((ref) => '91');
+
+class PhoneNumberScreen extends ConsumerWidget {
   final VoidCallback onNext;
 
-  const PhoneNumberScreen({required this.onNext});
+  PhoneNumberScreen({super.key, required this.onNext});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(loadingProvider);
+    final countryCode =
+        ref.watch(countryCodeProvider); // Watch the countryCodeProvider
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            Image.asset(
-              'assets/icons/kssiaLogo.png',
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Enter your Phone Number',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-            ),
-            const SizedBox(height: 20),
-            IntlPhoneField(
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 5.0,
-              ),
-              readOnly: true,
-              controller: _mobileController,
-              disableLengthCheck: true,
-              showCountryFlag: false,
-              decoration: const InputDecoration(
-                hintText: '0000000000',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                  letterSpacing: 5.0,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w400,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-              initialCountryCode: 'IN',
-              onChanged: (PhoneNumber phone) {
-                print(phone.completeNumber);
-              },
-              flagsButtonPadding: EdgeInsets.zero,
-              showDropdownIcon: true,
-              dropdownIconPosition: IconPosition.trailing,
-              dropdownTextStyle: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'We will send you the 4 digit Verification code',
-              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-            ),
-            const Spacer(),
-            Column(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                const SizedBox(height: 40),
+                Image.asset(
+                  'assets/icons/kssiaLogo.png',
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Enter your Phone Number',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                IntlPhoneField(
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 5.0,
+                  ),
+                  readOnly: true,
+                  controller: _mobileController,
+                  disableLengthCheck: true,
+                  showCountryFlag: false,
+                  decoration: const InputDecoration(
+                    hintText: '0000000000',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 5.0,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onCountryChanged: (value) {
+                    // Update the provider with the new country code
+                    ref.read(countryCodeProvider.notifier).state =
+                        value.dialCode;
+                  },
+                  initialCountryCode: 'IN',
+                  onChanged: (PhoneNumber phone) {
+                    print(phone.completeNumber);
+                  },
+                  flagsButtonPadding: EdgeInsets.zero,
+                  showDropdownIcon: true,
+                  dropdownIconPosition: IconPosition.trailing,
+                  dropdownTextStyle: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'We will send you the 6 digit Verification code',
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+                const Spacer(),
+                Column(
                   children: [
-                    _buildbutton(label: '1', model: 'mobile'),
-                    _buildbutton(label: '3', model: 'mobile'),
-                    _buildbutton(label: '3', model: 'mobile')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(
+                          label: '1',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '2',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '3',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(
+                          label: '4',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '5',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '6',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(
+                          label: '7',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '8',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: '9',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(label: '   ', model: ''),
+                        _buildbutton(
+                          label: '0',
+                          model: 'mobile',
+                          countryCode: countryCode,
+                        ),
+                        _buildbutton(
+                          label: 'back',
+                          icondata: Icons.arrow_back_ios,
+                          model: 'mobile',
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '4', model: 'mobile'),
-                    _buildbutton(label: '5', model: 'mobile'),
-                    _buildbutton(label: '6', model: 'mobile')
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: SizedBox(
+                    height: 47,
+                    width: double.infinity,
+                    child: customButton(
+                      label: 'GENERATE OTP',
+                      onPressed: isLoading
+                          ? () {}
+                          : () {
+                              _handleOtpGeneration(context, ref);
+                            },
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '7', model: 'mobile'),
-                    _buildbutton(label: '8', model: 'mobile'),
-                    _buildbutton(label: '9', model: 'mobile')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: 'ABC', model: ''),
-                    _buildbutton(label: '0', model: 'mobile'),
-                    _buildbutton(
-                        label: 'back',
-                        icondata: Icons.arrow_back_ios,
-                        model: 'mobile')
-                  ],
-                )
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SizedBox(
-                  height: 47,
-                  width: double.infinity,
-                  child: customButton(
-                      label: 'GENERATE OTP',
-                      onPressed: () async {
-                        if (_mobileController.text.length != 10) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Please Enter Valid Phone number')));
-                        }
-                        ApiRoutes userApi = ApiRoutes();
-                        String? response = await userApi.sendOtp(
-                            _mobileController.text, context);
-                        if (response != null) {
-                          onNext();
-                        }
-
-                        final SharedPreferences preferences =
-                            await SharedPreferences.getInstance();
-                        preferences.setString(
-                            'mobile', _mobileController.text.toString());
-                      },
-                      fontSize: 16)),
+          ),
+          // Loading overlay
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
+
+  Future<void> _handleOtpGeneration(BuildContext context, WidgetRef ref) async {
+    final countryCode = ref.watch(countryCodeProvider);
+    ref.read(loadingProvider.notifier).startLoading();
+
+    try {
+      if (countryCode == '971') {
+        if (_mobileController.text.length != 9) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Please Enter Valid Phone number')),
+          );
+        } else {
+          ApiRoutes userApi = ApiRoutes();
+
+          final data = await userApi.submitPhoneNumber(
+              countryCode == '971'
+                  ? 9710.toString()
+                  : countryCode ?? 91.toString(),
+              context,
+              _mobileController.text);
+          final verificationId = data['verificationId'];
+          final resendToken = data['resendToken'];
+          if (verificationId != null && verificationId.isNotEmpty) {
+            log('Otp Sent successfully');
+            onNext();
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                phone: _mobileController.text,
+                verificationId: verificationId,
+                resendToken: resendToken ?? '',
+              ),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed')),
+            );
+          }
+        }
+      } else if (countryCode != '971') {
+        if (_mobileController.text.length != 10) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Please Enter Valid Phone number')),
+          );
+        } else {
+          ApiRoutes userApi = ApiRoutes();
+
+          final data = await userApi.submitPhoneNumber(
+              countryCode == '971'
+                  ? 9710.toString()
+                  : countryCode ?? 971.toString(),
+              context,
+              _mobileController.text);
+          final verificationId = data['verificationId'];
+          final resendToken = data['resendToken'];
+          if (verificationId != null && verificationId.isNotEmpty) {
+            log('Otp Sent successfully');
+            onNext();
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                phone: _mobileController.text,
+                verificationId: verificationId,
+                resendToken: resendToken ?? '',
+              ),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed')),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed')),
+      );
+    } finally {
+      ref.read(loadingProvider.notifier).stopLoading();
+    }
+  }
 }
 
-class OTPScreen extends StatefulWidget {
-  final VoidCallback onNext;
-  OTPScreen({required this.onNext});
+class OTPScreen extends ConsumerStatefulWidget {
+  final String verificationId;
+  final String resendToken;
+  final String phone;
+  const OTPScreen({
+    required this.phone,
+    required this.resendToken,
+    super.key,
+    required this.verificationId,
+  });
 
   @override
-  State<OTPScreen> createState() => _OTPScreenState();
+  ConsumerState<OTPScreen> createState() => _OTPScreenState();
 }
 
-class _OTPScreenState extends State<OTPScreen> {
+class _OTPScreenState extends ConsumerState<OTPScreen> {
   Timer? _timer;
 
   int _start = 20;
@@ -242,7 +379,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   void resendCode() {
     startTimer();
-    // Add your resend code logic here
+    ApiRoutes userApi = ApiRoutes();
+    userApi.resendOTP(widget.phone, widget.verificationId, widget.resendToken);
   }
 
   @override
@@ -253,184 +391,224 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(loadingProvider);
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            Image.asset(
-              'assets/icons/kssiaLogo.png',
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Enter your OTP',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 5.0,
-              ),
-              readOnly: true,
-              controller: _otpController,
-              decoration: const InputDecoration(
-                hintText: '000000',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                  letterSpacing: 5.0,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w400,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: (value) {
-                print(value);
-              },
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: _isButtonDisabled
-                  ? null
-                  : () {
-                      resendCode();
-                    },
-              child: Text(
-                _isButtonDisabled ? 'Resend Code in $_start s' : 'Resend Code',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _isButtonDisabled ? Colors.grey : Colors.black,
-                ),
-              ),
-            ),
-            const Spacer(),
-            Column(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                const SizedBox(height: 40),
+                Image.asset(
+                  'assets/icons/kssiaLogo.png',
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Enter your OTP',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 5.0,
+                  ),
+                  readOnly: true,
+                  controller: _otpController,
+                  decoration: const InputDecoration(
+                    hintText: '000000',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 5.0,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onChanged: (value) {
+                    print(value);
+                  },
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: _isButtonDisabled
+                      ? null
+                      : () {
+                          resendCode();
+                        },
+                  child: Text(
+                    _isButtonDisabled
+                        ? 'Resend Code in $_start s'
+                        : 'Resend Code',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: _isButtonDisabled ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Column(
                   children: [
-                    _buildbutton(label: '1', model: 'otp'),
-                    _buildbutton(label: '2', model: 'otp'),
-                    _buildbutton(label: '3', model: 'otp')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(label: '1', model: 'otp'),
+                        _buildbutton(label: '2', model: 'otp'),
+                        _buildbutton(label: '3', model: 'otp')
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(label: '4', model: 'otp'),
+                        _buildbutton(label: '5', model: 'otp'),
+                        _buildbutton(label: '6', model: 'otp')
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(label: '7', model: 'otp'),
+                        _buildbutton(label: '8', model: 'otp'),
+                        _buildbutton(label: '9', model: 'otp')
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildbutton(label: '   ', model: ''),
+                        _buildbutton(label: '0', model: 'otp'),
+                        _buildbutton(
+                            label: 'back',
+                            icondata: Icons.arrow_back_ios,
+                            model: 'otp')
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '4', model: 'otp'),
-                    _buildbutton(label: '5', model: 'otp'),
-                    _buildbutton(label: '6', model: 'otp')
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: SizedBox(
+                    height: 47,
+                    width: double.infinity,
+                    child: customButton(
+                      label: 'NEXT',
+                      onPressed: isLoading
+                          ? () {}
+                          : () {
+                              _handleOtpVerification(context, ref);
+                            },
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '7', model: 'otp'),
-                    _buildbutton(label: '8', model: 'otp'),
-                    _buildbutton(label: '9', model: 'otp')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: 'ABC', model: ''),
-                    _buildbutton(label: '0', model: 'otp'),
-                    _buildbutton(
-                        label: 'back',
-                        icondata: Icons.arrow_back_ios,
-                        model: 'otp')
-                  ],
-                )
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SizedBox(
-                  height: 47,
-                  width: double.infinity,
-                  child: customButton(
-                      label: 'NEXT',
-                      onPressed: () async {
-                        if (_otpController.text.length < 6) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Please Enter the OTP')));
-                        } else {
-                          ApiRoutes userApi = ApiRoutes();
-                          List<dynamic> credentials = await userApi.verifyUser(
-                              _mobileController.text,
-                              _otpController.text,
-                              context);
-                          final SharedPreferences preferences =
-                              await SharedPreferences.getInstance();
-                          if (credentials.isNotEmpty) {
-                            preferences.setString(
-                                'token', credentials[0]['token']!);
-                            preferences.setString(
-                                'id', credentials[0]['userId']!);
-                            token = preferences.getString('token')!;
-                            id = preferences.getString('id')!;
-                            widget.onNext();
-                            _mobileController.clear();
-                            _otpController.clear();
-                          }
-                        }
-                      },
-                      fontSize: 16)),
+          ),
+          // Loading overlay
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
+
+  Future<void> _handleOtpVerification(
+      BuildContext context, WidgetRef ref) async {
+    ref.read(loadingProvider.notifier).startLoading();
+
+    try {
+      print(_otpController.text);
+
+      ApiRoutes userApi = ApiRoutes();
+      String savedToken = await userApi.verifyOTP(
+        verificationId: widget.verificationId,
+        fcmToken: fcmToken,
+        smsCode: _otpController.text,
+      );
+
+      if (savedToken.isNotEmpty) {
+        final SharedPreferences preferences =
+            await SharedPreferences.getInstance();
+        await preferences.setString('token', savedToken);
+        token = savedToken;
+        log('savedToken: $savedToken');
+        ref.invalidate(userProvider);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Wrong OTP')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Wrong OTP')),
+      );
+    } finally {
+      ref.read(loadingProvider.notifier).stopLoading();
+    }
+  }
 }
 
-InkWell _buildbutton({
-  required String label,
-  IconData? icondata,
-  required String model,
-}) {
+InkWell _buildbutton(
+    {required String label,
+    IconData? icondata,
+    required String model,
+    String? countryCode}) {
   return InkWell(
       onTap: () {
-        _onbuttonTap(label, model);
+        _onbuttonTap(label, model, countryCode ?? '971');
       },
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
           height: 40,
-          width: 100,
+          width: 80, // Adjusted width to fit better
           child: DecoratedBox(
-              decoration: const BoxDecoration(),
-              child: Center(
-                  child: icondata != null
-                      ? Icon(icondata,
-                          size: 19,
-                          color: const Color.fromARGB(255, 139, 138, 138))
-                      : Text(
-                          label,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 23,
-                              color: Color.fromARGB(255, 117, 116, 116)),
-                        ))),
+            decoration: const BoxDecoration(),
+            child: Center(
+              child: icondata != null
+                  ? Icon(icondata,
+                      size: 19, color: const Color.fromARGB(255, 139, 138, 138))
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 23,
+                          color: Color.fromARGB(255, 117, 116, 116)),
+                    ),
+            ),
+          ),
         ),
       ));
 }
 
-_onbuttonTap(var value, String model) {
+_onbuttonTap(var value, String model, String countryCode) {
   if (model == "mobile") {
     if (value == 'back') {
       if (_mobileController.text.isNotEmpty) {
         _mobileController.text = _mobileController.text
             .substring(0, _mobileController.text.length - 1);
       }
-    } else if (_mobileController.text.length < 10) {
+    } else if (countryCode == '971' && _mobileController.text.length < 9) {
+      log('Country code:$countryCode');
+      _mobileController.text += value;
+    } else if (countryCode != '971' && _mobileController.text.length < 10) {
+      log('Country code:$countryCode');
       _mobileController.text += value;
     } else {}
   } else if (model == "otp") {
@@ -449,9 +627,7 @@ _onbuttonTap(var value, String model) {
 }
 
 class ProfileCompletionScreen extends StatelessWidget {
-  final VoidCallback onNext;
-
-  ProfileCompletionScreen({required this.onNext});
+  ProfileCompletionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -483,7 +659,9 @@ class ProfileCompletionScreen extends StatelessWidget {
                       return customButton(
                           label: 'Next',
                           onPressed: () {
-                            onNext();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => DetailsPage()));
                             ref.invalidate(userProvider);
                           },
                           fontSize: 16);

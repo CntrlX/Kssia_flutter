@@ -9,7 +9,7 @@ import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
-import 'package:flutter/material.dart';
+
 
 class ViewMoreEventPage extends ConsumerStatefulWidget {
   final Event event;

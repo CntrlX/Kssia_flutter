@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/notifiers/promotions_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/promotions_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
@@ -35,6 +36,7 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+
   ScrollController _bannerScrollController = ScrollController();
   ScrollController _noticeScrollController = ScrollController();
   ScrollController _posterScrollController = ScrollController();
@@ -184,6 +186,36 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _fetchInitialPromotions();
+  }
+
+  Future<void> _fetchInitialPromotions() async {
+    await ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+  }
+
+  void _onScroll() {
+    if (_bannerScrollController.position.pixels ==
+        _bannerScrollController.position.maxScrollExtent) {
+      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+    }
+    if (_noticeScrollController.position.pixels ==
+        _noticeScrollController.position.maxScrollExtent) {
+      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+    }
+    if (_posterScrollController.position.pixels ==
+        _posterScrollController.position.maxScrollExtent) {
+      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+    }
+    if (_videoCountController.position.pixels ==
+        _videoCountController.position.maxScrollExtent) {
+      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+    }
+  }
+
+  @override
   void dispose() {
     _bannerScrollTimer?.cancel();
     _noticeScrollTimer?.cancel();
@@ -206,64 +238,62 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
     return Consumer(
       builder: (context, ref, child) {
-        final asyncPromotions = ref.watch(fetchPromotionsProvider(token));
+        final promotions = ref.watch(promotionsNotifierProvider);
+        final isLoading =
+            ref.read(promotionsNotifierProvider.notifier).isLoading;
+        final banners =
+            promotions.where((promo) => promo.type == 'banner').toList();
+        final posters =
+            promotions.where((promo) => promo.type == 'poster').toList();
+        final notices =
+            promotions.where((promo) => promo.type == 'notice').toList();
+        final videos =
+            promotions.where((promo) => promo.type == 'video').toList();
+        final filteredVideos =
+            videos.where((video) => video.ytLink!.startsWith('http')).toList();
+        // Start auto-scroll for all promotions when data is ready
+        if (banners.isNotEmpty) {
+          startAutoScroll(
+            controller: _bannerScrollController,
+            items: banners,
+            currentIndex: _currentBannerIndex,
+            itemKey: _bannerKey,
+            onIndexChanged: (index) => setState(() {
+              _currentBannerIndex = index;
+            }),
+            scrollTimer: _bannerScrollTimer,
+          );
+        }
 
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: asyncPromotions.when(
-            data: (promotions) {
-              final banners =
-                  promotions.where((promo) => promo.type == 'banner').toList();
-              final posters =
-                  promotions.where((promo) => promo.type == 'poster').toList();
-              final notices =
-                  promotions.where((promo) => promo.type == 'notice').toList();
-              final videos =
-                  promotions.where((promo) => promo.type == 'video').toList();
-              final filteredVideos = videos
-                  .where((video) => video.ytLink!.startsWith('http'))
-                  .toList();
-              // Start auto-scroll for all promotions when data is ready
-              if (banners.isNotEmpty) {
-                startAutoScroll(
-                  controller: _bannerScrollController,
-                  items: banners,
-                  currentIndex: _currentBannerIndex,
-                  itemKey: _bannerKey,
-                  onIndexChanged: (index) => setState(() {
-                    _currentBannerIndex = index;
-                  }),
-                  scrollTimer: _bannerScrollTimer,
-                );
-              }
+        if (notices.isNotEmpty) {
+          startAutoScroll(
+            controller: _noticeScrollController,
+            items: notices,
+            currentIndex: _currentNoticeIndex,
+            itemKey: _noticeKey,
+            onIndexChanged: (index) => setState(() {
+              _currentNoticeIndex = index;
+            }),
+            scrollTimer: _noticeScrollTimer,
+          );
+        }
 
-              if (notices.isNotEmpty) {
-                startAutoScroll(
-                  controller: _noticeScrollController,
-                  items: notices,
-                  currentIndex: _currentNoticeIndex,
-                  itemKey: _noticeKey,
-                  onIndexChanged: (index) => setState(() {
-                    _currentNoticeIndex = index;
-                  }),
-                  scrollTimer: _noticeScrollTimer,
-                );
-              }
-
-              if (posters.isNotEmpty) {
-                startAutoScroll(
-                  controller: _posterScrollController,
-                  items: posters,
-                  currentIndex: _currentPosterIndex,
-                  itemKey: _posterKey,
-                  onIndexChanged: (index) => setState(() {
-                    _currentPosterIndex = index;
-                  }),
-                  scrollTimer: _posterScrollTimer,
-                );
-              }
-
-              return GestureDetector(
+        if (posters.isNotEmpty) {
+          startAutoScroll(
+            controller: _posterScrollController,
+            items: posters,
+            currentIndex: _currentPosterIndex,
+            itemKey: _posterKey,
+            onIndexChanged: (index) => setState(() {
+              _currentPosterIndex = index;
+            }),
+            scrollTimer: _posterScrollTimer,
+          );
+        }
+        if (!isLoading) {
+          return Scaffold(
+              backgroundColor: Colors.white,
+              body: GestureDetector(
                 onPanDown: (_) =>
                     _onUserGestureDetected(banners, notices, posters),
                 onTap: () => _onUserGestureDetected(banners, notices, posters),
@@ -445,17 +475,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ],
                   ),
                 ),
-              );
-            },
-            loading: () =>
-                Center(child: buildShimmerPromotionsColumn(context: context)),
-            error: (error, stackTrace) {
-              return Center(
-                child: Text('NO PROMOTIONS YET'),
-              );
-            },
-          ),
-        );
+              ));
+        } else {
+          return LoadingAnimation();
+        }
       },
     );
   }

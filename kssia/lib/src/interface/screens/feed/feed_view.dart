@@ -166,7 +166,7 @@ class _FeedViewState extends State<FeedView> {
                 profilePicture: requirementOwner.profilePicture);
             return GestureDetector(
               onTap: () {
-                requirementModalSheet(
+                showRequirementModalSheet(
                     context: context,
                     onButtonPressed: () {},
                     buttonText: 'MESSAGE',

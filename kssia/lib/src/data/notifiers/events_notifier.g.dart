@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'products_notifier.dart';
+part of 'events_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$productsNotifierHash() => r'd87915c171eed4d3497b14a01ace4b86f5dd244d';
+String _$eventsNotifierHash() => r'8842721c2531f0dcf286e55dba71574d3c1f6003';
 
-/// See also [ProductsNotifier].
-@ProviderFor(ProductsNotifier)
-final productsNotifierProvider =
-    AutoDisposeNotifierProvider<ProductsNotifier, List<Product>>.internal(
-  ProductsNotifier.new,
-  name: r'productsNotifierProvider',
+/// See also [EventsNotifier].
+@ProviderFor(EventsNotifier)
+final eventsNotifierProvider =
+    AutoDisposeNotifierProvider<EventsNotifier, List<Event>>.internal(
+  EventsNotifier.new,
+  name: r'eventsNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$productsNotifierHash,
+      : _$eventsNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ProductsNotifier = AutoDisposeNotifier<List<Product>>;
+typedef _$EventsNotifier = AutoDisposeNotifier<List<Event>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

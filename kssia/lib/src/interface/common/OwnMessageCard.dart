@@ -1,23 +1,27 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 
 class OwnMessageCard extends StatelessWidget {
-
-
-  const OwnMessageCard({
-    Key? key,
-    required this.message,
-    required this.time,
-    required this.status,
-    this.product,
-  }) : super(key: key);
+  const OwnMessageCard(
+      {Key? key,
+      required this.message,
+      required this.time,
+      required this.status,
+      this.product,
+      this.requirement})
+      : super(key: key);
 
   final String message;
   final String time;
   final ChatProduct? product;
-   final String status;
+  final String status;
+  final ChatRequirement? requirement;
+
   @override
   Widget build(BuildContext context) {
+    log('Requirement Image:${requirement?.image ?? ''}');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Align(
@@ -43,15 +47,50 @@ class OwnMessageCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (product?.media != null)
+                if (product?.image != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Image.network(
-                      product!.media!,
+                      product!.image!,
                       height: 160, // Adjusted height to fit better
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
+                  ),
+                if (requirement?.image != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      requirement!.image!,
+                      height: 160, // Adjusted height to fit better
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                if (product != null)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product?.name ?? '',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(
+                              0xFF004797), // Using the provided color for emphasis
+                        ),
+                      ),
+                      SizedBox(height: 4), // Add spacing between name and price
+                      Text(
+                        'PRICE INR ${product?.price?.toStringAsFixed(2) ?? ''}', // Format price to two decimals
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              Colors.black87, // Subtle color for the price text
+                        ),
+                      ),
+                    ],
                   ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
@@ -78,7 +117,7 @@ class OwnMessageCard extends StatelessWidget {
                     Icon(
                       Icons.done_all,
                       size: 20,
-                      color:status=='seen'? Colors.blue[300]:Colors.grey,
+                      color: status == 'seen' ? Colors.blue[300] : Colors.grey,
                     ),
                   ],
                 ),

@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -13,57 +14,117 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/models/user_requirement_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 part 'user_api.g.dart';
 
 class ApiRoutes {
   final String baseUrl = 'http://43.205.89.79/api/v1';
-  Future<String?> sendOtp(String mobile, context) async {
-    print(mobile);
-    final response = await http.get(
-      Uri.parse('$baseUrl/user/login/$mobile'),
-      headers: {"Content-Type": "application/json"},
-    );
-    final Map<String, dynamic> responseBody = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      print(responseBody['message']);
-      print(responseBody['data']);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Success')));
-      return responseBody['message'];
-    } else if (response.statusCode == 400) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid Mobile Number')));
-      return null;
-    } else {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(responseBody['message'])));
+  Future<Map<String, String>> submitPhoneNumber(
+      String countryCode, BuildContext context, String phone) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    Completer<String> verificationIdcompleter = Completer<String>();
+    Completer<String> resendTokencompleter = Completer<String>();
+    log('phone:+$countryCode$phone');
+    await auth.verifyPhoneNumber(
+      phoneNumber: '+$countryCode$phone',
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Handle automatic verification completion if needed
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print(e.message.toString());
+        verificationIdcompleter.complete(''); // Verification failed
+        resendTokencompleter.complete('');
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        log(verificationId);
 
-      print(responseBody['message']);
-      return null;
+        verificationIdcompleter.complete(verificationId);
+        resendTokencompleter.complete(resendToken.toString());
+      },
+      codeAutoRetrievalTimeout: (String verificationID) {
+        if (!verificationIdcompleter.isCompleted) {
+          verificationIdcompleter.complete(''); // Timeout without sending code
+        }
+      },
+    );
+
+    return {
+      "verificationId": await verificationIdcompleter.future,
+      "resendToken": await resendTokencompleter.future
+    };
+  }
+
+  void resendOTP(
+      String phoneNumber, String verificationId, String resendToken) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.verifyPhoneNumber(
+      phoneNumber: '+91$phoneNumber',
+      forceResendingToken: int.parse(resendToken),
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: (PhoneAuthCredential credential) {
+        // Auto-retrieval or instant verification
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        // Handle error
+        print("Resend verification failed: ${e.message}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        resendToken = resendToken;
+        print("Resend verification Sucess");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        verificationId = verificationId;
+      },
+    );
+  }
+
+  Future<String> verifyOTP(
+      {required String verificationId,
+      required String fcmToken,
+      required String smsCode}) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+
+    try {
+      UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+      User? user = userCredential.user;
+      if (user != null) {
+        String? idToken = await user.getIdToken();
+        log("ID Token: $idToken");
+        log("fcm token:$fcmToken");
+        final token = await verifyUserDB(idToken!, fcmToken, context);
+        return token;
+      } else {
+        print("User signed in, but no user information was found.");
+        return '';
+      }
+    } catch (e) {
+      print("Failed to sign in: ${e.toString()}");
+      return '';
     }
   }
 
-  Future<List<dynamic>> verifyUser(String mobile, String otp, context) async {
+  Future<String> verifyUserDB(String idToken, String fcmToken, context) async {
     final response = await http.post(
       Uri.parse('$baseUrl/user/login'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"otp": int.parse(otp), "mobile": mobile}),
+      body: jsonEncode({"clientToken": idToken, "fcm": fcmToken}),
     );
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      print(responseBody['message']);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Success')));
+      log(responseBody.toString());
+
       return responseBody['data'];
     } else if (response.statusCode == 400) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid OTP')));
-      return [];
+      return '';
     } else {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      print(responseBody['message']);
-      return [];
+      log(responseBody.toString());
+      return '';
     }
   }
 
@@ -552,7 +613,7 @@ Future<UserModel> fetchUserDetails(
 
 @riverpod
 Future<List<UserModel>> fetchUsers(FetchUsersRef ref,
-    {int pageNo = 1, int limit = 10}) async {
+    {int pageNo = 1, int limit = 20}) async {
   final response = await http.get(
     Uri.parse('$baseUrl/admin/users?pageNo=$pageNo&limit=$limit'),
     headers: {
