@@ -7,10 +7,12 @@ import 'package:kssia/src/data/models/product_model.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'products_api.g.dart';
+
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
-Future<List<Product>> fetchProducts(FetchProductsRef ref, {int pageNo = 1, int limit = 10}) async {
+Future<List<Product>> fetchProducts(FetchProductsRef ref,
+    {int pageNo = 1, int limit = 10}) async {
   final url = Uri.parse('$baseUrl/products?pageNo=$pageNo&limit=$limit');
   print('Requesting URL: $url');
   final response = await http.get(
@@ -38,5 +40,3 @@ Future<List<Product>> fetchProducts(FetchProductsRef ref, {int pageNo = 1, int l
     throw Exception(json.decode(response.body)['message']);
   }
 }
-
-

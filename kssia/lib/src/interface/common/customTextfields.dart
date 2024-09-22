@@ -112,20 +112,20 @@ class CustomTextFormField extends StatelessWidget {
                     .updateCompanyAddress(textController!.text);
               case 'Enter phone number':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
-                    personal: int.parse(textController!.text));
+                    personal: textController!.text);
               case 'Enter landline number':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
-                    landline: int.parse(textController!.text));
+                    landline: textController!.text);
               case 'Enter Email':
                 ref
                     .read(userProvider.notifier)
                     .updateEmail(textController!.text);
               case 'Enter Business Whatsapp':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
-                    whatsappBusinessNumber: int.parse(textController!.text));
+                    whatsappBusinessNumber: textController!.text);
               case 'Enter Whatsapp':
                 ref.read(userProvider.notifier).updatePhoneNumbers(
-                    whatsappNumber: int.parse(textController!.text));
+                    whatsappNumber: textController!.text);
               case 'Enter Address':
                 ref
                     .read(userProvider.notifier)

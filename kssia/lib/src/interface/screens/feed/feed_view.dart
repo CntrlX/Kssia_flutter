@@ -3,25 +3,50 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/notifiers/requirements_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
+import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-class FeedView extends StatefulWidget {
+class FeedView extends ConsumerStatefulWidget {
   FeedView({super.key});
 
   @override
-  State<FeedView> createState() => _FeedViewState();
+  ConsumerState<FeedView> createState() => _FeedViewState();
 }
 
-class _FeedViewState extends State<FeedView> {
+class _FeedViewState extends ConsumerState<FeedView> {
   final TextEditingController requirementContentController =
       TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _fetchInitialFeeds();
+  }
+
+  Future<void> _fetchInitialFeeds() async {
+    await ref
+        .read(requirementsNotifierProvider.notifier)
+        .fetchMoreRequirements();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      ref.read(requirementsNotifierProvider.notifier).fetchMoreRequirements();
+    }
+  }
 
   File? _requirementImage;
   ApiRoutes api = ApiRoutes();
@@ -64,93 +89,89 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncRequirements = ref.watch(fetchRequirementsProvider(token));
-        return Scaffold(
-          body: asyncRequirements.when(
-            loading: () => Center(child: LoadingAnimation()),
-            error: (error, stackTrace) {
-              // Handle error state
-              return Center(
-                child: Text('No Requirements'),
-              );
-            },
-            data: (requirements) {
-              print(requirements);
-              return ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: [
-                  Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          prefixIcon: Icon(Icons.search),
-                          hintText: 'Search your requirements',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 211, 211),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 211, 211),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 216, 211, 211),
-                            ),
+        final requirements = ref.watch(requirementsNotifierProvider);
+        final isLoading =
+            ref.read(requirementsNotifierProvider.notifier).isLoading;
+        if (!isLoading) {
+          return Scaffold(
+            body: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        prefixIcon: Icon(Icons.search),
+                        hintText: 'Search your requirements',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
                           ),
                         ),
-                      )),
-                  SizedBox(height: 16),
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: requirements.length,
-                    itemBuilder: (context, index) {
-                      final requirement = requirements[index];
-                      if (requirement.status == 'approved') {
-                        return _buildPost(
-                          withImage: requirement.image != null &&
-                              requirement.image!.isNotEmpty,
-                          requirement: requirement,
-                        );
-                      } else {
-                        return SizedBox.shrink();
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    height: 40,
-                  )
-                ],
-              );
-            },
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openModalSheet(sheet: 'requirement'),
-            label: const Text(
-              'Add Requirement/update',
-              style: TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
+                          ),
+                        ),
+                      ),
+                    )),
+                SizedBox(height: 16),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: requirements.length,
+                  itemBuilder: (context, index) {
+                    final requirement = requirements[index];
+                    if (requirement.status == 'approved') {
+                      return _buildPost(
+                        withImage: requirement.image != null &&
+                            requirement.image!.isNotEmpty,
+                        requirement: requirement,
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 40,
+                )
+              ],
             ),
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 27,
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => _openModalSheet(sheet: 'requirement'),
+              label: const Text(
+                'Add Requirement/update',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 27,
+              ),
+              backgroundColor: const Color(0xFF004797),
             ),
-            backgroundColor: const Color(0xFF004797),
-          ),
-        );
+          );
+        } else {
+          return ReusableFeedPostSkeleton();
+        }
       },
     );
   }
 
   Widget _buildPost(
       {bool withImage = false, required Requirement requirement}) {
+    String formattedDateTime = DateFormat('h:mm a · MMM d, yyyy')
+        .format(DateTime.parse(requirement.createdAt.toString()).toLocal());
     return Consumer(
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
@@ -183,11 +204,11 @@ class _FeedViewState extends State<FeedView> {
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                   child: asyncUser.when(
-                    loading: () => Center(child: LoadingAnimation()),
+                    loading: () => Center(child: ReusableFeedPostSkeleton()),
                     error: (error, stackTrace) {
                       // Handle error state
                       return Center(
-                        child: Text('Error loading promotions: $error'),
+                        child: ReusableFeedPostSkeleton(),
                       );
                     },
                     data: (user) {
@@ -200,11 +221,10 @@ class _FeedViewState extends State<FeedView> {
                             children: [
                               if (withImage) ...[
                                 SizedBox(height: 16),
-                                Container(
-                                  height: 200,
-                                  width: double.infinity,
+                                AspectRatio(
+                                  aspectRatio: 4 / 4,
                                   child: Image.network(
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                     requirement.image!,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.network(
@@ -257,10 +277,18 @@ class _FeedViewState extends State<FeedView> {
                                     ],
                                   ),
                                   Spacer(),
-                                  Text(
-                                    requirement.createdAt.toString(),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        formattedDateTime,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 12),
+                                      ),
+                                      if (requirementOwner.id != id)
+                                        CustomDropDown(
+                                          requirement: requirement,
+                                        )
+                                    ],
                                   ),
                                 ],
                               ),
@@ -273,7 +301,7 @@ class _FeedViewState extends State<FeedView> {
                   )),
             );
           },
-          loading: () => Center(child: LoadingAnimation()),
+          loading: () => Center(child: ReusableFeedPostSkeleton()),
           error: (error, stackTrace) {
             return Center(
               child: Text('NO PROMOTIONS YET'),

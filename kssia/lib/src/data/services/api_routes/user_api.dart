@@ -78,7 +78,7 @@ class ApiRoutes {
     );
   }
 
-  Future<String> verifyOTP(
+  Future<Map<String, dynamic>> verifyOTP(
       {required String verificationId,
       required String fcmToken,
       required String smsCode}) async {
@@ -96,35 +96,39 @@ class ApiRoutes {
         String? idToken = await user.getIdToken();
         log("ID Token: $idToken");
         log("fcm token:$fcmToken");
-        final token = await verifyUserDB(idToken!, fcmToken, context);
-        return token;
+        log("Verification ID:$verificationId");
+        final Map<String, dynamic> tokenMap =
+            await verifyUserDB(idToken!, fcmToken);
+        return tokenMap;
       } else {
         print("User signed in, but no user information was found.");
-        return '';
+        return {};
       }
     } catch (e) {
       print("Failed to sign in: ${e.toString()}");
-      return '';
+      return {};
     }
   }
 
-  Future<String> verifyUserDB(String idToken, String fcmToken, context) async {
+  Future<Map<String, dynamic>> verifyUserDB(
+      String idToken, String fcmToken) async {
     final response = await http.post(
       Uri.parse('$baseUrl/user/login'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"clientToken": idToken, "fcm": fcmToken}),
     );
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
       log(responseBody.toString());
-
-      return responseBody['data'];
+      return responseBody[
+          'data']; // this will return the map with token and userId
     } else if (response.statusCode == 400) {
-      return '';
+      return {};
     } else {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
       log(responseBody.toString());
-      return '';
+      return {};
     }
   }
 
@@ -330,29 +334,51 @@ class ApiRoutes {
     }
   }
 
-  // Map<String, dynamic> _handleResponse(http.Response response) {
-  //   final Map<String, dynamic> responseBody = jsonDecode(response.body);
-  //   if (response.statusCode == 200) {
-  //     print(responseBody['message']);
-  //     print(responseBody['data']);
-  //     return {"status": true, "data": responseBody};
-  //   } else {
-  //     print(responseBody['message']);
+  Future<void> createReport({
+    required BuildContext context,
+    required String content,
+    required String reportedItemId,
+    required String reportType,
+  }) async {
+    const String url = 'http://43.205.89.79/api/v1/report';
+    try {
+      final Map<String, dynamic> body = {
+        'content': content,
+        'reportType': reportType,
+        'reportedItemId': reportedItemId
+      };
 
-  //     return {
-  //       "status": false,
-  //       "message": responseBody['message'] ?? 'Unknown error'
-  //     };
-  //   }
-  // }
+      // Send the POST request
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $token', // Include your token if authentication is required
+        },
+        body: jsonEncode(body),
+      );
 
-  Future<String?> uploadRequirement(
-    String token,
-    String author,
-    String content,
-    String status,
-    File file,
-  ) async {
+      // Handle the response
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Reported to Admin')),
+        );
+        print('Report created successfully');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to Report')),
+        );
+        print('Failed to create report: ${response.statusCode}');
+        print('Error: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+  Future<String?> uploadRequirement(String token, String author, String content,
+      String status, File file, BuildContext context) async {
     const String url = 'http://43.205.89.79/api/v1/requirements';
 
     // Create a multipart request
@@ -388,12 +414,18 @@ class ApiRoutes {
     var response = await request.send();
 
     if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Requirement will be reviewed by Admin')),
+      );
       print('Requirement submitted successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
 
       return jsonResponse['message'];
     } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Couldn\'t upload Requirement')),
+      );
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
       print(jsonResponse['message']);
@@ -489,7 +521,7 @@ class ApiRoutes {
     }
   }
 
-  Future<void> blockUser(String userId, String reason, context) async {
+  Future<void> blockUser(String userId, String? reason, context) async {
     final String url = 'http://43.205.89.79/api/v1/user/block/$userId';
 
     try {
@@ -499,7 +531,7 @@ class ApiRoutes {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({"reason": reason}),
+        body: jsonEncode({"reason": reason ?? ''}),
       );
 
       if (response.statusCode == 200) {
@@ -540,7 +572,7 @@ class ApiRoutes {
             .showSnackBar(SnackBar(content: Text('User unblocked ')));
       } else {
         // Handle error
-        print('Failed to Block: ${response.statusCode}');
+        print('Failed to unBlock: ${response.statusCode}');
         final dynamic message = json.decode(response.body)['message'];
         log(message);
         ScaffoldMessenger.of(context)

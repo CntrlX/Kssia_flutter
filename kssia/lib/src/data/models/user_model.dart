@@ -42,11 +42,11 @@ class Name {
 }
 
 class PhoneNumbers {
-  final int? personal;
-  final int? landline;
-  final int? companyPhoneNumber;
-  final int? whatsappNumber;
-  final int? whatsappBusinessNumber;
+  final String? personal;
+  final String? landline;
+  final String? companyPhoneNumber;
+  final String? whatsappNumber;
+  final String? whatsappBusinessNumber;
 
   PhoneNumbers({
     this.personal,
@@ -58,11 +58,11 @@ class PhoneNumbers {
 
   factory PhoneNumbers.fromJson(Map<String, dynamic> json) {
     return PhoneNumbers(
-      personal: json['personal'] as int?,
-      landline: json['landline'] as int?,
-      companyPhoneNumber: json['company_phone_number'] as int?,
-      whatsappNumber: json['whatsapp_number'] as int?,
-      whatsappBusinessNumber: json['whatsapp_business_number'] as int?,
+      personal: json['personal'] as String?,
+      landline: json['landline'] as String?,
+      companyPhoneNumber: json['company_phone_number'] as String?,
+      whatsappNumber: json['whatsapp_number'] as String?,
+      whatsappBusinessNumber: json['whatsapp_business_number'] as String?,
     );
   }
 
@@ -77,11 +77,11 @@ class PhoneNumbers {
   }
 
   PhoneNumbers copyWith({
-    int? personal,
-    int? landline,
-    int? companyPhoneNumber,
-    int? whatsappNumber,
-    int? whatsappBusinessNumber,
+    String? personal,
+    String? landline,
+    String? companyPhoneNumber,
+    String? whatsappNumber,
+    String? whatsappBusinessNumber,
   }) {
     return PhoneNumbers(
       personal: personal ?? this.personal,

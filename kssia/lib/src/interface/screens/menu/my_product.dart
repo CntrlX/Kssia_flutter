@@ -52,7 +52,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     return null;
   }
 
-   _addNewProduct() async {
+  _addNewProduct() async {
     final createdProduct = await api.uploadProduct(
         token,
         productNameController.text,
@@ -148,7 +148,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) {
               return Center(
-                child: Text('Error loading promotions: $error'),
+                child: LoadingAnimation(),
               );
             },
             data: (user) {

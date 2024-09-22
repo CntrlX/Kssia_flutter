@@ -4,10 +4,12 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'events_api.g.dart';
+
 const String baseUrl = 'http://43.205.89.79/api/v1';
 
 @riverpod
-Future<List<Event>> fetchEvents(FetchEventsRef ref,{int pageNo = 1, int limit = 10}) async {
+Future<List<Event>> fetchEvents(FetchEventsRef ref,
+    {int pageNo = 1, int limit = 10}) async {
   final url = Uri.parse('$baseUrl/events?pageNo=$pageNo&limit=$limit');
   print('Requesting URL: $url');
   final response = await http.get(

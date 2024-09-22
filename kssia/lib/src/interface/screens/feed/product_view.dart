@@ -144,6 +144,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
                                   context: context,
                                   product: filteredProducts[index]),
                               child: ProductCard(
+                                isOthersProduct: true,
                                 product: filteredProducts[index],
                                 onRemove: null,
                               ),

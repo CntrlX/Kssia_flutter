@@ -10,6 +10,7 @@ import 'package:kssia/src/interface/common/ReplyCard.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/customdialog.dart';
 
 class IndividualPage extends ConsumerStatefulWidget {
@@ -160,21 +161,9 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   style: const TextStyle(fontSize: 18),
                 ),
                 actions: [
-                  IconButton(
-                      icon: const Icon(Icons.block),
-                      onPressed: () {
-                        showBlockPersonDialog(context, widget.receiver.id ?? '',
-                            () {
-                          setState(() {
-                            if (isBlocked) {
-                              isBlocked = false;
-                            } else {
-                              isBlocked = true;
-                            }
-                            ;
-                          }); // Trigger UI refresh
-                        });
-                      }),
+                  CustomDropDown(
+                    userId: widget.receiver.id,
+                  )
                 ],
               )),
           body: Container(
@@ -204,13 +193,30 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                             ),
                           );
                         } else {
-                          return ReplyCard(
-                            requirement: message.requirement,
-                            product: message.product,
-                            message: message.content ?? '',
-                            time: DateFormat('h:mm a').format(
-                              DateTime.parse(message.timestamp.toString())
-                                  .toLocal(),
+                          return GestureDetector(
+                            onLongPress: () {
+                              showReportPersonDialog(
+                                  reportedItemId: message.id ?? '',
+                                  context: context,
+                                  onReportStatusChanged: () {
+                                    setState(() {
+                                      if (isBlocked) {
+                                        isBlocked = false;
+                                      } else {
+                                        isBlocked = true;
+                                      }
+                                    });
+                                  },
+                                  reportType: 'chat');
+                            },
+                            child: ReplyCard(
+                              requirement: message.requirement,
+                              product: message.product,
+                              message: message.content ?? '',
+                              time: DateFormat('h:mm a').format(
+                                DateTime.parse(message.timestamp.toString())
+                                    .toLocal(),
+                              ),
                             ),
                           );
                         }

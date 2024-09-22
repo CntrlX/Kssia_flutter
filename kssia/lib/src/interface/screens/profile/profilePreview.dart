@@ -392,17 +392,18 @@ class ProfilePreview extends ConsumerWidget {
                     const SizedBox(
                       height: 40,
                     ),
-                    const Row(
-                      children: [
-                        Text(
-                          'Products',
-                          style: TextStyle(
-                              color: Color(0xFF2C2829),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+                    if (user.products != null)
+                      const Row(
+                        children: [
+                          Text(
+                            'Products',
+                            style: TextStyle(
+                                color: Color(0xFF2C2829),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     if (user.products != null)
                       GridView.builder(
                         shrinkWrap:
@@ -427,17 +428,18 @@ class ProfilePreview extends ConsumerWidget {
                     const SizedBox(
                       height: 50,
                     ),
-                    const Row(
-                      children: [
-                        Text(
-                          'Certificates',
-                          style: TextStyle(
-                              color: Color(0xFF2C2829),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+                    if (user.awards != null)
+                      const Row(
+                        children: [
+                          Text(
+                            'Certificates',
+                            style: TextStyle(
+                                color: Color(0xFF2C2829),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     ListView.builder(
                       shrinkWrap:
                           true, // Let ListView take up only as much space as it needs
@@ -455,17 +457,18 @@ class ProfilePreview extends ConsumerWidget {
                         );
                       },
                     ),
-                    const Row(
-                      children: [
-                        Text(
-                          'Awards',
-                          style: TextStyle(
-                              color: Color(0xFF2C2829),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+                    if (user.awards != null)
+                      const Row(
+                        children: [
+                          Text(
+                            'Awards',
+                            style: TextStyle(
+                                color: Color(0xFF2C2829),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     GridView.builder(
                       shrinkWrap:
                           true, // Let GridView take up only as much space as it needs
@@ -486,30 +489,32 @@ class ProfilePreview extends ConsumerWidget {
                         );
                       },
                     ),
-                    const Row(
-                      children: [
-                        Text(
-                          'Brochure',
-                          style: TextStyle(
-                              color: Color(0xFF2C2829),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                    ListView.builder(
-                      shrinkWrap:
-                          true, // Let ListView take up only as much space as it needs
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                      itemCount: user.brochure!.length,
-                      itemBuilder: (context, index) {
-                        return BrochureCard(
-                          brochure: user.brochure![index],
-                          // onRemove: () => _removeCertificateCard(index),
-                        );
-                      },
-                    ),
+                    if (user.brochure != null)
+                      const Row(
+                        children: [
+                          Text(
+                            'Brochure',
+                            style: TextStyle(
+                                color: Color(0xFF2C2829),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    if (user.brochure != null)
+                      ListView.builder(
+                        shrinkWrap:
+                            true, // Let ListView take up only as much space as it needs
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                        itemCount: user.brochure!.length,
+                        itemBuilder: (context, index) {
+                          return BrochureCard(
+                            brochure: user.brochure![index],
+                            // onRemove: () => _removeCertificateCard(index),
+                          );
+                        },
+                      ),
                   ]),
                 ),
               ],
@@ -770,7 +775,7 @@ class ReviewsCard extends StatelessWidget {
         error: (error, stackTrace) {
           // Handle error state
           return Center(
-            child: Text('Error loading promotions: $error'),
+            child: LoadingAnimation(),
           );
         },
         data: (reviewer) {

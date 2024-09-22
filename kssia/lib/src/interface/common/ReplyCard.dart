@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 
 class ReplyCard extends StatelessWidget {
@@ -6,7 +7,7 @@ class ReplyCard extends StatelessWidget {
     Key? key,
     required this.message,
     required this.time,
-     this.status,
+    this.status,
     this.product,
     this.requirement,
   }) : super(key: key);
@@ -73,16 +74,19 @@ class ReplyCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF004797), // Using the same color for emphasis
+                          color: Color(
+                              0xFF004797), // Using the same color for emphasis
                         ),
                       ),
-                      const SizedBox(height: 4), // Add spacing between name and price
+                      const SizedBox(
+                          height: 4), // Add spacing between name and price
                       Text(
                         'PRICE INR ${product?.price?.toStringAsFixed(2) ?? ''}', // Format price to two decimals
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black87, // Subtle color for the price text
+                          color:
+                              Colors.black87, // Subtle color for the price text
                         ),
                       ),
                     ],

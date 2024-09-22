@@ -5,6 +5,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
@@ -113,7 +114,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stackTrace) {
                 return Center(
-                  child: Text('Error loading promotions: $error'),
+                  child: LoadingAnimation(),
                 );
               },
             )),

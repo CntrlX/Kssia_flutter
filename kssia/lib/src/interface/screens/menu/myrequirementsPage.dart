@@ -52,7 +52,7 @@ class MyRequirementsPage extends StatelessWidget {
                             return _buildRequirementCard(
                                 context,
                                 userRequirements[index].content,
-                                '3 messages',
+                                userRequirements[index].status,
                                 userRequirements[index].createdAt,
                                 userRequirements[index].id,
                                 imageUrl: userRequirements[index].image);
@@ -70,7 +70,7 @@ class MyRequirementsPage extends StatelessWidget {
   }
 
   Widget _buildRequirementCard(BuildContext context, String description,
-      String messages, DateTime timestamp, String requirementId,
+      String status, DateTime timestamp, String requirementId,
       {String? imageUrl}) {
     DateTime localDateTime = timestamp.toLocal();
 
@@ -103,9 +103,9 @@ class MyRequirementsPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  messages,
+                  'STATUS: ${status}',
                   style: TextStyle(
-                    color: Color(0xFF004797),
+                    color: status == 'approved' ? Colors.green : Colors.red,
                   ),
                 ),
                 Text(

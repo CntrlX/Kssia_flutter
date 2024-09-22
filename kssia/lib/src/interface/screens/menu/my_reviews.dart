@@ -38,7 +38,7 @@ class MyReviewsPage extends StatelessWidget {
             loading: () => Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               return Center(
-                child: Text('Error loading promotions: $error'),
+                child: LoadingAnimation(),
               );
             },
             data: (user) {
@@ -212,7 +212,7 @@ class ReviewsCard extends StatelessWidget {
         error: (error, stackTrace) {
           // Handle error state
           return Center(
-            child: Text('Error loading promotions: $error'),
+            child: LoadingAnimation(),
           );
         },
         data: (reviewer) {

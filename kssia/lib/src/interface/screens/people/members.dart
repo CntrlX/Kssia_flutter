@@ -162,7 +162,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                   loading: () => Center(child: LoadingAnimation()),
                   error: (error, stackTrace) {
                     return Center(
-                      child: Text('Error loading promotions: $error'),
+                      child: LoadingAnimation(),
                     );
                   },
                 )),

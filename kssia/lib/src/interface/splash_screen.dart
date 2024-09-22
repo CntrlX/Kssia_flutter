@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/api_routes/get_fcm_token.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -16,8 +17,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+   
     initialize();
-     getToken();
+    getToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print("New FCM Token: $newToken");
       // Save or send the new token to your server
@@ -50,6 +52,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
     });
   }
+
+  
 
   Future<void> checktoken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();

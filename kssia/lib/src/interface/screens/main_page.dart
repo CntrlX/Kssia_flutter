@@ -69,7 +69,9 @@ class _MainPageState extends State<MainPage> {
   List<String> _activeIcons = [];
   void _initialize({required UserModel user}) {
     _widgetOptions = <Widget>[
-      HomePage(user: user,),
+      HomePage(
+        user: user,
+      ),
       FeedPage(),
       ProfilePage(user: user),
       Event_News_Page(),
@@ -99,7 +101,7 @@ class _MainPageState extends State<MainPage> {
         loading: () => Center(child: LoadingAnimation()),
         error: (error, stackTrace) {
           return Center(
-            child: Text('Error loading promotions: $error'),
+            child: LoadingAnimation(),
           );
         },
         data: (user) {

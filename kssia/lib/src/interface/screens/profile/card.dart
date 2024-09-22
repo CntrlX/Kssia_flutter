@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/services/request_permissions.dart';
+import 'package:kssia/src/data/services/save_qr.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 
 class ProfileCard extends StatelessWidget {
   final UserModel user;
@@ -13,6 +18,7 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenshotController screenshotController = ScreenshotController();
     final isFullScreenProvider = StateProvider<bool>((ref) => false);
 
     return Consumer(
@@ -259,10 +265,12 @@ class ProfileCard extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          QrImageView(
-                            size: 300,
-                            data:
-                                'https://admin.akcafconnect.com/user/${user.id}',
+                          Screenshot(
+                            controller: screenshotController,
+                            child: QrImageView(
+                              size: 300,
+                              data: 'http://43.205.89.79/user/${user.id}',
+                            ),
                           ),
                           const SizedBox(height: 20),
                           if (user.phoneNumbers != null)
@@ -316,8 +324,22 @@ class ProfileCard extends StatelessWidget {
                                 child: customButton(
                                     buttonHeight: 60,
                                     fontSize: 16,
-                                    label: 'SAY HI',
-                                    onPressed: () {}),
+                                    label: 'SHARE',
+                                    onPressed: () {
+                                      // screenshotController
+                                      //     .captureFromWidget(
+                                      //   QrImageView(
+                                      //     backgroundColor: Colors.white,
+                                      //     size: 300,
+                                      //     data:
+                                      //         'http://43.205.89.79/user/${user.id}',
+                                      //   ),
+                                      // )
+                                      //     .then((capturedImage) {
+                                      //   captureAndShareScreenshot(
+                                      //       capturedImage);
+                                      // });
+                                    }),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -331,8 +353,22 @@ class ProfileCard extends StatelessWidget {
                                         255, 222, 218, 218),
                                     buttonHeight: 60,
                                     fontSize: 16,
-                                    label: 'SAVE CONTACT',
-                                    onPressed: () {}),
+                                    label: 'DOWNLOAD QR',
+                                    onPressed: () async {
+                                      await requestStoragePermission();
+                                      screenshotController
+                                          .captureFromWidget(
+                                        QrImageView(
+                                          backgroundColor: Colors.white,
+                                          size: 300,
+                                          data:
+                                              'http://43.205.89.79/user/${user.id}',
+                                        ),
+                                      )
+                                          .then((capturedImage) {
+                                        saveScreenshot(capturedImage, context);
+                                      });
+                                    }),
                               ),
                             ],
                           )),

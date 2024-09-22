@@ -71,11 +71,11 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
 
 
   void updatePhoneNumbers({
-    int? personal,
-    int? landline,
-    int? companyPhoneNumber,
-    int? whatsappNumber,
-    int? whatsappBusinessNumber,
+    String? personal,
+    String? landline,
+    String? companyPhoneNumber,
+    String? whatsappNumber,
+    String? whatsappBusinessNumber,
   }) {
     state = state.whenData((user) {
       final newPhoneNumbers = user.phoneNumbers?.copyWith(

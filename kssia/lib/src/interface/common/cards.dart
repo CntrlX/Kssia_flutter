@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AwardCard extends StatelessWidget {
@@ -105,8 +106,10 @@ class AwardCard extends StatelessWidget {
 class ProductCard extends StatelessWidget {
   final VoidCallback? onRemove;
   final Product product;
+  final bool? isOthersProduct;
 
-  const ProductCard({this.onRemove, required this.product, super.key});
+  const ProductCard(
+      {this.onRemove, required this.product, super.key, this.isOthersProduct});
 
   @override
   Widget build(BuildContext context) {
@@ -218,6 +221,20 @@ class ProductCard extends StatelessWidget {
                     padding: const EdgeInsets.all(4.0),
                     child: DropDownMenu(onRemove: onRemove!),
                   ),
+                ),
+              ),
+            if (isOthersProduct ?? false)
+              Positioned(
+                top: 4.0,
+                right: 10.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: CustomDropDown()),
                 ),
               ),
           ],

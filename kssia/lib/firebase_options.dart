@@ -54,7 +54,8 @@ class DefaultFirebaseOptions {
     appId: '1:730513867054:android:c8d1a3fade5f0f53777abf',
     messagingSenderId: '730513867054',
     projectId: 'kssia-fcde5',
-    databaseURL: 'https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'kssia-fcde5.appspot.com',
   );
 
@@ -63,8 +64,9 @@ class DefaultFirebaseOptions {
     appId: '1:730513867054:ios:32ec20319c12e5b4777abf',
     messagingSenderId: '730513867054',
     projectId: 'kssia-fcde5',
-    databaseURL: 'https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'kssia-fcde5.appspot.com',
-    iosBundleId: 'com.example.kssia',
+    iosBundleId: 'com.skybertech.kssia',
   );
 }

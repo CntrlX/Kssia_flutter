@@ -195,8 +195,10 @@ void showLogoutDialog(BuildContext context) {
 
                             preferences.remove('token');
                             preferences.remove('id');
-                            Navigator.pushReplacementNamed(
-                                context, '/login_screen');
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/login_screen',
+                              (Route<dynamic> route) => false,
+                            );
                           },
                         );
                       },
@@ -235,7 +237,7 @@ class MenuPage extends StatelessWidget {
               error: (error, stackTrace) {
                 // Handle error state
                 return Center(
-                  child: Text('Error loading promotions: $error'),
+                  child: LoadingAnimation(),
                 );
               },
               data: (user) {

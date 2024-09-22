@@ -57,7 +57,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
               error: (error, stackTrace) {
                 // Handle error state
                 return Center(
-                  child: Text('Error loading promotions: $error'),
+                  child: LoadingAnimation(),
                 );
               },
               data: (transactions) {

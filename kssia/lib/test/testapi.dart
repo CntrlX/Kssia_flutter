@@ -21,11 +21,12 @@ class TestApi extends StatelessWidget {
             );
           },
           loading: () => Center(child: LoadingAnimation()),
-          error: (error, stackTrace) { print('StackTrace: $stackTrace');
+          error: (error, stackTrace) {
+            print('StackTrace: $stackTrace');
             print(error);
             // Handle error state
             return Center(
-              child: Text('Error loading promotions: $error'),
+              child: LoadingAnimation(),
             );
           },
         ));

@@ -533,18 +533,24 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
       print(_otpController.text);
 
       ApiRoutes userApi = ApiRoutes();
-      String savedToken = await userApi.verifyOTP(
+      Map<String, dynamic> responseMap = await userApi.verifyOTP(
         verificationId: widget.verificationId,
         fcmToken: fcmToken,
         smsCode: _otpController.text,
       );
 
-      if (savedToken.isNotEmpty) {
+      String savedToken = responseMap['token'];
+      String savedId = responseMap['userId'];
+
+      if (savedToken.isNotEmpty && savedId.isNotEmpty) {
         final SharedPreferences preferences =
             await SharedPreferences.getInstance();
         await preferences.setString('token', savedToken);
+        await preferences.setString('id', savedId);
         token = savedToken;
+        id = savedId;
         log('savedToken: $savedToken');
+        log('savedId: $savedId');
         ref.invalidate(userProvider);
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));

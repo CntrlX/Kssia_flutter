@@ -6,7 +6,7 @@ part of 'requirement_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchRequirementsHash() => r'34633ab28ed17203c4aec9a54bd73b9ea3a192df';
+String _$fetchRequirementsHash() => r'cd157fb82f182e5db5b62b48997f7473e5355f24';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,11 +39,13 @@ class FetchRequirementsFamily extends Family<AsyncValue<List<Requirement>>> {
   const FetchRequirementsFamily();
 
   /// See also [fetchRequirements].
-  FetchRequirementsProvider call(
-    String token,
-  ) {
+  FetchRequirementsProvider call({
+    int pageNo = 1,
+    int limit = 10,
+  }) {
     return FetchRequirementsProvider(
-      token,
+      pageNo: pageNo,
+      limit: limit,
     );
   }
 
@@ -52,7 +54,8 @@ class FetchRequirementsFamily extends Family<AsyncValue<List<Requirement>>> {
     covariant FetchRequirementsProvider provider,
   ) {
     return call(
-      provider.token,
+      pageNo: provider.pageNo,
+      limit: provider.limit,
     );
   }
 
@@ -75,12 +78,14 @@ class FetchRequirementsFamily extends Family<AsyncValue<List<Requirement>>> {
 class FetchRequirementsProvider
     extends AutoDisposeFutureProvider<List<Requirement>> {
   /// See also [fetchRequirements].
-  FetchRequirementsProvider(
-    String token,
-  ) : this._internal(
+  FetchRequirementsProvider({
+    int pageNo = 1,
+    int limit = 10,
+  }) : this._internal(
           (ref) => fetchRequirements(
             ref as FetchRequirementsRef,
-            token,
+            pageNo: pageNo,
+            limit: limit,
           ),
           from: fetchRequirementsProvider,
           name: r'fetchRequirementsProvider',
@@ -91,7 +96,8 @@ class FetchRequirementsProvider
           dependencies: FetchRequirementsFamily._dependencies,
           allTransitiveDependencies:
               FetchRequirementsFamily._allTransitiveDependencies,
-          token: token,
+          pageNo: pageNo,
+          limit: limit,
         );
 
   FetchRequirementsProvider._internal(
@@ -101,10 +107,12 @@ class FetchRequirementsProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.token,
+    required this.pageNo,
+    required this.limit,
   }) : super.internal();
 
-  final String token;
+  final int pageNo;
+  final int limit;
 
   @override
   Override overrideWith(
@@ -119,7 +127,8 @@ class FetchRequirementsProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        token: token,
+        pageNo: pageNo,
+        limit: limit,
       ),
     );
   }
@@ -131,21 +140,27 @@ class FetchRequirementsProvider
 
   @override
   bool operator ==(Object other) {
-    return other is FetchRequirementsProvider && other.token == token;
+    return other is FetchRequirementsProvider &&
+        other.pageNo == pageNo &&
+        other.limit == limit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, pageNo.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin FetchRequirementsRef on AutoDisposeFutureProviderRef<List<Requirement>> {
-  /// The parameter `token` of this provider.
-  String get token;
+  /// The parameter `pageNo` of this provider.
+  int get pageNo;
+
+  /// The parameter `limit` of this provider.
+  int get limit;
 }
 
 class _FetchRequirementsProviderElement
@@ -154,7 +169,9 @@ class _FetchRequirementsProviderElement
   _FetchRequirementsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchRequirementsProvider).token;
+  int get pageNo => (origin as FetchRequirementsProvider).pageNo;
+  @override
+  int get limit => (origin as FetchRequirementsProvider).limit;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
