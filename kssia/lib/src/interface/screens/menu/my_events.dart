@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -63,6 +65,7 @@ class MyEventsPage extends StatelessWidget {
   }
 
   Widget eventCard({required BuildContext context, required Event event}) {
+    log(event.status.toString());
     String startTime = DateFormat('hh:mm a').format(event.startTime!);
     String startDate = DateFormat('yyyy-MM-dd').format(event.startDate!);
     String endDate = DateFormat('hh:mm a').format(event.endDate!);
@@ -182,25 +185,26 @@ class MyEventsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      launchURL(event.meetingLink ?? '');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF004797),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            4), // Adjust the value to make the edge less circular
+                if (event.status != 'completed')
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        launchURL(event.meetingLink ?? '');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF004797),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              4), // Adjust the value to make the edge less circular
+                        ),
+                        minimumSize: const Size(
+                            150, 40), // Adjust the width of the button
                       ),
-                      minimumSize:
-                          const Size(150, 40), // Adjust the width of the button
+                      child: const Text('JOIN',
+                          style: TextStyle(color: Colors.white)),
                     ),
-                    child: const Text('JOIN',
-                        style: TextStyle(color: Colors.white)),
                   ),
-                ),
               ],
             ),
           ),

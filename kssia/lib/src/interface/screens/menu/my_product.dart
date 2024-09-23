@@ -185,13 +185,16 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                         const SizedBox(height: 16),
                         Expanded(
                           child: GridView.builder(
-                            padding: EdgeInsets.zero,
+                            shrinkWrap:
+                                true, // Let GridView take up only as much space as it needs
+                            physics:
+                                const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: 212,
                               crossAxisCount: 2,
-                              crossAxisSpacing: 1.0,
-                              mainAxisSpacing: 2.0,
-                              childAspectRatio: .89,
+                              crossAxisSpacing: 0.0,
+                              mainAxisSpacing: 20.0,
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {

@@ -1270,7 +1270,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
           ElevatedButton(
               onPressed: () {
                 api.uploadRequirement(token, id, widget.textController.text,
-                    'pending', widget.requirementImage!,context);
+                    'pending', widget.requirementImage!, context);
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -1624,7 +1624,10 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                           children: [
                             Text(
                               'INR ${widget.product.price} / piece',
-                              style: const TextStyle(
+                              style: TextStyle(
+                                decoration: widget.product.offerPrice != null
+                                    ? TextDecoration.lineThrough
+                                    : null,
                                 color: Colors.grey,
                                 fontSize: 12,
                               ),
@@ -1745,7 +1748,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                     SizedBox(
                       height: 40,
                       width:
-                          250, // Increase this value to expand the horizontal width
+                          210, // Increase this value to expand the horizontal width
                       child: TextField(
                         controller: _quantityController,
                         keyboardType: TextInputType.number,
@@ -1801,6 +1804,9 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       },
                       fontSize: 16),
                 ),
+                SizedBox(
+                  height: 20,
+                )
               ],
             ),
           ),

@@ -101,6 +101,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextField(
                       decoration: InputDecoration(
+                        filled: true,
                         fillColor: Colors.white,
                         prefixIcon: Icon(Icons.search),
                         hintText: 'Search your requirements',

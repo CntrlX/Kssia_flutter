@@ -27,32 +27,26 @@ class RequestNFCPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Connect            with Ease',
+              'Connect\nwith Ease',
               style: TextStyle(
-                fontSize: 50,
+                fontSize: 35,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF004797),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
-              'Lorem ipsum dolor sit amet consectetur. Justo facilisis mattis tincidunt vitae quam quis. Nec nisi duis amet aenean arcu tristique et et eleifend.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF828282),
-              ),
+            Flexible(
+              child: Text(
+                  'Tired of carrying bulky business cards or typing out contact details? Upgrade to the future with our sleek NFC card! Just a simple tap, and your contact information, website, or social media instantly appears on any smartphone.'),
             ),
+            SizedBox(height: 16),
             SizedBox(height: 24),
             Center(
-              child: Image.network(
-                'https://placehold.co/600x400/png', // Replace with your image URL
-                height: 200,
+              child: Image.asset(
+                scale: 2.5,
+                'assets/NFC.png', // Replace with your image URL
               ),
             ),
-            SizedBox(height: 69),
-            Center(
-                child: customButton(
-                    label: 'REQUEST NFC', onPressed: () {}, fontSize: 16)),
+            customButton(label: 'REQUEST NFC', onPressed: () {}, fontSize: 16),
           ],
         ),
       ),

@@ -255,8 +255,7 @@ class MenuPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(9),
                               child: Image.network(
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Image.network(
-                                      'https://placehold.co/400');
+                                  return Icon(Icons.person);
                                 },
                                 user.profilePicture!,
                                 height: 70,

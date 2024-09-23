@@ -86,6 +86,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
                       ref.read(searchQueryProvider.notifier).state = query;
                     },
                     decoration: InputDecoration(
+                      filled: true,
                       fillColor: Colors.white,
                       prefixIcon: const Icon(Icons.search),
                       hintText: 'Search your Products',

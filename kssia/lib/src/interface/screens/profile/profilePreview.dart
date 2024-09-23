@@ -1,10 +1,14 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/getRatings.dart';
+import 'package:kssia/src/data/services/save_contact.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
@@ -14,6 +18,7 @@ import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -535,7 +540,20 @@ class ProfilePreview extends ConsumerWidget {
                               buttonHeight: 60,
                               fontSize: 16,
                               label: 'SAY HI',
-                              onPressed: () {}),
+                              onPressed: () {
+                                final Participant receiver = Participant(
+                                    id: user.id,
+                                    profilePicture: user.profilePicture ?? '',
+                                    firstName: user.name?.firstName ?? '',
+                                    middleName: user.name?.middleName ?? '',
+                                    lastName: user.name?.lastName ?? '');
+                                final Participant sender = Participant(id: id);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => IndividualPage(
+                                          receiver: receiver,
+                                          sender: sender,
+                                        )));
+                              }),
                         ),
                         const SizedBox(
                           width: 10,
@@ -549,7 +567,15 @@ class ProfilePreview extends ConsumerWidget {
                               buttonHeight: 60,
                               fontSize: 16,
                               label: 'SAVE CONTACT',
-                              onPressed: () {}),
+                              onPressed: () {
+                                if (user.phoneNumbers?.personal != null) {
+                                  saveContact(
+                                      name:
+                                          '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                                      context: context,
+                                      phone: user.phoneNumbers?.personal ?? '');
+                                }
+                              }),
                         ),
                       ],
                     ))),

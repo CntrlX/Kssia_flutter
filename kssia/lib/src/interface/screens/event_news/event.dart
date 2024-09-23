@@ -201,12 +201,12 @@ class _EventPageState extends ConsumerState<EventPage> {
                             child: Row(
                               children: [
                                 const Icon(Icons.calendar_today,
-                                    size: 20, color: Color(0xFF700F0F)),
+                                    size: 18, color: Color(0xFF700F0F)),
                                 const SizedBox(width: 5),
                                 Text(
                                   date,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: Color.fromARGB(255, 109, 84, 84),
                                   ),
                                 ),
@@ -223,12 +223,12 @@ class _EventPageState extends ConsumerState<EventPage> {
                             child: Row(
                               children: [
                                 const Icon(Icons.access_time,
-                                    size: 20, color: Color(0xFF0E1877)),
+                                    size: 18, color: Color(0xFF0E1877)),
                                 const SizedBox(width: 5),
                                 Text(
                                   time,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: Color(0xFF0E1877),
                                   ),
                                 ),

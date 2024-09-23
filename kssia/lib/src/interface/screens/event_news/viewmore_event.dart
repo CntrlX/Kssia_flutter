@@ -9,8 +9,6 @@ import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
-
-
 class ViewMoreEventPage extends ConsumerStatefulWidget {
   final Event event;
   const ViewMoreEventPage({super.key, required this.event});
@@ -181,10 +179,13 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: widget.event.speakers!.length,
                   itemBuilder: (context, index) {
-                    return _buildSpeakerCard(
-                        widget.event.speakers![index].speakerImage,
-                        widget.event.speakers![index].speakerName!,
-                        widget.event.speakers![index].speakerDesignation!);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _buildSpeakerCard(
+                          widget.event.speakers![index].speakerImage,
+                          widget.event.speakers![index].speakerName!,
+                          widget.event.speakers![index].speakerDesignation!),
+                    );
                   },
                 ),
                 const SizedBox(height: 24),
@@ -228,34 +229,39 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 bottom: 30,
                 left: 16,
                 right: 16,
-                child: customButton(
-                  sideColor:
-                      registered ? Colors.green : const Color(0xFF004797),
-                  buttonColor:
-                      registered ? Colors.green : const Color(0xFF004797),
-                  label: widget.event.status == 'cancelled'
-                      ? 'CANCELLED'
-                      : registered
-                          ? 'REGISTERED'
-                          : 'REGISTER EVENT',
-                  onPressed: () async {
-                    if (!registered && widget.event.status != 'cancelled') {
-                      ;
-                      await markEventAsRSVP(widget.event.id!, context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Registered')));
-                      // Update the local rsvp list to reflect the changes immediately
-                      setState(() {
-                        widget.event.rsvp?.add(id); // Add the user to RSVP
-                        registered = widget.event.rsvp?.contains(id) ?? false;
-                      });
+                child: widget.event.status != 'completed'
+                    ? customButton(
+                        sideColor:
+                            registered ? Colors.green : const Color(0xFF004797),
+                        buttonColor:
+                            registered ? Colors.green : const Color(0xFF004797),
+                        label: widget.event.status == 'cancelled'
+                            ? 'CANCELLED'
+                            : registered
+                                ? 'REGISTERED'
+                                : 'REGISTER EVENT',
+                        onPressed: () async {
+                          if (!registered &&
+                              widget.event.status != 'cancelled') {
+                            ;
+                            await markEventAsRSVP(widget.event.id!, context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Registered')));
+                            // Update the local rsvp list to reflect the changes immediately
+                            setState(() {
+                              widget.event.rsvp
+                                  ?.add(id); // Add the user to RSVP
+                              registered =
+                                  widget.event.rsvp?.contains(id) ?? false;
+                            });
 
-                      ref.invalidate(
-                          fetchEventsProvider); // Update your global state if needed
-                    }
-                  },
-                  fontSize: 16,
-                ),
+                            ref.invalidate(
+                                fetchEventsProvider); // Update your global state if needed
+                          }
+                        },
+                        fontSize: 16,
+                      )
+                    : SizedBox(),
               );
             },
           ),

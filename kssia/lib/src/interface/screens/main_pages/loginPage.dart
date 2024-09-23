@@ -988,7 +988,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     String firstName = nameParts[0];
     String middleName = nameParts.length > 2 ? nameParts[1] : ' ';
     String lastName = nameParts.length > 1 ? nameParts.last : ' ';
-
+    log('profile: ${user.profilePicture}');
+    log('company logo: ${user.companyLogo}');
     final Map<String, dynamic> profileData = {
       "name": {
         "first_name": firstName,
@@ -997,7 +998,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       },
       "blood_group": user.bloodGroup,
       "email": user.email,
-      "profile_picture": user.profilePicture,
+      if (user.profilePicture != null) "profile_picture": user.profilePicture,
       "phone_numbers": {
         "personal": user.phoneNumbers!.personal ?? 0,
         "landline": user.phoneNumbers!.landline ?? 0,
@@ -1006,13 +1007,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "whatsapp_business_number":
             user.phoneNumbers!.whatsappBusinessNumber ?? 0,
       },
-      "designation": user.designation,
-      "company_logo": user.companyLogo,
-      "company_name": user.companyName,
-      "company_email": user.companyEmail,
-      "company_address": user.companyAddress,
-      "bio": user.bio,
-      "address": user.address,
+      if (user.designation != null) "designation": user.designation,
+      if (user.companyLogo != null) "company_logo": user.companyLogo,
+      if (user.companyName != null) "company_name": user.companyName,
+      if (user.companyEmail != null) "company_email": user.companyEmail,
+      if (user.companyAddress != null) "company_address": user.companyAddress,
+      if (user.bio != null) "bio": user.bio,
+      if (user.address != null) "address": user.address,
       if (user.socialMedia != [])
         "social_media": [
           for (var i in user.socialMedia!)
@@ -1190,7 +1191,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               nameController.text =
                   '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
               designationController.text = user.designation!;
-              bioController.text = user.bio!;
+              bioController.text = user.bio ?? '';
               companyNameController.text = user.companyName!;
               if (user.companyAddress != null) {
                 companyAddressController.text = user.companyAddress!;
@@ -1406,22 +1407,22 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                     ),
                                     const SizedBox(height: 20.0),
                                     CustomTextFormField(
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please Enter Your Designation';
-                                          }
-                                          return null;
-                                        },
+                                        // validator: (value) {
+                                        //   if (value == null || value.isEmpty) {
+                                        //     return 'Please Enter Your Designation';
+                                        //   }
+                                        //   return null;
+                                        // },
                                         textController: designationController,
                                         labelText: 'Designation'),
                                     const SizedBox(height: 20.0),
                                     CustomTextFormField(
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please Enter Your Bio';
-                                          }
-                                          return null;
-                                        },
+                                        // validator: (value) {
+                                        //   if (value == null || value.isEmpty) {
+                                        //     return 'Please Enter Your Bio';
+                                        //   }
+                                        //   return null;
+                                        // },
                                         textController: bioController,
                                         labelText: 'Bio',
                                         maxLines: 5),
@@ -1433,18 +1434,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      'Add more',
-                                      style: TextStyle(
-                                          color: Color(0xFF004797),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15),
-                                    ),
-                                    Icon(
-                                      Icons.add,
-                                      color: Color(0xFF004797),
-                                      size: 18,
-                                    )
+                                    // Text(
+                                    //   'Add more',
+                                    //   style: TextStyle(
+                                    //       color: Color(0xFF004797),
+                                    //       fontWeight: FontWeight.w600,
+                                    //       fontSize: 15),
+                                    // ),
+                                    // Icon(
+                                    //   Icons.add,
+                                    //   color: Color(0xFF004797),
+                                    //   size: 18,
+                                    // )
                                   ],
                                 ),
                               ),
@@ -1463,12 +1464,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 ],
                               ),
                               FormField<File>(
-                                validator: (value) {
-                                  if (user.companyLogo == null) {
-                                    return 'Please select a company logo';
-                                  }
-                                  return null;
-                                },
+                                // validator: (value) {
+                                //   if (user.companyLogo == null) {
+                                //     return 'Please select a company logo';
+                                //   }
+                                //   return null;
+                                // },
                                 builder: (FormFieldState<File> state) {
                                   return Center(
                                     child: Column(
@@ -1611,24 +1612,24 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     top: 20, left: 20, right: 20, bottom: 10),
                                 child: CustomTextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Your Company Name';
-                                      }
-                                      return null;
-                                    },
+                                    // validator: (value) {
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'Please Enter Your Company Name';
+                                    //   }
+                                    //   return null;
+                                    // },
                                     labelText: 'Enter Company Name',
                                     textController: companyNameController),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(20),
                                 child: CustomTextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Your Company Address (street, city, state, zip)';
-                                    }
-                                    return null;
-                                  },
+                                  // validator: (value) {
+                                  //   if (value == null || value.isEmpty) {
+                                  //     return 'Please Enter Your Company Address (street, city, state, zip)';
+                                  //   }
+                                  //   return null;
+                                  // },
                                   labelText: 'Enter Company Address',
                                   textController: companyAddressController,
                                   maxLines: 3,
@@ -1845,18 +1846,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      'Add more',
-                                      style: TextStyle(
-                                          color: Color(0xFF004797),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15),
-                                    ),
-                                    Icon(
-                                      Icons.add,
-                                      color: Color(0xFF004797),
-                                      size: 18,
-                                    )
+                                    // Text(
+                                    //   'Add more',
+                                    //   style: TextStyle(
+                                    //       color: Color(0xFF004797),
+                                    //       fontWeight: FontWeight.w600,
+                                    //       fontSize: 15),
+                                    // ),
+                                    // Icon(
+                                    //   Icons.add,
+                                    //   color: Color(0xFF004797),
+                                    //   size: 18,
+                                    // )
                                   ],
                                 ),
                               ),
@@ -1959,18 +1960,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      'Add more',
-                                      style: TextStyle(
-                                          color: Color(0xFF004797),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15),
-                                    ),
-                                    Icon(
-                                      Icons.add,
-                                      color: Color(0xFF004797),
-                                      size: 18,
-                                    )
+                                    // Text(
+                                    //   'Add more',
+                                    //   style: TextStyle(
+                                    //       color: Color(0xFF004797),
+                                    //       fontWeight: FontWeight.w600,
+                                    //       fontSize: 15),
+                                    // ),
+                                    // Icon(
+                                    //   Icons.add,
+                                    //   color: Color(0xFF004797),
+                                    //   size: 18,
+                                    // )
                                   ],
                                 ),
                               ),
@@ -2236,12 +2237,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, // Number of columns
-                                    crossAxisSpacing:
-                                        1.0, // Space between columns
-                                    mainAxisSpacing: 2.0, // Space between rows
-                                    childAspectRatio:
-                                        .879, // Aspect ratio for the cards
+                                    mainAxisExtent: 212,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 0.0,
+                                    mainAxisSpacing: 20.0,
                                   ),
                                   itemCount: user.products!.length,
                                   itemBuilder: (context, index) {

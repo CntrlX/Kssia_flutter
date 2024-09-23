@@ -1,18 +1,24 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart'; // Optional, for saving with gallery indexing
+import 'package:mime/mime.dart'; // To identify the file type
 
 Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
   bool isAndroid10OrHigher = Platform.isAndroid && (await _getSdkInt() >= 29);
 
-  if (!isAndroid10OrHigher) {
-    // Request storage permission for Android versions below 10
+  // Request appropriate storage permissions based on the SDK version
+  if (isAndroid10OrHigher) {
+    if (!(await Permission.manageExternalStorage.request().isGranted)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Manage External Storage permission denied')),
+      );
+      return;
+    }
+  } else {
     if (!(await Permission.storage.request().isGranted)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Storage permission denied')),
@@ -22,19 +28,10 @@ Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
   }
 
   if (imageBytes != null) {
-    // Access the public external storage directory
-    String directoryPath;
-    if (isAndroid10OrHigher) {
-      directoryPath = '/storage/emulated/0'; // Root of the internal storage
-    } else {
-      Directory? directory = await getExternalStorageDirectory();
-      directoryPath = directory?.path ?? '/storage/emulated/0'; // Fallback
-    }
+    String directoryPath = '/storage/emulated/0';
 
-    // Save the image directly in the internal storage
     final imagePath =
         '$directoryPath/KSSIA_QR${DateTime.now().millisecondsSinceEpoch}.png';
-
     File imageFile = File(imagePath);
     await imageFile.writeAsBytes(imageBytes);
 
@@ -42,6 +39,9 @@ Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Screenshot saved to $imagePath')),
     );
+
+    // Add image to gallery using ImageGallerySaver
+    await _addImageToGallery(imagePath);
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Failed to capture screenshot')),
@@ -49,11 +49,20 @@ Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
   }
 }
 
+// Function to add image to gallery using ImageGallerySaver
+Future<void> _addImageToGallery(String filePath) async {
+  final result = await ImageGallerySaver.saveFile(filePath);
+  if (result['isSuccess']) {
+    debugPrint("Image successfully added to gallery.");
+  } else {
+    debugPrint("Failed to add image to gallery.");
+  }
+}
+
 Future<int> _getSdkInt() async {
   var version = await Process.run('getprop', ['ro.build.version.sdk']);
   return int.parse(version.stdout.trim());
 }
-
 // Future<void> captureAndShareScreenshot(Uint8List? screenshot) async {
 //   log('im inside share');
 //   try {
