@@ -257,7 +257,8 @@ class MenuPage extends StatelessWidget {
                                 errorBuilder: (context, error, stackTrace) {
                                   return Icon(Icons.person);
                                 },
-                                user.profilePicture!,
+                                user.profilePicture ??
+                                    'https://placehold.co/600x400',
                                 height: 70,
                                 width: 75,
                                 fit: BoxFit.cover,

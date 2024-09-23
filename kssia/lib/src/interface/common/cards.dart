@@ -234,7 +234,9 @@ class ProductCard extends StatelessWidget {
                   ),
                   child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: CustomDropDown()),
+                      child: CustomDropDown(
+                        isBlocked: false,
+                      )),
                 ),
               ),
           ],

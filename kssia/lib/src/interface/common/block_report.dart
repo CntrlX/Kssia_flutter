@@ -17,6 +17,7 @@ class CustomDropDown extends ConsumerWidget {
   final MessageModel? msg;
   final String? userId;
   final VoidCallback? onBlockStatusChanged;
+  final bool? isBlocked;
 
   const CustomDropDown({
     this.onBlockStatusChanged,
@@ -25,6 +26,7 @@ class CustomDropDown extends ConsumerWidget {
     this.msg,
     super.key,
     this.requirement,
+    this.isBlocked,
   });
 
   @override
@@ -41,12 +43,17 @@ class CustomDropDown extends ConsumerWidget {
               style: TextStyle(color: Colors.red),
             ),
           ),
-          const DropdownMenuItem(
+          DropdownMenuItem(
             value: 'block',
-            child: Text(
-              'Block',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: isBlocked != null && isBlocked == false
+                ? Text(
+                    'Block',
+                    style: TextStyle(color: Colors.red),
+                  )
+                : Text(
+                    'Unblock',
+                    style: TextStyle(color: Colors.red),
+                  ),
           ),
         ],
         onChanged: (value) async {

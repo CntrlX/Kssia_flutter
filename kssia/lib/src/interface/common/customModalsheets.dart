@@ -1732,7 +1732,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stackTrace) {
                     return Center(
-                      child: Text('Error loading user details: $error'),
+                      child: LoadingAnimation(),
                     );
                   },
                 ),

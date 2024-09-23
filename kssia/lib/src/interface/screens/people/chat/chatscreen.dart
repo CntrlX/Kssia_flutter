@@ -162,6 +162,16 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                 ),
                 actions: [
                   CustomDropDown(
+                    isBlocked: isBlocked,
+                    onBlockStatusChanged: () {
+                      setState(() {
+                        if (isBlocked) {
+                          isBlocked = false;
+                        } else {
+                          isBlocked = true;
+                        }
+                      });
+                    },
                     userId: widget.receiver.id,
                   )
                 ],
@@ -198,15 +208,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               showReportPersonDialog(
                                   reportedItemId: message.id ?? '',
                                   context: context,
-                                  onReportStatusChanged: () {
-                                    setState(() {
-                                      if (isBlocked) {
-                                        isBlocked = false;
-                                      } else {
-                                        isBlocked = true;
-                                      }
-                                    });
-                                  },
+                                  onReportStatusChanged: () {},
                                   reportType: 'chat');
                             },
                             child: ReplyCard(

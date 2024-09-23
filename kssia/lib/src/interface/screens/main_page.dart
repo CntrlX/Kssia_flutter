@@ -80,14 +80,14 @@ class _MainPageState extends State<MainPage> {
     _inactiveIcons = [
       'assets/icons/home_inactive.svg',
       'assets/icons/feed_inactive.svg',
-      user.profilePicture!,
+      user.profilePicture ?? 'assets/icons/person-svgrepo-com.svg',
       'assets/icons/news_inactive.svg',
       'assets/icons/people_inactive.svg',
     ];
     _activeIcons = [
       'assets/icons/home_active.svg',
       'assets/icons/feed_active.svg',
-      user.profilePicture!,
+      user.profilePicture ?? 'assets/icons/person-svgrepo-com.svg',
       'assets/icons/news_active.svg',
       'assets/icons/people_active.svg',
     ];
@@ -117,7 +117,7 @@ class _MainPageState extends State<MainPage> {
                   backgroundColor: Colors.white,
                   icon: index == 2 // Assuming profile is the third item
                       ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture!),
+                          backgroundImage: NetworkImage(user.profilePicture??'https://placehold.co/600x400'),
                           radius: 15,
                         )
                       : IconResolver(
@@ -128,7 +128,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                   activeIcon: index == 2
                       ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture!),
+                          backgroundImage: NetworkImage(user.profilePicture??'https://placehold.co/600x400'),
                           radius: 15,
                         )
                       : IconResolver(

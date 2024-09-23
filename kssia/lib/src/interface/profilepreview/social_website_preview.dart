@@ -97,7 +97,7 @@ Padding customWebsitePreview(int index, {Website? website}) {
               Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: Text('${website!.name}')),
+                  child: Text('${website?.name ?? 'Website'}')),
             ],
           )),
     ),

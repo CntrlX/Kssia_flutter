@@ -17,6 +17,7 @@ import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
+import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
@@ -87,7 +88,14 @@ class ProfilePreview extends ConsumerWidget {
                               Icons.edit,
                               color: Color(0xFF004797),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailsPage()), // Navigate to MenuPage
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -528,8 +536,8 @@ class ProfilePreview extends ConsumerWidget {
           if (user.id != id)
             Positioned(
                 bottom: 40,
-                left: 20,
-                right: 20,
+                left: 15,
+                right: 15,
                 child: SizedBox(
                     height: 50,
                     child: Row(
@@ -565,15 +573,12 @@ class ProfilePreview extends ConsumerWidget {
                               labelColor: Color(0xFF2C2829),
                               buttonColor: Color.fromARGB(255, 222, 218, 218),
                               buttonHeight: 60,
-                              fontSize: 16,
+                              fontSize: 14,
                               label: 'SAVE CONTACT',
                               onPressed: () {
                                 if (user.phoneNumbers?.personal != null) {
-                                  saveContact(
-                                      name:
-                                          '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
-                                      context: context,
-                                      phone: user.phoneNumbers?.personal ?? '');
+                                  launchDialer(
+                                      user.phoneNumbers?.personal ?? '');
                                 }
                               }),
                         ),

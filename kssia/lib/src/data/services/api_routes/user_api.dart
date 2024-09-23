@@ -531,7 +531,8 @@ class ApiRoutes {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({"reason": reason ?? ''}),
+        body: jsonEncode(
+            {"reason": reason != null && reason != '' ? reason : 'No reason'}),
       );
 
       if (response.statusCode == 200) {

@@ -131,10 +131,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                                       'https://placehold.co/600x400/png',
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Image.network(
-                                      'https://placehold.co/600x400/png',
-                                      fit: BoxFit.cover,
-                                    );
+                                    return Icon(Icons.person);
                                   },
                                 ),
                               ),

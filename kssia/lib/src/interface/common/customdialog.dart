@@ -63,13 +63,12 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
     if (isBlocked) {
       log('blocking user: ${widget.userId}');
       log('blocking reason: ${reasonController.text}');
-      userApi.blockUser(widget.userId, reasonController.text, context);
+      await userApi.blockUser(widget.userId, reasonController.text, context);
     } else {
-      userApi.unBlockUser(widget.userId, reasonController.text, context);
+      await userApi.unBlockUser(widget.userId, reasonController.text, context);
     }
-
+    log(widget.onBlockStatusChanged.toString());
     widget.onBlockStatusChanged();
-
     Navigator.of(context).pop(); // Close the dialog
   }
 
@@ -223,6 +222,7 @@ class ReportPersonDialog extends StatelessWidget {
   final VoidCallback onReportStatusChanged;
   final String reportType;
   final String reportedItemId;
+
   ReportPersonDialog({
     this.userId,
     required this.onReportStatusChanged,
@@ -367,12 +367,13 @@ class ReportPersonDialog extends StatelessWidget {
 }
 
 // Function to show the BlockPersonDialog
-void showReportPersonDialog(
-    {required BuildContext context,
-    String? userId,
-    required VoidCallback onReportStatusChanged,
-    required String reportType,
-    required String reportedItemId}) {
+void showReportPersonDialog({
+  required BuildContext context,
+  String? userId,
+  required VoidCallback onReportStatusChanged,
+  required String reportType,
+  required String reportedItemId,
+}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

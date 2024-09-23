@@ -1000,12 +1000,17 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       "email": user.email,
       if (user.profilePicture != null) "profile_picture": user.profilePicture,
       "phone_numbers": {
-        "personal": user.phoneNumbers!.personal ?? 0,
-        "landline": user.phoneNumbers!.landline ?? 0,
-        "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? 0,
-        "whatsapp_number": user.phoneNumbers!.whatsappNumber ?? 0,
-        "whatsapp_business_number":
-            user.phoneNumbers!.whatsappBusinessNumber ?? 0,
+        if (user.phoneNumbers?.personal != null)
+          "personal": user.phoneNumbers!.personal ?? '',
+        if (user.phoneNumbers?.landline != null)
+          "landline": user.phoneNumbers!.landline ?? '',
+        if (user.phoneNumbers?.companyPhoneNumber != null)
+          "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? '',
+        if (user.phoneNumbers?.whatsappNumber != null)
+          "whatsapp_number": user.phoneNumbers!.whatsappNumber ?? '',
+        if (user.phoneNumbers?.whatsappBusinessNumber != null)
+          "whatsapp_business_number":
+              user.phoneNumbers!.whatsappBusinessNumber ?? '',
       },
       if (user.designation != null) "designation": user.designation,
       if (user.companyLogo != null) "company_logo": user.companyLogo,
@@ -1052,8 +1057,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           }
       ]
     };
-    await api.editUser(profileData);
     log(profileData.toString());
+    await api.editUser(profileData);
   }
   // Future<void> _selectImageFile(ImageSource source, String imageType) async {
   //   final XFile? image = await _picker.pickImage(source: source);
@@ -1184,7 +1189,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             loading: () => Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               return Center(
-                child: Text('Error loading User: $error '),
+                child: LoadingAnimation(),
               );
             },
             data: (user) {
@@ -1278,12 +1283,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                               ),
                               const SizedBox(height: 35),
                               FormField<File>(
-                                validator: (value) {
-                                  if (user.profilePicture == null) {
-                                    return 'Please select a profile image';
-                                  }
-                                  return null;
-                                },
+                                // validator: (value) {
+                                //   if (user.profilePicture == null) {
+                                //     return 'Please select a profile image';
+                                //   }
+                                //   return null;
+                                // },
                                 builder: (FormFieldState<File> state) {
                                   return Center(
                                     child: Column(
@@ -1313,7 +1318,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                                       Icons
                                                                           .person);
                                                                 },
-                                                                user.profilePicture!,
+                                                                user.profilePicture ??
+                                                                    'https://placehold.co/600x400',
                                                                 fit: BoxFit
                                                                     .cover,
                                                               )
