@@ -112,9 +112,9 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Reason for rejection: Lorem ipsum dolor sit amet'),
+                      Text('Reason for rejection:'),
                       Text(
-                          'Description: Lorem ipsum dolor sit amet consectetur...'),
+                          'Description: '),
                       SizedBox(height: 8),
                       TextButton(
                         onPressed: null, // Implement re-upload logic

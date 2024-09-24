@@ -346,7 +346,7 @@ class ApiRoutes {
     const String url = 'http://43.205.89.79/api/v1/report';
     try {
       final Map<String, dynamic> body = {
-        'content': content,
+        'content': content != null && content != '' ? content : ' ',
         'reportType': reportType,
         'reportedItemId': reportedItemId
       };

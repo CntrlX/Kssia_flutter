@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -8,7 +7,7 @@ class AboutPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('About'),
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -21,7 +20,7 @@ class AboutPage extends StatelessWidget {
             SizedBox(height: 16),
             SizedBox(height: 8),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor.',
+              '''The Kerala State Small Industries Association was registered in 1961 under the Travancore Cochin Literary Scientific & Charitable Societies Registration Act 1955. This is the only representative Association of small-scale industries in Kerala State. The Association has district units in all the 14 revenue Districts of the State.''',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),
@@ -47,7 +46,11 @@ class AboutPage extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum.',
+                    '''Building No. 11/673 A,
+HMT Industrial Estate,
+HMT Colony.P.O.,
+Kalamassery,
+Kerala-683 503''',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

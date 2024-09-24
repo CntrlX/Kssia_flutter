@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
@@ -17,6 +18,7 @@ import '../menu/about.dart';
 import '../menu/my_subscription.dart';
 import '../menu/my_events.dart';
 import '../menu/my_transaction.dart';
+import 'package:animate_do/animate_do.dart';
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
@@ -488,13 +490,63 @@ class MenuPage extends StatelessWidget {
                       Container(color: Color(0xFFF2F2F2), height: 20),
 
                       Container(
-                        color: Color(0xFFF2F2F2),
-                        child: Center(
-                          child: Text(
-                            'Version 1.32\nRate us on Playstore',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey),
-                          ),
+                        color: const Color(0xFFF2F2F2),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FadeInDown(
+                              child: const Center(
+                                child: Text(
+                                  'Version 1.0',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            FadeInUp(
+                              delay: const Duration(milliseconds: 300),
+                              child: GestureDetector(
+                                onTap: () {
+                                  launchURL('https://www.skybertech.com');
+                                },
+                                child: const Text(
+                                  'Powered By SkyberTech',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            FadeInUp(
+                              delay: const Duration(milliseconds: 600),
+                              child: GestureDetector(
+                                onTap: () {
+                                  launchURL('https://www.xyvin.com');
+                                },
+                                child: const Text(
+                                  'Developed By Xyvin',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Container(color: Color(0xFFF2F2F2), height: 20),

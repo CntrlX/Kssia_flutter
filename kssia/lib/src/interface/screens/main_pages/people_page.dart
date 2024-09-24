@@ -18,7 +18,8 @@ class PeoplePage extends ConsumerStatefulWidget {
 }
 
 class _PeoplePageState extends ConsumerState<PeoplePage> {
-    late final webSocketClient;
+
+      late final webSocketClient;
 
   @override
   void initState() {
@@ -33,7 +34,6 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
 
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

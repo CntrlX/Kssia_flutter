@@ -185,6 +185,7 @@ class MyRequirementsPage extends StatelessWidget {
                           userApi.deleteFile(token, imageUrl);
                           userApi.deleteRequirement(
                               token, requirementId, context);
+                          ref.invalidate(fetchUserRequirementsProvider);
 
                           Navigator.of(context).pop();
                         },
