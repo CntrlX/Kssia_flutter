@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
@@ -20,6 +22,7 @@ class ReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log('Reply card Req Image:${requirement?.image ?? ''}');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Align(

@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -12,6 +13,7 @@ import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/models/user_requirement_model.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -275,6 +277,7 @@ class ApiRoutes {
       String token,
       String name,
       String price,
+      String offerPrice,
       String description,
       String moq,
       File productImage,
@@ -294,10 +297,10 @@ class ApiRoutes {
     // Add fields
     request.fields['name'] = name;
     request.fields['price'] = price;
-    request.fields['offer_price'] = price;
+    request.fields['offer_price'] = offerPrice;
     request.fields['description'] = description;
     request.fields['moq'] = moq;
-    request.fields['status'] = false.toString();
+    request.fields['status'] = 'pending';
     request.fields['seller_id'] = sellerId;
 
     // Add the image file
@@ -521,7 +524,35 @@ class ApiRoutes {
     }
   }
 
-  Future<void> blockUser(String userId, String? reason, context) async {
+  Future<void> requestNFC(BuildContext context) async {
+    final url = Uri.parse('$baseUrl/user/request/nfc');
+    log("Requesting URL:${url}");
+    final headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      final response = await http.post(url, headers: headers);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Review posted successfully');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'NFC requested sucessfully and we will mail you shortly')));
+      } else {
+        print('Response body: ${response.body}');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed')));
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> blockUser(
+      String userId, String? reason, context, WidgetRef ref) async {
     final String url = 'http://43.205.89.79/api/v1/user/block/$userId';
 
     try {
@@ -537,6 +568,7 @@ class ApiRoutes {
 
       if (response.statusCode == 200) {
         // Success
+        ref.invalidate(userProvider);
         print('User Blocked successfully');
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('User Blocked ')));

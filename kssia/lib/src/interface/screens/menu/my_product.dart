@@ -57,6 +57,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         token,
         productNameController.text,
         productActualPriceController.text,
+        productOfferPriceController.text,
         productDescriptionController.text,
         productMoqController.text,
         _productImageFIle!,
@@ -75,7 +76,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         offerPrice: int.parse(productOfferPriceController.text),
         price: int.parse(productActualPriceController.text),
         sellerId: SellerId(id: id),
-        status: true,
+        status: 'pending',
       );
       ref.read(userProvider.notifier).updateProduct(
           [...?ref.read(userProvider).value?.products, newProduct]);

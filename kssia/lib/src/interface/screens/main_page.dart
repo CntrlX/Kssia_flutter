@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +9,7 @@ import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
+import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 
@@ -98,11 +101,14 @@ class _MainPageState extends State<MainPage> {
     return Consumer(builder: (context, ref, child) {
       final asyncUser = ref.watch(userProvider);
       return asyncUser.when(
-        loading: () => Center(child: LoadingAnimation()),
+        loading: () {
+          log('im inside details main page loading');
+          return Center(child: LoadingAnimation());
+        },
         error: (error, stackTrace) {
-          return Center(
-            child: LoadingAnimation(),
-          );
+          log('im inside details main page error $error $stackTrace');
+
+          return LoginPage();
         },
         data: (user) {
           print(user.profilePicture);
@@ -117,7 +123,8 @@ class _MainPageState extends State<MainPage> {
                   backgroundColor: Colors.white,
                   icon: index == 2 // Assuming profile is the third item
                       ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture??'https://placehold.co/600x400'),
+                          backgroundImage: NetworkImage(user.profilePicture ??
+                              'https://placehold.co/600x400'),
                           radius: 15,
                         )
                       : IconResolver(
@@ -128,7 +135,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                   activeIcon: index == 2
                       ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture??'https://placehold.co/600x400'),
+                          backgroundImage: NetworkImage(user.profilePicture ??
+                              'https://placehold.co/600x400'),
                           radius: 15,
                         )
                       : IconResolver(

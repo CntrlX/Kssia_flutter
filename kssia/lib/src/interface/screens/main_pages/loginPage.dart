@@ -712,7 +712,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   //     StateProvider<bool>((ref) => false);
   // final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
 
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+
+  final TextEditingController middleNameController = TextEditingController();
+
+  final TextEditingController lastNameController = TextEditingController();
+
   final TextEditingController landlineController = TextEditingController();
   final TextEditingController bloodGroupController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -845,6 +850,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         token,
         productNameController.text,
         productActualPriceController.text,
+        productOfferPriceController.text,
         productDescriptionController.text,
         productMoqController.text,
         _productImageFIle!,
@@ -863,7 +869,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         offerPrice: int.parse(productOfferPriceController.text),
         price: int.parse(productActualPriceController.text),
         sellerId: SellerId(id: id),
-        status: true,
+        status: 'pending',
       );
       ref.read(userProvider.notifier).updateProduct(
           [...?ref.read(userProvider).value?.products, newProduct]);
@@ -961,7 +967,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   @override
   void dispose() {
     // Dispose controllers when the widget is disposed
-    nameController.dispose();
+    firstNameController.dispose();
+    middleNameController.dispose();
+    lastNameController.dispose();
     bloodGroupController.dispose();
     emailController.dispose();
     profilePictureController.dispose();
@@ -980,21 +988,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   }
 
   Future<void> _submitData({required UserModel user}) async {
-    String fullName =
-        '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
-
-    List<String> nameParts = fullName.split(' ');
-
-    String firstName = nameParts[0];
-    String middleName = nameParts.length > 2 ? nameParts[1] : ' ';
-    String lastName = nameParts.length > 1 ? nameParts.last : ' ';
     log('profile: ${user.profilePicture}');
     log('company logo: ${user.companyLogo}');
     final Map<String, dynamic> profileData = {
       "name": {
-        "first_name": firstName,
-        "middle_name": middleName,
-        "last_name": lastName,
+        "first_name": user.name?.firstName,
+        if (user.name?.middleName != null && user.name?.middleName != '')
+          "middle_name": user.name?.middleName,
+        "last_name": user.name?.lastName,
       },
       "blood_group": user.bloodGroup,
       "email": user.email,
@@ -1002,7 +1003,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       "phone_numbers": {
         if (user.phoneNumbers?.personal != null)
           "personal": user.phoneNumbers!.personal ?? '',
-        if (user.phoneNumbers?.landline != null)
+        if (user.phoneNumbers?.landline != null &&
+            user.phoneNumbers?.landline != '')
           "landline": user.phoneNumbers!.landline ?? '',
         if (user.phoneNumbers?.companyPhoneNumber != null)
           "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? '',
@@ -1186,33 +1188,35 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       child: Scaffold(
           backgroundColor: Colors.white,
           body: asyncUser.when(
-            loading: () => Center(child: LoadingAnimation()),
+            loading: () {
+              log('im inside details page');
+              return Center(child: LoadingAnimation());
+            },
             error: (error, stackTrace) {
               return Center(
                 child: LoadingAnimation(),
               );
             },
             data: (user) {
-              nameController.text =
-                  '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}';
-              designationController.text = user.designation!;
+              firstNameController.text = user.name?.firstName ?? '';
+              middleNameController.text = user.name?.middleName ?? '';
+              lastNameController.text = user.name?.lastName ?? '';
+
+              designationController.text = user.designation ?? '';
               bioController.text = user.bio ?? '';
-              companyNameController.text = user.companyName!;
+              companyNameController.text = user.companyName ?? '';
               if (user.companyAddress != null) {
-                companyAddressController.text = user.companyAddress!;
+                companyAddressController.text = user.companyAddress ?? '';
               }
               personalPhoneController.text =
                   user.phoneNumbers!.personal.toString();
-              landlineController.text = user.phoneNumbers!.landline.toString();
-              emailController.text = user.email!;
+              landlineController.text = user.phoneNumbers?.landline ?? '';
+              emailController.text = user.email ?? '';
               whatsappBusinessController.text =
-                  user.phoneNumbers!.whatsappBusinessNumber == 0
-                      ? ''
-                      : user.phoneNumbers!.whatsappBusinessNumber.toString();
-              whatsappController.text = user.phoneNumbers!.whatsappNumber == 0
-                  ? ''
-                  : user.phoneNumbers!.whatsappNumber.toString();
-              addressController.text = user.address!;
+                  user.phoneNumbers?.whatsappBusinessNumber ?? '';
+
+              whatsappController.text = user.phoneNumbers?.whatsappNumber ?? '';
+              addressController.text = user.address ?? '';
 
               for (var i in user.socialMedia!) {
                 if (i.platform == 'instagram') {
@@ -1408,8 +1412,24 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         }
                                         return null;
                                       },
-                                      textController: nameController,
-                                      labelText: 'Enter your Full name',
+                                      textController: firstNameController,
+                                      labelText: 'Enter your First name',
+                                    ),
+                                    const SizedBox(height: 20.0),
+                                    CustomTextFormField(
+                                      textController: middleNameController,
+                                      labelText: 'Enter your Middle name',
+                                    ),
+                                    const SizedBox(height: 20.0),
+                                    CustomTextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Your Full Name';
+                                        }
+                                        return null;
+                                      },
+                                      textController: lastNameController,
+                                      labelText: 'Enter your Last name',
                                     ),
                                     const SizedBox(height: 20.0),
                                     CustomTextFormField(
@@ -1733,12 +1753,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 10, bottom: 20),
                                 child: CustomTextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Your Landline Number';
-                                    }
-                                    return null;
-                                  },
                                   textController: landlineController,
                                   labelText: 'Enter landline number',
                                   prefixIcon: const Icon(Icons.phone_in_talk,

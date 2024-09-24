@@ -36,7 +36,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-
   ScrollController _bannerScrollController = ScrollController();
   ScrollController _noticeScrollController = ScrollController();
   ScrollController _posterScrollController = ScrollController();
@@ -477,6 +476,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
               ));
         } else {
+          log('im inside home');
           return LoadingAnimation();
         }
       },

@@ -1586,22 +1586,26 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(
-                        20), // Set the desired radius for the top left corner
-                    topRight: Radius.circular(
-                        20), // Set the desired radius for the top right corner
-                  ),
-                  child: Image.network(
-                    widget.product.image!, // Replace with your image URL
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.network(
-                        'https://placehold.co/600x400/png',
-                        fit: BoxFit.cover,
-                      );
-                    },
+                SizedBox(
+                  height: 200,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                          20), // Set the desired radius for the top left corner
+                      topRight: Radius.circular(
+                          20), // Set the desired radius for the top right corner
+                    ),
+                    child: Image.network(
+                      widget.product.image!, // Replace with your image URL
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.network(
+                          'https://placehold.co/600x400/png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),

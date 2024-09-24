@@ -1,4 +1,3 @@
-
 final RegExp _youtubeUrlPattern = RegExp(
   r"^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$",
 );
@@ -12,4 +11,3 @@ String? validateYouTubeUrl(String? value) {
   }
   return null;
 }
-

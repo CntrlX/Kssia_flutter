@@ -11,7 +11,7 @@ class BlockPersonDialog extends ConsumerStatefulWidget {
   final String userId;
   final VoidCallback onBlockStatusChanged;
 
-  BlockPersonDialog({
+  BlockPersonDialog( {
     required this.userId,
     required this.onBlockStatusChanged,
     super.key,
@@ -63,13 +63,17 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
     if (isBlocked) {
       log('blocking user: ${widget.userId}');
       log('blocking reason: ${reasonController.text}');
-      await userApi.blockUser(widget.userId, reasonController.text, context);
+      await userApi.blockUser(
+          widget.userId, reasonController.text, context, ref);
     } else {
-      await userApi.unBlockUser(widget.userId, reasonController.text, context);
+      await userApi.unBlockUser(
+        widget.userId,
+        reasonController.text,
+        context,
+      );
     }
     log(widget.onBlockStatusChanged.toString());
     widget.onBlockStatusChanged();
-    Navigator.of(context).pop(); // Close the dialog
   }
 
   @override
@@ -175,6 +179,7 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
         ElevatedButton(
           onPressed: () {
             _toggleBlockStatus(context);
+            Navigator.of(context).pop();
             ref.invalidate(userProvider);
           },
           style: ElevatedButton.styleFrom(
@@ -205,7 +210,8 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
 void showBlockPersonDialog(
     {required BuildContext context,
     required String userId,
-    required VoidCallback onBlockStatusChanged}) {
+    required VoidCallback onBlockStatusChanged,
+}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

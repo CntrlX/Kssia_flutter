@@ -39,7 +39,8 @@ Padding customWebsiteCard({Website? website, VoidCallback? onRemove}) {
             Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                child: Text('${website!.name}')),
+                child: Text(
+                    '${website?.name != 'null' && website?.name != null ? website?.name : 'Website'}')),
             Spacer(),
             GestureDetector(
               onTap: () => onRemove!(),

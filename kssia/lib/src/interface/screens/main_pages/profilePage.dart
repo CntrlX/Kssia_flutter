@@ -279,13 +279,17 @@ class ProfilePage extends StatelessWidget {
                                     const Icon(Icons.location_on,
                                         color: Color(0xFF004797)),
                                     if (user.address != null)
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(user.address ?? ''),
-                                        ],
+                                      Flexible(
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Flexible(
+                                                child:
+                                                    Text(user.address ?? '')),
+                                          ],
+                                        ),
                                       ),
                                     const SizedBox(width: 10),
                                     // if (user.bio != null)
@@ -339,40 +343,40 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: Image.asset(
-                                  'assets/icons/share_profile_button.png'),
-                              iconSize: 50,
-                              onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         ProfilePage(), // Navigate to Shared
-                                //   ),
-                                // );
-                              },
-                            ),
-                            const SizedBox(width: 20),
-                            IconButton(
-                              icon: Image.asset('assets/icons/qr_button.png'),
-                              iconSize: 50,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileCard(
-                                      user: user,
-                                    ), // Navigate to CardPage
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        )
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     IconButton(
+                        //       icon: Image.asset(
+                        //           'assets/icons/share_profile_button.png'),
+                        //       iconSize: 50,
+                        //       onPressed: () {
+                        //         // Navigator.push(
+                        //         //   context,
+                        //         //   MaterialPageRoute(
+                        //         //     builder: (context) =>
+                        //         //         ProfilePage(), // Navigate to Shared
+                        //         //   ),
+                        //         // );
+                        //       },
+                        //     ),
+                        //     const SizedBox(width: 20),
+                        //     IconButton(
+                        //       icon: Image.asset('assets/icons/qr_button.png'),
+                        //       iconSize: 50,
+                        //       onPressed: () {
+                        //         Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //             builder: (context) => ProfileCard(
+                        //               user: user,
+                        //             ), // Navigate to CardPage
+                        //           ),
+                        //         );
+                        //       },
+                        //     ),
+                        //   ],
+                        // )
                       ],
                     ),
                   ),

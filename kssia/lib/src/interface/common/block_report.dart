@@ -7,6 +7,7 @@ import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
+import 'package:kssia/src/data/notifiers/products_notifier.dart';
 import 'package:kssia/src/data/notifiers/requirements_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customdialog.dart';
@@ -67,6 +68,7 @@ class CustomDropDown extends ConsumerWidget {
                   onReportStatusChanged: () {},
                   reportType: reportType);
             } else if (product != null) {
+              log('product id:${product?.id ?? ''}');
               reportType = 'product';
               showReportPersonDialog(
                   reportedItemId: product?.id ?? '',
@@ -96,18 +98,15 @@ class CustomDropDown extends ConsumerWidget {
                   context: context,
                   userId: requirement?.author?.id ?? '',
                   onBlockStatusChanged: () {
-                    ref
-                        .read(requirementsNotifierProvider.notifier)
-                        .refreshRequirements();
+                    ref.invalidate(requirementsNotifierProvider);
                   });
             } else if (product != null) {
+              log('product id in block report widget:${product?.id ?? ''}');
               showBlockPersonDialog(
                   context: context,
                   userId: product?.sellerId?.id ?? '',
                   onBlockStatusChanged: () {
-                    ref
-                        .read(requirementsNotifierProvider.notifier)
-                        .refreshRequirements();
+                    ref.invalidate(productsNotifierProvider);
                   });
             } else if (userId != null) {
               showBlockPersonDialog(

@@ -16,21 +16,6 @@ class ChatPage extends ConsumerStatefulWidget {
 }
 
 class _ChatPageState extends ConsumerState<ChatPage> {
-  late final webSocketClient;
-
-  @override
-  void initState() {
-    super.initState();
-    webSocketClient = ref.read(socketIoClientProvider);
-    webSocketClient.connect(id, ref);
-  }
-
-  @override
-  void dispose() {
-    webSocketClient.disconnect();
-
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,87 +23,80 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
       final asyncChats = ref.watch(fetchChatThreadProvider(token));
 
-      return PopScope(
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) {
-            webSocketClient.disconnect();
-          }
-        },
-        child: Scaffold(
-            backgroundColor: Colors.white,
-            body: asyncChats.when(
-              data: (chats) {
-                return ListView.builder(
-                  itemCount: chats.length,
-                  itemBuilder: (context, index) {
-                    var receiver = chats[index].participants?.firstWhere(
-                          (participant) => participant.id != id,
-                          orElse: () => Participant(id: ''),
-                        );
-                    var sender = chats[index].participants?.firstWhere(
-                          (participant) => participant.id == id,
-                          orElse: () => Participant(),
-                        );
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(receiver?.profilePicture ?? ''),
-                      ),
-                      title: Text(
-                          '${receiver?.firstName ?? ''}${receiver?.middleName ?? ''}${receiver?.lastName ?? ''}'),
-                      subtitle:
-                          Text(chats[index].lastMessage?[0].content ?? ''),
-                      trailing: chats[index].unreadCount?[sender?.id] != 0 &&
-                              chats[index].unreadCount?[sender!.id] != null
-                          ? SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
-                                child: Center(
-                                  child:
-                                      chats[index].unreadCount?[sender!.id] !=
-                                              null
-                                          ? Text(
-                                              '${chats[index].unreadCount?[sender!.id]}',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            )
-                                          : null,
-                                ),
+      return Scaffold(
+          backgroundColor: Colors.white,
+          body: asyncChats.when(
+            data: (chats) {
+              return ListView.builder(
+                itemCount: chats.length,
+                itemBuilder: (context, index) {
+                  var receiver = chats[index].participants?.firstWhere(
+                        (participant) => participant.id != id,
+                        orElse: () => Participant(id: ''),
+                      );
+                  var sender = chats[index].participants?.firstWhere(
+                        (participant) => participant.id == id,
+                        orElse: () => Participant(),
+                      );
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(receiver?.profilePicture ?? ''),
+                    ),
+                    title: Text(
+                        '${receiver?.firstName ?? ''}${receiver?.middleName ?? ''}${receiver?.lastName ?? ''}'),
+                    subtitle:
+                        Text(chats[index].lastMessage?[0].content ?? ''),
+                    trailing: chats[index].unreadCount?[sender?.id] != 0 &&
+                            chats[index].unreadCount?[sender!.id] != null
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            )
-                          : const SizedBox.shrink(),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => IndividualPage(
-                                  receiver: receiver!,
-                                  sender: sender!,
-                                )));
-                      },
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) {
-                return Center(
-                  child: LoadingAnimation(),
-                );
-              },
-            )),
-      );
+                              constraints: BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Center(
+                                child:
+                                    chats[index].unreadCount?[sender!.id] !=
+                                            null
+                                        ? Text(
+                                            '${chats[index].unreadCount?[sender!.id]}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        : null,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => IndividualPage(
+                                receiver: receiver!,
+                                sender: sender!,
+                              )));
+                    },
+                  );
+                },
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) {
+              return Center(
+                child: LoadingAnimation(),
+              );
+            },
+          ));
     });
   }
 }

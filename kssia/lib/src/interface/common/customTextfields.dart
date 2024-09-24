@@ -85,16 +85,23 @@ class CustomTextFormField extends StatelessWidget {
         return TextFormField(
           onChanged: (value) {
             switch (labelText) {
-              case 'Enter your Full name':
-                List<String> nameParts = textController!.text.split(' ');
-
-                String firstName = nameParts[0];
-                String middleName = nameParts.length > 2 ? nameParts[1] : ' ';
-                String lastName = nameParts.length > 1 ? nameParts.last : ' ';
+               case 'Enter your First name':
                 ref.read(userProvider.notifier).updateName(
-                    firstName: firstName,
-                    middleName: middleName,
-                    lastName: lastName);
+                    firstName: textController!.text,
+                    middleName: null,
+                    lastName: null);
+                break;
+              case 'Enter your Middle name':
+                ref.read(userProvider.notifier).updateName(
+                    firstName: null,
+                    middleName: textController!.text,
+                    lastName: null);
+                break;
+              case 'Enter your Last name':
+                ref.read(userProvider.notifier).updateName(
+                    firstName: null,
+                    middleName: null,
+                    lastName: textController!.text);
                 break;
               case 'Designation':
                 ref
@@ -137,6 +144,7 @@ class CustomTextFormField extends StatelessWidget {
                     textController!.text);
 
               case 'Enter Linkedin':
+              
                 ref.read(userProvider.notifier).updateSocialMedia(
                     [...?ref.read(userProvider).value?.socialMedia],
                     'linkedin',

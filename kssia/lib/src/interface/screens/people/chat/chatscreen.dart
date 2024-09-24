@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/providers/chat_providers.dart';
+
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
@@ -22,7 +22,8 @@ class IndividualPage extends ConsumerStatefulWidget {
 }
 
 class _IndividualPageState extends ConsumerState<IndividualPage> {
-  bool isBlocked = false;
+  final isBlockedProvider = StateProvider<bool?>((ref) => false);
+
   bool show = false;
   FocusNode focusNode = FocusNode();
   List<MessageModel> messages = [];
@@ -57,7 +58,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
       (user) {
         setState(() {
           if (user.blockedUsers != null) {
-            isBlocked = user.blockedUsers!
+            ref.read(isBlockedProvider.notifier).state = user.blockedUsers!
                 .any((blockedUser) => blockedUser.userId == widget.receiver.id);
           }
         });
@@ -100,9 +101,11 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isBlocked = ref.watch(isBlockedProvider) ?? false;
     final messageStream = ref.watch(messageStreamProvider);
 
     messageStream.whenData((newMessage) {
+      print('new message: ${newMessage}');
       bool messageExists = messages.any((message) =>
           message.timestamp == newMessage.timestamp &&
           message.content == newMessage.content);
@@ -164,13 +167,11 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   CustomDropDown(
                     isBlocked: isBlocked,
                     onBlockStatusChanged: () {
-                      setState(() {
-                        if (isBlocked) {
-                          isBlocked = false;
-                        } else {
-                          isBlocked = true;
-                        }
-                      });
+                      if (isBlocked) {
+                        ref.read(isBlockedProvider.notifier).state = false;
+                      } else {
+                        ref.read(isBlockedProvider.notifier).state = true;
+                      }
                     },
                     userId: widget.receiver.id,
                   )

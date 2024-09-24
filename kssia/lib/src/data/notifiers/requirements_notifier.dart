@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
@@ -37,6 +38,31 @@ class RequirementsNotifier extends _$RequirementsNotifier {
     } finally {
       isLoading = false;
       log('im in people $requirements');
+    }
+  }
+
+   Future<void> refresh({required String blockedUserId}) async {
+    if (isLoading) return;
+
+    isLoading = true;
+
+    try {
+      // Fetch requirements for the current page and limit
+      final refreshedRequirements = requirements.where((requirement) => requirement.author?.id!=blockedUserId).toList();
+      
+
+      requirements = refreshedRequirements;
+
+
+      state = requirements;
+
+
+    } catch (e, stackTrace) {
+      log(e.toString());
+      log(stackTrace.toString());
+    } finally {
+      isLoading = false;
+      log('Requirements refreshed: $requirements');
     }
   }
 

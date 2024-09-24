@@ -14,13 +14,15 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
     _initializeUser();
   }
   Future<void> _initializeUser() async {
-    try {
-      log('user provider token');
-      final user = await ref.read(fetchUserDetailsProvider(token, id).future);
-      state = AsyncValue.data(user ?? UserModel());
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
+
+      try {
+        log('user provider token');
+        final user = await ref.read(fetchUserDetailsProvider(token, id).future);
+        state = AsyncValue.data(user ?? UserModel());
+      } catch (e, stackTrace) {
+        state = AsyncValue.error(e, stackTrace);
+      }
+
   }
 
   void updateName({
@@ -43,7 +45,7 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
     });
   }
 
-   void updateVideos(List<Video> videos) {
+  void updateVideos(List<Video> videos) {
     state = state.whenData((user) => user.copyWith(video: videos));
   }
 
@@ -68,7 +70,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
       return user.copyWith(websites: updatedWebsites);
     });
   }
-
 
   void updatePhoneNumbers({
     String? personal,
@@ -193,6 +194,7 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
           socialmedias.indexWhere((item) => item.platform == platform);
 
       if (index != -1) {
+        
         final updatedSocialMedia = socialmedias[index].copyWith(url: newUrl);
         socialmedias[index] = updatedSocialMedia;
       } else {
@@ -215,7 +217,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
       (user) => user.copyWith(video: videos),
     );
   }
-
 
   void removeAward(Award awardToRemove) {
     state = state.whenData((user) {
@@ -251,10 +252,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
       return user.copyWith(products: updatedProducts);
     });
   }
-
-
-
-  
 }
 
 final userProvider =

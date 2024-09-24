@@ -1,7 +1,7 @@
 name: kssia
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.2+2
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -58,7 +58,7 @@ dev_dependencies:
   build_runner: ^2.4.11
   custom_lint: ^0.6.4
   riverpod_lint: ^2.3.10
-
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -72,3 +72,9 @@ flutter:
 
     - assets/
     - assets/icons/
+
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path:  "assets/icons/appicon_20.png"

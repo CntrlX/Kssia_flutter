@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/product_model.dart';
@@ -235,6 +237,7 @@ class ProductCard extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: CustomDropDown(
+                        product: product,
                         isBlocked: false,
                       )),
                 ),

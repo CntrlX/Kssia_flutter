@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/interface/common/components/app_bar.dart';
-import 'package:kssia/src/interface/common/loading.dart';
-import 'package:kssia/src/interface/screens/feed/feed_view.dart';
-import 'package:kssia/src/interface/screens/feed/product_view.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PeoplePage extends StatelessWidget {
+
+class PeoplePage extends ConsumerStatefulWidget {
   const PeoplePage({super.key});
+
+  @override
+  ConsumerState<PeoplePage> createState() => _PeoplePageState();
+}
+
+class _PeoplePageState extends ConsumerState<PeoplePage> {
+    late final webSocketClient;
+
+  @override
+  void initState() {
+    super.initState();
+    webSocketClient = ref.read(socketIoClientProvider);
+    webSocketClient.connect(id, ref);
+  }
+
+  @override
+  void dispose() {
+    webSocketClient.disconnect();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
