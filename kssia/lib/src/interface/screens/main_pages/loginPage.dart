@@ -854,7 +854,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         productDescriptionController.text,
         productMoqController.text,
         _productImageFIle!,
-        id);
+        id,context);
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {

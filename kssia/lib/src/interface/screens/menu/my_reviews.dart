@@ -22,14 +22,14 @@ class MyReviewsPage extends StatelessWidget {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            actions: [
-              IconButton(
-                icon: FaIcon(FontAwesomeIcons.whatsapp),
-                onPressed: () {
-                  // Placeholder for WhatsApp functionality
-                },
-              ),
-            ],
+            // actions: [
+            //   IconButton(
+            //     icon: FaIcon(FontAwesomeIcons.whatsapp),
+            //     onPressed: () {
+            //       // Placeholder for WhatsApp functionality
+            //     },
+            //   ),
+            // ],
             backgroundColor: Colors.white,
             iconTheme: const IconThemeData(color: Colors.black),
             elevation: 0,

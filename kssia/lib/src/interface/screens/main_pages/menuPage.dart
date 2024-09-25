@@ -472,20 +472,20 @@ class MenuPage extends StatelessWidget {
                       ),
                       Container(color: Color(0xFFF2F2F2), height: 15),
 
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(),
-                            child: _buildListTile(
-                              context,
-                              Icons.delete,
-                              'Delete account',
-                              textColor: Colors.red,
-                              onTap: () => showDeleteAccountDialog(context),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     Padding(
+                      //       padding: const EdgeInsets.symmetric(),
+                      //       child: _buildListTile(
+                      //         context,
+                      //         Icons.delete,
+                      //         'Delete account',
+                      //         textColor: Colors.red,
+                      //         onTap: () => showDeleteAccountDialog(context),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
 
                       Container(color: Color(0xFFF2F2F2), height: 20),
 

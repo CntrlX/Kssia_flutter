@@ -22,14 +22,14 @@ class MyRequirementsPage extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
-              actions: [
-                IconButton(
-                  icon: FaIcon(FontAwesomeIcons.whatsapp),
-                  onPressed: () {
-                    // Handle WhatsApp button press
-                  },
-                ),
-              ],
+              // actions: [
+              //   IconButton(
+              //     icon: FaIcon(FontAwesomeIcons.whatsapp),
+              //     onPressed: () {
+              //       // Handle WhatsApp button press
+              //     },
+              //   ),
+              // ],
             ),
             body: asyncUserRequirments.when(
               loading: () => Center(child: LoadingAnimation()),

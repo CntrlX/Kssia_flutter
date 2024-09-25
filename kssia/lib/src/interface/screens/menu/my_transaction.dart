@@ -57,7 +57,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
               error: (error, stackTrace) {
                 // Handle error state
                 return Center(
-                  child: LoadingAnimation(),
+                  child: Text('No Transaction found'),
                 );
               },
               data: (transactions) {
@@ -113,8 +113,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Reason for rejection:'),
-                      Text(
-                          'Description: '),
+                      Text('Description: '),
                       SizedBox(height: 8),
                       TextButton(
                         onPressed: null, // Implement re-upload logic

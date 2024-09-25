@@ -256,7 +256,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                             (context, error, stackTrace) {
                                           return Icon(Icons.person);
                                         },
-                                        user.profilePicture ??
+                                        receiver.profilePicture ??
                                             'https://placehold.co/600x400', // Replace with your image URL
                                         fit: BoxFit.cover,
                                       ),

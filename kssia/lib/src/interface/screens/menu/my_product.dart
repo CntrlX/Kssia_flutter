@@ -61,7 +61,8 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         productDescriptionController.text,
         productMoqController.text,
         _productImageFIle!,
-        id);
+        id,
+        context);
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {
@@ -123,27 +124,18 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         final asyncUser = ref.watch(userProvider);
         return Scaffold(
           appBar: AppBar(
+            title: Text(
+              "My Products",
+              style: TextStyle(fontSize: 15),
+            ),
+            backgroundColor: Colors.white,
+            scrolledUnderElevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
             ),
-            title: const Text(
-              'My Products',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(FontAwesomeIcons.whatsapp),
-                onPressed: () {
-                  // WhatsApp icon action
-                },
-              ),
-            ],
           ),
           body: asyncUser.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -188,8 +180,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                           child: GridView.builder(
                             shrinkWrap:
                                 true, // Let GridView take up only as much space as it needs
-                            physics:
-                                const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                            // Disable GridView's internal scrolling
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               mainAxisExtent: 212,

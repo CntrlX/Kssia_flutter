@@ -1,8 +1,6 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -12,15 +10,11 @@ import 'package:kssia/src/data/services/save_contact.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
-import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
-import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
-import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
-import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -405,7 +399,7 @@ class ProfilePreview extends ConsumerWidget {
                     const SizedBox(
                       height: 40,
                     ),
-                    if (user.products != null)
+                    if (user.products != null && user.products!.isNotEmpty)
                       const Row(
                         children: [
                           Text(
@@ -441,7 +435,8 @@ class ProfilePreview extends ConsumerWidget {
                     const SizedBox(
                       height: 50,
                     ),
-                    if (user.awards != null)
+                    if (user.certificates != null &&
+                        user.certificates!.isNotEmpty)
                       const Row(
                         children: [
                           Text(
@@ -470,7 +465,7 @@ class ProfilePreview extends ConsumerWidget {
                         );
                       },
                     ),
-                    if (user.awards != null)
+                    if (user.awards != null && user.awards!.isNotEmpty)
                       const Row(
                         children: [
                           Text(
@@ -502,7 +497,7 @@ class ProfilePreview extends ConsumerWidget {
                         );
                       },
                     ),
-                    if (user.brochure != null)
+                    if (user.brochure != null && user.brochure!.isNotEmpty)
                       const Row(
                         children: [
                           Text(

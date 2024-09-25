@@ -47,14 +47,14 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              // WhatsApp action
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: FaIcon(FontAwesomeIcons.whatsapp),
+        //     onPressed: () {
+        //       // WhatsApp action
+        //     },
+        //   ),
+        // ],
       ),
       body: ListView(
         children: [

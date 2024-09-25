@@ -281,7 +281,7 @@ class ApiRoutes {
       String description,
       String moq,
       File productImage,
-      String sellerId) async {
+      String sellerId,context) async {
     final url = Uri.parse('$baseUrl/products');
 
     // Create a multipart request
@@ -331,6 +331,9 @@ class ApiRoutes {
     } else {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text(jsonResponse['message'])),
+      );
       print(jsonResponse['message']);
       print('Failed to upload product: ${response.statusCode}');
       return null;
@@ -417,18 +420,14 @@ class ApiRoutes {
     var response = await request.send();
 
     if (response.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Requirement will be reviewed by Admin')),
-      );
+  
       print('Requirement submitted successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
 
       return jsonResponse['message'];
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Couldn\'t upload Requirement')),
-      );
+
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
       print(jsonResponse['message']);

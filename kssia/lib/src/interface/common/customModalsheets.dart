@@ -1021,6 +1021,9 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                   );
                 },
               ),
+              Center(
+                child: Text('Must be less than 1mb'),
+              ),
               const SizedBox(height: 20),
               ModalSheetTextFormField(
                 textController: widget.productNameText,
@@ -1268,9 +1271,19 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-              onPressed: () {
-                api.uploadRequirement(token, id, widget.textController.text,
-                    'pending', widget.requirementImage!, context);
+              onPressed: () async {
+                await api.uploadRequirement(
+                    token,
+                    id,
+                    widget.textController.text,
+                    'pending',
+                    widget.requirementImage!,
+                    context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Requirement will be reviewed by Admin')),
+                );
                 Navigator.pop(context);
               },
               style: ButtonStyle(
