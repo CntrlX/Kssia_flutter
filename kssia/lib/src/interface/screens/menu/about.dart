@@ -16,7 +16,7 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network('https://placehold.co/600x400/png'),
+            Image.asset('assets/aboutus1.png'),
             SizedBox(height: 16),
             SizedBox(height: 8),
             Text(
@@ -57,7 +57,7 @@ Kerala-683 503''',
               ],
             ),
             SizedBox(height: 16),
-            Image.network('https://placehold.co/600x400/png'),
+            // Image.network('https://placehold.co/600x400/png'),
           ],
         ),
       ),
