@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/globals.dart';
-
+import 'package:kssia/src/data/providers/chat_providers.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/OwnMessageCard.dart';
 import 'package:kssia/src/interface/common/ReplyCard.dart';
@@ -22,8 +22,7 @@ class IndividualPage extends ConsumerStatefulWidget {
 }
 
 class _IndividualPageState extends ConsumerState<IndividualPage> {
-  final isBlockedProvider = StateProvider<bool?>((ref) => false);
-
+  bool isBlocked = false;
   bool show = false;
   FocusNode focusNode = FocusNode();
   List<MessageModel> messages = [];
@@ -58,7 +57,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
       (user) {
         setState(() {
           if (user.blockedUsers != null) {
-            ref.read(isBlockedProvider.notifier).state = user.blockedUsers!
+            isBlocked = user.blockedUsers!
                 .any((blockedUser) => blockedUser.userId == widget.receiver.id);
           }
         });
@@ -101,11 +100,9 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isBlocked = ref.watch(isBlockedProvider) ?? false;
     final messageStream = ref.watch(messageStreamProvider);
 
     messageStream.whenData((newMessage) {
-      print('new message: ${newMessage}');
       bool messageExists = messages.any((message) =>
           message.timestamp == newMessage.timestamp &&
           message.content == newMessage.content);
@@ -164,17 +161,31 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   style: const TextStyle(fontSize: 18),
                 ),
                 actions: [
-                  CustomDropDown(
-                    isBlocked: isBlocked,
-                    onBlockStatusChanged: () {
-                      if (isBlocked) {
-                        ref.read(isBlockedProvider.notifier).state = false;
-                      } else {
-                        ref.read(isBlockedProvider.notifier).state = true;
-                      }
-                    },
-                    userId: widget.receiver.id,
-                  )
+                  IconButton(
+                      icon: const Icon(Icons.report),
+                      onPressed: () {
+                        showReportPersonDialog(
+                            context: context,
+                            onReportStatusChanged: () {},
+                            reportType: 'user',
+                            reportedItemId: widget.receiver.id ?? '');
+                      }),
+                  IconButton(
+                      icon: const Icon(Icons.block),
+                      onPressed: () {
+                        showBlockPersonDialog(
+                            context: context,
+                            userId: widget.receiver.id ?? '',
+                            onBlockStatusChanged: () {
+                              setState(() {
+                                if (isBlocked) {
+                                  isBlocked = false;
+                                } else {
+                                  isBlocked = true;
+                                }
+                              });
+                            });
+                      }),
                 ],
               )),
           body: Container(
@@ -209,7 +220,15 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               showReportPersonDialog(
                                   reportedItemId: message.id ?? '',
                                   context: context,
-                                  onReportStatusChanged: () {},
+                                  onReportStatusChanged: () {
+                                    setState(() {
+                                      if (isBlocked) {
+                                        isBlocked = false;
+                                      } else {
+                                        isBlocked = true;
+                                      }
+                                    });
+                                  },
                                   reportType: 'chat');
                             },
                             child: ReplyCard(

@@ -16,6 +16,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_switch.dart';
@@ -259,9 +260,7 @@ class PhoneNumberScreen extends ConsumerWidget {
     try {
       if (countryCode == '971') {
         if (_mobileController.text.length != 9) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please Enter Valid Phone number')),
-          );
+           CustomSnackbar.showSnackbar(context, 'Please Enter valid mobile number');
         } else {
           ApiRoutes userApi = ApiRoutes();
 
@@ -284,16 +283,12 @@ class PhoneNumberScreen extends ConsumerWidget {
               ),
             ));
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed')),
-            );
+             CustomSnackbar.showSnackbar(context, 'Failed');
           }
         }
       } else if (countryCode != '971') {
         if (_mobileController.text.length != 10) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please Enter Valid Phone number')),
-          );
+            CustomSnackbar.showSnackbar(context, 'Please Enter valid mobile number');
         } else {
           ApiRoutes userApi = ApiRoutes();
 
@@ -316,16 +311,12 @@ class PhoneNumberScreen extends ConsumerWidget {
               ),
             ));
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed')),
-            );
+             CustomSnackbar.showSnackbar(context, 'Failed');
           }
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed')),
-      );
+       CustomSnackbar.showSnackbar(context, 'Failed');
     } finally {
       ref.read(loadingProvider.notifier).stopLoading();
     }
@@ -555,14 +546,10 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Wrong OTP')),
-        );
+         CustomSnackbar.showSnackbar(context, 'Wrong OTP');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Wrong OTP')),
-      );
+          CustomSnackbar.showSnackbar(context, 'Wrong OTP');
     } finally {
       ref.read(loadingProvider.notifier).stopLoading();
     }
@@ -854,7 +841,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         productDescriptionController.text,
         productMoqController.text,
         _productImageFIle!,
-        id,context);
+        id,
+        context);
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {
@@ -2508,11 +2496,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       for (var files in filesToBeDeleted) {
                                         api.deleteFile(token, files);
                                       }
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Success')),
-                                      );
+                                      CustomSnackbar.showSnackbar(
+                                          context, "Success!");
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(

@@ -91,7 +91,7 @@ class _MainPageState extends State<MainPage> {
       'assets/icons/home_active.svg',
       'assets/icons/feed_active.svg',
       user.profilePicture ?? 'assets/icons/person-svgrepo-com.svg',
-      'assets/icons/news_active.svg',
+      'assets/icons/event_active.svg',
       'assets/icons/people_active.svg',
     ];
   }

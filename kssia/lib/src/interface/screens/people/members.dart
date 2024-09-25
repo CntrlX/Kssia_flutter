@@ -25,7 +25,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
   @override
   void initState() {
     super.initState();
-
+    _scrollController.addListener(_onScroll);
     _fetchInitialUsers();
   }
 
@@ -58,9 +58,20 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                     log('im inside chat');
                     return ListView.builder(
                       controller: _scrollController,
-                      itemCount:
-                          users.length, // Add 1 for the loading indicator
+                      itemCount: users.length +
+                          (isLoading
+                              ? 1
+                              : 0), // Add 1 to show the loading indicator
                       itemBuilder: (context, index) {
+                        if (index == users.length) {
+                          // This is the loading indicator at the end of the list
+                          return Center(
+                            child:
+                                LoadingAnimation(), // Show loading indicator when fetching more users
+                          );
+                        }
+
+                        // Regular user item
                         var chatForUser = chats.firstWhere(
                           (chat) =>
                               chat.participants?.any((participant) =>
@@ -76,19 +87,18 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                                 profilePicture: users[index].profilePicture,
                               ),
                               Participant(
-                                  id: id), // You can replace this with a default sender (current user)
+                                  id: id), // Replace with current user if needed
                             ],
                           ),
                         );
 
-                        // Get the receiver and sender for the chat
                         var receiver = chatForUser.participants?.firstWhere(
                           (participant) => participant.id != id,
                           orElse: () => Participant(
                             id: users[index].id,
                             firstName: users[index].name?.firstName ?? '',
-                            middleName: users[index].name?.firstName ?? '',
-                            lastName: users[index].name?.firstName ?? '',
+                            middleName: users[index].name?.middleName ?? '',
+                            lastName: users[index].name?.lastName ?? '',
                             profilePicture: users[index].profilePicture,
                           ),
                         );
@@ -97,13 +107,6 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                           (participant) => participant.id == id,
                           orElse: () => Participant(),
                         );
-                        if (index == users.length) {
-                          return isLoading
-                              ? Center(
-                                  child:
-                                      LoadingAnimation()) // Show loading when fetching more users
-                              : SizedBox.shrink(); // Hide when done
-                        }
 
                         final user = users[index];
 
@@ -111,9 +114,8 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ProfilePreview(
-                                  user: user,
-                                ),
+                                builder: (context) =>
+                                    ProfilePreview(user: user),
                               ),
                             );
                           },
@@ -141,10 +143,11 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                               icon: Icon(Icons.chat),
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => IndividualPage(
-                                          receiver: receiver!,
-                                          sender: sender!,
-                                        )));
+                                  builder: (context) => IndividualPage(
+                                    receiver: receiver!,
+                                    sender: sender!,
+                                  ),
+                                ));
                               },
                             ),
                           ),

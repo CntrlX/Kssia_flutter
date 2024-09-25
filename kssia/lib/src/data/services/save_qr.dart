@@ -15,7 +15,7 @@ Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
     // Request storage permission for Android versions below 10
     if (!(await Permission.storage.request().isGranted)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage permission denied')),
+         SnackBar(content: Text('Storage permission denied')),
       );
       return;
     }
@@ -44,7 +44,7 @@ Future<void> saveScreenshot(Uint8List? imageBytes, BuildContext context) async {
     );
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Failed to capture screenshot')),
+       SnackBar(content: Text('Failed to capture screenshot')),
     );
   }
 }

@@ -1,8 +1,5 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -10,9 +7,12 @@ import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/notifiers/people_notifier.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/data/services/getRatings.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
@@ -91,7 +91,7 @@ void showWebsiteSheet({
                           if (_formKey.currentState!.validate()) {
                             addWebsite();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Saved')),
+                               SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -212,7 +212,7 @@ void showVideoLinkSheet({
                           if (_formKey.currentState!.validate()) {
                             addVideo();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Saved')),
+                               SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -342,7 +342,7 @@ void showWlinkorVlinkSheet(
                               }
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Saved')),
+                               SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           },
@@ -1280,10 +1280,8 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                     widget.requirementImage!,
                     context);
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Requirement will be reviewed by Admin')),
-                );
+                CustomSnackbar.showSnackbar(
+                    context, "Your requirement will be reviewed by ADMIN");
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -1458,9 +1456,11 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'How is your Experience with this Member?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Flexible(
+                child: Text(
+                  'How is your Experience with this Member?',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
               IconButton(
                 icon: Icon(Icons.close),
@@ -1517,7 +1517,7 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
                                 selectedRating, context)
                             .then(
                           (value) {
-                            ref.invalidate(userProvider);
+                            ref.invalidate(peopleNotifierProvider);
                           },
                         );
                         Navigator.of(context).pop();
@@ -1703,6 +1703,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                 const SizedBox(height: 16),
                 asyncUser.when(
                   data: (user) {
+                    final averageRating = getAverageRating(user);
+                    final totalReviews = user.reviews!.length;
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -1734,11 +1736,11 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             ],
                           ),
                           const Spacer(),
-                          const Row(
+                          Row(
                             children: [
                               Icon(Icons.star, color: Colors.orange),
-                              Text('4.5'),
-                              Text('(24 Reviews)'),
+                              Text(averageRating.toString()),
+                              Text('($totalReviews)'),
                             ],
                           )
                         ],

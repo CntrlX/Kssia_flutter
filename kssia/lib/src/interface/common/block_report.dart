@@ -112,7 +112,9 @@ class CustomDropDown extends ConsumerWidget {
               showBlockPersonDialog(
                   context: context,
                   userId: userId ?? '',
-                  onBlockStatusChanged: () {});
+                  onBlockStatusChanged: () {
+                    onBlockStatusChanged;
+                  });
             }
           }
         },

@@ -14,6 +14,7 @@ import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/models/user_requirement_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -242,12 +243,11 @@ class ApiRoutes {
     );
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Requirement Deleted Successfully')));
+      CustomSnackbar.showSnackbar(
+          context, "'Requirement Deleted Successfully'");
     } else {
       final jsonResponse = json.decode(response.body);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(jsonResponse['message'])));
+      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
       print(jsonResponse['message']);
       print('Failed to delete image: ${response.statusCode}');
     }
@@ -281,7 +281,8 @@ class ApiRoutes {
       String description,
       String moq,
       File productImage,
-      String sellerId,context) async {
+      String sellerId,
+      context) async {
     final url = Uri.parse('$baseUrl/products');
 
     // Create a multipart request
@@ -331,9 +332,8 @@ class ApiRoutes {
     } else {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
-       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(jsonResponse['message'])),
-      );
+      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
+
       print(jsonResponse['message']);
       print('Failed to upload product: ${response.statusCode}');
       return null;
@@ -367,14 +367,12 @@ class ApiRoutes {
 
       // Handle the response
       if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Reported to Admin')),
-        );
+        CustomSnackbar.showSnackbar(context, 'Reported to admin');
+
         print('Report created successfully');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to Report')),
-        );
+        CustomSnackbar.showSnackbar(context, 'Failed to Report');
+
         print('Failed to create report: ${response.statusCode}');
         print('Error: ${response.body}');
       }
@@ -420,14 +418,12 @@ class ApiRoutes {
     var response = await request.send();
 
     if (response.statusCode == 201) {
-  
       print('Requirement submitted successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
 
       return jsonResponse['message'];
     } else {
-
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
       print(jsonResponse['message']);
@@ -510,13 +506,12 @@ class ApiRoutes {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Review posted successfully');
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Review posted successfully')));
+        CustomSnackbar.showSnackbar(
+            context, 'Your Review will be Posted after some time');
       } else {
         print('Failed to post review: ${response.statusCode}');
         print('Response body: ${response.body}');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to post review')));
+        CustomSnackbar.showSnackbar(context, 'Failed to post Review');
       }
     } catch (e) {
       print('Error: $e');
@@ -537,13 +532,11 @@ class ApiRoutes {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Review posted successfully');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                'NFC requested sucessfully and we will mail you shortly')));
+        CustomSnackbar.showSnackbar(
+            context, 'NFC requested sucessfully and we will mail you shortly');
       } else {
         print('Response body: ${response.body}');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed')));
+        CustomSnackbar.showSnackbar(context, 'Failed to request');
       }
     } catch (e) {
       print('Error: $e');
@@ -569,15 +562,13 @@ class ApiRoutes {
         // Success
         ref.invalidate(userProvider);
         print('User Blocked successfully');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('User Blocked ')));
+        CustomSnackbar.showSnackbar(context, 'User Blocked');
       } else {
         // Handle error
         print('Failed to Block: ${response.statusCode}');
         final dynamic message = json.decode(response.body)['message'];
         log(message);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to Block')));
+        CustomSnackbar.showSnackbar(context, 'Failed to block');
       }
     } catch (e) {
       // Handle exceptions
@@ -600,15 +591,13 @@ class ApiRoutes {
       if (response.statusCode == 200) {
         // Success
         print('User unBlocked successfully');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('User unblocked ')));
+        CustomSnackbar.showSnackbar(context, 'User unblocked');
       } else {
         // Handle error
         print('Failed to unBlock: ${response.statusCode}');
         final dynamic message = json.decode(response.body)['message'];
         log(message);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to unblock')));
+        CustomSnackbar.showSnackbar(context, 'Failed to block');
       }
     } catch (e) {
       // Handle exceptions
@@ -633,13 +622,11 @@ Future<void> markEventAsRSVP(String eventId, context) async {
     if (response.statusCode == 200) {
       // Success
       print('RSVP marked successfully');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registered sucessfully successfully')));
+      CustomSnackbar.showSnackbar(context, 'Registered successfully');
     } else {
       // Handle error
       print('Failed to mark RSVP: ${response.statusCode}');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to Register')));
+      CustomSnackbar.showSnackbar(context, 'Failed to register');
     }
   } catch (e) {
     // Handle exceptions

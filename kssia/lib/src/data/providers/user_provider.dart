@@ -14,7 +14,7 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
     _initializeUser();
   }
   Future<void> _initializeUser() async {
-
+    if (mounted) {
       try {
         log('user provider token');
         final user = await ref.read(fetchUserDetailsProvider(token, id).future);
@@ -22,7 +22,7 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
       } catch (e, stackTrace) {
         state = AsyncValue.error(e, stackTrace);
       }
-
+    }
   }
 
   void updateName({
@@ -194,7 +194,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
           socialmedias.indexWhere((item) => item.platform == platform);
 
       if (index != -1) {
-        
         final updatedSocialMedia = socialmedias[index].copyWith(url: newUrl);
         socialmedias[index] = updatedSocialMedia;
       } else {

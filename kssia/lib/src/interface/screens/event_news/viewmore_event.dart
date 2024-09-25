@@ -7,6 +7,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
 class ViewMoreEventPage extends ConsumerStatefulWidget {
@@ -37,12 +38,16 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        title: Text(
+          "Event Details",
+          style: TextStyle(fontSize: 17),
+        ),
         backgroundColor: Colors.white,
-        title: const Text('Event Details'),
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -245,9 +250,8 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                               widget.event.status != 'cancelled') {
                             ;
                             await markEventAsRSVP(widget.event.id!, context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Registered')));
-                            // Update the local rsvp list to reflect the changes immediately
+                            CustomSnackbar.showSnackbar(context,'Registered');
+
                             setState(() {
                               widget.event.rsvp
                                   ?.add(id); // Add the user to RSVP
