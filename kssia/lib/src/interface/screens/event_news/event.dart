@@ -136,13 +136,13 @@ class _EventPageState extends ConsumerState<EventPage> {
                         ),
                       ),
                       // Icon placed above the image
-                      Center(
-                        child: Icon(
-                          Icons.play_circle_fill,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      ),
+                      // Center(
+                      //   child: Icon(
+                      //     Icons.play_circle_fill,
+                      //     color: Colors.white,
+                      //     size: 50,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

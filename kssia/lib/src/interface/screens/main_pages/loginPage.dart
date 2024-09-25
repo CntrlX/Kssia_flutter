@@ -260,7 +260,8 @@ class PhoneNumberScreen extends ConsumerWidget {
     try {
       if (countryCode == '971') {
         if (_mobileController.text.length != 9) {
-           CustomSnackbar.showSnackbar(context, 'Please Enter valid mobile number');
+          CustomSnackbar.showSnackbar(
+              context, 'Please Enter valid mobile number');
         } else {
           ApiRoutes userApi = ApiRoutes();
 
@@ -283,12 +284,13 @@ class PhoneNumberScreen extends ConsumerWidget {
               ),
             ));
           } else {
-             CustomSnackbar.showSnackbar(context, 'Failed');
+            CustomSnackbar.showSnackbar(context, 'Failed');
           }
         }
       } else if (countryCode != '971') {
         if (_mobileController.text.length != 10) {
-            CustomSnackbar.showSnackbar(context, 'Please Enter valid mobile number');
+          CustomSnackbar.showSnackbar(
+              context, 'Please Enter valid mobile number');
         } else {
           ApiRoutes userApi = ApiRoutes();
 
@@ -311,12 +313,12 @@ class PhoneNumberScreen extends ConsumerWidget {
               ),
             ));
           } else {
-             CustomSnackbar.showSnackbar(context, 'Failed');
+            CustomSnackbar.showSnackbar(context, 'Failed');
           }
         }
       }
     } catch (e) {
-       CustomSnackbar.showSnackbar(context, 'Failed');
+      CustomSnackbar.showSnackbar(context, 'Failed');
     } finally {
       ref.read(loadingProvider.notifier).stopLoading();
     }
@@ -546,10 +548,10 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));
       } else {
-         CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+        CustomSnackbar.showSnackbar(context, 'Wrong OTP');
       }
     } catch (e) {
-          CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+      CustomSnackbar.showSnackbar(context, 'Wrong OTP');
     } finally {
       ref.read(loadingProvider.notifier).stopLoading();
     }
@@ -985,8 +987,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           "middle_name": user.name?.middleName,
         "last_name": user.name?.lastName,
       },
-      "blood_group": user.bloodGroup,
-      "email": user.email,
+      if (user.bloodGroup != null) "blood_group": user.bloodGroup,
+      if (user.email != null) "email": user.email,
       if (user.profilePicture != null) "profile_picture": user.profilePicture,
       "phone_numbers": {
         if (user.phoneNumbers?.personal != null)
@@ -1002,13 +1004,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
           "whatsapp_business_number":
               user.phoneNumbers!.whatsappBusinessNumber ?? '',
       },
-      if (user.designation != null) "designation": user.designation,
-      if (user.companyLogo != null) "company_logo": user.companyLogo,
-      if (user.companyName != null) "company_name": user.companyName,
-      if (user.companyEmail != null) "company_email": user.companyEmail,
-      if (user.companyAddress != null) "company_address": user.companyAddress,
-      if (user.bio != null) "bio": user.bio,
-      if (user.address != null) "address": user.address,
+      if (user.designation != null && user.designation != '')
+        "designation": user.designation,
+      if (user.companyLogo != null && user.companyLogo != '')
+        "company_logo": user.companyLogo,
+      if (user.companyName != null && user.companyName != '')
+        "company_name": user.companyName,
+      if (user.companyEmail != null && user.companyEmail != '')
+        "company_email": user.companyEmail,
+      if (user.companyAddress != null && user.companyAddress != '')
+        "company_address": user.companyAddress,
+      if (user.bio != null && user.bio != '') "bio": user.bio,
+      if (user.address != null && user.address != '') "address": user.address,
       if (user.socialMedia != [])
         "social_media": [
           for (var i in user.socialMedia!)
@@ -1685,22 +1692,22 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 ),
                               ),
                               // if (isPhoneNumberVisible)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 20, right: 20, top: 0, bottom: 10),
-                                child: CustomTextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Your Phone Number';
-                                    }
-                                    return null;
-                                  },
-                                  textController: personalPhoneController,
-                                  labelText: 'Enter phone number',
-                                  prefixIcon: const Icon(Icons.phone,
-                                      color: Color(0xFF004797)),
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(
+                              //       left: 20, right: 20, top: 0, bottom: 10),
+                              //   child: CustomTextFormField(
+                              //     validator: (value) {
+                              //       if (value == null || value.isEmpty) {
+                              //         return 'Please Enter Your Phone Number';
+                              //       }
+                              //       return null;
+                              //     },
+                              //     textController: personalPhoneController,
+                              //     labelText: 'Enter phone number',
+                              //     prefixIcon: const Icon(Icons.phone,
+                              //         color: Color(0xFF004797)),
+                              //   ),
+                              // ),
                               // if (isPhoneNumberVisible && !isLandlineVisible)
                               // Padding(
                               //   padding: const EdgeInsets.only(

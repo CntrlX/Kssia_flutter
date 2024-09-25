@@ -93,78 +93,83 @@ class _FeedViewState extends ConsumerState<FeedView> {
         final isLoading =
             ref.read(requirementsNotifierProvider.notifier).isLoading;
 
-        return Scaffold(
-          body: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search your requirements',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
+        return RefreshIndicator(
+          onRefresh: () => ref
+              .read(requirementsNotifierProvider.notifier)
+              .refreshRequirements(),
+          child: Scaffold(
+            body: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: Icon(Icons.search),
+                        hintText: 'Search your requirements',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 216, 211, 211),
+                          ),
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
-                        ),
-                      ),
-                    ),
-                  )),
-              SizedBox(height: 16),
-              if (requirements.isNotEmpty)
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: requirements.length,
-                  itemBuilder: (context, index) {
-                    final requirement = requirements[index];
-                    if (requirement.status == 'approved') {
-                      return _buildPost(
-                        withImage: requirement.image != null &&
-                            requirement.image!.isNotEmpty,
-                        requirement: requirement,
-                      );
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
-                ),
-              if (requirements.isEmpty)
-                Center(
-                  child: Text(' No Requirements'),
-                ),
-              SizedBox(
-                height: 40,
-              )
-            ],
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openModalSheet(sheet: 'requirement'),
-            label: const Text(
-              'Add Requirement/update',
-              style: TextStyle(color: Colors.white),
+                    )),
+                SizedBox(height: 16),
+                if (requirements.isNotEmpty)
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: requirements.length,
+                    itemBuilder: (context, index) {
+                      final requirement = requirements[index];
+                      if (requirement.status == 'approved') {
+                        return _buildPost(
+                          withImage: requirement.image != null &&
+                              requirement.image!.isNotEmpty,
+                          requirement: requirement,
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    },
+                  ),
+                if (requirements.isEmpty)
+                  Center(
+                    child: Text(' No Requirements'),
+                  ),
+                SizedBox(
+                  height: 40,
+                )
+              ],
             ),
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 27,
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => _openModalSheet(sheet: 'requirement'),
+              label: const Text(
+                'Add Requirement/update',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 27,
+              ),
+              backgroundColor: const Color(0xFF004797),
             ),
-            backgroundColor: const Color(0xFF004797),
           ),
         );
       },

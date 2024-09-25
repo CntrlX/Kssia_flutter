@@ -7,6 +7,7 @@ import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'requirements_notifier.g.dart';
+
 @riverpod
 class RequirementsNotifier extends _$RequirementsNotifier {
   List<Requirement> requirements = [];
@@ -41,30 +42,27 @@ class RequirementsNotifier extends _$RequirementsNotifier {
     }
   }
 
-   Future<void> refresh({required String blockedUserId}) async {
-    if (isLoading) return;
+  //  Future<void> refresh({required String blockedUserId}) async {
+  //   if (isLoading) return;
 
-    isLoading = true;
+  //   isLoading = true;
 
-    try {
-      // Fetch requirements for the current page and limit
-      final refreshedRequirements = requirements.where((requirement) => requirement.author?.id!=blockedUserId).toList();
-      
+  //   try {
+  //     // Fetch requirements for the current page and limit
+  //     final refreshedRequirements = requirements.where((requirement) => requirement.author?.id!=blockedUserId).toList();
 
-      requirements = refreshedRequirements;
+  //     requirements = refreshedRequirements;
 
+  //     state = requirements;
 
-      state = requirements;
-
-
-    } catch (e, stackTrace) {
-      log(e.toString());
-      log(stackTrace.toString());
-    } finally {
-      isLoading = false;
-      log('Requirements refreshed: $requirements');
-    }
-  }
+  //   } catch (e, stackTrace) {
+  //     log(e.toString());
+  //     log(stackTrace.toString());
+  //   } finally {
+  //     isLoading = false;
+  //     log('Requirements refreshed: $requirements');
+  //   }
+  // }
 
   // Function to refresh the requirements while keeping the current page and limit
   Future<void> refreshRequirements() async {
@@ -73,24 +71,18 @@ class RequirementsNotifier extends _$RequirementsNotifier {
     isLoading = true;
 
     try {
-      // Fetch requirements for the current page and limit
+      pageNo = 1;
       final refreshedRequirements = await ref
           .read(fetchRequirementsProvider(pageNo: pageNo, limit: limit).future);
-      
-      // Replace the old requirements with the new data
       requirements = refreshedRequirements;
-
-      // Update state with refreshed requirements
-      state = requirements;
-
-      // If the number of fetched requirements is less than the limit, mark hasMore as false
       hasMore = refreshedRequirements.length == limit;
+      state = requirements; // Update the state with the refreshed feed\
+      log('refreshed');
     } catch (e, stackTrace) {
       log(e.toString());
       log(stackTrace.toString());
     } finally {
       isLoading = false;
-      log('Requirements refreshed: $requirements');
     }
   }
 }
