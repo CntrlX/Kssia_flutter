@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
@@ -30,6 +33,10 @@ class NewsPage extends StatelessWidget {
                     (currentIndex - 1 + news.length) % news.length;
               }
 
+              String minsToRead = calculateReadingTimeAndWordCount(
+                  news[currentIndex].content ?? '');
+              String formattedDate =
+                  '${DateFormat('MMM dd, yyyy, hh:mm a').format(news[currentIndex].updatedAt!)} IST';
               return Scaffold(
                 body: Column(
                   children: [
@@ -63,11 +70,26 @@ class NewsPage extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          news[currentIndex].category ?? '',
-                                          style: const TextStyle(
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: const Color.fromARGB(
+                                                  255, 192, 252, 194)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10,
+                                                right: 10,
+                                                top: 2,
+                                                bottom: 2),
+                                            child: Text(
+                                              news[currentIndex].category ?? '',
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
@@ -76,8 +98,6 @@ class NewsPage extends StatelessWidget {
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        const SizedBox(height: 8),
-                                        const SizedBox(height: 8),
                                       ],
                                     ),
                                   ),
@@ -87,11 +107,39 @@ class NewsPage extends StatelessWidget {
                           ),
                           SliverFillRemaining(
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 16),
                               child: SingleChildScrollView(
-                                child: Text(
-                                  news[currentIndex].content!,
-                                  style: const TextStyle(fontSize: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          formattedDate,
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 12),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          minsToRead,
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          news[currentIndex].content ?? '',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -118,10 +166,10 @@ class NewsPage extends StatelessWidget {
                             child: const Row(
                               children: [
                                 Icon(Icons.arrow_back,
-                                    color: Color(0xFFE30613)),
+                                    color: Color(0xFF004797)),
                                 SizedBox(width: 8),
                                 Text('Previous',
-                                    style: TextStyle(color: Color(0xFFE30613))),
+                                    style: TextStyle(color: Color(0xFF004797))),
                               ],
                             ),
                           ),
@@ -142,10 +190,10 @@ class NewsPage extends StatelessWidget {
                             child: const Row(
                               children: [
                                 Text('Next',
-                                    style: TextStyle(color: Color(0xFFE30613))),
+                                    style: TextStyle(color: Color(0xFF004797))),
                                 SizedBox(width: 8),
                                 Icon(Icons.arrow_forward,
-                                    color: Color(0xFFE30613)),
+                                    color: Color(0xFF004797)),
                               ],
                             ),
                           ),
@@ -164,7 +212,7 @@ class NewsPage extends StatelessWidget {
           loading: () => Center(child: LoadingAnimation()),
           error: (error, stackTrace) {
             return Center(
-              child: LoadingAnimation(),
+              child: Text('No News'),
             );
           },
         );
@@ -172,6 +220,33 @@ class NewsPage extends StatelessWidget {
     );
   }
 }
+
+String calculateReadingTimeAndWordCount(String text) {
+  // Count the number of words by splitting the string on whitespace
+  List<String> words = text.trim().split(RegExp(r'\s+'));
+  int wordCount = words.length;
+
+  // Average reading speed in words per minute (WPM)
+  const int averageWPM = 250;
+
+  // Calculate reading time in minutes
+  double readingTimeMinutes = wordCount / averageWPM;
+
+  // Convert the decimal to minutes and seconds
+  int minutes = readingTimeMinutes.floor();
+  int seconds = ((readingTimeMinutes - minutes) * 60).round();
+
+  // Format the result as 'x min y sec' or just 'x min'
+  String formattedTime;
+  if (minutes > 0) {
+    formattedTime = '$minutes min ${seconds > 0 ? '$seconds sec' : ''}';
+  } else {
+    formattedTime = '$seconds sec';
+  }
+
+  return '$formattedTime read';
+}
+
 // void main() {
 //   runApp(MaterialApp(
 //     home: NewsPage(),

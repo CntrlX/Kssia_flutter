@@ -433,6 +433,7 @@ class ApiRoutes {
   }
 
   Future<String?> uploadPayment(
+    context,
     String token,
     String category,
     String remarks,
@@ -475,11 +476,12 @@ class ApiRoutes {
       print('Payment submitted successfully');
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
-
+      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
       return jsonResponse['message'];
     } else {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
+        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
       print(jsonResponse['message']);
       print('Failed to submit Payment: ${response.statusCode}');
       return 'Failed';

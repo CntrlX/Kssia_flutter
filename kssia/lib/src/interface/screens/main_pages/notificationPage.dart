@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 class NotificationPage extends StatelessWidget {
@@ -43,6 +45,7 @@ class NotificationPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
+                            link: unreadNotifications[index].linkUrl!,
                             readed: readed,
                             subject: unreadNotifications[index].subject!,
                             content: unreadNotifications[index].content!,
@@ -70,9 +73,10 @@ class NotificationPage extends StatelessWidget {
                           bool readed = true;
                           return _buildNotificationCard(
                             readed: readed,
-                            subject: readNotifications[index].subject!,
-                            content: readNotifications[index].content!,
+                            subject: readNotifications[index].subject ?? '',
+                            content: readNotifications[index].content ?? '',
                             dateTime: readNotifications[index].updatedAt!,
+                            link: readNotifications[index].linkUrl ?? '',
                           );
                         },
                         padding: EdgeInsets.all(0.0),
@@ -98,42 +102,51 @@ class NotificationPage extends StatelessWidget {
       {required bool readed,
       required String subject,
       required String content,
-      required DateTime dateTime}) {
+      required DateTime dateTime,
+      required String link}) {
     String time = timeAgo(dateTime);
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
-      child: Card(
-        elevation: 1,
-        color: readed ? Color(0xFFF2F2F2) : Colors.white,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  if (!readed) Icon(Icons.circle, color: Colors.blue, size: 12),
-                  SizedBox(width: 8),
-                  Text(
-                    subject,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () {
+          if (link != '') {
+            launchURL(link);
+          }
+        },
+        child: Card(
+          elevation: 1,
+          color: readed ? Color(0xFFF2F2F2) : Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    if (!readed)
+                      Icon(Icons.circle, color: Colors.blue, size: 12),
+                    SizedBox(width: 8),
+                    Text(
+                      subject,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-              Text(
-                content,
-                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-              ),
-              SizedBox(height: 8),
-              Text(
-                time,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  content,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  time,
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
           ),
         ),
       ),

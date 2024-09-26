@@ -11,3 +11,19 @@ String? validateYouTubeUrl(String? value) {
   }
   return null;
 }
+
+
+
+
+
+
+String? isValidUri(String? link) {
+      final uri = Uri.parse(link??'');
+  if (link == null || link.isEmpty) {
+    return 'Please enter a Valid link';
+  }
+  if (!uri.hasScheme && !(uri.isAbsolute || uri.host.isNotEmpty)) {
+    return 'Please enter a valid Social Media link';
+  }
+  return null;
+}

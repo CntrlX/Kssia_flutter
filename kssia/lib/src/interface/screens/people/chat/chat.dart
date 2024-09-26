@@ -16,8 +16,6 @@ class ChatPage extends ConsumerStatefulWidget {
 }
 
 class _ChatPageState extends ConsumerState<ChatPage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
@@ -46,8 +44,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                     ),
                     title: Text(
                         '${receiver?.firstName ?? ''}${receiver?.middleName ?? ''}${receiver?.lastName ?? ''}'),
-                    subtitle:
-                        Text(chats[index].lastMessage?[0].content ?? ''),
+                    subtitle: Text(chats[index].lastMessage?[0].content ?? ''),
                     trailing: chats[index].unreadCount?[sender?.id] != 0 &&
                             chats[index].unreadCount?[sender!.id] != null
                         ? SizedBox(
@@ -64,18 +61,17 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                 minHeight: 16,
                               ),
                               child: Center(
-                                child:
-                                    chats[index].unreadCount?[sender!.id] !=
-                                            null
-                                        ? Text(
-                                            '${chats[index].unreadCount?[sender!.id]}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          )
-                                        : null,
+                                child: chats[index].unreadCount?[sender!.id] !=
+                                        null
+                                    ? Text(
+                                        '${chats[index].unreadCount?[sender!.id]}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      )
+                                    : null,
                               ),
                             ),
                           )

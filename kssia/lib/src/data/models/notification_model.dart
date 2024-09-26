@@ -1,41 +1,29 @@
 class NotificationModel {
-  final String? id;
-  final List<String>? to;
-  final String? subject;
-  final String? content;
-  final String? type;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  String? id;
+  List<String>? to;
+  String? subject;
+  String? content;
+  String? fileUrl;
+  String? linkUrl;
+  String? type;
+  List<String>? readBy;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  int? v;
 
   NotificationModel({
     this.id,
     this.to,
     this.subject,
     this.content,
+    this.fileUrl,
+    this.linkUrl,
     this.type,
+    this.readBy,
     this.createdAt,
     this.updatedAt,
+    this.v,
   });
-
-  NotificationModel copyWith({
-    String? id,
-    List<String>? to,
-    String? subject,
-    String? content,
-    String? type,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return NotificationModel(
-      id: id ?? this.id,
-      to: to ?? this.to,
-      subject: subject ?? this.subject,
-      content: content ?? this.content,
-      type: type ?? this.type,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
@@ -43,13 +31,13 @@ class NotificationModel {
       to: (json['to'] as List<dynamic>?)?.map((e) => e as String).toList(),
       subject: json['subject'] as String?,
       content: json['content'] as String?,
+      fileUrl: json['file_url'] as String?,
+      linkUrl: json['link_url'] as String?,
       type: json['type'] as String?,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
+      readBy: (json['readBy'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      v: json['__v'] as int?,
     );
   }
 
@@ -59,9 +47,13 @@ class NotificationModel {
       'to': to,
       'subject': subject,
       'content': content,
+      'file_url': fileUrl,
+      'link_url': linkUrl,
       'type': type,
+      'readBy': readBy,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      '__v': v,
     };
   }
 }

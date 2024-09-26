@@ -7,6 +7,18 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
+
+class ReviewsState extends StateNotifier<int> {
+  ReviewsState() : super(1);
+
+  void showMoreReviews(int totalReviews) {
+    state = (state + 2).clamp(0, totalReviews);
+  }
+}
+
+final reviewsProvider = StateNotifierProvider<ReviewsState, int>((ref) {
+  return ReviewsState();
+});
 class MyReviewsPage extends StatelessWidget {
   const MyReviewsPage({Key? key}) : super(key: key);
 
@@ -16,6 +28,7 @@ class MyReviewsPage extends StatelessWidget {
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text('My Reviews'),
             leading: IconButton(
@@ -53,36 +66,39 @@ class MyReviewsPage extends StatelessWidget {
                       height: 1.0,
                       color: Colors.grey[300], // Divider color
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ReviewBarChart(
-                        ratingDistribution: ratingDistribution,
-                        averageRating: averageRating,
-                        totalReviews: totalReviews,
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: user.reviews!.length,
-                      itemBuilder: (context, index) {
-                        return ReviewsCard(
-                          review: user.reviews![index],
+                    if (totalReviews != 0)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ReviewBarChart(
                           ratingDistribution: ratingDistribution,
                           averageRating: averageRating,
                           totalReviews: totalReviews,
-                        );
-                      },
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          // Placeholder for 'View More' functionality
-                        },
-                        child: const Text('View More'),
+                        ),
                       ),
-                    ),
+                    if (totalReviews != 0)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: user.reviews!.length,
+                        itemBuilder: (context, index) {
+                          return ReviewsCard(
+                            review: user.reviews![index],
+                            ratingDistribution: ratingDistribution,
+                            averageRating: averageRating,
+                            totalReviews: totalReviews,
+                          );
+                        },
+                      ),
+                    if (totalReviews != 0)
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            // Placeholder for 'View More' functionality
+                          },
+                          child: const Text('View More'),
+                        ),
+                      ),
                   ],
                 ),
               );

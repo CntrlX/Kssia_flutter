@@ -91,7 +91,7 @@ void showWebsiteSheet({
                           if (_formKey.currentState!.validate()) {
                             addWebsite();
                             ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(content: Text('Saved')),
+                              SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -212,7 +212,7 @@ void showVideoLinkSheet({
                           if (_formKey.currentState!.validate()) {
                             addVideo();
                             ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(content: Text('Saved')),
+                              SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -342,7 +342,7 @@ void showWlinkorVlinkSheet(
                               }
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(content: Text('Saved')),
+                              SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           },
@@ -1314,15 +1314,14 @@ class ShowPaymentUploadSheet extends StatefulWidget {
   final TextEditingController textController;
   final String imageType;
   File? paymentImage;
-  final BuildContext context1;
   final String subscriptionType;
+
   ShowPaymentUploadSheet(
       {super.key,
       required this.pickImage,
       required this.textController,
       required this.imageType,
       this.paymentImage,
-      required this.context1,
       required this.subscriptionType});
 
   @override
@@ -1412,13 +1411,23 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
           ),
           const SizedBox(height: 10),
           customButton(
-              label: 'SAVE',
-              onPressed: () {
-                api.uploadPayment(token, widget.subscriptionType,
-                    widget.textController.text, widget.paymentImage!);
-                Navigator.pop(context);
-              },
-              fontSize: 16)
+            label: 'SAVE',
+            onPressed: () async {
+              // Make sure to handle the API call and show the snackbar conditionally
+              String? success = await api.uploadPayment(
+                context,
+                token,
+                widget.subscriptionType,
+                widget.textController.text,
+                widget.paymentImage!,
+              );
+
+              // Check if the widget is still mounted
+
+              Navigator.pop(context);
+            },
+            fontSize: 16,
+          ),
         ],
       ),
     );

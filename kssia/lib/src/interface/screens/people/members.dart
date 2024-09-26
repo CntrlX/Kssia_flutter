@@ -125,8 +125,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                               width: 40,
                               child: ClipOval(
                                 child: Image.network(
-                                  user.profilePicture ??
-                                      'https://placehold.co/600x400/png',
+                                  user.profilePicture ?? 'error',
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Icon(Icons.person);

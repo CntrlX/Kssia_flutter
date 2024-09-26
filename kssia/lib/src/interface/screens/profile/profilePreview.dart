@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -243,6 +242,37 @@ class ProfilePreview extends ConsumerWidget {
                                 child: Text(
                                   user.address!,
                                 ),
+                              )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const SvgIcon(
+                              assetName: 'assets/icons/whatsapp.svg',
+                              color: Color(0xFF004797),
+                              size: 25,
+                            ),
+                            const SizedBox(width: 10),
+                            if (user.phoneNumbers?.whatsappNumber != null)
+                              Expanded(
+                                child: Text(user.phoneNumbers!.whatsappNumber!),
+                              )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const SvgIcon(
+                              assetName: 'assets/icons/whatsapp-business.svg',
+                              color: Color(0xFF004797),
+                              size: 23,
+                            ),
+                            const SizedBox(width: 10),
+                            if (user.phoneNumbers?.whatsappBusinessNumber !=
+                                null)
+                              Expanded(
+                                child: Text(user.phoneNumbers!.whatsappNumber!),
                               )
                           ],
                         ),

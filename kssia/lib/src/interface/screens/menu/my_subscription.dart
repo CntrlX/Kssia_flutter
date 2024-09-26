@@ -25,11 +25,12 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
         isScrollControlled: true,
         context: context,
         builder: (context) {
-          return ShowPaymentUploadSheet(subscriptionType: subscriptionType,
+          return ShowPaymentUploadSheet(
+            subscriptionType: subscriptionType,
             pickImage: _pickFile,
             textController: remarksController,
             imageType: 'payment',
-            context1: context,
+         
             paymentImage: _paymentImage,
           );
         });
@@ -38,30 +39,31 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: const Text('My Subscription'),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        // actions: [
-        //   IconButton(
-        //     icon: FaIcon(FontAwesomeIcons.whatsapp),
-        //     onPressed: () {
-        //       // WhatsApp action
-        //     },
-        //   ),
-        // ],
-      ),
+      appBar:AppBar(
+            title: Text(
+              "My Subscription",
+              style: TextStyle(fontSize: 15),
+            ),
+            backgroundColor: Colors.white,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
       body: ListView(
         children: [
           subscriptionCard(context, 'membership', 'Active', '12th July 2025',
               '₹2000', '12th July 2026', Colors.green),
           subscriptionCard(context, 'app', 'Premium', '12th July 2025', '₹2000',
               '12th July 2026', Colors.orange),
+          SizedBox(
+            height: 30,
+          )
         ],
       ),
     );
@@ -75,79 +77,81 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
       String amount,
       String dueDate,
       Color statusColor) {
-    return Card(
-      margin: const EdgeInsets.all(20),
-      elevation: 4,
-      shadowColor: Color(0xFFFFFFFF).withOpacity(0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              subscriptionType,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Plan',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF616161),
-                  ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+            border:
+                Border.all(color: const Color.fromARGB(255, 225, 217, 217))),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                subscriptionType,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: statusColor),
-                  ),
-                  child: Text(
-                    planStatus,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Plan',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF616161),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            detailRow('Last Renewed date', lastRenewedDate),
-            detailRow('Amount to be paid', amount),
-            detailRow(
-                subscriptionType == 'Membership subscription'
-                    ? 'Due date'
-                    : 'Expiry date',
-                dueDate),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF004797),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFFFFF),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: statusColor),
+                    ),
+                    child: Text(
+                      planStatus,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-                onPressed: () => _openModalSheet(
-                    sheet: 'payment', subscriptionType: subscriptionType),
-                child: const Text('UPLOAD RECEIPT'),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              detailRow('Last Renewed date', lastRenewedDate),
+              detailRow('Amount to be paid', amount),
+              detailRow(
+                  subscriptionType == 'Membership subscription'
+                      ? 'Due date'
+                      : 'Expiry date',
+                  dueDate),
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004797),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: () => _openModalSheet(
+                      sheet: 'payment', subscriptionType: subscriptionType),
+                  child: const Text('UPLOAD RECEIPT'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

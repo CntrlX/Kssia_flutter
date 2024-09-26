@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
@@ -7,10 +8,11 @@ import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
 
 Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
+  initializeNotifications();
   runApp(ProviderScope(child: MainApp()));
 }
 
@@ -62,4 +64,18 @@ class MainApp extends StatelessWidget {
           '/mainpage': (context) => MainPage(),
         });
   }
+}
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+// Initialize in your main function
+void initializeNotifications() {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }

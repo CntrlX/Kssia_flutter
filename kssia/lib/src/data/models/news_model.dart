@@ -1,46 +1,43 @@
 class News {
-  final String id;
-  final String category;
-  final String title;
-  final String image;
-  final String content;
+  final String? id;
+  final String? category;
+  final String? title;
+  final String? image;
+  final String? content;
+  final bool? published;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   News({
-    required this.id,
-    required this.category,
-    required this.title,
-    required this.image,
-    required this.content,
+    this.id,
+    this.category,
+    this.title,
+    this.image,
+    this.content,
+    this.published,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  News copyWith({
-    String? id,
-    String? category,
-    String? title,
-    String? image,
-    String? content,
-  }) {
-    return News(
-      id: id ?? this.id,
-      category: category ?? this.category,
-      title: title ?? this.title,
-      image: image ?? this.image,
-      content: content ?? this.content,
-    );
-  }
-
-
+  // fromJson method
   factory News.fromJson(Map<String, dynamic> json) {
     return News(
-      id: json['_id'] as String,
-      category: json['category'] as String,
-      title: json['title'] as String,
-      image: json['image'] as String,
-      content: json['content'] as String,
+      id: json['_id'] as String?,
+      category: json['category'] as String?,
+      title: json['title'] as String?,
+      image: json['image'] as String?,
+      content: json['content'] as String?,
+      published: json['published'] as bool?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
-  // To JSON method
+  // toJson method
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -48,6 +45,9 @@ class News {
       'title': title,
       'image': image,
       'content': content,
+      'published': published,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }
