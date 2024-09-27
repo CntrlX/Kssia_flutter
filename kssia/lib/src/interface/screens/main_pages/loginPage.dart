@@ -1017,10 +1017,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "company_address": user.companyAddress,
       if (user.bio != null && user.bio != '') "bio": user.bio,
       if (user.address != null && user.address != '') "address": user.address,
-      if (user.socialMedia != [])
+      if (user.socialMedia != null &&
+          user.socialMedia!.any((e) => e.url != null && e.url!.isNotEmpty))
         "social_media": [
           for (var i in user.socialMedia!)
-            {"platform": "${i.platform}", "url": i.url}
+            if (i.url != null && i.url!.isNotEmpty)
+              {"platform": i.platform, "url": i.url}
         ],
       "websites": [
         for (var i in user.websites!) {"name": i.name.toString(), "url": i.url}
@@ -1166,19 +1168,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(userProvider);
-    // final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
-    // final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
-    // final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
-    // final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
-    // final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
-    // final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
-    // final isLandlineVisible = ref.watch(isLandlineVisibleProvider);
-    // final isProductsDetailsVisible =
-    //     ref.watch(isProductsDetailsVisibleProvider);
-    // final isCertificateDetailsVisible =
-    //     ref.watch(isCertificateDetailsVisibleProvider);
-    // final isBrochureDetailsVisible =
-    //     ref.watch(isBrochureDetailsVisibleProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -1194,38 +1183,61 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               );
             },
             data: (user) {
+              if (firstNameController.text.isEmpty) {
+                firstNameController.text = user.name?.firstName ?? '';
+              }
+           if (firstNameController.text.isEmpty) {
               firstNameController.text = user.name?.firstName ?? '';
+            }
+            if (middleNameController.text.isEmpty) {
               middleNameController.text = user.name?.middleName ?? '';
+            }
+            if (lastNameController.text.isEmpty) {
               lastNameController.text = user.name?.lastName ?? '';
-
+            }
+            if (designationController.text.isEmpty) {
               designationController.text = user.designation ?? '';
+            }
+            if (bioController.text.isEmpty) {
               bioController.text = user.bio ?? '';
+            }
+            if (companyNameController.text.isEmpty) {
               companyNameController.text = user.companyName ?? '';
-              if (user.companyAddress != null) {
-                companyAddressController.text = user.companyAddress ?? '';
-              }
-              personalPhoneController.text =
-                  user.phoneNumbers!.personal.toString();
+            }
+            if (companyAddressController.text.isEmpty) {
+              companyAddressController.text = user.companyAddress ?? '';
+            }
+            if (personalPhoneController.text.isEmpty) {
+              personalPhoneController.text = user.phoneNumbers?.personal?.toString() ?? '';
+            }
+            if (landlineController.text.isEmpty) {
               landlineController.text = user.phoneNumbers?.landline ?? '';
+            }
+            if (emailController.text.isEmpty) {
               emailController.text = user.email ?? '';
-              whatsappBusinessController.text =
-                  user.phoneNumbers?.whatsappBusinessNumber ?? '';
-
+            }
+            if (whatsappBusinessController.text.isEmpty) {
+              whatsappBusinessController.text = user.phoneNumbers?.whatsappBusinessNumber ?? '';
+            }
+            if (whatsappController.text.isEmpty) {
               whatsappController.text = user.phoneNumbers?.whatsappNumber ?? '';
+            }
+            if (addressController.text.isEmpty) {
               addressController.text = user.address ?? '';
+            }
 
-              for (var i in user.socialMedia!) {
-                if (i.platform == 'instagram') {
-                  igController.text = i.url ?? '';
-                } else if (i.platform == 'linkedin') {
-                  linkedinController.text = i.url ?? '';
-                } else if (i.platform == 'twitter') {
-                  twtitterController.text = i.url ?? '';
-                } else if (i.platform == 'facebook') {
-                  facebookController.text = i.url ?? '';
-                }
+            // Set social media URLs based on the platform
+            for (var social in user.socialMedia ?? []) {
+              if (social.platform == 'instagram' && igController.text.isEmpty) {
+                igController.text = social.url ?? '';
+              } else if (social.platform == 'linkedin' && linkedinController.text.isEmpty) {
+                linkedinController.text = social.url ?? '';
+              } else if (social.platform == 'twitter' && twtitterController.text.isEmpty) {
+                twtitterController.text = social.url ?? '';
+              } else if (social.platform == 'facebook' && facebookController.text.isEmpty) {
+                facebookController.text = social.url ?? '';
               }
-
+            }
               return Consumer(
                 builder: (context, ref, child) {
                   return Stack(

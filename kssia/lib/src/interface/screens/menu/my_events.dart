@@ -45,14 +45,22 @@ class MyEventsPage extends StatelessWidget {
           ),
           body: asyncEvents.when(
             data: (registeredEvents) {
-              print(registeredEvents);
-              return ListView.builder(
-                itemCount: registeredEvents.length,
-                itemBuilder: (context, index) {
-                  return eventCard(
-                      context: context, event: registeredEvents[index]);
-                },
-              );
+              if (registeredEvents.length == 0) {
+                return Center(
+                  child: Text('No Events Registered'),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemCount: registeredEvents.length,
+                    itemBuilder: (context, index) {
+                      return eventCard(
+                          context: context, event: registeredEvents[index]);
+                    },
+                  ),
+                );
+              }
             },
             loading: () => Center(child: LoadingAnimation()),
             error: (error, stackTrace) {

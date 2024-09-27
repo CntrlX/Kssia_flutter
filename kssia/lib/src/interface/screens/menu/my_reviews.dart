@@ -28,7 +28,12 @@ class MyReviewsPage extends StatelessWidget {
       builder: (context, ref, child) {
         final reviewsToShow = ref.watch(reviewsProvider);
         final asyncUser = ref.watch(userProvider);
-        return Scaffold(
+        if (reviewsToShow == 0) {
+          return const Center(
+            child: Text('No Reviews'),
+          );
+        } else {
+          return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text(
@@ -103,6 +108,7 @@ class MyReviewsPage extends StatelessWidget {
             },
           ),
         );
+        }
       },
     );
   }

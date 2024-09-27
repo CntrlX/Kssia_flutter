@@ -86,14 +86,14 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                   children: [
                     subscriptionCard(
                       context,
-                      category,
+                      'Membership',
                       'Active',
-                      renewalDate,
-                      amount,
-                      timeDate,
+                      '-',
+                      '-',
+                      '-',
                       Colors.green,
                     ),
-                    subscriptionCard(context, 'app', 'Premium', '-', '-', '-',
+                    subscriptionCard(context, 'App', 'Premium', '-', '-', '-',
                         Colors.orange),
                     SizedBox(
                       height: 30,

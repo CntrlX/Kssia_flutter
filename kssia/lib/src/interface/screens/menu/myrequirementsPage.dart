@@ -14,22 +14,20 @@ class MyRequirementsPage extends StatelessWidget {
         final asyncUserRequirments =
             ref.watch(fetchUserRequirementsProvider(token));
         return Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              title: Text('My requirements'),
+              title: Text(
+                "My Requirements",
+                style: TextStyle(fontSize: 17),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              // actions: [
-              //   IconButton(
-              //     icon: FaIcon(FontAwesomeIcons.whatsapp),
-              //     onPressed: () {
-              //       // Handle WhatsApp button press
-              //     },
-              //   ),
-              // ],
             ),
             body: asyncUserRequirments.when(
               loading: () => Center(child: LoadingAnimation()),

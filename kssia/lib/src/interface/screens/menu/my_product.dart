@@ -123,6 +123,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: Text(
               "My Products",
@@ -162,7 +163,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                               title: 'Products',
                               count: user.products!.length.toString(),
                             ),
-                            const _InfoCard(title: 'Messages', count: '30'),
+                            // const _InfoCard(title: 'Messages', count: '30'),
                           ],
                         ),
                         const SizedBox(height: 16),

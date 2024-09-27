@@ -1887,108 +1887,108 @@ class _RequirementModalSheetState extends ConsumerState<RequirementModalSheet> {
             Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height *
-                    0.75, // Fixed height (75% of screen height)
+                    0.8, // Fixed height (75% of screen height)
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (widget.requirement.image != null &&
-                      widget.requirement.image != '')
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(20.0)),
-                      child: Image.network(
-                        widget.requirement.image!,
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (widget.requirement.image != null &&
+                        widget.requirement.image != '')
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20.0)),
+                        child: Image.network(
+                          widget.requirement.image!,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  if (widget.requirement.image != null &&
-                      widget.requirement.image != '')
-                    const SizedBox(height: 20),
-                  // Make only the text content scrollable
-                  SizedBox(
-                    height: 50, // Adjust the height for scrolling content
-                    child: SingleChildScrollView(
+                    if (widget.requirement.image != null &&
+                        widget.requirement.image != '')
+                      const SizedBox(height: 20),
+                    // Make only the text content scrollable
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(widget.requirement.content ?? ''),
                     ),
-                  ),
-                  asyncUser.when(
-                    data: (user) {
-                      final averageRating = getAverageRating(user);
-                      final totalReviews = user.reviews!.length;
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: ClipOval(
-                                child: Image.network(
-                                  user.profilePicture ?? '',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.person);
-                                  },
+                    asyncUser.when(
+                      data: (user) {
+                        final averageRating = getAverageRating(user);
+                        final totalReviews = user.reviews!.length;
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: ClipOval(
+                                  child: Image.network(
+                                    user.profilePicture ?? '',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(Icons.person);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
-                                Text('${user.companyName}'),
-                              ],
-                            ),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.orange),
-                                Text(averageRating.toStringAsFixed(2)),
-                                Text('($totalReviews)'),
-                              ],
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    loading: () => const Center(child: LoadingAnimation()),
-                    error: (error, stackTrace) {
-                      return Center(
-                        child: LoadingAnimation(),
-                      );
-                    },
-                  ),
-                  if (id != widget.requirement.author?.id)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          return customButton(
-                            label: widget.buttonText,
-                            onPressed: () async {
-                              await sendChatMessage(
-                                  userId: widget.requirement.author!.id!,
-                                  content: widget.requirement.content!,
-                                  requirementId: widget.requirement.id);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => IndividualPage(
-                                        receiver: widget.receiver,
-                                        sender: widget.sender,
-                                      )));
-                            },
-                            fontSize: 16,
-                          );
-                        },
-                      ),
+                              const SizedBox(width: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                                  Text('${user.companyName}'),
+                                ],
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  Icon(Icons.star, color: Colors.orange),
+                                  Text(averageRating.toStringAsFixed(2)),
+                                  Text('($totalReviews)'),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                      loading: () => const Center(child: LoadingAnimation()),
+                      error: (error, stackTrace) {
+                        return Center(
+                          child: LoadingAnimation(),
+                        );
+                      },
                     ),
-                  const SizedBox(height: 10),
-                ],
+                    if (id != widget.requirement.author?.id)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            return customButton(
+                              label: widget.buttonText,
+                              onPressed: () async {
+                                await sendChatMessage(
+                                    userId: widget.requirement.author!.id!,
+                                    content: widget.requirement.content!,
+                                    requirementId: widget.requirement.id);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => IndividualPage(
+                                          receiver: widget.receiver,
+                                          sender: widget.sender,
+                                        )));
+                              },
+                              fontSize: 16,
+                            );
+                          },
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
             Positioned(

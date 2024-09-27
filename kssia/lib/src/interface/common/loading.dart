@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 class LoadingAnimation extends StatelessWidget {
-  final double size; // Allows adjusting the size if needed
-  const LoadingAnimation({
-    Key? key,
-    this.size = 100.0,
-  }) : super(key: key);
+  const LoadingAnimation({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image.asset(
-        'assets/icons/kssiaLogo.png',
-        height: size,
-        width: size,
-      ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(seconds: 1),
+      builder: (context, opacity, child) {
+        return Opacity(
+          opacity: opacity,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
     );
   }
 }

@@ -36,12 +36,8 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
       builder: (context, ref, child) {
         final asyncTransactions = ref.watch(fetchTransactionsProvider(token));
         return Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              title: const Text('My Transactions'),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
               bottom: TabBar(
                 controller: _tabController,
                 tabs: const [
@@ -50,6 +46,18 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
                   Tab(text: 'Pending'),
                   Tab(text: 'Rejected'),
                 ],
+              ),
+              title: Text(
+                "My Products",
+                style: TextStyle(fontSize: 17),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ),
             body: asyncTransactions.when(
@@ -87,45 +95,53 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
   }
 
   Widget _transactionList(String status, List<Transaction> transaction) {
-    return ListView.builder(
-      itemCount: transaction
-          .length, // Number of transactions, you can adjust as needed
-      itemBuilder: (context, index) {
-        String formattedDate = '';
-        if (transaction[index].date != null)
-          formattedDate = DateFormat('d\'th\' MMMM y, h:mm a')
-              .format(transaction[index].date!);
+    if (transaction.length == 0) {
+      return Center(
+        child: Text('No Transactions'),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemCount: transaction
+            .length, // Number of transactions, you can adjust as needed
+        itemBuilder: (context, index) {
+          String formattedDate = '';
+          if (transaction[index].date != null)
+            formattedDate = DateFormat('d\'th\' MMMM y, h:mm a')
+                .format(transaction[index].date!);
 
-        // Output: 12th July 2025, 12:20 pm
-        return Card(
-          child: ListTile(
-            title: Text('Transaction ID: ${transaction[index].id}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Type: ${transaction[index].category}'),
-                if (transaction[index].date != null)
-                  Text('Date & time: $formattedDate'),
-                Text('Amount paid: ₹2000'),
-                Text('Status: ${transaction[index].status}'),
-                if (status == 'Rejected')
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Reason for rejection:'),
-                      Text('Description: '),
-                      SizedBox(height: 8),
-                      TextButton(
-                        onPressed: null, // Implement re-upload logic
-                        child: Text('RE-UPLOAD'),
-                      ),
-                    ],
-                  ),
-              ],
+          // Output: 12th July 2025, 12:20 pm
+          return Card(
+            child: ListTile(
+              title: Text('Transaction ID: ${transaction[index].id}'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Type: ${transaction[index].category}'),
+                  if (transaction[index].date != null)
+                    Text('Date & time: $formattedDate'),
+                  Text('Amount paid: ₹2000'),
+                  Text('Status: ${transaction[index].status}'),
+                  if (status == 'Rejected')
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Reason for rejection:'),
+                        Text('Description: '),
+                        SizedBox(height: 8),
+                        TextButton(
+                          onPressed: null, // Implement re-upload logic
+                          child: Text('RE-UPLOAD'),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

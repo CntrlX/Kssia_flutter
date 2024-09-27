@@ -272,7 +272,7 @@ class ProfilePreview extends ConsumerWidget {
                             if (user.phoneNumbers?.whatsappBusinessNumber !=
                                 null)
                               Expanded(
-                                child: Text(user.phoneNumbers!.whatsappNumber!),
+                                child: Text(user.phoneNumbers?.whatsappNumber??''),
                               )
                           ],
                         ),
