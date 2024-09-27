@@ -19,7 +19,10 @@ class MyEventsPage extends StatelessWidget {
         final asyncEvents = ref.watch(fetchUserRsvpdEventsProvider);
         return Scaffold(
           appBar: AppBar(
-            title: const Text('My Events'),
+            title: const Text(
+              'My Events',
+              style: TextStyle(fontSize: 17),
+            ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.of(context).pop(),

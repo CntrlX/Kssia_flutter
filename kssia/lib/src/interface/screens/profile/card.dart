@@ -269,7 +269,8 @@ class ProfileCard extends StatelessWidget {
                             controller: screenshotController,
                             child: QrImageView(
                               size: 300,
-                              data: 'http://43.205.89.79/user/${user.id}',
+                              data:
+                                  'https://api.kssiathrissur.com/user/${user.id}',
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -332,7 +333,7 @@ class ProfileCard extends StatelessWidget {
                                       //     backgroundColor: Colors.white,
                                       //     size: 300,
                                       //     data:
-                                      //         'http://43.205.89.79/user/${user.id}',
+                                      //         'https://api.kssiathrissur.com/user/${user.id}',
                                       //   ),
                                       // )
                                       //     .then((capturedImage) {
@@ -362,7 +363,7 @@ class ProfileCard extends StatelessWidget {
                                           backgroundColor: Colors.white,
                                           size: 300,
                                           data:
-                                              'http://43.205.89.79/user/${user.id}',
+                                              'https://api.kssiathrissur.com/user/${user.id}',
                                         ),
                                       )
                                           .then((capturedImage) {

@@ -13,55 +13,13 @@ void launchURL(String url) async {
   }
 }
 
-// void launchInstagram(String url) async {
-//   if (!url.startsWith('http://www.instagram.com/') &&
-//       !url.startsWith('https://www.instagram.com/')) {
-//     url = 'https://www.instagram.com/$url';
-//   }
+Future<void> openGoogleMaps(String location) async {
+  final Uri googleMapsUrl =
+      Uri.parse("https://www.google.com/maps/search/?api=1&query=$location");
 
-//   try {
-//     await launchUrl(Uri.parse(url));
-//   } catch (e) {
-//     print(e);
-//   }
-// }
-
-
-// void launchLinkedin(String url) async {
-//   if (!url.startsWith('http://www.instagram.com/') &&
-//       !url.startsWith('https://www.instagram.com/')) {
-//     url = 'https://www.instagram.com/$url';
-//   }
-
-//   try {
-//     await launchUrl(Uri.parse(url));
-//   } catch (e) {
-//     print(e);
-//   }
-// }
-
-// void launchTwitter(String url) async {
-//   if (!url.startsWith('https://x.com/') &&
-//       !url.startsWith('https://x.com/')) {
-//     url = 'https://x.com/$url';
-//   }
-
-//   try {
-//     await launchUrl(Uri.parse(url));
-//   } catch (e) {
-//     print(e);
-//   }
-// }
-
-// void launchFacebook(String url) async {
-//   if (!url.startsWith('http://www.facebook.com/') &&
-//       !url.startsWith('https://www.facebook.com/')) {
-//     url = 'https://www.facebook.com/$url';
-//   }
-
-//   try {
-//     await launchUrl(Uri.parse(url));
-//   } catch (e) {
-//     print(e);
-//   }
-// }
+  if (await canLaunchUrl(googleMapsUrl)) {
+    await launchUrl(googleMapsUrl);
+  } else {
+    print('Failed to load maps');
+  }
+}

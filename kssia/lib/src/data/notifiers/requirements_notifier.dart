@@ -13,7 +13,7 @@ class RequirementsNotifier extends _$RequirementsNotifier {
   List<Requirement> requirements = [];
   bool isLoading = false;
   int pageNo = 1;
-  final int limit = 20;
+  final int limit = 2;
   bool hasMore = true;
 
   @override
@@ -26,21 +26,46 @@ class RequirementsNotifier extends _$RequirementsNotifier {
 
     isLoading = true;
 
+    // Delay state update after starting the fetch to avoid modifying during build
+    Future(() {
+      state = [...requirements];
+    });
+
     try {
       final newRequirements = await ref
           .read(fetchRequirementsProvider(pageNo: pageNo, limit: limit).future);
+
       requirements = [...requirements, ...newRequirements];
       pageNo++;
       hasMore = newRequirements.length == limit;
-      state = requirements;
+
+      // Delay state update after fetch to avoid modifying during build
+      Future(() {
+        state = [...requirements];
+      });
     } catch (e, stackTrace) {
       log(e.toString());
       log(stackTrace.toString());
     } finally {
       isLoading = false;
+
+      // Delay state update again after fetch completion
+      Future(() {
+        state = [...requirements];
+      });
+
       log('im in people $requirements');
     }
   }
+
+  // Optionally, add a method for refreshing the requirements
+  Future<void> refreshRequirements() async {
+    requirements = [];
+    pageNo = 1;
+    hasMore = true;
+    await fetchMoreRequirements();
+  }
+}
 
   //  Future<void> refresh({required String blockedUserId}) async {
   //   if (isLoading) return;
@@ -65,24 +90,24 @@ class RequirementsNotifier extends _$RequirementsNotifier {
   // }
 
   // Function to refresh the requirements while keeping the current page and limit
-  Future<void> refreshRequirements() async {
-    if (isLoading) return;
+  // Future<void> refreshRequirements() async {
+  //   if (isLoading) return;
 
-    isLoading = true;
+  //   isLoading = true;
 
-    try {
-      pageNo = 1;
-      final refreshedRequirements = await ref
-          .read(fetchRequirementsProvider(pageNo: pageNo, limit: limit).future);
-      requirements = refreshedRequirements;
-      hasMore = refreshedRequirements.length == limit;
-      state = requirements; // Update the state with the refreshed feed\
-      log('refreshed');
-    } catch (e, stackTrace) {
-      log(e.toString());
-      log(stackTrace.toString());
-    } finally {
-      isLoading = false;
-    }
-  }
-}
+  //   try {
+  //     pageNo = 1;
+  //     final refreshedRequirements = await ref
+  //         .read(fetchRequirementsProvider(pageNo: pageNo, limit: limit).future);
+  //     requirements = refreshedRequirements;
+  //     hasMore = refreshedRequirements.length == limit;
+  //     state = requirements; // Update the state with the refreshed feed\
+  //     log('refreshed');
+  //   } catch (e, stackTrace) {
+  //     log(e.toString());
+  //     log(stackTrace.toString());
+  //   } finally {
+  //     isLoading = false;
+  //   }
+  // }
+// }

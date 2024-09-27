@@ -43,8 +43,21 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                           NetworkImage(receiver?.profilePicture ?? ''),
                     ),
                     title: Text(
-                        '${receiver?.firstName ?? ''}${receiver?.middleName ?? ''}${receiver?.lastName ?? ''}'),
-                    subtitle: Text(chats[index].lastMessage?[0].content ?? ''),
+                        '${receiver?.firstName ?? ''} ${receiver?.middleName ?? ''} ${receiver?.lastName ?? ''}'),
+                    subtitle: Text(
+                      chats[index].lastMessage?[0].content != null
+                          ? (chats[index].lastMessage![0].content!.length > 10
+                              ? chats[index].lastMessage![0].content!.substring(
+                                      0,
+                                      chats[index]
+                                          .lastMessage![0]
+                                          .content!
+                                          .length
+                                          .clamp(0, 10)) +
+                                  '...'
+                              : chats[index].lastMessage![0].content!)
+                          : '',
+                    ),
                     trailing: chats[index].unreadCount?[sender?.id] != 0 &&
                             chats[index].unreadCount?[sender!.id] != null
                         ? SizedBox(
@@ -87,7 +100,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 },
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               return Center(
                 child: LoadingAnimation(),

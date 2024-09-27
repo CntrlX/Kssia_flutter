@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/data/models/subscription_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/models/user_requirement_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
@@ -21,7 +22,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_api.g.dart';
 
 class ApiRoutes {
-  final String baseUrl = 'http://43.205.89.79/api/v1';
+  final String baseUrl = 'https://api.kssiathrissur.com/api/v1';
   Future<Map<String, String>> submitPhoneNumber(
       String countryCode, BuildContext context, String phone) async {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -255,7 +256,7 @@ class ApiRoutes {
 
   Future<void> markNotificationAsRead(String notificationId) async {
     final url = Uri.parse(
-        'http://43.205.89.79/api/v1/notification/in-app/$notificationId/read/$id');
+        'https://api.kssiathrissur.com/api/v1/notification/in-app/$notificationId/read/$id');
 
     final response = await http.put(
       url,
@@ -346,7 +347,7 @@ class ApiRoutes {
     required String reportedItemId,
     required String reportType,
   }) async {
-    const String url = 'http://43.205.89.79/api/v1/report';
+    const String url = 'https://api.kssiathrissur.com/api/v1/report';
     try {
       final Map<String, dynamic> body = {
         'content': content != null && content != '' ? content : ' ',
@@ -383,7 +384,7 @@ class ApiRoutes {
 
   Future<String?> uploadRequirement(String token, String author, String content,
       String status, File file, BuildContext context) async {
-    const String url = 'http://43.205.89.79/api/v1/requirements';
+    const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
 
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -439,7 +440,7 @@ class ApiRoutes {
     String remarks,
     File file,
   ) async {
-    const String url = 'http://43.205.89.79/api/v1/payments/user';
+    const String url = 'https://api.kssiathrissur.com/api/v1/payments/user';
 
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -481,7 +482,7 @@ class ApiRoutes {
     } else {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = json.decode(responseData);
-        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
+      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
       print(jsonResponse['message']);
       print('Failed to submit Payment: ${response.statusCode}');
       return 'Failed';
@@ -490,7 +491,8 @@ class ApiRoutes {
 
   Future<void> postReview(
       String userId, String content, int rating, context) async {
-    final url = Uri.parse('http://43.205.89.79/api/v1/user/$userId/reviews');
+    final url =
+        Uri.parse('https://api.kssiathrissur.com/api/v1/user/$userId/reviews');
     final headers = {
       'accept': 'application/json',
       'Authorization': 'Bearer $token',
@@ -547,7 +549,8 @@ class ApiRoutes {
 
   Future<void> blockUser(
       String userId, String? reason, context, WidgetRef ref) async {
-    final String url = 'http://43.205.89.79/api/v1/user/block/$userId';
+    final String url =
+        'https://api.kssiathrissur.com/api/v1/user/block/$userId';
 
     try {
       final response = await http.post(
@@ -579,7 +582,8 @@ class ApiRoutes {
   }
 
   Future<void> unBlockUser(String userId, String reason, context) async {
-    final String url = 'http://43.205.89.79/api/v1/user/unblock/$userId';
+    final String url =
+        'https://api.kssiathrissur.com/api/v1/user/unblock/$userId';
 
     try {
       final response = await http.post(
@@ -606,10 +610,9 @@ class ApiRoutes {
       print('An error occurred: $e');
     }
   }
-}
-
-Future<void> markEventAsRSVP(String eventId, context) async {
-  final String url = 'http://43.205.89.79/api/v1/events/rsvp/$eventId/mark';
+  Future<void> markEventAsRSVP(String eventId, context) async {
+  final String url =
+      'https://api.kssiathrissur.com/api/v1/events/rsvp/$eventId/mark';
   final String bearerToken = '$token';
 
   try {
@@ -635,8 +638,11 @@ Future<void> markEventAsRSVP(String eventId, context) async {
     print('An error occurred: $e');
   }
 }
+}
 
-const String baseUrl = 'http://43.205.89.79/api/v1';
+
+
+const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<UserModel> fetchUserDetails(
@@ -722,7 +728,8 @@ Future<List<UserRequirementModel>> fetchUserRequirements(
 Future<List<Event>> fetchUserRsvpdEvents(
   FetchUserRsvpdEventsRef ref,
 ) async {
-  final url = Uri.parse('http://43.205.89.79/api/v1/events/user/rsvpd');
+  final url =
+      Uri.parse('https://api.kssiathrissur.com/api/v1/events/user/rsvpd');
   print(token);
   final headers = {
     'accept': 'application/json',
@@ -749,6 +756,39 @@ Future<List<Event>> fetchUserRsvpdEvents(
     }
   } catch (error) {
     print('Error occurred: $error');
+    return [];
+  }
+}
+
+@riverpod
+Future<List<Subscription>> getUserPayments(GetUserPaymentsRef ref) async {
+  final String url = '$baseUrl/payments/user/$id';
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      print('Response Data: $data');
+      List<Subscription> subscription = [];
+      for (var item in data) {
+        print(item);
+        subscription.add(Subscription.fromJson(item));
+        // log(item);
+      }
+      log('sub details:$subscription');
+      return subscription;
+    } else {
+      print('Failed to load data. Status code: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    print('Error in loading subscription details: $e');
     return [];
   }
 }

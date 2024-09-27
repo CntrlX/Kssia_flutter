@@ -11,7 +11,8 @@ class CustomSnackbar {
         ],
       ),
       backgroundColor: const Color(0xFF004797),
-      behavior: SnackBarBehavior.floating, // Makes the Snackbar float above the UI
+      behavior:
+          SnackBarBehavior.floating, // Makes the Snackbar float above the UI
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -25,7 +26,6 @@ class CustomSnackbar {
         },
       ),
     );
-    
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

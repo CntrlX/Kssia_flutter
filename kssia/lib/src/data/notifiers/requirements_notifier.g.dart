@@ -7,7 +7,7 @@ part of 'requirements_notifier.dart';
 // **************************************************************************
 
 String _$requirementsNotifierHash() =>
-    r'2af7c9a809e9777a73f6821d1c981426e1d4ca08';
+    r'bd1c4a09258eadaf29bdcd107678103655d85920';
 
 /// See also [RequirementsNotifier].
 @ProviderFor(RequirementsNotifier)

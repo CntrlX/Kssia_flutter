@@ -27,6 +27,7 @@ import 'package:kssia/src/interface/common/website_video_cards.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/validate_urls.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -245,7 +246,7 @@ class PhoneNumberScreen extends ConsumerWidget {
             Container(
               color: Colors.black54,
               child: const Center(
-                child: CircularProgressIndicator(),
+                child: LoadingAnimation(),
               ),
             ),
         ],
@@ -510,7 +511,7 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
             Container(
               color: Colors.black54,
               child: const Center(
-                child: CircularProgressIndicator(),
+                child: LoadingAnimation(),
               ),
             ),
         ],
@@ -1918,6 +1919,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 20, bottom: 10),
                                 child: CustomTextFormField(
+                                  validator: (value) =>
+                                      isValidUri(igController.text),
                                   textController: igController,
                                   labelText: 'Enter Ig',
                                   prefixIcon: const SvgIcon(
@@ -1932,6 +1935,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 20, bottom: 10),
                                 child: CustomTextFormField(
+                                  validator: (value) =>
+                                      isValidUri(linkedinController.text),
                                   textController: linkedinController,
                                   labelText: 'Enter Linkedin',
                                   prefixIcon: const SvgIcon(
@@ -1946,6 +1951,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 20, bottom: 10),
                                 child: CustomTextFormField(
+                                  validator: (value) =>
+                                      isValidUri(twtitterController.text),
                                   textController: twtitterController,
                                   labelText: 'Enter Twitter',
                                   prefixIcon: const SvgIcon(
@@ -1960,6 +1967,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 padding: const EdgeInsets.only(
                                     left: 20, right: 20, top: 20, bottom: 10),
                                 child: CustomTextFormField(
+                                  validator: (value) =>
+                                      isValidUri(facebookController.text),
                                   textController: facebookController,
                                   labelText: 'Enter Facebook',
                                   prefixIcon: const Icon(

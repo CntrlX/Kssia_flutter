@@ -31,7 +31,7 @@ class SocketIoClient {
   Stream<MessageModel> get messageStream => _controller.stream;
 
   void connect(String senderId, WidgetRef ref) {
-    final uri = 'http://43.205.89.79/api/v1/chats?userId=$senderId';
+    final uri = 'https://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
 
     // Initialize socket.io client
     _socket = IO.io(
@@ -100,7 +100,8 @@ Future<void> sendChatMessage(
     String? content,
     String? productId,
     String? requirementId}) async {
-  final url = Uri.parse('http://43.205.89.79/api/v1/chats/send/$userId');
+  final url =
+      Uri.parse('https://api.kssiathrissur.com/api/v1/chats/send/$userId');
   final headers = {
     'accept': '*/*',
     'Authorization': 'Bearer $token',
@@ -136,7 +137,7 @@ Future<void> sendChatMessage(
 Future<List<MessageModel>> getMessages(
     {required String senderId, required String recieverId}) async {
   final String url =
-      'http://43.205.89.79/api/v1/chats/messages/$senderId/$recieverId';
+      'https://api.kssiathrissur.com/api/v1/chats/messages/$senderId/$recieverId';
   final response = await http.get(
     Uri.parse(url),
     headers: {
@@ -165,7 +166,7 @@ Future<List<MessageModel>> getMessages(
 @riverpod
 Future<List<ChatModel>> fetchChatThread(
     FetchChatThreadRef ref, String token) async {
-  final url = Uri.parse('http://43.205.89.79/api/v1/chats/threads');
+  final url = Uri.parse('https://api.kssiathrissur.com/api/v1/chats/threads');
   print('Requesting URL: $url');
 
   final response = await http.get(

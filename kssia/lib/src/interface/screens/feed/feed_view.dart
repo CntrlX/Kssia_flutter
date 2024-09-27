@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -42,8 +43,9 @@ class _FeedViewState extends ConsumerState<FeedView> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels ==
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent) {
+      log('Reached the bottom of the list');
       ref.read(requirementsNotifierProvider.notifier).fetchMoreRequirements();
     }
   }
@@ -99,43 +101,25 @@ class _FeedViewState extends ConsumerState<FeedView> {
               .refreshRequirements(),
           child: Scaffold(
             body: ListView(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16.0),
               children: [
-                Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search your requirements',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 211, 211),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 211, 211),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 216, 211, 211),
-                          ),
-                        ),
-                      ),
-                    )),
-                SizedBox(height: 16),
                 if (requirements.isNotEmpty)
                   ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: requirements.length,
+                    itemCount: requirements.length + (isLoading ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == requirements.length && isLoading) {
+                        // Show loading spinner when fetching more requirements
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: LoadingAnimation(),
+                          ),
+                        );
+                      }
+
                       final requirement = requirements[index];
                       if (requirement.status == 'approved') {
                         return _buildPost(
@@ -144,23 +128,25 @@ class _FeedViewState extends ConsumerState<FeedView> {
                           requirement: requirement,
                         );
                       } else {
-                        return SizedBox.shrink();
+                        return const SizedBox.shrink();
                       }
                     },
                   ),
-                if (requirements.isEmpty)
-                  Center(
-                    child: Text(' No Requirements'),
+                if (requirements.isEmpty && !isLoading)
+                  const Center(
+                    child: Text('No Requirements'),
                   ),
-                SizedBox(
-                  height: 40,
-                )
+                if (isLoading && requirements.isEmpty)
+                  const Center(
+                    child: LoadingAnimation(),
+                  ),
+                const SizedBox(height: 40),
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () => _openModalSheet(sheet: 'requirement'),
               label: const Text(
-                'Add Requirement/update',
+                'Add Requirement/Update',
                 style: TextStyle(color: Colors.white),
               ),
               icon: const Icon(
@@ -313,8 +299,9 @@ class _FeedViewState extends ConsumerState<FeedView> {
           },
           loading: () => Center(child: ReusableFeedPostSkeleton()),
           error: (error, stackTrace) {
+            log('$stackTrace');
             return Center(
-              child: Text('NO REQUIREMENTS'),
+              child: Text(error.toString()),
             );
           },
         );

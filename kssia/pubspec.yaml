@@ -1,7 +1,7 @@
 name: kssia
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.7+7
+version: 0.1.8+8
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -47,6 +47,7 @@ dependencies:
   mime: ^1.0.6
   animate_do: ^3.3.4
   flutter_local_notifications: ^17.2.3
+  flutter_upgrade_version: ^1.1.6
 
 
 

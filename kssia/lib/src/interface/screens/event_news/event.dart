@@ -270,7 +270,7 @@ class _EventPageState extends ConsumerState<EventPage> {
                           ref.invalidate(fetchEventsProvider);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFE30613), // Blue color
+                          backgroundColor: Color(0xFF0E1877), // Blue color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

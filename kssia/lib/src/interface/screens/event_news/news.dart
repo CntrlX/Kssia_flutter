@@ -133,9 +133,12 @@ class NewsPage extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Text(
-                                          news[currentIndex].content ?? '',
-                                          style: const TextStyle(fontSize: 16),
+                                        Flexible(
+                                          child: Text(
+                                            news[currentIndex].content ?? '',
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
                                         ),
                                       ],
                                     ),

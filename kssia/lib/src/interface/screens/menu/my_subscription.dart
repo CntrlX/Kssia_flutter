@@ -1,12 +1,16 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class MySubscriptionPage extends StatefulWidget {
   const MySubscriptionPage({super.key});
@@ -30,7 +34,6 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
             pickImage: _pickFile,
             textController: remarksController,
             imageType: 'payment',
-         
             paymentImage: _paymentImage,
           );
         });
@@ -38,34 +41,74 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar:AppBar(
-            title: Text(
-              "My Subscription",
-              style: TextStyle(fontSize: 15),
-            ),
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncSubDetails = ref.watch(getUserPaymentsProvider);
+        return Scaffold(
             backgroundColor: Colors.white,
-            scrolledUnderElevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              title: Text(
+                "My Subscription",
+                style: TextStyle(fontSize: 15),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
-          ),
-      body: ListView(
-        children: [
-          subscriptionCard(context, 'membership', 'Active', '12th July 2025',
-              '₹2000', '12th July 2026', Colors.green),
-          subscriptionCard(context, 'app', 'Premium', '12th July 2025', '₹2000',
-              '12th July 2026', Colors.orange),
-          SizedBox(
-            height: 30,
-          )
-        ],
-      ),
+            body: asyncSubDetails.when(
+              data: (subscription) {
+                if (subscription.isEmpty) {
+                  return Center(child: Text('No Subscriptions Found'));
+                }
+
+                log('Subscription Data: ${subscription.toString()}'); // Log entire subscription data
+
+                // Ensure all values are not null before accessing them
+                final category = subscription[0].category ?? '-';
+                final renewalDate = subscription[0].renewal != null
+                    ? DateFormat("d'th' MMMM y")
+                        .format(subscription[0].renewal!)
+                    : '-';
+                final amount = subscription[0].amount != null
+                    ? subscription[0].amount.toString()
+                    : '-';
+                final timeDate = subscription[0].time != null
+                    ? DateFormat("d'th' MMMM y").format(subscription[0].time!)
+                    : '-';
+
+                return ListView(
+                  children: [
+                    subscriptionCard(
+                      context,
+                      category,
+                      'Active',
+                      renewalDate,
+                      amount,
+                      timeDate,
+                      Colors.green,
+                    ),
+                    subscriptionCard(context, 'app', 'Premium', '-', '-', '-',
+                        Colors.orange),
+                    SizedBox(
+                      height: 30,
+                    )
+                  ],
+                );
+              },
+              loading: () => const Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                return Center(
+                  child: Text(error.toString()),
+                );
+              },
+            ));
+      },
     );
   }
 

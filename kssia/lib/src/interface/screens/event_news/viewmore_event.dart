@@ -19,8 +19,7 @@ class ViewMoreEventPage extends ConsumerStatefulWidget {
 }
 
 class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
-  bool registered = false; // Moved to the top-level state variable
-
+  bool registered = false;
   @override
   void initState() {
     super.initState();
@@ -185,23 +184,24 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                   itemCount: widget.event.speakers!.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(8.0),
                       child: _buildSpeakerCard(
-                          widget.event.speakers![index].speakerImage,
-                          widget.event.speakers![index].speakerName!,
-                          widget.event.speakers![index].speakerDesignation!),
+                          widget.event.speakers?[index].speakerImage,
+                          widget.event.speakers?[index].speakerName ?? '',
+                          widget.event.speakers?[index].speakerDesignation ??
+                              ''),
                     );
                   },
                 ),
                 const SizedBox(height: 24),
                 // Venue Section
-                const Text(
-                  'Venue',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // const Text(
+                //   'Venue',
+                //   style: TextStyle(
+                //     fontSize: 18,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
                 const SizedBox(height: 8),
                 // if (widget.event.venue != null)
                 //   Text(
@@ -212,17 +212,17 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 //     ),
                 //   ),
                 const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5)),
-                  height: 200,
-                  child: Image.asset(
-                    'assets/eventlocation.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                // Container(
+                //   width: double.infinity,
+                //   decoration: BoxDecoration(
+                //       color: Colors.grey[300],
+                //       borderRadius: BorderRadius.circular(5)),
+                //   height: 200,
+                //   child: Image.asset(
+                //     'assets/eventlocation.png',
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
                 const SizedBox(
                     height: 50), // Add spacing to avoid overlap with the button
               ],
@@ -231,41 +231,33 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
           Consumer(
             builder: (context, ref, child) {
               return Positioned(
-                bottom: 30,
+                bottom: 16,
                 left: 16,
                 right: 16,
-                child: widget.event.status != 'completed'
-                    ? customButton(
-                        sideColor:
-                            registered ? Colors.green : const Color(0xFF004797),
-                        buttonColor:
-                            registered ? Colors.green : const Color(0xFF004797),
-                        label: widget.event.status == 'cancelled'
-                            ? 'CANCELLED'
-                            : registered
-                                ? 'REGISTERED'
-                                : 'REGISTER EVENT',
-                        onPressed: () async {
-                          if (!registered &&
-                              widget.event.status != 'cancelled') {
-                            ;
-                            await markEventAsRSVP(widget.event.id!, context);
-                            CustomSnackbar.showSnackbar(context,'Registered');
+                child: customButton(
+                  buttonColor:
+                      registered ? Colors.green : const Color(0xFF004797),
+                  label: widget.event.status == 'cancelled'
+                      ? 'CANCELLED'
+                      : registered
+                          ? 'REGISTERED'
+                          : 'REGISTER EVENT',
+                  onPressed: () async {
+                    if (!registered && widget.event.status != 'cancelled') {
+                      ApiRoutes userApi = ApiRoutes();
+                      await userApi.markEventAsRSVP(widget.event.id!, context);
 
-                            setState(() {
-                              widget.event.rsvp
-                                  ?.add(id); // Add the user to RSVP
-                              registered =
-                                  widget.event.rsvp?.contains(id) ?? false;
-                            });
+                      setState(() {
+                        widget.event.rsvp?.add(id); // Add the user to RSVP
+                        registered = widget.event.rsvp?.contains(id) ?? false;
+                      });
 
-                            ref.invalidate(
-                                fetchEventsProvider); // Update your global state if needed
-                          }
-                        },
-                        fontSize: 16,
-                      )
-                    : SizedBox(),
+                      ref.invalidate(
+                          fetchEventsProvider); // Update your global state if needed
+                    }
+                  },
+                  fontSize: 16,
+                ),
               );
             },
           ),
@@ -286,15 +278,13 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor:
-              Colors.transparent, // Transparent background for the avatar
-          child: Image.network(
-            imagePath.toString(),
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.person, size: 40);
-            },
-          ),
+          backgroundColor: Colors.transparent,
+          backgroundImage: (imagePath != null && imagePath.isNotEmpty)
+              ? NetworkImage(imagePath)
+              : null, // Use image if available
+          child: (imagePath == null || imagePath.isEmpty)
+              ? const Icon(Icons.person, size: 40)
+              : null, // Show icon if no image is provided
         ),
         title: Text(
           name,

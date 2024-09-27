@@ -526,12 +526,50 @@ class UserModel {
   }
 }
 
+class Reviewer {
+  final String? firstName;
+  final String? middleName;
+  final String? lastName;
+  final String? id;
+  final String? profilePicture;
+
+  Reviewer({
+    this.firstName,
+    this.middleName,
+    this.lastName,
+    this.id,
+    this.profilePicture,
+  });
+
+  factory Reviewer.fromJson(Map<String, dynamic> json) {
+    return Reviewer(
+      firstName: json['name']?['first_name'] as String?,
+      middleName: json['name']?['middle_name'] as String?,
+      lastName: json['name']?['last_name'] as String?,
+      id: json['_id'] as String?,
+      profilePicture: json['profile_picture'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': {
+        'first_name': firstName,
+        'middle_name': middleName,
+        'last_name': lastName,
+      },
+      '_id': id,
+      'profile_picture': profilePicture,
+    };
+  }
+}
+
 class Review {
-  final String? reviewer;
+  final Reviewer? reviewer;
   final String? content;
   final int? rating;
   final String? id;
-  final String? createdAt;
+  final DateTime? createdAt;
 
   Review({
     this.reviewer,
@@ -543,40 +581,29 @@ class Review {
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
-      reviewer: json['reviewer'] as String?,
+      reviewer: json['reviewer'] != null
+          ? Reviewer.fromJson(json['reviewer'] as Map<String, dynamic>)
+          : null,
       content: json['content'] as String?,
       rating: json['rating'] as int?,
       id: json['_id'] as String?,
-      createdAt: json['created_at'] as String?,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'reviewer': reviewer,
+      'reviewer': reviewer?.toJson(),
       'content': content,
       'rating': rating,
       '_id': id,
-      'created_at': createdAt,
+      'created_at': createdAt?.toIso8601String(),
     };
   }
-
-  Review copyWith({
-    String? reviewer,
-    String? content,
-    int? rating,
-    String? id,
-    String? createdAt,
-  }) {
-    return Review(
-      reviewer: reviewer ?? this.reviewer,
-      content: content ?? this.content,
-      rating: rating ?? this.rating,
-      id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
 }
+
 
 class BlockedUser {
   final String userId;

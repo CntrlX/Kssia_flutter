@@ -7,7 +7,7 @@ import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notification_api.g.dart';
 
-const String baseUrl = 'http://43.205.89.79/api/v1';
+const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<NotificationModel>> fetchUnreadNotifications(

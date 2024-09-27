@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
                       child: Row(
                         children: [
                           Image.asset(
-                            scale: 1.5,
+                            scale: 1,
                             'assets/icons/kssiaLogo.png',
                             fit: BoxFit.scaleDown,
                           ),

@@ -126,7 +126,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
           appBar: AppBar(
             title: Text(
               "My Products",
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: 17),
             ),
             backgroundColor: Colors.white,
             scrolledUnderElevation: 0,
@@ -138,7 +138,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
             ),
           ),
           body: asyncUser.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               return Center(
                 child: LoadingAnimation(),

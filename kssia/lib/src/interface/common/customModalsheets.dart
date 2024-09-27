@@ -1723,14 +1723,10 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             width: 40,
                             child: ClipOval(
                               child: Image.network(
-                                widget.product.sellerId!.id ??
-                                    'https://placehold.co/600x400/png',
+                                user.profilePicture ?? '',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Image.network(
-                                    'https://placehold.co/600x400/png',
-                                    fit: BoxFit.cover,
-                                  );
+                                  return Icon(Icons.person);
                                 },
                               ),
                             ),
@@ -1740,7 +1736,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  '${user!.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}'),
+                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
                               Text('${user.companyName}'),
                             ],
                           ),
@@ -1748,7 +1744,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                           Row(
                             children: [
                               Icon(Icons.star, color: Colors.orange),
-                              Text(averageRating.toString()),
+                              Text(averageRating.toStringAsFixed(2)),
                               Text('($totalReviews)'),
                             ],
                           )
@@ -1756,8 +1752,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       ),
                     );
                   },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(child: LoadingAnimation()),
                   error: (error, stackTrace) {
                     return Center(
                       child: LoadingAnimation(),
@@ -1877,89 +1872,152 @@ class _RequirementModalSheetState extends ConsumerState<RequirementModalSheet> {
   @override
   void dispose() {
     webSocketClient.disconnect();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUser = ref.watch(
+            fetchUserDetailsProvider(token, widget.requirement.author!.id!));
+        return Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Conditionally render the image
-            if (widget.requirement.image != null &&
-                widget.requirement.image != '')
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20.0)),
-                child: Image.network(
-                  widget.requirement.image!,
-                  width: double.infinity,
-                  height: 200, // Adjust the height as needed
-                  fit: BoxFit.cover,
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height *
+                    0.75, // Fixed height (75% of screen height)
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (widget.requirement.image != null &&
+                      widget.requirement.image != '')
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(20.0)),
+                      child: Image.network(
+                        widget.requirement.image!,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  if (widget.requirement.image != null &&
+                      widget.requirement.image != '')
+                    const SizedBox(height: 20),
+                  // Make only the text content scrollable
+                  SizedBox(
+                    height: 50, // Adjust the height for scrolling content
+                    child: SingleChildScrollView(
+                      child: Text(widget.requirement.content ?? ''),
+                    ),
+                  ),
+                  asyncUser.when(
+                    data: (user) {
+                      final averageRating = getAverageRating(user);
+                      final totalReviews = user.reviews!.length;
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: ClipOval(
+                                child: Image.network(
+                                  user.profilePicture ?? '',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.person);
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                                Text('${user.companyName}'),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              children: [
+                                Icon(Icons.star, color: Colors.orange),
+                                Text(averageRating.toStringAsFixed(2)),
+                                Text('($totalReviews)'),
+                              ],
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                    loading: () => const Center(child: LoadingAnimation()),
+                    error: (error, stackTrace) {
+                      return Center(
+                        child: LoadingAnimation(),
+                      );
+                    },
+                  ),
+                  if (id != widget.requirement.author?.id)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          return customButton(
+                            label: widget.buttonText,
+                            onPressed: () async {
+                              await sendChatMessage(
+                                  userId: widget.requirement.author!.id!,
+                                  content: widget.requirement.content!,
+                                  requirementId: widget.requirement.id);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => IndividualPage(
+                                        receiver: widget.receiver,
+                                        sender: widget.sender,
+                                      )));
+                            },
+                            fontSize: 16,
+                          );
+                        },
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 5,
+              top: -50,
+              child: Container(
+                padding: const EdgeInsets.all(0),
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0, 2),
+                      blurRadius: 4.0,
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
-            // Add spacing only if image is displayed
-            if (widget.requirement.image != null &&
-                widget.requirement.image != '')
-              const SizedBox(height: 20),
-            Text(widget.requirement.content ?? ''),
-            if (id != widget.requirement.author?.id)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    return customButton(
-                      label: widget.buttonText,
-                      onPressed: () async {
-                        await sendChatMessage(
-                            userId: widget.requirement.author!.id!,
-                            content: widget.requirement.content!,
-                            requirementId: widget.requirement.id);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => IndividualPage(
-                                  receiver: widget.receiver,
-                                  sender: widget.sender,
-                                )));
-                      },
-                      fontSize: 16,
-                    );
-                  },
-                ),
-              ),
-            const SizedBox(height: 10),
+            ),
           ],
-        ),
-        // Close button positioned at the top-right of the sheet
-        Positioned(
-          right: 5,
-          top: -50,
-          child: Container(
-            padding: const EdgeInsets.all(0),
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 2),
-                  blurRadius: 4.0,
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

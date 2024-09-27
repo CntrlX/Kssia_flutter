@@ -125,7 +125,7 @@ class ProfilePreview extends ConsumerWidget {
                             : const Icon(Icons.person),
                         const SizedBox(height: 10),
                         Text(
-                          '${user.name!.firstName} ${user.name!.middleName} ${user.name!.lastName}',
+                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}',
                           style: const TextStyle(
                             color: Color(0xFF2C2829),
                             fontSize: 20,
@@ -449,10 +449,10 @@ class ProfilePreview extends ConsumerWidget {
                             const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Number of columns
-                          crossAxisSpacing: 1.0, // Space between columns
-                          mainAxisSpacing: 2.0, // Space between rows
-                          childAspectRatio: .879, // Aspect ratio for the cards
+                          mainAxisExtent: 212,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 0.0,
+                          mainAxisSpacing: 20.0,
                         ),
                         itemCount: user.products!.length,
                         itemBuilder: (context, index) {
@@ -824,59 +824,45 @@ class ReviewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      final asyncUser = ref.watch(userProvider);
-      return asyncUser.when(
-        loading: () => Center(child: LoadingAnimation()),
-        error: (error, stackTrace) {
-          // Handle error state
-          return Center(
-            child: LoadingAnimation(),
-          );
-        },
-        data: (reviewer) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    reviewer.profilePicture != null
-                        ? CircleAvatar(
-                            radius: 20,
-                            backgroundImage:
-                                NetworkImage(reviewer.profilePicture!),
-                          )
-                        : const Icon(Icons.person),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              review.reviewer?.profilePicture != null
+                  ? CircleAvatar(
+                      radius: 20,
+                      backgroundImage:
+                          NetworkImage(review.reviewer!.profilePicture!),
+                    )
+                  : const Icon(Icons.person),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${review.reviewer?.firstName ?? ''}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 42, 41, 41),
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${reviewer.name!.firstName!}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 42, 41, 41),
-                      ),
-                    ),
-                    Text(
-                      review.content!,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+              ),
+              Text(
+                review.content ?? '',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
                 ),
-              ],
-            ),
-          );
-        },
-      );
-    });
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

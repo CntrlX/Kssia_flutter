@@ -11,7 +11,7 @@ class PeopleNotifier extends _$PeopleNotifier {
   List<UserModel> users = [];
   bool isLoading = false;
   int pageNo = 1;
-  final int limit = 20;
+  final int limit = 9;
   bool hasMore = true;
 
   @override
@@ -24,20 +24,35 @@ class PeopleNotifier extends _$PeopleNotifier {
 
     isLoading = true;
 
+    // Delay state update to avoid modifying during widget build
+    Future(() {
+      state = [...users];
+    });
+
     try {
       final newUsers = await ref
           .read(fetchUsersProvider(pageNo: pageNo, limit: limit).future);
+
       users = [...users, ...newUsers];
       pageNo++;
       hasMore = newUsers.length == limit;
-      state = users;
+
+      // Delay state update to trigger rebuild after data is fetched
+      Future(() {
+        state = [...users];
+      });
     } catch (e, stackTrace) {
       log(e.toString());
-
       log(stackTrace.toString());
     } finally {
       isLoading = false;
-      log('im in people $users');
+
+      // Ensure state update after fetch completion
+      Future(() {
+        state = [...users];
+      });
+
+      log('Fetched users: $users');
     }
   }
 }
