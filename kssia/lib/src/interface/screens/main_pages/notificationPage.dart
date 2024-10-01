@@ -45,7 +45,7 @@ class NotificationPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
-                            link: unreadNotifications[index].linkUrl!,
+                            link: unreadNotifications[index].linkUrl??'',
                             readed: readed,
                             subject: unreadNotifications[index].subject!,
                             content: unreadNotifications[index].content!,

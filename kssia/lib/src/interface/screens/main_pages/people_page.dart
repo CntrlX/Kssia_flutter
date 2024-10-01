@@ -19,21 +19,7 @@ class PeoplePage extends ConsumerStatefulWidget {
 
 class _PeoplePageState extends ConsumerState<PeoplePage> {
 
-      late final webSocketClient;
 
-  @override
-  void initState() {
-    super.initState();
-    webSocketClient = ref.read(socketIoClientProvider);
-    webSocketClient.connect(id, ref);
-  }
-
-  @override
-  void dispose() {
-    webSocketClient.disconnect();
-
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

@@ -312,68 +312,68 @@ class ProfileCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (!isFullScreen)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: SizedBox(
-                          height: 50,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Flexible(
-                                child: customButton(
-                                    buttonHeight: 60,
-                                    fontSize: 16,
-                                    label: 'SHARE',
-                                    onPressed: () {
-                                      // screenshotController
-                                      //     .captureFromWidget(
-                                      //   QrImageView(
-                                      //     backgroundColor: Colors.white,
-                                      //     size: 300,
-                                      //     data:
-                                      //         'https://api.kssiathrissur.com/user/${user.id}',
-                                      //   ),
-                                      // )
-                                      //     .then((capturedImage) {
-                                      //   captureAndShareScreenshot(
-                                      //       capturedImage);
-                                      // });
-                                    }),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Flexible(
-                                child: customButton(
-                                    sideColor: const Color.fromARGB(
-                                        255, 219, 217, 217),
-                                    labelColor: const Color(0xFF2C2829),
-                                    buttonColor: const Color.fromARGB(
-                                        255, 222, 218, 218),
-                                    buttonHeight: 60,
-                                    fontSize: 16,
-                                    label: 'DOWNLOAD QR',
-                                    onPressed: () async {
-                                      await requestStoragePermission();
-                                      screenshotController
-                                          .captureFromWidget(
-                                        QrImageView(
-                                          backgroundColor: Colors.white,
-                                          size: 300,
-                                          data:
-                                              'https://api.kssiathrissur.com/user/${user.id}',
-                                        ),
-                                      )
-                                          .then((capturedImage) {
-                                        saveScreenshot(capturedImage, context);
-                                      });
-                                    }),
-                              ),
-                            ],
-                          )),
-                    ),
+                  // if (!isFullScreen)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 20, vertical: 20),
+                  //     child: SizedBox(
+                  //         height: 50,
+                  //         child: Row(
+                  //           mainAxisSize: MainAxisSize.max,
+                  //           children: [
+                  //             Flexible(
+                  //               child: customButton(
+                  //                   buttonHeight: 60,
+                  //                   fontSize: 16,
+                  //                   label: 'SHARE',
+                  //                   onPressed: () {
+                  //                     // screenshotController
+                  //                     //     .captureFromWidget(
+                  //                     //   QrImageView(
+                  //                     //     backgroundColor: Colors.white,
+                  //                     //     size: 300,
+                  //                     //     data:
+                  //                     //         'https://api.kssiathrissur.com/user/${user.id}',
+                  //                     //   ),
+                  //                     // )
+                  //                     //     .then((capturedImage) {
+                  //                     //   captureAndShareScreenshot(
+                  //                     //       capturedImage);
+                  //                     // });
+                  //                   }),
+                  //             ),
+                  //             const SizedBox(
+                  //               width: 10,
+                  //             ),
+                  //             Flexible(
+                  //               child: customButton(
+                  //                   sideColor: const Color.fromARGB(
+                  //                       255, 219, 217, 217),
+                  //                   labelColor: const Color(0xFF2C2829),
+                  //                   buttonColor: const Color.fromARGB(
+                  //                       255, 222, 218, 218),
+                  //                   buttonHeight: 60,
+                  //                   fontSize: 16,
+                  //                   label: 'DOWNLOAD QR',
+                  //                   onPressed: () async {
+                  //                     await requestStoragePermission();
+                  //                     screenshotController
+                  //                         .captureFromWidget(
+                  //                       QrImageView(
+                  //                         backgroundColor: Colors.white,
+                  //                         size: 300,
+                  //                         data:
+                  //                             'https://api.kssiathrissur.com/user/${user.id}',
+                  //                       ),
+                  //                     )
+                  //                         .then((capturedImage) {
+                  //                       saveScreenshot(capturedImage, context);
+                  //                     });
+                  //                   }),
+                  //             ),
+                  //           ],
+                  //         )),
+                  //   ),
                   const SizedBox(
                     height: 40,
                   )

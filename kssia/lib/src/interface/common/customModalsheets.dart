@@ -1567,14 +1567,13 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   void initState() {
     super.initState();
     _quantityController.text = '0';
-    webSocketClient = ref.read(socketIoClientProvider);
-    webSocketClient.connect(id, ref);
+
   }
 
   @override
   void dispose() {
     _quantityController.dispose();
-    webSocketClient.disconnect();
+
     super.dispose();
   }
 
@@ -1839,7 +1838,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   }
 }
 
-class RequirementModalSheet extends ConsumerStatefulWidget {
+class RequirementModalSheet extends StatelessWidget {
   final VoidCallback onButtonPressed;
   final String buttonText;
   final Requirement requirement;
@@ -1856,31 +1855,11 @@ class RequirementModalSheet extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  _RequirementModalSheetState createState() => _RequirementModalSheetState();
-}
-
-class _RequirementModalSheetState extends ConsumerState<RequirementModalSheet> {
-  late final webSocketClient;
-
-  @override
-  void initState() {
-    super.initState();
-    webSocketClient = ref.read(socketIoClientProvider);
-    webSocketClient.connect(id, ref);
-  }
-
-  @override
-  void dispose() {
-    webSocketClient.disconnect();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
         final asyncUser = ref.watch(
-            fetchUserDetailsProvider(token, widget.requirement.author!.id!));
+            fetchUserDetailsProvider(token, requirement.author!.id!));
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -1894,25 +1873,25 @@ class _RequirementModalSheetState extends ConsumerState<RequirementModalSheet> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (widget.requirement.image != null &&
-                        widget.requirement.image != '')
+                    if (requirement.image != null &&
+                        requirement.image != '')
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20.0)),
                         child: Image.network(
-                          widget.requirement.image!,
+                          requirement.image!,
                           width: double.infinity,
                           height: 200,
                           fit: BoxFit.cover,
                         ),
                       ),
-                    if (widget.requirement.image != null &&
-                        widget.requirement.image != '')
+                    if (requirement.image != null &&
+                        requirement.image != '')
                       const SizedBox(height: 20),
                     // Make only the text content scrollable
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(widget.requirement.content ?? ''),
+                      child: Text(requirement.content ?? ''),
                     ),
                     asyncUser.when(
                       data: (user) {
@@ -1963,22 +1942,22 @@ class _RequirementModalSheetState extends ConsumerState<RequirementModalSheet> {
                         );
                       },
                     ),
-                    if (id != widget.requirement.author?.id)
+                    if (id != requirement.author?.id)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Consumer(
                           builder: (context, ref, child) {
                             return customButton(
-                              label: widget.buttonText,
+                              label: buttonText,
                               onPressed: () async {
                                 await sendChatMessage(
-                                    userId: widget.requirement.author!.id!,
-                                    content: widget.requirement.content!,
-                                    requirementId: widget.requirement.id);
+                                    userId: requirement.author!.id!,
+                                    content: requirement.content!,
+                                    requirementId: requirement.id);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => IndividualPage(
-                                          receiver: widget.receiver,
-                                          sender: widget.sender,
+                                          receiver: receiver,
+                                          sender: sender,
                                         )));
                               },
                               fontSize: 16,

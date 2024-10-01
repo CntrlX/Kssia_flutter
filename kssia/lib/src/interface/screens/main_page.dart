@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
@@ -50,14 +52,30 @@ class IconResolver extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends ConsumerState<MainPage> {
+  late final webSocketClient;
+
+  @override
+  void initState() {
+    super.initState();
+    webSocketClient = ref.read(socketIoClientProvider);
+    webSocketClient.connect(id, ref);
+  }
+
+  @override
+  void dispose() {
+    webSocketClient.disconnect();
+
+    super.dispose();
+  }
+
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[];

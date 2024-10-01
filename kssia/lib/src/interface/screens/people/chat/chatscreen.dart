@@ -177,6 +177,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                             context: context,
                             userId: widget.receiver.id ?? '',
                             onBlockStatusChanged: () {
+                              Future.delayed(Duration(seconds: 1));
                               setState(() {
                                 if (isBlocked) {
                                   isBlocked = false;

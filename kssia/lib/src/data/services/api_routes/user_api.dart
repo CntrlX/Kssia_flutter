@@ -549,8 +549,7 @@ class ApiRoutes {
 
   Future<void> blockUser(
       String userId, String? reason, context, WidgetRef ref) async {
-    final String url =
-        'https://api.kssiathrissur.com/api/v1/user/block/$userId';
+    final String url = '$baseUrl/user/block/$userId';
 
     try {
       final response = await http.post(
@@ -610,37 +609,35 @@ class ApiRoutes {
       print('An error occurred: $e');
     }
   }
+
   Future<void> markEventAsRSVP(String eventId, context) async {
-  final String url =
-      'https://api.kssiathrissur.com/api/v1/events/rsvp/$eventId/mark';
-  final String bearerToken = '$token';
+    final String url =
+        'https://api.kssiathrissur.com/api/v1/events/rsvp/$eventId/mark';
 
-  try {
-    final response = await http.put(
-      Uri.parse(url),
-      headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer $bearerToken',
-      },
-    );
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      // Success
-      print('RSVP marked successfully');
-      CustomSnackbar.showSnackbar(context, 'Registered successfully');
-    } else {
-      // Handle error
-      print('Failed to mark RSVP: ${response.statusCode}');
-      CustomSnackbar.showSnackbar(context, 'Failed to register');
+      if (response.statusCode == 200) {
+        // Success
+        print('RSVP marked successfully');
+        CustomSnackbar.showSnackbar(context, 'Registered successfully');
+      } else {
+        // Handle error
+        print('Failed to mark RSVP: ${response.statusCode}');
+        CustomSnackbar.showSnackbar(context, 'Failed to register');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('An error occurred: $e');
     }
-  } catch (e) {
-    // Handle exceptions
-    print('An error occurred: $e');
   }
 }
-}
-
-
 
 const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 

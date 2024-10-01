@@ -343,40 +343,40 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     IconButton(
-                        //       icon: Image.asset(
-                        //           'assets/icons/share_profile_button.png'),
-                        //       iconSize: 50,
-                        //       onPressed: () {
-                        //         // Navigator.push(
-                        //         //   context,
-                        //         //   MaterialPageRoute(
-                        //         //     builder: (context) =>
-                        //         //         ProfilePage(), // Navigate to Shared
-                        //         //   ),
-                        //         // );
-                        //       },
-                        //     ),
-                        //     const SizedBox(width: 20),
-                        //     IconButton(
-                        //       icon: Image.asset('assets/icons/qr_button.png'),
-                        //       iconSize: 50,
-                        //       onPressed: () {
-                        //         Navigator.push(
-                        //           context,
-                        //           MaterialPageRoute(
-                        //             builder: (context) => ProfileCard(
-                        //               user: user,
-                        //             ), // Navigate to CardPage
-                        //           ),
-                        //         );
-                        //       },
-                        //     ),
-                        //   ],
-                        // )
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileCard(
+                                  user: user,
+                                ), // Navigate to CardPage
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 90,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                  50), // Apply circular border to the outer container
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.white,
+                                ),
+                                child: Icon(
+                                  Icons.qr_code,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
