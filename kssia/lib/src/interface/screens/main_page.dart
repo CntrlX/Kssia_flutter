@@ -107,56 +107,65 @@ class _MainPageState extends State<MainPage> {
         },
         error: (error, stackTrace) {
           log('im inside details main page error $error $stackTrace');
-
           return LoginPage();
         },
         data: (user) {
           print(user.profilePicture);
           _initialize(user: user);
-          return Scaffold(
-            body: Center(
-              child: _widgetOptions.elementAt(_selectedIndex),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              items: List.generate(5, (index) {
-                return BottomNavigationBarItem(
-                  backgroundColor: Colors.white,
-                  icon: index == 2 // Assuming profile is the third item
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture ??
-                              'https://placehold.co/600x400'),
-                          radius: 15,
-                        )
-                      : IconResolver(
-                          iconPath: _inactiveIcons[index],
-                          color: _selectedIndex == index
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                  activeIcon: index == 2
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(user.profilePicture ??
-                              'https://placehold.co/600x400'),
-                          radius: 15,
-                        )
-                      : IconResolver(
-                          iconPath: _activeIcons[index],
-                          color: Color(0xFF004797),
-                        ),
-                  label: [
-                    'Home',
-                    'Feed',
-                    'Profile',
-                    'Events/news',
-                    'People'
-                  ][index],
-                );
-              }),
-              currentIndex: _selectedIndex,
-              selectedItemColor: Color(0xFF004797),
-              unselectedItemColor: Colors.grey,
-              onTap: _onItemTapped,
-              showUnselectedLabels: true,
+          return PopScope(
+            canPop: _selectedIndex != 0 ? false : true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (_selectedIndex != 0) {
+                setState(() {
+                  _selectedIndex = 0;
+                });
+              }
+            },
+            child: Scaffold(
+              body: Center(
+                child: _widgetOptions.elementAt(_selectedIndex),
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                items: List.generate(5, (index) {
+                  return BottomNavigationBarItem(
+                    backgroundColor: Colors.white,
+                    icon: index == 2 // Assuming profile is the third item
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(user.profilePicture ??
+                                'https://placehold.co/600x400'),
+                            radius: 15,
+                          )
+                        : IconResolver(
+                            iconPath: _inactiveIcons[index],
+                            color: _selectedIndex == index
+                                ? Colors.blue
+                                : Colors.grey,
+                          ),
+                    activeIcon: index == 2
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(user.profilePicture ??
+                                'https://placehold.co/600x400'),
+                            radius: 15,
+                          )
+                        : IconResolver(
+                            iconPath: _activeIcons[index],
+                            color: Color(0xFF004797),
+                          ),
+                    label: [
+                      'Home',
+                      'Feed',
+                      'Profile',
+                      'Events/news',
+                      'People'
+                    ][index],
+                  );
+                }),
+                currentIndex: _selectedIndex,
+                selectedItemColor: Color(0xFF004797),
+                unselectedItemColor: Colors.grey,
+                onTap: _onItemTapped,
+                showUnselectedLabels: true,
+              ),
             ),
           );
         },

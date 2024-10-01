@@ -18,6 +18,7 @@ class Event {
   final String? status;
   final List<String>? rsvp;
   final bool? activate;
+  final String? venue;
 
   Event({
     this.id,
@@ -39,6 +40,7 @@ class Event {
     this.status,
     this.rsvp,
     this.activate,
+    this.venue
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -48,9 +50,11 @@ class Event {
       name: json['name'],
       image: json['image'],
       description: json['description'],
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      startDate:
+          json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-      startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
+      startTime:
+          json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
       platform: json['platform'],
       meetingLink: json['meeting_link'],
@@ -64,6 +68,7 @@ class Event {
       status: json['status'],
       rsvp: json['rsvp'] != null ? List<String>.from(json['rsvp']) : null,
       activate: json['activate'],
+      venue: json['venue']
     );
   }
 
@@ -88,6 +93,7 @@ class Event {
       'status': status,
       'rsvp': rsvp,
       'activate': activate,
+      'venue': venue
     };
   }
 
@@ -111,6 +117,7 @@ class Event {
     String? status,
     List<String>? rsvp,
     bool? activate,
+    String? venue,
   }) {
     return Event(
       id: id ?? this.id,
@@ -132,6 +139,7 @@ class Event {
       status: status ?? this.status,
       rsvp: rsvp ?? this.rsvp,
       activate: activate ?? this.activate,
+      venue: venue?? this.venue
     );
   }
 }

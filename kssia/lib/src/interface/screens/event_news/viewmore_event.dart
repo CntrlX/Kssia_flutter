@@ -7,6 +7,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 
@@ -53,7 +54,6 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -82,7 +82,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                         decoration: BoxDecoration(
                           color:
                               const Color(0xFFE4483E), // Red background color
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(2),
                         ),
                         child: widget.event.status != null &&
                                 widget.event.status != ''
@@ -110,71 +110,106 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 ),
                 const SizedBox(height: 16),
                 // Event Title
-                Text(
-                  widget.event.name!,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.event.name!,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
+
                 // Date and Time
-                Row(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today,
-                            color: Color(0xFFE30613)),
-                        const SizedBox(width: 8),
-                        Text(
-                          date,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Row(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              size: 15, color: Color(0xFFE30613)),
+                          const SizedBox(width: 8),
+                          Text(
+                            date,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 16),
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time, color: Color(0xFFE30613)),
-                        const SizedBox(width: 8),
-                        Text(
-                          time,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time,
+                              size: 15, color: Color(0xFFE30613)),
+                          const SizedBox(width: 8),
+                          Text(
+                            time,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Divider(color: Color.fromARGB(255, 192, 188, 188)),
-                const Text('Organiser'),
-                Text(
-                  widget.event.organiserName ?? '',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w600),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: const Text('Organiser'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    widget.event.organiserName ?? '',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  widget.event.description ?? '',
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, bottom: 8),
+                  child: Text(
+                    widget.event.description ?? '',
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: const Text('Organiser company'),
+                ),
+                // ClipRRect(
+                //                                   borderRadius:
+                //                                       BorderRadius.circular(9),
+                //                                   child: widget.event.o !=
+                //                                               null &&
+                //                                           user.companyLogo != ''
+                //                                       ? Image.network(
+                //                                           user.companyLogo!,
+                //                                           height: 33,
+                //                                           width: 40,
+                //                                           fit: BoxFit.cover,
+                //                                         )
+                //                                       : const SizedBox())
                 const SizedBox(height: 24),
-                // Speakers Section
-                const Text(
-                  'Speakers',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Speakers',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -195,34 +230,44 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 ),
                 const SizedBox(height: 24),
                 // Venue Section
-                // const Text(
-                //   'Venue',
-                //   style: TextStyle(
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
+                if (widget.event.venue != null)
+                  const Text(
+                    'Venue',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 const SizedBox(height: 8),
-                // if (widget.event.venue != null)
-                //   Text(
-                //     widget.event.venue ?? '',
-                //     style: TextStyle(
-                //       fontSize: 16,
-                //       fontWeight: FontWeight.normal,
-                //     ),
-                //   ),
+                if (widget.event.venue != null)
+                  Text(
+                    widget.event.venue ?? '',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
                 const SizedBox(height: 8),
-                // Container(
-                //   width: double.infinity,
-                //   decoration: BoxDecoration(
-                //       color: Colors.grey[300],
-                //       borderRadius: BorderRadius.circular(5)),
-                //   height: 200,
-                //   child: Image.asset(
-                //     'assets/eventlocation.png',
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
+                if (widget.event.venue != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        openGoogleMaps(widget.event.venue ?? '');
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(5)),
+                        height: 200,
+                        child: Image.asset(
+                          'assets/eventlocation.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
                 const SizedBox(
                     height: 50), // Add spacing to avoid overlap with the button
               ],

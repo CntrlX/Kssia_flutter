@@ -984,33 +984,34 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     final Map<String, dynamic> profileData = {
       "name": {
         "first_name": user.name?.firstName,
-        if (user.name?.middleName != null && user.name?.middleName != '')
-          "middle_name": user.name?.middleName,
+        // if (user.name?.middleName != null && user.name?.middleName != '')
+        "middle_name": user.name?.middleName,
         "last_name": user.name?.lastName,
       },
-      if (user.bloodGroup != null) "blood_group": user.bloodGroup,
+      // if (user.bloodGroup != null)
+      "blood_group": user.bloodGroup,
       if (user.email != null) "email": user.email,
       if (user.profilePicture != null) "profile_picture": user.profilePicture,
       "phone_numbers": {
         if (user.phoneNumbers?.personal != null)
           "personal": user.phoneNumbers!.personal ?? '',
-        if (user.phoneNumbers?.landline != null &&
-            user.phoneNumbers?.landline != '')
-          "landline": user.phoneNumbers!.landline ?? '',
-        if (user.phoneNumbers?.companyPhoneNumber != null)
-          "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? '',
-        if (user.phoneNumbers?.whatsappNumber != null)
-          "whatsapp_number": user.phoneNumbers!.whatsappNumber ?? '',
-        if (user.phoneNumbers?.whatsappBusinessNumber != null)
-          "whatsapp_business_number":
-              user.phoneNumbers!.whatsappBusinessNumber ?? '',
+        // if (user.phoneNumbers?.landline != null &&
+        //     user.phoneNumbers?.landline != '')
+        "landline": user.phoneNumbers!.landline ?? '',
+        // if (user.phoneNumbers?.companyPhoneNumber != null)
+        "company_phone_number": user.phoneNumbers!.companyPhoneNumber ?? '',
+        // if (user.phoneNumbers?.whatsappNumber != null)
+        "whatsapp_number": user.phoneNumbers!.whatsappNumber ?? '',
+        // if (user.phoneNumbers?.whatsappBusinessNumber != null)
+        "whatsapp_business_number":
+            user.phoneNumbers!.whatsappBusinessNumber ?? '',
       },
-      if (user.designation != null && user.designation != '')
-        "designation": user.designation,
-      if (user.companyLogo != null && user.companyLogo != '')
-        "company_logo": user.companyLogo,
-      if (user.companyName != null && user.companyName != '')
-        "company_name": user.companyName,
+      // if (user.designation != null && user.designation != '')
+      "designation": user.designation,
+      // if (user.companyLogo != null && user.companyLogo != '')
+      "company_logo": user.companyLogo,
+      // if (user.companyName != null && user.companyName != '')
+      "company_name": user.companyName,
       if (user.companyEmail != null && user.companyEmail != '')
         "company_email": user.companyEmail,
       if (user.companyAddress != null && user.companyAddress != '')
@@ -1186,58 +1187,65 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               if (firstNameController.text.isEmpty) {
                 firstNameController.text = user.name?.firstName ?? '';
               }
-           if (firstNameController.text.isEmpty) {
-              firstNameController.text = user.name?.firstName ?? '';
-            }
-            if (middleNameController.text.isEmpty) {
-              middleNameController.text = user.name?.middleName ?? '';
-            }
-            if (lastNameController.text.isEmpty) {
-              lastNameController.text = user.name?.lastName ?? '';
-            }
-            if (designationController.text.isEmpty) {
-              designationController.text = user.designation ?? '';
-            }
-            if (bioController.text.isEmpty) {
-              bioController.text = user.bio ?? '';
-            }
-            if (companyNameController.text.isEmpty) {
-              companyNameController.text = user.companyName ?? '';
-            }
-            if (companyAddressController.text.isEmpty) {
-              companyAddressController.text = user.companyAddress ?? '';
-            }
-            if (personalPhoneController.text.isEmpty) {
-              personalPhoneController.text = user.phoneNumbers?.personal?.toString() ?? '';
-            }
-            if (landlineController.text.isEmpty) {
-              landlineController.text = user.phoneNumbers?.landline ?? '';
-            }
-            if (emailController.text.isEmpty) {
-              emailController.text = user.email ?? '';
-            }
-            if (whatsappBusinessController.text.isEmpty) {
-              whatsappBusinessController.text = user.phoneNumbers?.whatsappBusinessNumber ?? '';
-            }
-            if (whatsappController.text.isEmpty) {
-              whatsappController.text = user.phoneNumbers?.whatsappNumber ?? '';
-            }
-            if (addressController.text.isEmpty) {
-              addressController.text = user.address ?? '';
-            }
-
-            // Set social media URLs based on the platform
-            for (var social in user.socialMedia ?? []) {
-              if (social.platform == 'instagram' && igController.text.isEmpty) {
-                igController.text = social.url ?? '';
-              } else if (social.platform == 'linkedin' && linkedinController.text.isEmpty) {
-                linkedinController.text = social.url ?? '';
-              } else if (social.platform == 'twitter' && twtitterController.text.isEmpty) {
-                twtitterController.text = social.url ?? '';
-              } else if (social.platform == 'facebook' && facebookController.text.isEmpty) {
-                facebookController.text = social.url ?? '';
+              if (firstNameController.text.isEmpty) {
+                firstNameController.text = user.name?.firstName ?? '';
               }
-            }
+              if (middleNameController.text.isEmpty) {
+                middleNameController.text = user.name?.middleName ?? '';
+              }
+              if (lastNameController.text.isEmpty) {
+                lastNameController.text = user.name?.lastName ?? '';
+              }
+              if (designationController.text.isEmpty) {
+                designationController.text = user.designation ?? '';
+              }
+              if (bioController.text.isEmpty) {
+                bioController.text = user.bio ?? '';
+              }
+              if (companyNameController.text.isEmpty) {
+                companyNameController.text = user.companyName ?? '';
+              }
+              if (companyAddressController.text.isEmpty) {
+                companyAddressController.text = user.companyAddress ?? '';
+              }
+              if (personalPhoneController.text.isEmpty) {
+                personalPhoneController.text =
+                    user.phoneNumbers?.personal?.toString() ?? '';
+              }
+              if (landlineController.text.isEmpty) {
+                landlineController.text = user.phoneNumbers?.landline ?? '';
+              }
+              if (emailController.text.isEmpty) {
+                emailController.text = user.email ?? '';
+              }
+              if (whatsappBusinessController.text.isEmpty) {
+                whatsappBusinessController.text =
+                    user.phoneNumbers?.whatsappBusinessNumber ?? '';
+              }
+              if (whatsappController.text.isEmpty) {
+                whatsappController.text =
+                    user.phoneNumbers?.whatsappNumber ?? '';
+              }
+              if (addressController.text.isEmpty) {
+                addressController.text = user.address ?? '';
+              }
+
+              // Set social media URLs based on the platform
+              for (var social in user.socialMedia ?? []) {
+                if (social.platform == 'instagram' &&
+                    igController.text.isEmpty) {
+                  igController.text = social.url ?? '';
+                } else if (social.platform == 'linkedin' &&
+                    linkedinController.text.isEmpty) {
+                  linkedinController.text = social.url ?? '';
+                } else if (social.platform == 'twitter' &&
+                    twtitterController.text.isEmpty) {
+                  twtitterController.text = social.url ?? '';
+                } else if (social.platform == 'facebook' &&
+                    facebookController.text.isEmpty) {
+                  facebookController.text = social.url ?? '';
+                }
+              }
               return Consumer(
                 builder: (context, ref, child) {
                   return Stack(

@@ -21,7 +21,7 @@ class OwnMessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('Requirement Image:${requirement?.image ?? ''}');
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Align(

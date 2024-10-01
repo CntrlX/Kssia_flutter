@@ -31,7 +31,7 @@ class SocketIoClient {
   Stream<MessageModel> get messageStream => _controller.stream;
 
   void connect(String senderId, WidgetRef ref) {
-    final uri = 'https://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
+    final uri = 'wss://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
 
     // Initialize socket.io client
     _socket = IO.io(

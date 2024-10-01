@@ -22,7 +22,6 @@ class ReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('Reply card Req Image:${requirement?.image ?? ''}');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Align(
