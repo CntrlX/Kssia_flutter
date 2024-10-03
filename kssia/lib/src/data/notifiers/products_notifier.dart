@@ -24,7 +24,6 @@ class ProductsNotifier extends _$ProductsNotifier {
 
   Future<void> fetchMoreProducts() async {
     if (isLoading || !hasMore) return;
-
     isLoading = true;
 
     try {
@@ -36,11 +35,28 @@ class ProductsNotifier extends _$ProductsNotifier {
       state = products;
     } catch (e, stackTrace) {
       log(e.toString());
-
       log(stackTrace.toString());
     } finally {
       isLoading = false;
-      log('im in people $products');
+    }
+  }
+
+  Future<void> searchProducts(String query) async {
+    isLoading = true;
+    pageNo = 1;
+    products = []; // Reset the product list when searching
+
+    try {
+      final newProducts = await ref
+          .read(fetchProductsProvider(pageNo: pageNo, limit: limit, search: query).future);
+      products = [...newProducts];
+      hasMore = newProducts.length == limit;
+      state = products;
+    } catch (e, stackTrace) {
+      log(e.toString());
+      log(stackTrace.toString());
+    } finally {
+      isLoading = false;
     }
   }
 }

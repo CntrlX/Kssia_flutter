@@ -13,7 +13,10 @@ import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:searchfield/searchfield.dart';
+import 'dart:async';
 
 class ProductView extends ConsumerStatefulWidget {
   const ProductView({super.key});
@@ -23,7 +26,10 @@ class ProductView extends ConsumerStatefulWidget {
 }
 
 class _ProductViewState extends ConsumerState<ProductView> {
+  FocusNode _searchFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -41,6 +47,15 @@ class _ProductViewState extends ConsumerState<ProductView> {
         _scrollController.position.maxScrollExtent) {
       ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
     }
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      ref
+          .read(productsNotifierProvider.notifier)
+          .searchProducts(query); // Call the search function
+    });
   }
 
   void _showProductDetails(
@@ -62,17 +77,16 @@ class _ProductViewState extends ConsumerState<ProductView> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final searchQuery = ref.watch(searchQueryProvider);
       final products = ref.watch(productsNotifierProvider);
       final isLoading = ref.read(productsNotifierProvider.notifier).isLoading;
-      final filteredProducts = products.where((product) {
-        return product.name!
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()) &&
-            product.sellerId!.id != id;
-      }).toList();
-      if (!isLoading) {
-        return Scaffold(
+
+      return PopScope(
+        onPopInvokedWithResult: (didPop, result) {
+          if (_searchFocus.hasFocus) {
+            _searchFocus.unfocus();
+          }
+        },
+        child: Scaffold(
             body: SingleChildScrollView(
           controller: _scrollController, // Attach scroll controller here
           padding: const EdgeInsets.all(16.0),
@@ -81,11 +95,14 @@ class _ProductViewState extends ConsumerState<ProductView> {
             children: [
               Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    onChanged: (query) {
-                      ref.read(searchQueryProvider.notifier).state = query;
-                    },
-                    decoration: InputDecoration(
+                  child: SearchField(
+                    suggestions: products
+                        .map((e) => SearchFieldListItem(e.name.toString(),
+                            child: Text(e.name.toString())))
+                        .toList(),
+                    controller: _searchController,
+                    suggestionState: Suggestion.expand,
+                    searchInputDecoration: SearchInputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: const Icon(Icons.search),
@@ -109,27 +126,27 @@ class _ProductViewState extends ConsumerState<ProductView> {
                         ),
                       ),
                     ),
+                    onSubmit: (query) =>
+                        _onSearchChanged(query), // Trigger search
                   )),
               const SizedBox(height: 16),
-              if (filteredProducts.isNotEmpty)
+              if (products.isNotEmpty)
                 GridView.builder(
-                  shrinkWrap:
-                      true, // Let GridView take up only as much space as it needs
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     mainAxisExtent: 212,
                     crossAxisCount: 2,
                     crossAxisSpacing: 0.0,
                     mainAxisSpacing: 20.0,
                   ),
-                  itemCount: filteredProducts.length,
+                  itemCount: products.length,
                   itemBuilder: (context, index) {
                     return Consumer(
                       builder: (context, ref, child) {
                         final asyncProductOwner = ref.watch(
-                            fetchUserDetailsProvider(token,
-                                filteredProducts[index].sellerId?.id ?? ''));
+                            fetchUserDetailsProvider(
+                                token, products[index].sellerId?.id ?? ''));
                         return asyncProductOwner.when(
                           data: (productOwner) {
                             final receiver = Participant(
@@ -143,20 +160,20 @@ class _ProductViewState extends ConsumerState<ProductView> {
                                   receiver: receiver,
                                   sender: Participant(id: id),
                                   context: context,
-                                  product: filteredProducts[index]),
+                                  product: products[index]),
                               child: ProductCard(
                                 isOthersProduct: true,
-                                product: filteredProducts[index],
+                                product: products[index],
                                 onRemove: null,
                               ),
                             );
                           },
                           error: (error, stackTrace) {
                             log(error.toString());
-                            return SizedBox();
+                            return const SizedBox();
                           },
                           loading: () {
-                            return LoadingAnimation();
+                            return const LoadingAnimation();
                           },
                         );
                       },
@@ -164,21 +181,11 @@ class _ProductViewState extends ConsumerState<ProductView> {
                   },
                 )
               else
-                Column(
+                const Column(
                   children: [
-                    const SizedBox(height: 100),
-                    SvgPicture.asset(
-                      'assets/icons/feed_productBag.svg',
-                      height: 120,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Search for Products',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text(
-                      'that you need',
+                    SizedBox(height: 100),
+                    Text(
+                      'No Products Found',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -186,16 +193,16 @@ class _ProductViewState extends ConsumerState<ProductView> {
                 ),
             ],
           ),
-        ));
-      } else {
-        return LoadingAnimation();
-      }
+        )),
+      );
     });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 }

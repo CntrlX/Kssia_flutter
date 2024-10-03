@@ -11,8 +11,10 @@ import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/review_card.dart';
 import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
+import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -815,72 +817,6 @@ class ReviewBarChart extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ReviewsCard extends StatelessWidget {
-  final Map<int, int> ratingDistribution;
-  final double averageRating;
-  final int totalReviews;
-  final Review review;
-
-  const ReviewsCard({
-    super.key,
-    required this.ratingDistribution,
-    required this.averageRating,
-    required this.totalReviews,
-    required this.review,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start, // Align at the top
-        children: [
-          Column(
-            children: [
-              review.reviewer?.profilePicture != null
-                  ? CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          NetworkImage(review.reviewer!.profilePicture!),
-                    )
-                  : const Icon(Icons.person),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            // Ensures the content stays within the available width
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${review.reviewer?.firstName ?? ''}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 42, 41, 41),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  review.content ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                  maxLines: null, // Allows for multiple lines
-                  overflow: TextOverflow.clip, // Prevents overflowing text
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
