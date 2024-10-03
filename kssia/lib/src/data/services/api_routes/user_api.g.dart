@@ -455,7 +455,7 @@ class _FetchUserRequirementsProviderElement
 }
 
 String _$fetchUserRsvpdEventsHash() =>
-    r'15fa659312ed4c3be7c7939a8cfba2b2383c1543';
+    r'c91662b4f4ddf1078b38ac20423258640a576294';
 
 /// See also [fetchUserRsvpdEvents].
 @ProviderFor(fetchUserRsvpdEvents)
@@ -471,7 +471,7 @@ final fetchUserRsvpdEventsProvider =
 );
 
 typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getUserPaymentsHash() => r'9a2904164c2a71713e18ae64635d2fea96a63ea1';
+String _$getUserPaymentsHash() => r'e019316ed5c55be972e9e2921e5c44327407a345';
 
 /// See also [getUserPayments].
 @ProviderFor(getUserPayments)

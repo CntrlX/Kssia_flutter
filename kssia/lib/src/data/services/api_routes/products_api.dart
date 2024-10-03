@@ -12,8 +12,14 @@ const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<Product>> fetchProducts(FetchProductsRef ref,
-    {int pageNo = 1, int limit = 10}) async {
-  final url = Uri.parse('$baseUrl/products?pageNo=$pageNo&limit=$limit');
+    {int pageNo = 1, int limit = 10, String? search}) async {
+  Uri url = Uri.parse('$baseUrl/products?pageNo=$pageNo&limit=$limit');
+
+  if (search != null && search != '') {
+    url = Uri.parse(
+        '$baseUrl/products?pageNo=$pageNo&limit=$limit&search=$search');
+  }
+
   print('Requesting URL: $url');
   final response = await http.get(
     url,

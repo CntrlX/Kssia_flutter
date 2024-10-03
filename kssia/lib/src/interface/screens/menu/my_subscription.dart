@@ -61,28 +61,29 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                 },
               ),
             ),
-            body: asyncSubDetails.when(
-              data: (subscription) {
-                if (subscription.isEmpty) {
-                  return Center(child: Text('No Subscriptions Found'));
-                }
+            body:
+            //  asyncSubDetails.when(
+            //   data: (subscription) {
+            //     if (subscription.isEmpty) {
+            //       return Center(child: Text('No Subscriptions Found'));
+            //     }
 
-                log('Subscription Data: ${subscription.toString()}'); // Log entire subscription data
+            //     log('Subscription Data: ${subscription.toString()}'); // Log entire subscription data
 
-                // Ensure all values are not null before accessing them
-                final category = subscription[0].category ?? '-';
-                final renewalDate = subscription[0].renewal != null
-                    ? DateFormat("d'th' MMMM y")
-                        .format(subscription[0].renewal!)
-                    : '-';
-                final amount = subscription[0].amount != null
-                    ? subscription[0].amount.toString()
-                    : '-';
-                final timeDate = subscription[0].time != null
-                    ? DateFormat("d'th' MMMM y").format(subscription[0].time!)
-                    : '-';
+            //     // Ensure all values are not null before accessing them
+            //     final category = subscription[0].category ?? '-';
+            //     final renewalDate = subscription[0].renewal != null
+            //         ? DateFormat("d'th' MMMM y")
+            //             .format(subscription[0].renewal!)
+            //         : '-';
+            //     final amount = subscription[0].amount != null
+            //         ? subscription[0].amount.toString()
+            //         : '-';
+            //     final timeDate = subscription[0].time != null
+            //         ? DateFormat("d'th' MMMM y").format(subscription[0].time!)
+            //         : '-';
 
-                return ListView(
+               ListView(
                   children: [
                     subscriptionCard(
                       context,
@@ -99,18 +100,19 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                       height: 30,
                     )
                   ],
-                );
+                ));
               },
-              loading: () => const Center(child: LoadingAnimation()),
-              error: (error, stackTrace) {
-                return Center(
-                  child: Text(error.toString()),
-                );
-              },
-            ));
-      },
-    );
-  }
+            //   loading: () => const Center(child: LoadingAnimation()),
+            //   error: (error, stackTrace) {
+            //     return Center(
+            //       child: Text(error.toString()),
+            //     );
+            //   },
+            // )
+            );
+      }
+
+  
 
   Widget subscriptionCard(
       BuildContext context,

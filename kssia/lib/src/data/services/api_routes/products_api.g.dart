@@ -6,7 +6,7 @@ part of 'products_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchProductsHash() => r'99b429d2217f68e38bf995bbbd7992e6ed137b3b';
+String _$fetchProductsHash() => r'8d390c40dd867489a167f93068b78c074dbdd996';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,10 +42,12 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
   FetchProductsProvider call({
     int pageNo = 1,
     int limit = 10,
+    String? search,
   }) {
     return FetchProductsProvider(
       pageNo: pageNo,
       limit: limit,
+      search: search,
     );
   }
 
@@ -56,6 +58,7 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
     return call(
       pageNo: provider.pageNo,
       limit: provider.limit,
+      search: provider.search,
     );
   }
 
@@ -80,11 +83,13 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
   FetchProductsProvider({
     int pageNo = 1,
     int limit = 10,
+    String? search,
   }) : this._internal(
           (ref) => fetchProducts(
             ref as FetchProductsRef,
             pageNo: pageNo,
             limit: limit,
+            search: search,
           ),
           from: fetchProductsProvider,
           name: r'fetchProductsProvider',
@@ -97,6 +102,7 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
               FetchProductsFamily._allTransitiveDependencies,
           pageNo: pageNo,
           limit: limit,
+          search: search,
         );
 
   FetchProductsProvider._internal(
@@ -108,10 +114,12 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     required super.from,
     required this.pageNo,
     required this.limit,
+    required this.search,
   }) : super.internal();
 
   final int pageNo;
   final int limit;
+  final String? search;
 
   @override
   Override overrideWith(
@@ -128,6 +136,7 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
         debugGetCreateSourceHash: null,
         pageNo: pageNo,
         limit: limit,
+        search: search,
       ),
     );
   }
@@ -141,7 +150,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
   bool operator ==(Object other) {
     return other is FetchProductsProvider &&
         other.pageNo == pageNo &&
-        other.limit == limit;
+        other.limit == limit &&
+        other.search == search;
   }
 
   @override
@@ -149,6 +159,7 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, pageNo.hashCode);
     hash = _SystemHash.combine(hash, limit.hashCode);
+    hash = _SystemHash.combine(hash, search.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -160,6 +171,9 @@ mixin FetchProductsRef on AutoDisposeFutureProviderRef<List<Product>> {
 
   /// The parameter `limit` of this provider.
   int get limit;
+
+  /// The parameter `search` of this provider.
+  String? get search;
 }
 
 class _FetchProductsProviderElement
@@ -171,6 +185,8 @@ class _FetchProductsProviderElement
   int get pageNo => (origin as FetchProductsProvider).pageNo;
   @override
   int get limit => (origin as FetchProductsProvider).limit;
+  @override
+  String? get search => (origin as FetchProductsProvider).search;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

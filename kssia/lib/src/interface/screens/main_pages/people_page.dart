@@ -91,9 +91,9 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
-                      tabs: [
+                      tabs: [    Tab(text: "CHAT"),
                         Tab(text: "MEMBERS"),
-                        Tab(text: "CHAT"),
+                    
                       ],
                     ),
                   ),
@@ -106,9 +106,9 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
 
                 Expanded(
                   child: TabBarView(
-                    children: [
+                    children: [   ChatPage(),
                       MembersPage(),
-                      ChatPage(),
+                   
                     ],
                   ),
                 ),

@@ -4,7 +4,9 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
-import 'package:kssia/src/interface/screens/profile/profilePreview.dart'; // Import the XCard widget
+import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
+import 'package:open_share_plus/open.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProfilePage extends StatelessWidget {
   final UserModel user;
@@ -210,7 +212,7 @@ class ProfilePage extends StatelessWidget {
                                                 Text(
                                                   user.designation ?? '',
                                                   style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
+                                                    fontWeight: FontWeight.w500,
                                                     fontSize: 16,
                                                     color: Color.fromARGB(
                                                         255, 42, 41, 41),
@@ -275,6 +277,7 @@ class ProfilePage extends StatelessWidget {
                               const SizedBox(height: 10),
                               if (user.address != null)
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Icon(Icons.location_on,
                                         color: Color(0xFF004797)),
@@ -342,40 +345,76 @@ class ProfilePage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileCard(
-                                  user: user,
-                                ), // Navigate to CardPage
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 90,
-                            height: 90,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(
-                                  50), // Apply circular border to the outer container
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Share.share(
+                                    'https://admin.kssiathrissur.com/user/${user.id}');
+                              },
                               child: Container(
+                                width: 90,
+                                height: 90,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.white,
+                                  color: Color(0xFF004797),
+                                  borderRadius: BorderRadius.circular(
+                                      50), // Apply circular border to the outer container
                                 ),
-                                child: Icon(
-                                  Icons.qr_code,
-                                  color: Colors.grey,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: Color(0xFF004797),
+                                    ),
+                                    child: Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 40),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileCard(
+                                      user: user,
+                                    ), // Navigate to CardPage
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 90,
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(
+                                      50), // Apply circular border to the outer container
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(
+                                      Icons.qr_code,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     ),

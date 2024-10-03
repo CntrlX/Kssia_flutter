@@ -689,7 +689,8 @@ class DetailsPage extends ConsumerStatefulWidget {
 }
 
 class _DetailsPageState extends ConsumerState<DetailsPage> {
-  String _productPriceType = 'Price per unit';
+  TextEditingController productPriceType = TextEditingController();
+
   // final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
   // final isLandlineVisibleProvider = StateProvider<bool>((ref) => false);
   // final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
@@ -845,6 +846,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         productMoqController.text,
         _productImageFIle!,
         id,
+        productPriceType.text,
         context);
     if (createdProduct == null) {
       print('couldnt create new product');
@@ -1146,7 +1148,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               moqText: productMoqController,
               actualPriceText: productActualPriceController,
               offerPriceText: productOfferPriceController,
-              productPriceType: _productPriceType);
+              productPriceTypeController: productPriceType);
         } else if (sheet == 'certificate') {
           return ShowAddCertificateSheet(
               certificateImage: _certificateImageFIle,

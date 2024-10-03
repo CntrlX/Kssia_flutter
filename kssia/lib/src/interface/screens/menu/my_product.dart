@@ -21,7 +21,7 @@ class MyProductPage extends ConsumerStatefulWidget {
 }
 
 class _MyProductPageState extends ConsumerState<MyProductPage> {
-  String _productPriceType = 'Price per unit';
+  TextEditingController productPriceType = TextEditingController();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productDescriptionController =
       TextEditingController();
@@ -62,6 +62,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         productMoqController.text,
         _productImageFIle!,
         id,
+        productPriceType.text,
         context);
     if (createdProduct == null) {
       print('couldnt create new product');
@@ -100,16 +101,17 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
       builder: (context) {
         if (sheet == 'product') {
           return ShowEnterProductsSheet(
-              productImage: _productImageFIle,
-              imageType: sheet,
-              pickImage: _pickFile,
-              addProductCard: _addNewProduct,
-              productNameText: productNameController,
-              descriptionText: productDescriptionController,
-              moqText: productMoqController,
-              actualPriceText: productActualPriceController,
-              offerPriceText: productOfferPriceController,
-              productPriceType: _productPriceType);
+            productPriceTypeController: productPriceType,
+            productImage: _productImageFIle,
+            imageType: sheet,
+            pickImage: _pickFile,
+            addProductCard: _addNewProduct,
+            productNameText: productNameController,
+            descriptionText: productDescriptionController,
+            moqText: productMoqController,
+            actualPriceText: productActualPriceController,
+            offerPriceText: productOfferPriceController,
+          );
         } else {
           return SizedBox();
         }
@@ -201,7 +203,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                     ),
                   ),
                   Positioned(
-                    bottom: 16,
+                    bottom: 36,
                     right: 16,
                     child: FloatingActionButton.extended(
                       onPressed: () {

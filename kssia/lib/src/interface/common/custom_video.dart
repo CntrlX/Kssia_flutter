@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/promotions_model.dart';
 
-
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class AutoScrollText extends StatefulWidget {
@@ -100,13 +99,6 @@ class _AutoScrollTextState extends State<AutoScrollText> {
               ),
             ),
             const SizedBox(width: 20), // Gap between repeated text
-            Text(
-              widget.text, // Repeat the text to create a marquee effect
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
           ],
         ),
       ),

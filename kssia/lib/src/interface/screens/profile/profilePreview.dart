@@ -69,28 +69,29 @@ class ProfilePreview extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFF2F2F2),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: IconButton(
-                            icon: const Icon(
-                              size: 18,
-                              Icons.edit,
-                              color: Color(0xFF004797),
+                        if (id.toString() == user.id.toString())
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFF2F2F2),
+                                borderRadius: BorderRadius.circular(30)),
+                            child: IconButton(
+                              icon: const Icon(
+                                size: 18,
+                                Icons.edit,
+                                color: Color(0xFF004797),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DetailsPage()), // Navigate to MenuPage
+                                );
+                              },
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DetailsPage()), // Navigate to MenuPage
-                              );
-                            },
                           ),
-                        ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -160,7 +161,7 @@ class ProfilePreview extends ConsumerWidget {
                                   Text(
                                     user.designation!,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                       fontSize: 16,
                                       color: Color.fromARGB(255, 42, 41, 41),
                                     ),
@@ -248,11 +249,12 @@ class ProfilePreview extends ConsumerWidget {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const SvgIcon(
-                              assetName: 'assets/icons/whatsapp.svg',
-                              color: Color(0xFF004797),
-                              size: 25,
-                            ),
+                            if (user.phoneNumbers?.whatsappNumber != null)
+                              const SvgIcon(
+                                assetName: 'assets/icons/whatsapp.svg',
+                                color: Color(0xFF004797),
+                                size: 25,
+                              ),
                             const SizedBox(width: 10),
                             if (user.phoneNumbers?.whatsappNumber != null)
                               Expanded(
@@ -263,16 +265,19 @@ class ProfilePreview extends ConsumerWidget {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const SvgIcon(
-                              assetName: 'assets/icons/whatsapp-business.svg',
-                              color: Color(0xFF004797),
-                              size: 23,
-                            ),
+                            if (user.phoneNumbers?.whatsappBusinessNumber !=
+                                null)
+                              const SvgIcon(
+                                assetName: 'assets/icons/whatsapp-business.svg',
+                                color: Color(0xFF004797),
+                                size: 23,
+                              ),
                             const SizedBox(width: 10),
                             if (user.phoneNumbers?.whatsappBusinessNumber !=
                                 null)
                               Expanded(
-                                child: Text(user.phoneNumbers?.whatsappNumber??''),
+                                child: Text(
+                                    user.phoneNumbers?.whatsappNumber ?? ''),
                               )
                           ],
                         ),
@@ -288,14 +293,15 @@ class ProfilePreview extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Flexible(child: Text('''${user.bio}''')),
-                        ],
+                    if (user.bio != null)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Flexible(child: Text('''${user.bio}''')),
+                          ],
+                        ),
                       ),
-                    ),
                     const SizedBox(
                       height: 50,
                     ),
@@ -602,8 +608,13 @@ class ProfilePreview extends ConsumerWidget {
                               label: 'SAVE CONTACT',
                               onPressed: () {
                                 if (user.phoneNumbers?.personal != null) {
-                                  launchDialer(
-                                      user.phoneNumbers?.personal ?? '');
+                                  saveContact(
+                                      firstName:
+                                          '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''}',
+                                      number: user.phoneNumbers?.personal ?? '',
+                                      lastName: '${user.name?.lastName ?? ''}',
+                                      email: user.email ?? '',
+                                      context: context);
                                 }
                               }),
                         ),
@@ -828,6 +839,7 @@ class ReviewsCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start, // Align at the top
         children: [
           Column(
             children: [
@@ -841,25 +853,31 @@ class ReviewsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${review.reviewer?.firstName ?? ''}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: Color.fromARGB(255, 42, 41, 41),
+          Expanded(
+            // Ensures the content stays within the available width
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${review.reviewer?.firstName ?? ''}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 42, 41, 41),
+                  ),
                 ),
-              ),
-              Text(
-                review.content ?? '',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                const SizedBox(height: 5),
+                Text(
+                  review.content ?? '',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                  maxLines: null, // Allows for multiple lines
+                  overflow: TextOverflow.clip, // Prevents overflowing text
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

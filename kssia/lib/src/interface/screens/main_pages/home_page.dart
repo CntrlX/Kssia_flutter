@@ -508,7 +508,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Image.network(
                 banner.bannerImageUrl ?? 'https://placehold.co/600x400/png',
                 width: double.infinity,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) {
                     // If the image is fully loaded, show the image
@@ -548,7 +548,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             32, // Poster width matches screen width
         child: Image.network(
           poster.posterImageUrl ?? 'https://placehold.co/600x400/png',
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
               return child; // Image loaded successfully

@@ -283,6 +283,7 @@ class ApiRoutes {
       String moq,
       File productImage,
       String sellerId,
+      String productPriceType,
       context) async {
     final url = Uri.parse('$baseUrl/products');
 
@@ -304,6 +305,7 @@ class ApiRoutes {
     request.fields['moq'] = moq;
     request.fields['status'] = 'pending';
     request.fields['seller_id'] = sellerId;
+    request.fields['units'] = productPriceType;
 
     // Add the image file
     var stream = http.ByteStream(productImage.openRead());

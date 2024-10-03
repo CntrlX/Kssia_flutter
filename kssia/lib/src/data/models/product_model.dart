@@ -7,7 +7,7 @@ class Product {
   final int? offerPrice;
   final String? description;
   final int? moq;
-  final int? units;
+  final String? units;
   final String? status;
   final List<String>? tags;
   final DateTime? createdAt;
@@ -78,7 +78,7 @@ class Product {
     int? offerPrice,
     String? description,
     int? moq,
-    int? units,
+    String? units,
     String? status,
     List<String>? tags,
     DateTime? createdAt,

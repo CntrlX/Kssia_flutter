@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/models/news_model.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 final currentIndexProvider = StateProvider<int>((ref) => 0);
@@ -41,113 +38,95 @@ class NewsPage extends StatelessWidget {
                 body: Column(
                   children: [
                     Expanded(
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverList(
-                            delegate: SliverChildListDelegate([
-                              Column(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Image Section
+                            SizedBox(
+                              height: 200,
+                              child: Image.network(
+                                news[currentIndex].image ??
+                                    'https://placehold.co/600x400/png',
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.network(
+                                    'https://placehold.co/600x400/png',
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    height: 200,
-                                    child: Image.network(
-                                      width: double.infinity,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.network(
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                            'https://placehold.co/600x400/png');
-                                      },
-                                      news[currentIndex].image ??
-                                          'https://placehold.co/600x400/png', // Replace with your image URL
-                                      fit: BoxFit.cover,
+                                  // Category Section
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromARGB(
+                                          255, 192, 252, 194),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 2, horizontal: 10),
+                                      child: Text(
+                                        news[currentIndex].category ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: const Color.fromARGB(
-                                                  255, 192, 252, 194)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                top: 2,
-                                                bottom: 2),
-                                            child: Text(
-                                              news[currentIndex].category ?? '',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
+                                  const SizedBox(height: 8),
+                                  // Title Section
+                                  Text(
+                                    news[currentIndex].title ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Date and Reading Time Row
+                                  Row(
+                                    children: [
+                                      Text(
+                                        formattedDate,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          news[currentIndex].title ?? '',
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        minsToRead,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  // Content Section
+                                  Text(
+                                    news[currentIndex].content ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ],
                               ),
-                            ]),
-                          ),
-                          SliverFillRemaining(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16, right: 16),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          formattedDate,
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12),
-                                        ),
-                                        Spacer(),
-                                        Text(
-                                          minsToRead,
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            news[currentIndex].content ?? '',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     Padding(

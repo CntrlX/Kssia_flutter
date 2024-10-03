@@ -19,8 +19,22 @@ final reviewsProvider = StateNotifierProvider<ReviewsState, int>((ref) {
   return ReviewsState();
 });
 
-class MyReviewsPage extends StatelessWidget {
+class MyReviewsPage extends ConsumerStatefulWidget {
   const MyReviewsPage({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<MyReviewsPage> createState() => _MyReviewsPageState();
+}
+
+class _MyReviewsPageState extends ConsumerState<MyReviewsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Move invalidate call to initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(userProvider);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,80 +48,80 @@ class MyReviewsPage extends StatelessWidget {
           );
         } else {
           return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text(
-              'My Reviews',
-              style: TextStyle(fontSize: 17),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
             backgroundColor: Colors.white,
-            iconTheme: const IconThemeData(color: Colors.black),
-            elevation: 0,
-          ),
-          body: asyncUser.when(
-            loading: () => Center(child: LoadingAnimation()),
-            error: (error, stackTrace) {
-              return Center(
-                child: LoadingAnimation(),
-              );
-            },
-            data: (user) {
-              final ratingDistribution = getRatingDistribution(user);
-              final averageRating = getAverageRating(user);
-              final totalReviews = user.reviews!.length;
+            appBar: AppBar(
+              title: const Text(
+                'My Reviews',
+                style: TextStyle(fontSize: 17),
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: Colors.white,
+              iconTheme: const IconThemeData(color: Colors.black),
+              elevation: 0,
+            ),
+            body: asyncUser.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                return Center(
+                  child: LoadingAnimation(),
+                );
+              },
+              data: (user) {
+                final ratingDistribution = getRatingDistribution(user);
+                final averageRating = getAverageRating(user);
+                final totalReviews = user.reviews!.length;
 
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 1.0,
-                      color: Colors.grey[300], // Divider color
-                    ),
-                    if (totalReviews != 0)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ReviewBarChart(
-                          ratingDistribution: ratingDistribution,
-                          averageRating: averageRating,
-                          totalReviews: totalReviews,
-                        ),
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 1.0,
+                        color: Colors.grey[300], // Divider color
                       ),
-                    if (user.reviews!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: reviewsToShow,
-                          itemBuilder: (context, index) {
-                            return ReviewsCard(
-                              review: user.reviews![index],
-                              ratingDistribution: ratingDistribution,
-                              averageRating: averageRating,
-                              totalReviews: totalReviews,
-                            );
+                      if (totalReviews != 0)
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ReviewBarChart(
+                            ratingDistribution: ratingDistribution,
+                            averageRating: averageRating,
+                            totalReviews: totalReviews,
+                          ),
+                        ),
+                      if (user.reviews!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: reviewsToShow,
+                            itemBuilder: (context, index) {
+                              return ReviewsCard(
+                                review: user.reviews![index],
+                                ratingDistribution: ratingDistribution,
+                                averageRating: averageRating,
+                                totalReviews: totalReviews,
+                              );
+                            },
+                          ),
+                        ),
+                      if (reviewsToShow < user.reviews!.length)
+                        TextButton(
+                          onPressed: () {
+                            ref
+                                .read(reviewsProvider.notifier)
+                                .showMoreReviews(user.reviews!.length);
                           },
+                          child: Text('View More'),
                         ),
-                      ),
-                    if (reviewsToShow < user.reviews!.length)
-                      TextButton(
-                        onPressed: () {
-                          ref
-                              .read(reviewsProvider.notifier)
-                              .showMoreReviews(user.reviews!.length);
-                        },
-                        child: Text('View More'),
-                      ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
         }
       },
     );

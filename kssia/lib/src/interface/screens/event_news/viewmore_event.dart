@@ -231,20 +231,30 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 const SizedBox(height: 24),
                 // Venue Section
                 if (widget.event.venue != null)
-                  const Text(
-                    'Venue',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                    ),
+                    child: const Text(
+                      'Venue',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 const SizedBox(height: 8),
                 if (widget.event.venue != null)
-                  Text(
-                    widget.event.venue ?? '',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                    ),
+                    child: Text(
+                      widget.event.venue ?? '',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
                   ),
                 const SizedBox(height: 8),

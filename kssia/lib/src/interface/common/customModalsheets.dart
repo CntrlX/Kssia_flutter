@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -872,7 +873,7 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
 }
 
 class ShowEnterProductsSheet extends StatefulWidget {
-  String productPriceType;
+  final TextEditingController productPriceTypeController;
   final TextEditingController productNameText;
   final TextEditingController descriptionText;
   final TextEditingController moqText;
@@ -886,7 +887,6 @@ class ShowEnterProductsSheet extends StatefulWidget {
 
   ShowEnterProductsSheet({
     super.key,
-    required this.productPriceType,
     required this.productNameText,
     required this.descriptionText,
     required this.moqText,
@@ -896,6 +896,7 @@ class ShowEnterProductsSheet extends StatefulWidget {
     required this.imageType,
     this.productImage,
     required this.pickImage,
+    required this.productPriceTypeController,
   });
 
   @override
@@ -903,6 +904,7 @@ class ShowEnterProductsSheet extends StatefulWidget {
 }
 
 class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
+  String productPriceType = 'Price per unit';
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -1082,6 +1084,14 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the offer price';
                         }
+                        if (int.parse(widget.offerPriceText.text) >
+                            int.parse(widget.actualPriceText.text)) {
+                          return 'Actual price is higher';
+                        }
+                        if (int.parse(widget.offerPriceText.text) ==
+                            int.parse(widget.actualPriceText.text)) {
+                          return 'Prices should be different';
+                        }
                         return null;
                       },
                     ),
@@ -1104,7 +1114,12 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                 onPressed: () {
                   _showProductPriceTypeDialog(context).then((value) {
                     if (value != null) {
-                      widget.productPriceType = value;
+                      setState(() {
+                        productPriceType = value;
+                        widget.productPriceTypeController.text = value;
+                      });
+
+                      log('Selected price per unit: ${productPriceType}'); // Log the updated value
                     }
                   });
                 },
@@ -1112,7 +1127,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.productPriceType,
+                      productPriceType,
                       style: const TextStyle(
                           color: Color.fromARGB(255, 94, 93, 93)),
                     ),
@@ -1135,7 +1150,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                 fontSize: 16,
               ),
               const SizedBox(
-                height: 10,
+                height: 30,
               ),
             ],
           ),
@@ -1153,20 +1168,32 @@ Future<String?> _showProductPriceTypeDialog(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        title: const Text('Select an Option'),
+        title: const Text('Select a Unit'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('Price per unit'),
+              title: const Text('Kilogram (kg)'),
               onTap: () {
-                Navigator.of(context).pop('Price per unit');
+                Navigator.of(context).pop('kg');
               },
             ),
             ListTile(
-              title: const Text('Option 2'),
+              title: const Text('Gram (g)'),
               onTap: () {
-                Navigator.of(context).pop('Option 2');
+                Navigator.of(context).pop('g');
+              },
+            ),
+            ListTile(
+              title: const Text('Per Piece'),
+              onTap: () {
+                Navigator.of(context).pop('piece');
+              },
+            ),
+            ListTile(
+              title: const Text('Litre (L)'),
+              onTap: () {
+                Navigator.of(context).pop('L');
               },
             ),
           ],
@@ -1567,7 +1594,6 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   void initState() {
     super.initState();
     _quantityController.text = '0';
-
   }
 
   @override
@@ -1858,8 +1884,8 @@ class RequirementModalSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncUser = ref.watch(
-            fetchUserDetailsProvider(token, requirement.author!.id!));
+        final asyncUser =
+            ref.watch(fetchUserDetailsProvider(token, requirement.author!.id!));
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -1873,8 +1899,7 @@ class RequirementModalSheet extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (requirement.image != null &&
-                        requirement.image != '')
+                    if (requirement.image != null && requirement.image != '')
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20.0)),
@@ -1885,8 +1910,7 @@ class RequirementModalSheet extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                       ),
-                    if (requirement.image != null &&
-                        requirement.image != '')
+                    if (requirement.image != null && requirement.image != '')
                       const SizedBox(height: 20),
                     // Make only the text content scrollable
                     Padding(

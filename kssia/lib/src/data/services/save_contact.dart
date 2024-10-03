@@ -1,12 +1,33 @@
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'dart:math';
 
-Future<void> launchDialer(String number) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: number);
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
+import 'package:contact_add/contact.dart';
+import 'package:contact_add/contact_add.dart';
+import 'package:flutter/material.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> saveContact(
+    {required String number,
+    required String firstName,    required String lastName,required String email,
+    required BuildContext context}) async {
+  // Request permission to access contacts
+  if (await Permission.contacts.request().isGranted) {
+    final Contact contact = Contact(
+        firstname: firstName,
+        lastname: lastName,
+
+        phone: number,
+        email: email);
+
+    final bool success = await ContactAdd.addContact(contact);
+
+    if (success) {
+      CustomSnackbar.showSnackbar(context, 'Contact saved successfully!');
     } else {
-      throw 'Could not launch $number';
+      CustomSnackbar.showSnackbar(context, 'Contact saving failed!');
     }
+  } else {
+    // Show error message if permission is denied
+    CustomSnackbar.showSnackbar(context, 'Permission denied to save contacts');
   }
+}

@@ -140,6 +140,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? savedtoken = preferences.getString('token');
     String? savedId = preferences.getString('id');
+    log('token:$savedtoken');
     if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
       setState(() {
         LoggedIn = true;
