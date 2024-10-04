@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/services/request_permissions.dart';
-import 'package:kssia/src/data/services/save_pdf.dart';
-import 'package:kssia/src/data/services/share_pdf.dart';
+import 'package:kssia/src/data/services/save_qr.dart';
+import 'package:kssia/src/data/services/share_qr.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
@@ -163,6 +163,9 @@ class ProfileCard extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 25, right: 15),
                         child: Column(
                           children: [
+                            SizedBox(
+                              height: 30,
+                            ),
                             Stack(
                               children: [
                                 Padding(
@@ -312,6 +315,9 @@ class ProfileCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                            SizedBox(
+                              height: 30,
+                            ),
                           ],
                         ),
                       ),
@@ -332,20 +338,10 @@ class ProfileCard extends StatelessWidget {
                                     fontSize: 16,
                                     label: 'SHARE',
                                     onPressed: () async {
-                                      await requestStoragePermission();
-                                      screenshotController
-                                          .captureFromWidget(
-                                        QrImageView(
-                                          backgroundColor: Colors.white,
-                                          size: 300,
-                                          data:
-                                              'https://api.kssiathrissur.com/user/${user.id}',
-                                        ),
-                                      )
-                                          .then((capturedImage) async {
-                                        await createPdfAndDownloadAndShare(
-                                            screenshotController, context);
-                                      });
+                                      shareQr(
+                                          context: context,
+                                          screenshotController:
+                                              screenshotController);
                                     }),
                               ),
                               const SizedBox(
@@ -362,20 +358,10 @@ class ProfileCard extends StatelessWidget {
                                     fontSize: 16,
                                     label: 'DOWNLOAD QR',
                                     onPressed: () async {
-                                      await requestStoragePermission();
-                                      screenshotController
-                                          .captureFromWidget(
-                                        QrImageView(
-                                          backgroundColor: Colors.white,
-                                          size: 300,
-                                          data:
-                                              'https://api.kssiathrissur.com/user/${user.id}',
-                                        ),
-                                      )
-                                          .then((capturedImage) {
-                                        createPdfAndDownload(
-                                            screenshotController, context);
-                                      });
+                                      saveQr(
+                                          context: context,
+                                          screenshotController:
+                                              screenshotController);
                                     }),
                               ),
                             ],
