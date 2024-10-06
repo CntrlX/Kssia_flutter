@@ -228,9 +228,3 @@ String calculateReadingTimeAndWordCount(String text) {
 
   return '$formattedTime read';
 }
-
-// void main() {
-//   runApp(MaterialApp(
-//     home: NewsPage(),
-//   ));
-// }

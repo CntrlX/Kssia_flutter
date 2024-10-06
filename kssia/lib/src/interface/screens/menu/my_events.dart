@@ -17,7 +17,7 @@ class MyEventsPage extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final asyncEvents = ref.watch(fetchUserRsvpdEventsProvider);
-        return Scaffold(
+        return Scaffold(backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text(
               'My Events',
