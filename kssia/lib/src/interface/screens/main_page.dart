@@ -8,6 +8,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -95,7 +96,7 @@ class _MainPageState extends ConsumerState<MainPage> {
       ),
       FeedPage(),
       ProfilePage(user: user),
-      Event_News_Page(),
+      NewsPage(),
       PeoplePage(),
     ];
     _inactiveIcons = [
@@ -169,13 +170,7 @@ class _MainPageState extends ConsumerState<MainPage> {
                             iconPath: _activeIcons[index],
                             color: Color(0xFF004797),
                           ),
-                    label: [
-                      'Home',
-                      'Feed',
-                      'Profile',
-                      'Events/news',
-                      'People'
-                    ][index],
+                    label: ['Home', 'Feed', 'Profile', 'News', 'People'][index],
                   );
                 }),
                 currentIndex: _selectedIndex,

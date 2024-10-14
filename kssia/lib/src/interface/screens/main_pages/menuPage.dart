@@ -350,7 +350,7 @@ class MenuPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const MySubscriptionPage()),
+                                     MySubscriptionPage()),
                           );
                         },
                       ),

@@ -129,7 +129,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                       Row(
                         children: [
                           const Icon(Icons.calendar_today,
-                              size: 15, color: Color(0xFFE30613)),
+                              size: 15, color: Color(0xFF004797)),
                           const SizedBox(width: 8),
                           Text(
                             date,
@@ -145,7 +145,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                       Row(
                         children: [
                           const Icon(Icons.access_time,
-                              size: 15, color: Color(0xFFE30613)),
+                              size: 15, color: Color(0xFF004797)),
                           const SizedBox(width: 8),
                           Text(
                             time,

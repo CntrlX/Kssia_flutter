@@ -22,10 +22,10 @@ class _EventPageState extends ConsumerState<EventPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _fetchInitialFeeds();
+    _fetchInitialEvents();
   }
 
-  Future<void> _fetchInitialFeeds() async {
+  Future<void> _fetchInitialEvents() async {
     await ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
   }
 
