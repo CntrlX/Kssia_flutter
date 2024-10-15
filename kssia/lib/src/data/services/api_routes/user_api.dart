@@ -566,7 +566,7 @@ class ApiRoutes {
 
       if (response.statusCode == 200) {
         // Success
-        ref.invalidate(userProvider);
+        ref.read(userProvider.notifier).refreshUser();
         print('User Blocked successfully');
         CustomSnackbar.showSnackbar(context, 'User Blocked');
       } else {

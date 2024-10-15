@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
+import 'package:kssia/src/interface/screens/menu/my_product.dart';
+import 'package:kssia/src/interface/screens/menu/myrequirementsPage.dart';
 
 class ReplyCard extends StatelessWidget {
   const ReplyCard({
@@ -58,40 +60,58 @@ class ReplyCard extends StatelessWidget {
                     ),
                   ),
                 if (requirement?.image != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      requirement!.image!,
-                      height: 160, // Adjusted height to fit better
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyRequirementsPage(),
+                          ));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        requirement!.image!,
+                        height: 160, // Adjusted height to fit better
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 if (product != null)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product?.name ?? '',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(
-                              0xFF004797), // Using the same color for emphasis
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyProductPage(),
+                          ));
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product?.name ?? '',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(
+                                0xFF004797), // Using the same color for emphasis
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                          height: 4), // Add spacing between name and price
-                      Text(
-                        'PRICE INR ${product?.price?.toStringAsFixed(2) ?? ''}', // Format price to two decimals
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color:
-                              Colors.black87, // Subtle color for the price text
+                        const SizedBox(
+                            height: 4), // Add spacing between name and price
+                        Text(
+                          'PRICE INR ${product?.price?.toStringAsFixed(2) ?? ''}', // Format price to two decimals
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors
+                                .black87, // Subtle color for the price text
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5),

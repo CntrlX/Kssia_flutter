@@ -11,6 +11,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MembersPage extends ConsumerStatefulWidget {
   const MembersPage({super.key});
@@ -66,7 +67,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                               LoadingAnimation(), // Show loading indicator when fetching more users
                         );
                       }
-    
+
                       // Regular user item
                       var chatForUser = chats.firstWhere(
                         (chat) =>
@@ -87,7 +88,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                           ],
                         ),
                       );
-    
+
                       var receiver = chatForUser.participants?.firstWhere(
                         (participant) => participant.id != id,
                         orElse: () => Participant(
@@ -98,20 +99,19 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                           profilePicture: users[index].profilePicture,
                         ),
                       );
-    
+
                       var sender = chatForUser.participants?.firstWhere(
                         (participant) => participant.id == id,
                         orElse: () => Participant(),
                       );
-    
+
                       final user = users[index];
-    
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfilePreview(user: user),
+                              builder: (context) => ProfilePreview(user: user),
                             ),
                           );
                         },
@@ -121,10 +121,33 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                             width: 40,
                             child: ClipOval(
                               child: Image.network(
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    // If the image is fully loaded, show the image
+                                    return child;
+                                  }
+                                  // While the image is loading, show shimmer effect
+                                  return Container(
+                                    child: Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                                 user.profilePicture ?? 'error',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.person);
+                                  return Image.asset(
+                                      scale: .9,
+                                      'assets/icons/dummy_person_small.png');
                                 },
                               ),
                             ),

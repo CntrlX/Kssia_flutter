@@ -89,15 +89,16 @@ class ProfilePage extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    user.profilePicture != null
+                                    user.profilePicture != null &&
+                                            user.profilePicture != ''
                                         ? CircleAvatar(
                                             radius: 40,
                                             backgroundImage: NetworkImage(
-                                              user.profilePicture ??
-                                                  'https://placehold.co/600x400',
+                                              user.profilePicture ?? '',
                                             ),
                                           )
-                                        : const Icon(Icons.person),
+                                        : Image.asset(
+                                            'assets/icons/dummy_person.png'),
                                     const SizedBox(height: 10),
                                     Text(
                                       '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name!.lastName!}',

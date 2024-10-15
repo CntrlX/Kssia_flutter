@@ -25,8 +25,6 @@ class RequirementsNotifier extends _$RequirementsNotifier {
     if (isLoading || !hasMore) return;
 
     isLoading = true;
-
-    // Delay state update after starting the fetch to avoid modifying during build
     Future(() {
       state = [...requirements];
     });
@@ -39,7 +37,6 @@ class RequirementsNotifier extends _$RequirementsNotifier {
       pageNo++;
       hasMore = newRequirements.length == limit;
 
-      // Delay state update after fetch to avoid modifying during build
       Future(() {
         state = [...requirements];
       });
@@ -48,22 +45,29 @@ class RequirementsNotifier extends _$RequirementsNotifier {
       log(stackTrace.toString());
     } finally {
       isLoading = false;
-
-      // Delay state update again after fetch completion
       Future(() {
         state = [...requirements];
       });
-
       log('im in people $requirements');
     }
   }
 
-  // Optionally, add a method for refreshing the requirements
   Future<void> refreshRequirements() async {
     requirements = [];
     pageNo = 1;
     hasMore = true;
     await fetchMoreRequirements();
+  }
+
+  /// Function to remove all requirements by a specific author ID.
+  void removeRequirementsByAuthor(String authorId) {
+    requirements = requirements
+        .where((requirement) => requirement.author?.id != authorId)
+        .toList();
+
+    // Update state after filtering
+    state = [...requirements];
+    log('Removed requirements by author: $authorId');
   }
 }
 

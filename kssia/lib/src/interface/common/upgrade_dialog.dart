@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/screens/menu/my_subscription.dart';
 
 class UpgradeDialog extends StatelessWidget {
   const UpgradeDialog({Key? key}) : super(key: key);
@@ -15,22 +16,21 @@ class UpgradeDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Arrow Image
             Image.asset(
-              'assets/upgrade.png', // Placeholder arrow image
+              'assets/upgrade.png',
               height: 80,
             ),
             const SizedBox(height: 20),
 
             // Title
-            Text(
+            const Text(
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               'Upgrade required !',
             ),
             const SizedBox(height: 8),
 
             // Subtitle
-            SizedBox(
+            const SizedBox(
               child: Text(
                 'Please upgrade to premium to access this feature',
                 textAlign: TextAlign.center,
@@ -47,15 +47,25 @@ class UpgradeDialog extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: customButton(
                       labelColor: Colors.black,
-                      sideColor: Color(0xFFF2F2F7),
-                      buttonColor: Color(0xFFF2F2F7),
+                      sideColor: const Color(0xFFF2F2F7),
+                      buttonColor: const Color(0xFFF2F2F7),
                       label: 'Cancel',
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
                 )),
                 Flexible(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: customButton(label: 'Upgrade', onPressed: () {}),
+                  child: customButton(
+                      label: 'Upgrade',
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MySubscriptionPage(),
+                            ));
+                      }),
                 ))
               ],
             ),
@@ -66,25 +76,4 @@ class UpgradeDialog extends StatelessWidget {
   }
 
   // Helper function to build buttons
-  Widget _buildDialogButton(
-    BuildContext context,
-    String text,
-    Color backgroundColor,
-    Color textColor,
-    VoidCallback onPressed,
-  ) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-      ),
-    );
-  }
 }

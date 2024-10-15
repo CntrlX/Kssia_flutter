@@ -21,6 +21,12 @@ class ProductsNotifier extends _$ProductsNotifier {
   List<Product> build() {
     return [];
   }
+ void removeProductsBySeller(String sellerId) {
+    products = products
+        .where((product) => product.sellerId?.id != sellerId)
+        .toList();
+    state = products;
+  }
 
   Future<void> fetchMoreProducts() async {
     if (isLoading || !hasMore) return;

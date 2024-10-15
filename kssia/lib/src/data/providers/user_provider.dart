@@ -6,22 +6,38 @@ import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 
 import '../globals.dart';
-
 class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
   final StateNotifierProviderRef<UserNotifier, AsyncValue<UserModel>> ref;
 
   UserNotifier(this.ref) : super(const AsyncValue.loading()) {
     _initializeUser();
   }
+
+  /// Initializes the user when the notifier is first created
   Future<void> _initializeUser() async {
     if (mounted) {
-      try {
-        log('user provider token');
-        final user = await ref.read(fetchUserDetailsProvider(token, id).future);
-        state = AsyncValue.data(user ?? UserModel());
-      } catch (e, stackTrace) {
-        state = AsyncValue.error(e, stackTrace);
-      }
+      await _fetchUserDetails();
+    }
+  }
+
+  /// Refresh user details by re-fetching them and updating the state
+  Future<void> refreshUser() async {
+    if (mounted) {
+      state = const AsyncValue.loading(); // Set state to loading during refresh
+      await _fetchUserDetails();
+    }
+  }
+
+  /// Helper function to fetch user details and update the state
+  Future<void> _fetchUserDetails() async {
+    try {
+      log('Fetching user details');
+      final user = await ref.read(fetchUserDetailsProvider(token, id).future);
+      state = AsyncValue.data(user ?? UserModel());
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      log('Error fetching user details: $e');
+      log(stackTrace.toString());
     }
   }
 

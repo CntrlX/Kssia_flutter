@@ -16,6 +16,7 @@ import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FeedView extends ConsumerStatefulWidget {
   FeedView({super.key});
@@ -133,8 +134,13 @@ class _FeedViewState extends ConsumerState<FeedView> {
                     },
                   ),
                 if (requirements.isEmpty && !isLoading)
-                  const Center(
-                    child: Text('No Requirements'),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Center(
+                        child: Text('No Requirements'),
+                      ),
+                    ],
                   ),
                 if (isLoading && requirements.isEmpty)
                   const Center(
@@ -146,7 +152,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () => _openModalSheet(sheet: 'requirement'),
               label: const Text(
-                'Add Requirement/Update',
+                'Add Requirement',
                 style: TextStyle(color: Colors.white),
               ),
               icon: const Icon(
@@ -218,6 +224,27 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                 AspectRatio(
                                   aspectRatio: 4 / 4,
                                   child: Image.network(
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        // If the image is fully loaded, show the image
+                                        return child;
+                                      }
+                                      // While the image is loading, show shimmer effect
+                                      return Container(
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[100]!,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     fit: BoxFit.contain,
                                     requirement.image!,
                                     errorBuilder: (context, error, stackTrace) {

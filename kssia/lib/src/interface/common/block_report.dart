@@ -12,6 +12,7 @@ import 'package:kssia/src/data/notifiers/requirements_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customdialog.dart';
 
+
 class CustomDropDown extends ConsumerWidget {
   final Requirement? requirement;
   final Product? product;
@@ -33,89 +34,30 @@ class CustomDropDown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ApiRoutes userApi = ApiRoutes();
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: const Icon(Icons.more_vert), // Trigger icon
         items: [
           const DropdownMenuItem(
             value: 'report',
-            child: const Text(
+            child: Text(
               'Report',
               style: TextStyle(color: Colors.red),
             ),
           ),
           DropdownMenuItem(
             value: 'block',
-            child: isBlocked != null && isBlocked == false
-                ? Text(
-                    'Block',
-                    style: TextStyle(color: Colors.red),
-                  )
-                : Text(
-                    'Unblock',
-                    style: TextStyle(color: Colors.red),
-                  ),
+            child: isBlocked != null && !isBlocked!
+                ? const Text('Block', style: TextStyle(color: Colors.red))
+                : const Text('Unblock', style: TextStyle(color: Colors.red)),
           ),
         ],
         onChanged: (value) async {
           if (value == 'report') {
-            String reportType = '';
-            if (requirement != null) {
-              reportType = 'requirement';
-              showReportPersonDialog(
-                  reportedItemId: requirement?.id ?? '',
-                  context: context,
-                  onReportStatusChanged: () {},
-                  reportType: reportType);
-            } else if (product != null) {
-              log('product id:${product?.id ?? ''}');
-              reportType = 'product';
-              showReportPersonDialog(
-                  reportedItemId: product?.id ?? '',
-                  context: context,
-                  onReportStatusChanged: () {},
-                  reportType: reportType);
-            } else if (userId != null) {
-              log(userId.toString());
-              reportType = 'user';
-              showReportPersonDialog(
-                  reportedItemId: userId ?? '',
-                  context: context,
-                  userId: userId ?? '',
-                  onReportStatusChanged: () {},
-                  reportType: reportType);
-            } else {
-              reportType = 'chat';
-              showReportPersonDialog(
-                  reportedItemId: msg?.id ?? '',
-                  context: context,
-                  onReportStatusChanged: () {},
-                  reportType: reportType);
-            }
+            _handleReport(context);
           } else if (value == 'block') {
-            if (requirement != null) {
-              showBlockPersonDialog(
-                  context: context,
-                  userId: requirement?.author?.id ?? '',
-                  onBlockStatusChanged: () {
-                    ref.invalidate(requirementsNotifierProvider);
-                  });
-            } else if (product != null) {
-              log('product id in block report widget:${product?.id ?? ''}');
-              showBlockPersonDialog(
-                  context: context,
-                  userId: product?.sellerId?.id ?? '',
-                  onBlockStatusChanged: () {
-                    ref.invalidate(productsNotifierProvider);
-                  });
-            } else if (userId != null) {
-              showBlockPersonDialog(
-                  context: context,
-                  userId: userId ?? '',
-                  onBlockStatusChanged: () {
-                    onBlockStatusChanged;
-                  });
-            }
+            await _handleBlock(context, ref);
           }
         },
         buttonStyleData: ButtonStyleData(
@@ -134,5 +76,82 @@ class CustomDropDown extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _handleReport(BuildContext context) {
+    String reportType = '';
+    if (requirement != null) {
+      reportType = 'requirement';
+      showReportPersonDialog(
+        reportedItemId: requirement?.id ?? '',
+        context: context,
+        onReportStatusChanged: () {},
+        reportType: reportType,
+      );
+    } else if (product != null) {
+      log('product id: ${product?.id ?? ''}');
+      reportType = 'product';
+      showReportPersonDialog(
+        reportedItemId: product?.id ?? '',
+        context: context,
+        onReportStatusChanged: () {},
+        reportType: reportType,
+      );
+    } else if (userId != null) {
+      log(userId.toString());
+      reportType = 'user';
+      showReportPersonDialog(
+        reportedItemId: userId ?? '',
+        context: context,
+        userId: userId ?? '',
+        onReportStatusChanged: () {},
+        reportType: reportType,
+      );
+    } else {
+      reportType = 'chat';
+      showReportPersonDialog(
+        reportedItemId: msg?.id ?? '',
+        context: context,
+        onReportStatusChanged: () {},
+        reportType: reportType,
+      );
+    }
+  }
+
+  Future<void> _handleBlock(BuildContext context, WidgetRef ref) async {
+    if (requirement != null) {
+      showBlockPersonDialog(
+        context: context,
+        userId: requirement?.author?.id ?? '',
+        onBlockStatusChanged: () {
+          if (context.mounted) {
+            ref
+                .read(requirementsNotifierProvider.notifier)
+                .removeRequirementsByAuthor(requirement!.author?.id ?? '');
+          }
+        },
+      );
+    } else if (product != null) {
+      log('product id in block report widget: ${product?.id ?? ''}');
+      showBlockPersonDialog(
+        context: context,
+        userId: product?.sellerId?.id ?? '',
+        onBlockStatusChanged: () {
+          if (context.mounted) {
+            ref.invalidate(productsNotifierProvider);
+          }
+        },
+      );
+    } else if (userId != null) {
+      showBlockPersonDialog(
+        context: context,
+        userId: userId ?? '',
+        onBlockStatusChanged: () {
+          if (onBlockStatusChanged != null) {
+            onBlockStatusChanged!(); // Properly invoke the callback
+          }
+        },
+      );
+    }
   }
 }

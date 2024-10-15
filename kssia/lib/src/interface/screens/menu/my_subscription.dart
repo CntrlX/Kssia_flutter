@@ -407,6 +407,9 @@ class MySubscriptionPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),

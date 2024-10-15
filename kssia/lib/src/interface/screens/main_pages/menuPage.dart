@@ -187,7 +187,7 @@ void showLogoutDialog(BuildContext context) {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          child: Text('Yes, Logout',
+                          child: Text('Yes',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.red)),
                           onPressed: () async {
@@ -349,8 +349,7 @@ class MenuPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                     MySubscriptionPage()),
+                                builder: (context) => MySubscriptionPage()),
                           );
                         },
                       ),

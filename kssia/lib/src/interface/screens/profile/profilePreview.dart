@@ -125,7 +125,8 @@ class ProfilePreview extends ConsumerWidget {
                                 backgroundImage:
                                     NetworkImage(user.profilePicture!),
                               )
-                            : const Icon(Icons.person),
+                            : Image.asset(
+                                'assets/icons/dummy_person_large.png'),
                         const SizedBox(height: 10),
                         Text(
                           '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}',
@@ -227,74 +228,72 @@ class ProfilePreview extends ConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Icon(Icons.email, color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            Text(user.email!),
-                          ],
-                        ),
+                        if (user.email != null)
+                          Row(
+                            children: [
+                              const Icon(Icons.email, color: Color(0xFF004797)),
+                              const SizedBox(width: 10),
+                              Text(user.email!),
+                            ],
+                          ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on,
-                                color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            if (user.address != null)
+                        if (user.address != null)
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on,
+                                  color: Color(0xFF004797)),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   user.address!,
                                 ),
                               )
-                          ],
-                        ),
+                            ],
+                          ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            if (user.phoneNumbers?.whatsappNumber != null)
+                        if (user.phoneNumbers?.whatsappNumber != null)
+                          Row(
+                            children: [
                               const SvgIcon(
                                 assetName: 'assets/icons/whatsapp.svg',
                                 color: Color(0xFF004797),
                                 size: 25,
                               ),
-                            const SizedBox(width: 10),
-                            if (user.phoneNumbers?.whatsappNumber != null)
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(user.phoneNumbers!.whatsappNumber!),
                               )
-                          ],
-                        ),
+                            ],
+                          ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            if (user.phoneNumbers?.whatsappBusinessNumber !=
-                                null)
+                        if (user.phoneNumbers?.whatsappBusinessNumber != null)
+                          Row(
+                            children: [
                               const SvgIcon(
                                 assetName: 'assets/icons/whatsapp-business.svg',
                                 color: Color(0xFF004797),
                                 size: 23,
                               ),
-                            const SizedBox(width: 10),
-                            if (user.phoneNumbers?.whatsappBusinessNumber !=
-                                null)
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                     user.phoneNumbers?.whatsappNumber ?? ''),
                               )
-                          ],
-                        ),
+                            ],
+                          ),
                       ],
                     ),
                     const SizedBox(height: 60),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset('assets/icons/qoutes.png'),
-                        ),
-                      ],
-                    ),
+                    if (user.bio != null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('assets/icons/qoutes.png'),
+                          ),
+                        ],
+                      ),
                     if (user.bio != null)
                       Padding(
                         padding: const EdgeInsets.all(8.0),

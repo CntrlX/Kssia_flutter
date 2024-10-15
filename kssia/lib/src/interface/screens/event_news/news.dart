@@ -8,6 +8,20 @@ import 'package:kssia/src/interface/common/components/app_bar.dart';
 
 import 'package:shimmer/shimmer.dart';
 
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/news_model.dart';
+import 'package:kssia/src/data/services/api_routes/news_api.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+
+import 'package:shimmer/shimmer.dart';
+
 // Riverpod Provider for current index tracking
 final currentIndexProvider = StateProvider<int>((ref) => 0);
 
@@ -83,104 +97,106 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
           children: [
             // PageView Section
             Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: widget.news.length,
-                onPageChanged: (index) {
-                  ref.read(currentIndexProvider.notifier).state = index;
-                },
-                itemBuilder: (context, index) {
-                  // Calculate opacity based on the current scroll position
-                  double opacity =
-                      (1 - (_currentPage - index).abs()).clamp(0.0, 1.0);
-
-                  return AnimatedOpacity(
-                    duration: const Duration(milliseconds: 500),
-                    opacity: opacity,
-                    child: NewsContent(newsItem: widget.news[index]),
-                  );
-                },
-              ),
-            ),
+                child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: widget.news.length,
+                    onPageChanged: (index) {
+                      ref.read(currentIndexProvider.notifier).state = index;
+                    },
+                    itemBuilder: (context, index) {
+                      return ClipRect(
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 500),
+                          opacity: (1 - (_currentPage - index).abs())
+                              .clamp(0.0, 1.0),
+                          child: NewsContent(
+                            key: PageStorageKey<int>(
+                                index), // Unique key for the page
+                            newsItem: widget.news[index],
+                          ),
+                        ),
+                      );
+                    })),
             // Navigation Buttons Section
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 500),
-                opacity: (1 - (_currentPage - _currentPage.round()).abs())
-                    .clamp(0.0, 1.0), // Smooth transition for buttons too
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        int currentIndex = ref.read(currentIndexProvider);
-                        if (currentIndex > 0) {
-                          setState(() {
-                            ref.read(currentIndexProvider.notifier).state =
-                                currentIndex - 1;
-                            _pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          });
-                        }
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                            color: Color.fromARGB(255, 224, 219, 219)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+            if (subscriptionType != 'free')
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 500),
+                  opacity: (1 - (_currentPage - _currentPage.round()).abs())
+                      .clamp(0.0, 1.0), // Smooth transition for buttons too
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          int currentIndex = ref.read(currentIndexProvider);
+                          if (currentIndex > 0) {
+                            setState(() {
+                              ref.read(currentIndexProvider.notifier).state =
+                                  currentIndex - 1;
+                              _pageController.previousPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            });
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                              color: Color.fromARGB(255, 224, 219, 219)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.arrow_back, color: Color(0xFF004797)),
-                          SizedBox(width: 8),
-                          Text('Previous',
-                              style: TextStyle(color: Color(0xFF004797))),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    OutlinedButton(
-                      onPressed: () {
-                        int currentIndex = ref.read(currentIndexProvider);
-                        if (currentIndex < widget.news.length - 1) {
-                          setState(() {
-                            ref.read(currentIndexProvider.notifier).state =
-                                currentIndex + 1;
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          });
-                        }
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                            color: Color.fromARGB(255, 224, 219, 219)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.arrow_back, color: Color(0xFF004797)),
+                            SizedBox(width: 8),
+                            Text('Previous',
+                                style: TextStyle(color: Color(0xFF004797))),
+                          ],
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 10),
                       ),
-                      child: const Row(
-                        children: [
-                          Text('Next',
-                              style: TextStyle(color: Color(0xFF004797))),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_forward, color: Color(0xFF004797)),
-                        ],
+                      const SizedBox(width: 20),
+                      OutlinedButton(
+                        onPressed: () {
+                          int currentIndex = ref.read(currentIndexProvider);
+                          if (currentIndex < widget.news.length - 1) {
+                            setState(() {
+                              ref.read(currentIndexProvider.notifier).state =
+                                  currentIndex + 1;
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            });
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                              color: Color.fromARGB(255, 224, 219, 219)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 10),
+                        ),
+                        child: const Row(
+                          children: [
+                            Text('Next',
+                                style: TextStyle(color: Color(0xFF004797))),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward, color: Color(0xFF004797)),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ],
@@ -189,10 +205,14 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
 }
 
 // Widget for displaying individual news content
+
 class NewsContent extends StatelessWidget {
   final News newsItem;
 
-  const NewsContent({Key? key, required this.newsItem}) : super(key: key);
+  const NewsContent({
+    Key? key,
+    required this.newsItem,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -200,113 +220,162 @@ class NewsContent extends StatelessWidget {
         DateFormat('MMM dd, yyyy, hh:mm a').format(newsItem.updatedAt!);
     final minsToRead = calculateReadingTimeAndWordCount(newsItem.content ?? '');
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image Section
-          SizedBox(
-            height: 250,
-            width: double.infinity,
-            child: Image.network(
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
-                  // If the image is fully loaded, show the image
-                  return child;
-                }
-                // While the image is loading, show shimmer effect
-                return Container(
-                  width: double.infinity,
-                  height: 250,
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Container(
-                      decoration: BoxDecoration(
+    return Stack(
+      children: [
+        // News Content
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image Section
+              SizedBox(
+                height: 250,
+                width: double.infinity,
+                child: Image.network(
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: double.infinity,
+                        height: 250,
                         color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    );
+                  },
+                  newsItem.image ?? 'https://placehold.co/600x400/png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      'https://placehold.co/600x400/png',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Category Section
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: const Color.fromARGB(255, 192, 252, 194),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 10),
+                        child: Text(
+                          newsItem.category ?? '',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              newsItem.image ?? 'https://placehold.co/600x400/png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Image.network(
-                  'https://placehold.co/600x400/png',
-                  fit: BoxFit.cover,
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Category Section
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: const Color.fromARGB(255, 192, 252, 194),
-                  ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                    child: Text(
-                      newsItem.category ?? '',
+                    const SizedBox(height: 8),
+                    // Title Section
+                    Text(
+                      newsItem.title ?? '',
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.green,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Title Section
-                Text(
-                  newsItem.title ?? '',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Date and Reading Time Row
-                Row(
-                  children: [
-                    Text(
-                      formattedDate,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+                    const SizedBox(height: 8),
+                    // Date and Reading Time Row
+                    Row(
+                      children: [
+                        Text(
+                          formattedDate,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          minsToRead,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 16),
+                    // Content Section
                     Text(
-                      minsToRead,
+                      newsItem.content ?? '',
                       style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
+                        fontSize: 16,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                // Content Section
-                Text(
-                  newsItem.content ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
+              ),
+            ],
+          ),
+        ),
+
+        // Premium Lock Overlay (Shown only if locked)
+        if (subscriptionType == 'free')
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Container(
+                color:
+                    Colors.black.withOpacity(0.6), // Semi-transparent overlay
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.lock_outline,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Unlock Premium Content',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Buy Premium to access this article and more.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                          width: 250,
+                          child: customButton(
+                              label: 'Buy Premium',
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const UpgradeDialog(),
+                                );
+                              }))
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }

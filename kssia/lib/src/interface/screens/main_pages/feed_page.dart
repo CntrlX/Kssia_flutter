@@ -42,8 +42,8 @@ class FeedPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: [
-                          Tab(text: "CHAT"),
-                          Tab(text: "MEMBERS"),
+                          Tab(text: "FEED"),
+                          Tab(text: "PRODUCTS"),
                         ],
                       ),
                     ),

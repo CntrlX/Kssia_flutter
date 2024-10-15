@@ -7,6 +7,7 @@ import 'package:kssia/src/data/models/msg_model.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   ChatPage({super.key});
@@ -38,9 +39,39 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                         orElse: () => Participant(),
                       );
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(receiver?.profilePicture ?? ''),
+                    leading: ClipOval(
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        child: Image.network(
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              // If the image is fully loaded, show the image
+                              return child;
+                            }
+                            // While the image is loading, show shimmer effect
+                            return Container(
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          receiver?.profilePicture ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                                'assets/icons/dummy_person_small.png');
+                          },
+                        ),
+                      ),
                     ),
                     title: Text(
                         '${receiver?.firstName ?? ''} ${receiver?.middleName ?? ''} ${receiver?.lastName ?? ''}'),

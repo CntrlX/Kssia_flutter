@@ -1240,7 +1240,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Post a Requirement/update',
+                'Post a Requirement',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -1534,32 +1534,33 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('CANCEL'),
-                ),
-              ),
+                  child: customButton(
+                      labelColor: Colors.black,
+                      sideColor: const Color.fromARGB(255, 234, 229, 229),
+                      buttonColor: const Color.fromARGB(255, 234, 229, 229),
+                      label: 'Cancel',
+                      onPressed: () {})),
               SizedBox(width: 10),
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    return ElevatedButton(
-                      onPressed: () async {
-                        ApiRoutes userApi = ApiRoutes();
-                        await userApi
-                            .postReview(widget.userId, feedbackController.text,
-                                selectedRating, context)
-                            .then(
-                          (value) {
-                            ref.invalidate(peopleNotifierProvider);
-                          },
-                        );
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('SUBMIT'),
-                    );
+                    return customButton(
+                        label: 'Submit',
+                        onPressed: () async {
+                          ApiRoutes userApi = ApiRoutes();
+                          await userApi
+                              .postReview(
+                                  widget.userId,
+                                  feedbackController.text,
+                                  selectedRating,
+                                  context)
+                              .then(
+                            (value) {
+                              ref.invalidate(peopleNotifierProvider);
+                            },
+                          );
+                          Navigator.of(context).pop();
+                        });
                   },
                 ),
               ),

@@ -13,22 +13,8 @@ class MyTransactionsPage extends StatefulWidget {
   _MyTransactionsPageState createState() => _MyTransactionsPageState();
 }
 
-class _MyTransactionsPageState extends State<MyTransactionsPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(
-        length: 4, vsync: this); // Corrected to match the number of tabs
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _MyTransactionsPageState extends State<MyTransactionsPage> {
+  String selectedStatus = 'All'; // Default selection
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +24,8 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
         return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              bottom: TabBar(
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'All'),
-                  Tab(text: 'Approved'),
-                  Tab(text: 'Pending'),
-                  Tab(text: 'Rejected'),
-                ],
-              ),
-              title: Text(
-                "My Products",
+              title: const Text(
+                "My Transactions",
                 style: TextStyle(fontSize: 17),
               ),
               backgroundColor: Colors.white,
@@ -61,15 +38,15 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
               ),
             ),
             body: asyncTransactions.when(
-              loading: () => Center(child: LoadingAnimation()),
+              loading: () => const Center(child: LoadingAnimation()),
               error: (error, stackTrace) {
                 // Handle error state
-                return Center(
+                return const Center(
                   child: Text('No Transaction found'),
                 );
               },
               data: (transactions) {
-                print(transactions);
+                // Filtered lists based on status
                 final approved = transactions
                     .where((transaction) => transaction.status == 'approved')
                     .toList();
@@ -79,13 +56,38 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
                 final rejected = transactions
                     .where((transaction) => transaction.status == 'rejected')
                     .toList();
-                return TabBarView(
-                  controller: _tabController,
+
+                // List of transactions to show based on filter
+                List<Transaction> filteredTransactions;
+                if (selectedStatus == 'All') {
+                  filteredTransactions = transactions;
+                } else if (selectedStatus == 'Approved') {
+                  filteredTransactions = approved;
+                } else if (selectedStatus == 'Pending') {
+                  filteredTransactions = pending;
+                } else {
+                  filteredTransactions = rejected;
+                }
+
+                return Column(
                   children: [
-                    _transactionList('All', transactions),
-                    _transactionList('Approved', approved),
-                    _transactionList('Pending', pending),
-                    _transactionList('Rejected', rejected),
+                    // ChoiceChips for filter
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Wrap(
+                        spacing: 8.0,
+                        children: [
+                          _buildChoiceChip('All'),
+                          _buildChoiceChip('Approved'),
+                          _buildChoiceChip('Pending'),
+                          _buildChoiceChip('Rejected'),
+                        ],
+                      ),
+                    ),
+                    // Transaction list
+                    Expanded(
+                      child: _transactionList(filteredTransactions),
+                    ),
                   ],
                 );
               },
@@ -94,53 +96,172 @@ class _MyTransactionsPageState extends State<MyTransactionsPage>
     );
   }
 
-  Widget _transactionList(String status, List<Transaction> transaction) {
-    if (transaction.length == 0) {
-      return Center(
+  Widget _buildChoiceChip(String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selectedStatus == label,
+        onSelected: (selected) {
+          setState(() {
+            selectedStatus = label;
+          });
+        },
+        backgroundColor: Colors.white, // Unselected background color
+        selectedColor: const Color(0xFFD3EDCA), // Selected color (light green)
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color.fromARGB(255, 214, 210, 210)),
+          borderRadius: BorderRadius.circular(20.0), // Circular border
+        ),
+        showCheckmark: false, // Remove tick icon
+      ),
+    );
+  }
+
+  Widget _transactionList(List<Transaction> transactions) {
+    if (transactions.isEmpty) {
+      return const Center(
         child: Text('No Transactions'),
       );
     }
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
-        itemCount: transaction
-            .length, // Number of transactions, you can adjust as needed
+        itemCount: transactions.length,
         itemBuilder: (context, index) {
-          String formattedDate = '';
-          if (transaction[index].date != null)
-            formattedDate = DateFormat('d\'th\' MMMM y, h:mm a')
-                .format(transaction[index].date!);
+          final transaction = transactions[index];
+          return _transactionCard(transaction);
+        },
+      ),
+    );
+  }
 
-          // Output: 12th July 2025, 12:20 pm
-          return Card(
-            child: ListTile(
-              title: Text('Transaction ID: ${transaction[index].id}'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _transactionCard(Transaction transaction) {
+    String formattedDate = '';
+    if (transaction.date != null) {
+      formattedDate =
+          DateFormat('d\'th\' MMMM y, h:mm a').format(transaction.date!);
+    }
+
+    Color statusColor = transaction.status == 'approved'
+        ? Colors.green
+        : transaction.status == 'pending'
+            ? Colors.orange
+            : Colors.red;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          border: Border.all(color: const Color.fromARGB(255, 225, 217, 217)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Transaction ID: ${transaction.id}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Type: ${transaction[index].category}'),
-                  if (transaction[index].date != null)
-                    Text('Date & time: $formattedDate'),
-                  Text('Amount paid: ₹2000'),
-                  Text('Status: ${transaction[index].status}'),
-                  if (status == 'Rejected')
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Reason for rejection:'),
-                        Text('Description: '),
-                        SizedBox(height: 8),
-                        TextButton(
-                          onPressed: null, // Implement re-upload logic
-                          child: Text('RE-UPLOAD'),
-                        ),
-                      ],
+                  const Text(
+                    'Status',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF616161),
                     ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: statusColor),
+                    ),
+                    child: Text(
+                      transaction.status?.toUpperCase() ?? '',
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
               ),
+              const SizedBox(height: 8),
+              _detailRow('Type', transaction.category ?? ''),
+              if (transaction.date != null)
+                _detailRow('Date & time', formattedDate),
+              _detailRow('Amount paid', '₹2000'), // Placeholder for now
+              // if (transaction.status == 'rejected')
+              //   Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       const SizedBox(height: 8),
+              //       const Text(
+              //         'Reason for rejection:',
+              //         style: TextStyle(fontWeight: FontWeight.bold),
+              //       ),
+              //       const Text(
+              //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              //         style: TextStyle(fontSize: 12),
+              //       ),
+              //       const SizedBox(height: 8),
+              //       Center(
+              //         child: ElevatedButton(
+              //           style: ElevatedButton.styleFrom(
+              //             backgroundColor: const Color(0xFF004797),
+              //             foregroundColor: Colors.white,
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(5),
+              //             ),
+              //           ),
+              //           onPressed: () {
+              //             // Implement re-upload logic
+              //           },
+              //           child: const Text('RE-UPLOAD'),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF616161),
             ),
-          );
-        },
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
