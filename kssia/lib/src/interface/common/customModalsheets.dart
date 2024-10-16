@@ -1594,7 +1594,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   @override
   void initState() {
     super.initState();
-    _quantityController.text = '0';
+    _quantityController.text = widget.product.moq.toString() ?? '';
   }
 
   @override
@@ -1614,7 +1614,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   void _decrementQuantity() {
     setState(() {
       int currentValue = int.tryParse(_quantityController.text) ?? 0;
-      if (currentValue > 0) {
+      if (currentValue > 0 &&
+          currentValue > num.parse(widget.product.moq.toString())) {
         _quantityController.text = (currentValue - 1).toString();
       }
     });
@@ -1730,7 +1731,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                     children: [
                       Text(
                         widget.product.description!,
-                        style: const TextStyle(fontSize: 16),
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -1752,7 +1754,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                                 user.profilePicture ?? '',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.person);
+                                  return Image.asset(
+                                      'assets/icons/dummy_person_small.png');
                                 },
                               ),
                             ),
@@ -1762,6 +1765,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
+                                  overflow: TextOverflow.ellipsis,
                                   '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
                               Text('${user.companyName}'),
                             ],
@@ -1769,9 +1773,17 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                           const Spacer(),
                           Row(
                             children: [
-                              Icon(Icons.star, color: Colors.orange),
-                              Text(averageRating.toStringAsFixed(2)),
-                              Text('($totalReviews)'),
+                              Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 15,
+                              ),
+                              Text(
+                                averageRating.toStringAsFixed(2),
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              Text('($totalReviews)',
+                                  style: TextStyle(fontSize: 12)),
                             ],
                           )
                         ],
@@ -1789,48 +1801,102 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove),
-                      onPressed: _decrementQuantity,
+                    GestureDetector(
+                      onTap: () => _decrementQuantity(),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFEFEFEF),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Icon(Icons.remove),
+                          )),
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
-                      height: 40,
-                      width:
-                          210, // Increase this value to expand the horizontal width
-                      child: TextField(
-                        controller: _quantityController,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 235, 229, 229),
-                              width: 2.0, // Border width
+                        height: 40,
+                        width:
+                            210, // Increase this value to expand the horizontal width
+                        child: TextField(
+                          style: TextStyle(
+                              color: Color(0xFF004797),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600),
+                          controller: _quantityController,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            // Border when the field is not focused and enabled
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(
+                                    255, 224, 218, 218), // Default border color
+                                width: 1.0,
+                              ),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 235, 229, 229),
-                              width: 1.0, // Border width when focused
+
+                            // Border when the field is focused
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 220, 223,
+                                    226), // Border color when focused
+                                width: 2.0,
+                              ),
                             ),
+
+                            // Border when the field is disabled
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey
+                                    .shade400, // Lighter grey for disabled state
+                                width: 1.0,
+                              ),
+                            ),
+
+                            // Border when an error is present (e.g., validation failed)
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.red, // Red border for error state
+                                width: 1.0,
+                              ),
+                            ),
+
+                            // Border when the field is both focused and has an error
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors
+                                    .red, // Red border when focused and has an error
+                                width: 2.0,
+                              ),
+                            ),
+
+                            // Padding inside the TextField
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
                           ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 8.0),
-                        ),
-                        onChanged: (value) {
-                          if (int.tryParse(value) == null) {
-                            _quantityController.text = '0';
-                          }
-                        },
-                      ),
-                    ),
+                          onChanged: (value) {
+                            // Ensure only valid numbers are allowed
+                            if (int.tryParse(value) == null) {
+                              _quantityController.text = '0';
+                            }
+                          },
+                        )),
                     const SizedBox(width: 16),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: _incrementQuantity,
+                    GestureDetector(
+                      onTap: () => _incrementQuantity(),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFEFEFEF),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Icon(Icons.add),
+                          )),
                     ),
                   ],
                 ),
@@ -1923,7 +1989,8 @@ class RequirementModalSheet extends StatelessWidget {
                         final averageRating = getAverageRating(user);
                         final totalReviews = user.reviews!.length;
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, bottom: 10),
                           child: Row(
                             children: [
                               SizedBox(
@@ -1934,7 +2001,8 @@ class RequirementModalSheet extends StatelessWidget {
                                     user.profilePicture ?? '',
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.person);
+                                      return Image.asset(
+                                          'assets/icons/dummy_person_small.png');
                                     },
                                   ),
                                 ),

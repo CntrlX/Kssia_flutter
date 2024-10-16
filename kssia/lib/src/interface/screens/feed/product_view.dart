@@ -9,6 +9,7 @@ import 'package:kssia/src/data/notifiers/products_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/Shimmer/product_card._shimmer.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
@@ -50,6 +51,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
   }
 
   void _onSearchChanged(String query) {
+    log('im inside search');
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
@@ -173,7 +175,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
                             return const SizedBox();
                           },
                           loading: () {
-                            return const LoadingAnimation();
+                            return const ProductCardShimmer();
                           },
                         );
                       },

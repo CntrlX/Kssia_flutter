@@ -563,7 +563,8 @@ class ApiRoutes {
         body: jsonEncode(
             {"reason": reason != null && reason != '' ? reason : 'No reason'}),
       );
-
+      final dynamic message = json.decode(response.body)['message'];
+      log(message);
       if (response.statusCode == 200) {
         // Success
         ref.read(userProvider.notifier).refreshUser();

@@ -5,22 +5,10 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
-
 import 'package:shimmer/shimmer.dart';
-
 import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:kssia/src/data/globals.dart';
-import 'package:kssia/src/data/models/news_model.dart';
-import 'package:kssia/src/data/services/api_routes/news_api.dart';
-import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
-
-import 'package:shimmer/shimmer.dart';
 
 // Riverpod Provider for current index tracking
 final currentIndexProvider = StateProvider<int>((ref) => 0);
@@ -129,52 +117,6 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       OutlinedButton(
-                        onPressed: () {
-                          int currentIndex = ref.read(currentIndexProvider);
-                          if (currentIndex > 0) {
-                            setState(() {
-                              ref.read(currentIndexProvider.notifier).state =
-                                  currentIndex - 1;
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            });
-                          }
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: Color.fromARGB(255, 224, 219, 219)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.arrow_back, color: Color(0xFF004797)),
-                            SizedBox(width: 8),
-                            Text('Previous',
-                                style: TextStyle(color: Color(0xFF004797))),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      OutlinedButton(
-                        onPressed: () {
-                          int currentIndex = ref.read(currentIndexProvider);
-                          if (currentIndex < widget.news.length - 1) {
-                            setState(() {
-                              ref.read(currentIndexProvider.notifier).state =
-                                  currentIndex + 1;
-                              _pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            });
-                          }
-                        },
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(
                               color: Color.fromARGB(255, 224, 219, 219)),
@@ -184,6 +126,48 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 25, vertical: 10),
                         ),
+                        onPressed: () {
+                          int currentIndex = ref.read(currentIndexProvider);
+                          if (currentIndex > 0) {
+                            _pageController.previousPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        },
+                        // Button styling remains unchanged
+                        child: const Row(
+                          children: [
+                            Icon(Icons.arrow_back, color: Color(0xFF004797)),
+                            SizedBox(width: 8),
+                            Text('Previous',
+                                style: TextStyle(color: Color(0xFF004797))),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                              color: Color.fromARGB(255, 224, 219, 219)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 10),
+                        ),
+                        onPressed: () {
+                          int currentIndex = ref.read(currentIndexProvider);
+                          if (currentIndex < widget.news.length - 1) {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        },
+                        // Button styling remains unchanged
                         child: const Row(
                           children: [
                             Text('Next',

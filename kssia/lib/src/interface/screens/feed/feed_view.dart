@@ -214,109 +214,121 @@ class _FeedViewState extends ConsumerState<FeedView> {
                     data: (user) {
                       print(user);
                       if (requirement.author != null) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (withImage) ...[
-                                SizedBox(height: 16),
-                                AspectRatio(
-                                  aspectRatio: 4 / 4,
-                                  child: Image.network(
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        // If the image is fully loaded, show the image
-                                        return child;
-                                      }
-                                      // While the image is loading, show shimmer effect
-                                      return Container(
-                                        child: Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
+                        return Column(
+                          children: [
+                            if (withImage) ...[
+                              SizedBox(height: 16),
+                              AspectRatio(
+                                aspectRatio: 4 / 4,
+                                child: Image.network(
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      // If the image is fully loaded, show the image
+                                      return child;
+                                    }
+                                    // While the image is loading, show shimmer effect
+                                    return Container(
+                                      child: Shimmer.fromColors(
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[100]!,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
-                                      );
-                                    },
-                                    fit: BoxFit.contain,
-                                    requirement.image!,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.network(
-                                          fit: BoxFit.cover,
-                                          'https://placehold.co/600x400');
-                                    },
-                                  ),
-                                )
-                              ],
-                              SizedBox(height: 16),
-                              Text(
-                                requirement.content!,
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  ClipOval(
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
-                                      child: Image.network(
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Icon(Icons.person);
-                                        },
-                                        receiver.profilePicture ??
-                                            'https://placehold.co/600x400', // Replace with your image URL
+                                      ),
+                                    );
+                                  },
+                                  fit: BoxFit.contain,
+                                  requirement.image!,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.network(
                                         fit: BoxFit.cover,
-                                      ),
-                                    ),
+                                        'https://placehold.co/600x400');
+                                  },
+                                ),
+                              )
+                            ],
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 16),
+                                  Text(
+                                    requirement.content!,
+                                    style: TextStyle(fontSize: 14),
                                   ),
-                                  SizedBox(width: 8),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${requirement.author!.name!.firstName} ${requirement.author!.name!.middleName} ${requirement.author!.name!.lastName}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12),
-                                      ),
-                                      Text(
-                                        user.companyName!,
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
+                                  SizedBox(height: 16),
                                   Row(
                                     children: [
-                                      Text(
-                                        formattedDateTime,
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 12),
+                                      ClipOval(
+                                        child: Container(
+                                          width: 30,
+                                          height: 30,
+                                          color: const Color.fromARGB(
+                                              255, 255, 255, 255),
+                                          child: Image.network(
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Icon(Icons.person);
+                                            },
+                                            receiver.profilePicture ??
+                                                'https://placehold.co/600x400', // Replace with your image URL
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                      if (requirementOwner.id != id)
-                                        CustomDropDown(
-                                          isBlocked: false,
-                                          requirement: requirement,
-                                        )
+                                      SizedBox(width: 8),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}'
+                                                .split(' ')
+                                                .take(2)
+                                                .join(' '),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Text(
+                                            user.companyName!,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            formattedDateTime,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12),
+                                          ),
+                                          if (requirementOwner.id != id)
+                                            CustomDropDown(
+                                              isBlocked: false,
+                                              requirement: requirement,
+                                            )
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         );
                       } else
                         return SizedBox();
