@@ -18,6 +18,7 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'user_api.g.dart';
 
@@ -638,6 +639,31 @@ class ApiRoutes {
     } catch (e) {
       // Handle exceptions
       print('An error occurred: $e');
+    }
+  }
+
+  Future<void> fetchStatus() async {
+    final url = Uri.parse('$baseUrl/user/get/subscription');
+    print('Requesting URL: $url');
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+    log('hello');
+    log(response.body);
+    if (response.statusCode == 200) {
+      final String data = json.decode(response.body)['data'];
+      print(data);
+      // SharedPreferences preferences = await SharedPreferences.getInstance();
+      // preferences.setString('subscription', data);
+      subscription = data;
+    } else {
+      print(json.decode(response.body)['message']);
+
+      throw Exception(json.decode(response.body)['message']);
     }
   }
 }

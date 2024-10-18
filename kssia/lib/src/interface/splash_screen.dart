@@ -11,6 +11,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/appversion_model.dart';
 
 import 'package:kssia/src/data/services/api_routes/get_fcm_token.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,7 +129,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!isAppUpdateRequired) {
         print('Logged in : $LoggedIn');
         if (LoggedIn) {
-          Navigator.pushReplacementNamed(context, '/mainpage');
+          Navigator.pushReplacementNamed(context, '/membership');
         } else {
           Navigator.pushReplacementNamed(context, '/login_screen');
         }
@@ -148,6 +149,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         id = savedId;
       });
     }
+    ApiRoutes userApi = ApiRoutes();
+    await userApi.fetchStatus();
+    log("Subscription status:$subscription");
   }
 
   @override

@@ -1233,7 +1233,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               }
 
               // Set social media URLs based on the platform
-              for (var social in user.socialMedia ?? []) {
+              for (SocialMedia social in user.socialMedia ?? []) {
                 if (social.platform == 'instagram' &&
                     igController.text.isEmpty) {
                   igController.text = social.url ?? '';
@@ -1286,20 +1286,18 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        const MainPage()));
-                                      },
-                                      child: const Text(
-                                        'Skip',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 16),
-                                      ),
-                                    ),
+                                        onPressed: () {
+                                          ref
+                                              .read(userProvider.notifier)
+                                              .refreshUser();
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          const MainPage()));
+                                        },
+                                        child: Icon(Icons.close)),
                                   ],
                                 ),
                               ),

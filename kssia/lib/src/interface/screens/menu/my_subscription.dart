@@ -235,184 +235,451 @@
 //   }
 // }
 
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/services/api_routes/transactions_api.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 
-class MySubscriptionPage extends StatelessWidget {
+class MySubscriptionPage extends StatefulWidget {
+  @override
+  State<MySubscriptionPage> createState() => _MySubscriptionPageState();
+}
+
+class _MySubscriptionPageState extends State<MySubscriptionPage> {
+  TextEditingController remarksController = TextEditingController();
+
+  File? _paymentImage;
+
+  ApiRoutes api = ApiRoutes();
+
+  void _openModalSheet({required String sheet, required subscriptionType}) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return ShowPaymentUploadSheet(
+            subscriptionType: subscriptionType,
+            pickImage: _pickFile,
+            textController: remarksController,
+            imageType: 'payment',
+            paymentImage: _paymentImage,
+          );
+        });
+  }
+
+  Future<File?> _pickFile({required String imageType}) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'png',
+        'jpg',
+        'jpeg',
+      ],
+    );
+
+    if (result != null) {
+      setState(() {
+        _paymentImage = File(result.files.single.path!);
+      });
+      return _paymentImage;
+    } else {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "My Subscription",
-          style: TextStyle(fontSize: 15),
-        ),
-        backgroundColor: Colors.white,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Icon Image Section
-                      Image.asset('assets/basic.png'),
-                      SizedBox(height: 10),
-
-                      // Plan Title
-                      Text(
-                        'BASIC PLAN',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(height: 5),
-
-                      // Price Section
-                      Text(
-                        style: TextStyle(
-                            fontSize: 19, fontWeight: FontWeight.w600),
-                        '₹0 per month',
-                      ),
-                      SizedBox(height: 10),
-
-                      // Features List
-                      Container(
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 233, 246, 255),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildBasicCard('Access to News and updates'),
-                            _buildBasicCard('Access to Product search'),
-                            _buildBasicCard('Chat with limited members'),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 15),
-
-                      // Action Button
-                      SizedBox(
-                          width: double.infinity,
-                          child:
-                              customButton(label: 'ACTIVE', onPressed: () {})),
-                    ],
-                  ),
-                ),
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncTransactions = ref.watch(fetchTransactionsProvider(token));
+        return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                "My Subscription",
+                style: TextStyle(fontSize: 15),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
+            backgroundColor: Colors.white,
+            body: asyncTransactions.when(
+              data: (transactions) {
+                String membershipFormattedRenewalDate =
+                    transactions[0].renewal == null
+                        ? ''
+                        : DateFormat('dd MMMM yyyy')
+                            .format(transactions[0].renewal!);
+                String membershipFormattedRenewedDate =
+                    transactions[0].renewal == null
+                        ? ''
+                        : DateFormat('dd MMMM yyyy')
+                            .format(transactions[0].time ?? DateTime.parse(''));
+                return SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Icon Image Section
-                      Image.asset(
-                        'assets/premium.png',
-                        height: 80,
-                      ),
-                      SizedBox(height: 10),
-
-                      // Plan Title
-                      Text(
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                        'PREMIUM PLAN',
-                      ),
-                      SizedBox(height: 5),
-
-                      // Price Section
-                      Text(
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                        '₹499 per month',
-                      ),
-                      SizedBox(height: 10),
-
-                      // Features List
-                      Container(
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 231, 192),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildPremiumCard('Access to news and updates'),
-                            _buildPremiumCard('Access to product search'),
-                            _buildPremiumCard('Chat with unlimited members'),
-                            _buildPremiumCard(
-                                'Access to add products and requirements'),
-                            _buildPremiumCard(
-                                'Register to attend exciting events'),
-                            _buildPremiumCard('Access to report and block'),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 15),
-
-                      // Subscribe Button
-                      SizedBox(
-                          width: double.infinity,
-                          child: customButton(
-                            buttonHeight: 40,
-                            sideColor: Color(0xFFF76412),
-                            buttonColor: Color(0xFFF76412),
-                            label: 'SUBSCRIBE',
-                            onPressed: () => showDialog(
-                              context: context,
-                              builder: (context) => const UpgradeDialog(),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, top: 20),
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                const BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ],
                             ),
-                          )),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Icon Image Section
+                                Image.asset('assets/basic.png'),
+                                const SizedBox(height: 10),
+
+                                // Plan Title
+                                const Text(
+                                  'Membership Fee',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 5),
+
+                                // Price Section
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      style: TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.w600),
+                                      '₹2000  ',
+                                    ),
+                                    Text(
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600),
+                                      'per year',
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 10),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: const Color.fromARGB(
+                                            255, 218, 206, 206)),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              'Membership status:',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            const Spacer(),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                  color:
+                                                      transactions[0].status ==
+                                                              'accepted'
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              child: Text(
+                                                transactions.isNotEmpty &&
+                                                        transactions[0]
+                                                                .status ==
+                                                            'accepted'
+                                                    ? 'Active'
+                                                    : 'Inactive',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color:
+                                                      transactions.isNotEmpty &&
+                                                              transactions[0]
+                                                                      .status ==
+                                                                  'accepted'
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              'Last renewed on:',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            const Spacer(),
+                                            Text(
+                                              membershipFormattedRenewedDate,
+                                              style: const TextStyle(
+                                                decorationColor:
+                                                    Color(0xFF004797),
+                                                decoration: TextDecoration
+                                                    .underline, // Adds underline
+                                                fontStyle: FontStyle
+                                                    .italic, // Makes text italic
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF004797),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              'Next renewal on:',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            const Spacer(),
+                                            Text(
+                                              membershipFormattedRenewalDate,
+                                              style: const TextStyle(
+                                                decorationColor:
+                                                    Color(0xFF004797),
+                                                decoration: TextDecoration
+                                                    .underline, // Adds underline
+                                                fontStyle: FontStyle
+                                                    .italic, // Makes text italic
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF004797),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                // Features List
+                                Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 233, 246, 255),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _buildBasicCard(
+                                          'Access to News and updates'),
+                                      _buildBasicCard(
+                                          'Access to Product search'),
+                                      _buildBasicCard('Access to Requirements'),
+                                      _buildBasicCard('Access to Requirements'),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+
+                                // Action Button
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: customButton(
+                                        sideColor: transactions.isNotEmpty &&
+                                                transactions[0].status ==
+                                                    'accepted'
+                                            ? Colors.green
+                                            : Colors.red,
+                                        buttonColor: transactions.isNotEmpty &&
+                                                transactions[0].status ==
+                                                    'accepted'
+                                            ? Colors.green
+                                            : Colors.red,
+                                        label:
+                                            transactions[0].status == 'accepted'
+                                                ? 'ACTIVE'
+                                                : 'INACTIVE',
+                                        onPressed: () {
+                                          if (transactions.isNotEmpty &&
+                                              transactions[0].status !=
+                                                  'accepted') {
+                                            _openModalSheet(
+                                                sheet: 'payment',
+                                                subscriptionType: 'membership');
+                                          }
+                                        })),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 25, right: 25, top: 20),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                const BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Icon Image Section
+                                Image.asset(
+                                  'assets/premium.png',
+                                  height: 80,
+                                ),
+                                const SizedBox(height: 10),
+
+                                // Plan Title
+                                const Text(
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 17),
+                                  'PREMIUM PLAN',
+                                ),
+                                const SizedBox(height: 5),
+
+                                // Price Section
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 26),
+                                      '₹499 ',
+                                    ),
+                                    Text(
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
+                                      'per month',
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+
+                                // Features List
+                                Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 255, 231, 192),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _buildPremiumCard(
+                                          'Access to news and updates'),
+                                      _buildPremiumCard(
+                                          'Access to product search'),
+                                      _buildPremiumCard(
+                                          'Chat with unlimited members'),
+                                      _buildPremiumCard(
+                                          'Access to add products and requirements'),
+                                      _buildPremiumCard(
+                                          'Register to attend exciting events'),
+                                      // _buildPremiumCard('Access to report and block'),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+
+                                // Subscribe Button
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: customButton(
+                                        buttonHeight: 40,
+                                        sideColor: const Color(0xFFF76412),
+                                        buttonColor: const Color(0xFFF76412),
+                                        label: transactions.length > 1 &&
+                                                transactions[1].status ==
+                                                    'accepted'
+                                            ? 'ACTIVE'
+                                            : 'SUBSCRIBE',
+                                        onPressed: () {
+                                          if (transactions.length < 2) {
+                                            _openModalSheet(
+                                                sheet: 'payment',
+                                                subscriptionType: 'app');
+                                          } else if (transactions[1].status !=
+                                              'accepted') {
+                                            _openModalSheet(
+                                                sheet: 'payment',
+                                                subscriptionType: 'app');
+                                          }
+                                        })),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      )
                     ],
                   ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            )
-          ],
-        ),
-      ),
+                );
+              },
+              loading: () => const Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                return const Center(
+                  child: Text(''),
+                );
+              },
+            ));
+      },
     );
   }
 
@@ -421,8 +688,8 @@ class MySubscriptionPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: Color(0xFF004797), size: 18),
-          SizedBox(width: 10),
+          const Icon(Icons.check_circle, color: Color(0xFF004797), size: 18),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               feature,
@@ -438,8 +705,8 @@ class MySubscriptionPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: Colors.orange, size: 18),
-          SizedBox(width: 10),
+          const Icon(Icons.check_circle, color: Colors.orange, size: 18),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               feature,

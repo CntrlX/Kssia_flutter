@@ -13,10 +13,12 @@ import 'package:kssia/src/data/services/api_routes/promotions_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/promotions_model.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/custom_video.dart';
 import 'package:kssia/src/interface/common/event_widget.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'dart:async';
 import 'package:shimmer/shimmer.dart';
@@ -112,7 +114,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       final double itemHeight =
           titleHeight + descriptionHeight; // Adding padding
       if (itemHeight > maxHeight) {
-        maxHeight = itemHeight + 35;
+        maxHeight = itemHeight + 57;
       }
     }
     return maxHeight;
@@ -335,7 +337,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomAppBar(),
+                    const CustomAppBar(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -407,11 +409,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Column(
                       children: [
                         if (events.isNotEmpty)
-                          Row(
+                          const Row(
                             children: [
                               Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 25, top: 10),
+                                    EdgeInsets.only(left: 25, top: 10),
                                 child: Text(
                                   'Events',
                                   style: TextStyle(
@@ -636,7 +638,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    notice.noticeTitle!,
+                    notice.noticeTitle ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -645,12 +647,46 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    notice.noticeDescription!,
+                    notice.noticeDescription ?? '',
                     style: const TextStyle(
                       color: Color.fromRGBO(
                           0, 0, 0, 1), // Set the font color to blue
                     ),
                   ),
+                  const Spacer(),
+                  if (notice.noticeLink != null && notice.noticeLink != '')
+                    GestureDetector(
+                      onTap: () {
+                        if (subscription == 'free') {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const UpgradeDialog(),
+                          );
+                        } else {
+                          launchURL(notice.noticeLink);
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Know more',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(
+                                      0xFF004797) // Set the font color to blue
+                                  ),
+                            ),
+                            Icon(
+                              color: Color(0xFF004797),
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

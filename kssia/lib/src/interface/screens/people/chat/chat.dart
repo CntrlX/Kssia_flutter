@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,7 +7,9 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/msg_model.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -27,108 +31,171 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           backgroundColor: Colors.white,
           body: asyncChats.when(
             data: (chats) {
-              return ListView.builder(
-                itemCount: chats.length,
-                itemBuilder: (context, index) {
-                  var receiver = chats[index].participants?.firstWhere(
-                        (participant) => participant.id != id,
-                        orElse: () => Participant(id: ''),
-                      );
-                  var sender = chats[index].participants?.firstWhere(
-                        (participant) => participant.id == id,
-                        orElse: () => Participant(),
-                      );
-                  return ListTile(
-                    leading: ClipOval(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        child: Image.network(
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) {
-                              // If the image is fully loaded, show the image
-                              return child;
-                            }
-                            // While the image is loading, show shimmer effect
-                            return Container(
-                              child: Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
+              return Stack(
+                children: [
+                  ListView.builder(
+                    itemCount: chats.length,
+                    itemBuilder: (context, index) {
+                      var receiver = chats[index].participants?.firstWhere(
+                            (participant) => participant.id != id,
+                            orElse: () => Participant(id: ''),
+                          );
+                      var sender = chats[index].participants?.firstWhere(
+                            (participant) => participant.id == id,
+                            orElse: () => Participant(),
+                          );
+                      return ListTile(
+                        leading: ClipOval(
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            child: Image.network(
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  // If the image is fully loaded, show the image
+                                  return child;
+                                }
+                                // While the image is loading, show shimmer effect
+                                return Container(
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              receiver?.profilePicture ?? '',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                    'assets/icons/dummy_person_small.png');
+                              },
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                            '${receiver?.firstName ?? ''} ${receiver?.middleName ?? ''} ${receiver?.lastName ?? ''}'),
+                        subtitle: Text(
+                          chats[index].lastMessage?[0].content != null
+                              ? (chats[index].lastMessage![0].content!.length >
+                                      10
+                                  ? chats[index]
+                                          .lastMessage![0]
+                                          .content!
+                                          .substring(
+                                              0,
+                                              chats[index]
+                                                  .lastMessage![0]
+                                                  .content!
+                                                  .length
+                                                  .clamp(0, 10)) +
+                                      '...'
+                                  : chats[index].lastMessage![0].content!)
+                              : '',
+                        ),
+                        trailing: chats[index].unreadCount?[sender?.id] != 0 &&
+                                chats[index].unreadCount?[sender!.id] != null
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
                                 child: Container(
+                                  padding: EdgeInsets.all(4),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(8.0),
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Center(
+                                    child:
+                                        chats[index].unreadCount?[sender!.id] !=
+                                                null
+                                            ? Text(
+                                                '${chats[index].unreadCount?[sender!.id]}',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              )
+                                            : null,
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          receiver?.profilePicture ?? '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                                'assets/icons/dummy_person_small.png');
-                          },
+                              )
+                            : const SizedBox.shrink(),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => IndividualPage(
+                                    receiver: receiver!,
+                                    sender: sender!,
+                                  )));
+                        },
+                      );
+                    },
+                  ),
+                  if (subscription == 'free')
+                    Positioned.fill(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                        child: Container(
+                          color: Colors.black
+                              .withOpacity(0.6), // Semi-transparent overlay
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.lock_outline,
+                                  size: 60,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Unlock Premium Content',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Buy Premium to access this article and more.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                SizedBox(
+                                    width: 250,
+                                    child: customButton(
+                                        label: 'Buy Premium',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const UpgradeDialog(),
+                                          );
+                                        }))
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    title: Text(
-                        '${receiver?.firstName ?? ''} ${receiver?.middleName ?? ''} ${receiver?.lastName ?? ''}'),
-                    subtitle: Text(
-                      chats[index].lastMessage?[0].content != null
-                          ? (chats[index].lastMessage![0].content!.length > 10
-                              ? chats[index].lastMessage![0].content!.substring(
-                                      0,
-                                      chats[index]
-                                          .lastMessage![0]
-                                          .content!
-                                          .length
-                                          .clamp(0, 10)) +
-                                  '...'
-                              : chats[index].lastMessage![0].content!)
-                          : '',
-                    ),
-                    trailing: chats[index].unreadCount?[sender?.id] != 0 &&
-                            chats[index].unreadCount?[sender!.id] != null
-                        ? SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
-                              child: Center(
-                                child: chats[index].unreadCount?[sender!.id] !=
-                                        null
-                                    ? Text(
-                                        '${chats[index].unreadCount?[sender!.id]}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      )
-                                    : null,
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => IndividualPage(
-                                receiver: receiver!,
-                                sender: sender!,
-                              )));
-                    },
-                  );
-                },
+                ],
               );
             },
             loading: () => const Center(child: LoadingAnimation()),

@@ -5,6 +5,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:ui';
 import 'package:kssia/src/interface/common/custom_button.dart';
@@ -31,7 +32,7 @@ class NewsPage extends ConsumerWidget {
           return const Center(child: Text('No News'));
         }
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: LoadingAnimation()),
       error: (error, stackTrace) =>
           const Center(child: Text('Failed to load news')),
     );
@@ -106,7 +107,7 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                       );
                     })),
             // Navigation Buttons Section
-            if (subscriptionType != 'free')
+            if (subscription != 'free')
               Padding(
                 padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                 child: AnimatedOpacity(
@@ -308,7 +309,7 @@ class NewsContent extends StatelessWidget {
         ),
 
         // Premium Lock Overlay (Shown only if locked)
-        if (subscriptionType == 'free')
+        if (subscription == 'free')
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),

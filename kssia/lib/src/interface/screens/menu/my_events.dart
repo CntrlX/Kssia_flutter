@@ -66,7 +66,7 @@ class MyEventsPage extends StatelessWidget {
             error: (error, stackTrace) {
               // Handle error state
               return Center(
-                child: LoadingAnimation(),
+                child: Text(''),
               );
             },
           ),

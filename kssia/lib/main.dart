@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
+import 'package:kssia/src/interface/common/membership_subscription.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
@@ -62,6 +63,7 @@ class MainApp extends StatelessWidget {
           '/': (context) => SplashScreen(),
           '/login_screen': (context) => LoginPage(),
           '/mainpage': (context) => MainPage(),
+          '/membership': (context) => MembershipSubscription(),
         });
   }
 }

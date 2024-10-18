@@ -23,10 +23,16 @@ class NotificationPage extends StatelessWidget {
           final asyncreadNotification =
               ref.watch(fetchreadNotificationsProvider(token));
           return Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              title: Text('Notifications'),
+              title: Text(
+                "Notifications",
+                style: TextStyle(fontSize: 17),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -45,7 +51,7 @@ class NotificationPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
-                            link: unreadNotifications[index].linkUrl??'',
+                            link: unreadNotifications[index].linkUrl ?? '',
                             readed: readed,
                             subject: unreadNotifications[index].subject!,
                             content: unreadNotifications[index].content!,

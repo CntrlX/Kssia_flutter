@@ -158,7 +158,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                               ? Text(user.designation!)
                               : null,
                           trailing: IconButton(
-                            icon: Icon(Icons.chat),
+                            icon: Icon(Icons.chat_bubble_outline),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => IndividualPage(
