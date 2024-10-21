@@ -6,7 +6,7 @@ part of 'subscription_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchStatusHash() => r'22605f845a534135859a60451b965878d01e305d';
+String _$fetchStatusHash() => r'992cafa35e91c54c4926d804dcb0289f6fc3f0d1';
 
 /// See also [fetchStatus].
 @ProviderFor(fetchStatus)
