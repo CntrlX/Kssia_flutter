@@ -149,9 +149,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         id = savedId;
       });
     }
-    ApiRoutes userApi = ApiRoutes();
-    await userApi.fetchStatus();
-    log("Subscription status:$subscription");
+
   }
 
   @override

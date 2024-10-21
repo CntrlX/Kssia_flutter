@@ -242,6 +242,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/data/services/api_routes/transactions_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
@@ -301,6 +302,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        ref.invalidate(fetchStatusProvider);
         final asyncSubscription = ref.watch(getSubscriptionProvider);
         return Scaffold(
             appBar: AppBar(
@@ -639,7 +641,8 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         buttonHeight: 40,
                                         sideColor: const Color(0xFFF76412),
                                         buttonColor: const Color(0xFFF76412),
-                                        label: subscription.app?.status ??
+                                        label: subscription.app?.status
+                                                ?.toUpperCase() ??
                                             'SUBSCRIBE',
                                         onPressed: () {
                                           if (subscription.app?.status !=

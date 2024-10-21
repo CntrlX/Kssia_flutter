@@ -1907,7 +1907,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                   child: customButton(
                       label: 'Get Quote',
                       onPressed: () async {
-                        if (subscription == 'accepted') {
+                        if (subscription != 'free') {
                           await sendChatMessage(
                               productId: widget.product.id,
                               userId: widget.product.sellerId!.id!,
@@ -2052,7 +2052,7 @@ class RequirementModalSheet extends StatelessWidget {
                             return customButton(
                               label: buttonText,
                               onPressed: () async {
-                                if (subscription == 'accepted') {
+                                if (subscription != 'free') {
                                   await sendChatMessage(
                                       userId: requirement.author!.id!,
                                       content: requirement.content!,

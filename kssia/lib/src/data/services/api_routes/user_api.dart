@@ -642,30 +642,7 @@ class ApiRoutes {
     }
   }
 
-  Future<void> fetchStatus() async {
-    final url = Uri.parse('$baseUrl/user/get/subscription');
-    print('Requesting URL: $url');
-    final response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      },
-    );
-    log('hello');
-    log(response.body);
-    if (response.statusCode == 200) {
-      final String data = json.decode(response.body)['data'];
-      print(data);
-      // SharedPreferences preferences = await SharedPreferences.getInstance();
-      // preferences.setString('subscription', data);
-      subscription = data;
-    } else {
-      print(json.decode(response.body)['message']);
-
-      throw Exception(json.decode(response.body)['message']);
-    }
-  }
+ 
 }
 
 const String baseUrl = 'https://api.kssiathrissur.com/api/v1';

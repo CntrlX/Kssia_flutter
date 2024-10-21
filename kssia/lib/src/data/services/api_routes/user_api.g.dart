@@ -471,7 +471,7 @@ final fetchUserRsvpdEventsProvider =
 );
 
 typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getSubscriptionHash() => r'eedb406e3745789ef96c46354dc94e4f0a0fab5e';
+String _$getSubscriptionHash() => r'c140ae214a28e66e0319491ca413286da391df48';
 
 /// See also [getSubscription].
 @ProviderFor(getSubscription)

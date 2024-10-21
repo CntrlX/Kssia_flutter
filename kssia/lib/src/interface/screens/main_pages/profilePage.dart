@@ -278,16 +278,14 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              if(subscription=='accpeted'){
-           Share.share(
-                                  'https://admin.kssiathrissur.com/user/${user.id}');
-                              }
-                              else {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                const UpgradeDialog(),
-                                          );
+                              if (subscription != 'free') {
+                                Share.share(
+                                    'https://admin.kssiathrissur.com/user/${user.id}');
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const UpgradeDialog(),
+                                );
                               }
                             },
                             child: Container(
@@ -315,23 +313,22 @@ class ProfilePage extends StatelessWidget {
                           ),
                           const SizedBox(width: 40),
                           GestureDetector(
-                            onTap: () {if(subscription=='accepted') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfileCard(
-                                    user: user,
-                                  ), // Navigate to CardPage
-                                ),
-                              );
-                            }
-                            else{
-                                       showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                const UpgradeDialog(),
-                                          );
-                            }
+                            onTap: () {
+                              if (subscription != 'free') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileCard(
+                                      user: user,
+                                    ), // Navigate to CardPage
+                                  ),
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const UpgradeDialog(),
+                                );
+                              }
                             },
                             child: Container(
                               width: 90,

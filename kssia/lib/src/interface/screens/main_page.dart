@@ -7,6 +7,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
@@ -118,6 +119,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
+          ref.watch(fetchStatusProvider);
       final asyncUser = ref.watch(userProvider);
       return asyncUser.when(
         loading: () {

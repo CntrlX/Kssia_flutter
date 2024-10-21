@@ -152,7 +152,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
-                if (subscription == 'accepted') {
+                if (subscription != 'free') {
                   _openModalSheet(sheet: 'requirement');
                 } else {
                   showDialog(
