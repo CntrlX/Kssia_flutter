@@ -16,6 +16,7 @@ import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FeedView extends ConsumerStatefulWidget {
@@ -150,7 +151,16 @@ class _FeedViewState extends ConsumerState<FeedView> {
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(
-              onPressed: () => _openModalSheet(sheet: 'requirement'),
+              onPressed: () {
+                if (subscription == 'accepted') {
+                  _openModalSheet(sheet: 'requirement');
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const UpgradeDialog(),
+                  );
+                }
+              },
               label: const Text(
                 'Add Requirement',
                 style: TextStyle(color: Colors.white),

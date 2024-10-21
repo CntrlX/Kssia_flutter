@@ -107,81 +107,81 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                       );
                     })),
             // Navigation Buttons Section
-            if (subscription != 'free')
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 500),
-                  opacity: (1 - (_currentPage - _currentPage.round()).abs())
-                      .clamp(0.0, 1.0), // Smooth transition for buttons too
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: Color.fromARGB(255, 224, 219, 219)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 10),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 500),
+                opacity: (1 - (_currentPage - _currentPage.round()).abs())
+                    .clamp(0.0, 1.0), // Smooth transition for buttons too
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                            color: Color.fromARGB(255, 224, 219, 219)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        onPressed: () {
-                          int currentIndex = ref.read(currentIndexProvider);
-                          if (currentIndex > 0) {
-                            _pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          }
-                        },
-                        // Button styling remains unchanged
-                        child: const Row(
-                          children: [
-                            Icon(Icons.arrow_back, color: Color(0xFF004797)),
-                            SizedBox(width: 8),
-                            Text('Previous',
-                                style: TextStyle(color: Color(0xFF004797))),
-                          ],
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 10),
                       ),
-                      SizedBox(
-                        width: 10,
+                      onPressed: () {
+                        int currentIndex = ref.read(currentIndexProvider);
+                        if (currentIndex > 0) {
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      // Button styling remains unchanged
+                      child: const Row(
+                        children: [
+                          Icon(Icons.arrow_back, color: Color(0xFF004797)),
+                          SizedBox(width: 8),
+                          Text('Previous',
+                              style: TextStyle(color: Color(0xFF004797))),
+                        ],
                       ),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: Color.fromARGB(255, 224, 219, 219)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 10),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                            color: Color.fromARGB(255, 224, 219, 219)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        onPressed: () {
-                          int currentIndex = ref.read(currentIndexProvider);
-                          if (currentIndex < widget.news.length - 1) {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          }
-                        },
-                        // Button styling remains unchanged
-                        child: const Row(
-                          children: [
-                            Text('Next',
-                                style: TextStyle(color: Color(0xFF004797))),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, color: Color(0xFF004797)),
-                          ],
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 10),
                       ),
-                    ],
-                  ),
+                      onPressed: () {
+                        int currentIndex = ref.read(currentIndexProvider);
+                        if (currentIndex < widget.news.length - 1) {
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      // Button styling remains unchanged
+                      child: const Row(
+                        children: [
+                          Text('Next',
+                              style: TextStyle(color: Color(0xFF004797))),
+                          SizedBox(width: 8),
+                          Icon(Icons.arrow_forward, color: Color(0xFF004797)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ],
@@ -309,57 +309,57 @@ class NewsContent extends StatelessWidget {
         ),
 
         // Premium Lock Overlay (Shown only if locked)
-        if (subscription == 'free')
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Container(
-                color:
-                    Colors.black.withOpacity(0.6), // Semi-transparent overlay
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.lock_outline,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Unlock Premium Content',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Buy Premium to access this article and more.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                          width: 250,
-                          child: customButton(
-                              label: 'Buy Premium',
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => const UpgradeDialog(),
-                                );
-                              }))
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+        // if (subscription == 'free')
+        //   Positioned.fill(
+        //     child: BackdropFilter(
+        //       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+        //       child: Container(
+        //         color:
+        //             Colors.black.withOpacity(0.6), // Semi-transparent overlay
+        //         child: Center(
+        //           child: Column(
+        //             mainAxisAlignment: MainAxisAlignment.center,
+        //             children: [
+        //               const Icon(
+        //                 Icons.lock_outline,
+        //                 size: 60,
+        //                 color: Colors.white,
+        //               ),
+        //               const SizedBox(height: 16),
+        //               const Text(
+        //                 'Unlock Premium Content',
+        //                 style: TextStyle(
+        //                   fontSize: 24,
+        //                   color: Colors.white,
+        //                   fontWeight: FontWeight.bold,
+        //                 ),
+        //               ),
+        //               const SizedBox(height: 8),
+        //               const Text(
+        //                 'Buy Premium to access this article and more.',
+        //                 textAlign: TextAlign.center,
+        //                 style: TextStyle(
+        //                   fontSize: 16,
+        //                   color: Colors.white70,
+        //                 ),
+        //               ),
+        //               const SizedBox(height: 24),
+        //               SizedBox(
+        //                   width: 250,
+        //                   child: customButton(
+        //                       label: 'Buy Premium',
+        //                       onPressed: () {
+        //                         showDialog(
+        //                           context: context,
+        //                           builder: (context) => const UpgradeDialog(),
+        //                         );
+        //                       }))
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }

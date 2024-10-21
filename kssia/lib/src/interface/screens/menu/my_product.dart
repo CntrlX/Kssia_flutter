@@ -12,6 +12,7 @@ import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 
 class MyProductPage extends ConsumerStatefulWidget {
   MyProductPage({super.key});
@@ -207,7 +208,16 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                     right: 16,
                     child: FloatingActionButton.extended(
                       onPressed: () {
-                        _openModalSheet(sheet: 'product');
+                        if (subscription == 'accepted') {
+                          _openModalSheet(sheet: 'product');
+                        }
+                        else{
+                             showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const UpgradeDialog(),
+                                          );
+                        }
                       },
                       label: Padding(
                         padding: const EdgeInsets.all(8.0),

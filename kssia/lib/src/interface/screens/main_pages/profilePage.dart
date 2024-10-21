@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
@@ -276,8 +278,17 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Share.share(
+                              if(subscription=='accpeted'){
+           Share.share(
                                   'https://admin.kssiathrissur.com/user/${user.id}');
+                              }
+                              else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const UpgradeDialog(),
+                                          );
+                              }
                             },
                             child: Container(
                               width: 90,
@@ -304,7 +315,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                           const SizedBox(width: 40),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () {if(subscription=='accepted') {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -313,6 +324,14 @@ class ProfilePage extends StatelessWidget {
                                   ), // Navigate to CardPage
                                 ),
                               );
+                            }
+                            else{
+                                       showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const UpgradeDialog(),
+                                          );
+                            }
                             },
                             child: Container(
                               width: 90,

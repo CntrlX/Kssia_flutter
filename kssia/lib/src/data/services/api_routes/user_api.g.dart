@@ -471,21 +471,21 @@ final fetchUserRsvpdEventsProvider =
 );
 
 typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getUserPaymentsHash() => r'e019316ed5c55be972e9e2921e5c44327407a345';
+String _$getSubscriptionHash() => r'eedb406e3745789ef96c46354dc94e4f0a0fab5e';
 
-/// See also [getUserPayments].
-@ProviderFor(getUserPayments)
-final getUserPaymentsProvider =
-    AutoDisposeFutureProvider<List<Subscription>>.internal(
-  getUserPayments,
-  name: r'getUserPaymentsProvider',
+/// See also [getSubscription].
+@ProviderFor(getSubscription)
+final getSubscriptionProvider =
+    AutoDisposeFutureProvider<Subscription>.internal(
+  getSubscription,
+  name: r'getSubscriptionProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$getUserPaymentsHash,
+      : _$getSubscriptionHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef GetUserPaymentsRef = AutoDisposeFutureProviderRef<List<Subscription>>;
+typedef GetSubscriptionRef = AutoDisposeFutureProviderRef<Subscription>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -65,30 +66,56 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncTransactions = ref.watch(fetchTransactionsProvider(token));
+        final asyncSubscription = ref.watch(getSubscriptionProvider);
         return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(fetchTransactionsProvider),
+          onRefresh: () async => ref.invalidate(getSubscriptionProvider),
           child: Scaffold(
-              body: asyncTransactions.when(
-            data: (transactions) {
-              String membershipFormattedRenewalDate = transactions[0].renewal ==
-                      null
-                  ? ''
-                  : DateFormat('dd MMMM yyyy').format(transactions[0].renewal!);
-              String membershipFormattedRenewedDate =
-                  transactions[0].renewal == null
-                      ? ''
-                      : DateFormat('dd MMMM yyyy')
-                          .format(transactions[0].time ?? DateTime.parse(''));
-              if (transactions.isEmpty ||
-                  transactions[0].status != 'accepted') {
+              body: asyncSubscription.when(
+            data: (subscription) {
+              if (subscription.membership?.status != 'accepted') {
+                String membershipFormattedRenewalDate =
+                    subscription.membership?.lastRenewed == null ||
+                            subscription.membership?.lastRenewed == ''
+                        ? ''
+                        : DateFormat('dd MMMM yyyy')
+                            .format(subscription.membership!.lastRenewed!);
+                String membershipFormatteNextRenewalDate =
+                    subscription.membership?.nextRenewal == null ||
+                            subscription.membership?.nextRenewal == ''
+                        ? ''
+                        : DateFormat('dd MMMM yyyy')
+                            .format(subscription.membership!.nextRenewal!);
+
                 return SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 70,
                       ),
+                      Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.center, // Center horizontally
+                            crossAxisAlignment:
+                                CrossAxisAlignment.center, // Center vertically
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  subscription.membership?.status == 'expired'
+                                      ? 'Your membership subscription has expired'
+                                      : 'Subscribe to access App',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign
+                                      .center, // Align text content inside Text widget
+                                ),
+                              ),
+                            ],
+                          )),
                       Padding(
                         padding:
                             const EdgeInsets.only(left: 25, right: 25, top: 20),
@@ -166,7 +193,8 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               border: Border.all(
-                                                color: transactions[0].status ==
+                                                color: subscription.membership
+                                                            ?.status ==
                                                         'accepted'
                                                     ? Colors.green
                                                     : Colors.red,
@@ -175,20 +203,17 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                                                   BorderRadius.circular(16),
                                             ),
                                             child: Text(
-                                              transactions.isNotEmpty &&
-                                                      transactions[0].status ==
-                                                          'accepted'
+                                              subscription.membership?.status ==
+                                                      'accepted'
                                                   ? 'Active'
                                                   : 'Inactive',
                                               style: TextStyle(
                                                 fontSize: 12,
-                                                color:
-                                                    transactions.isNotEmpty &&
-                                                            transactions[0]
-                                                                    .status ==
-                                                                'accepted'
-                                                        ? Colors.green
-                                                        : Colors.red,
+                                                color: subscription.membership
+                                                            ?.status ==
+                                                        'accepted'
+                                                    ? Colors.green
+                                                    : Colors.red,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -206,7 +231,7 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                                           ),
                                           const Spacer(),
                                           Text(
-                                            membershipFormattedRenewedDate,
+                                            membershipFormattedRenewalDate,
                                             style: const TextStyle(
                                               decorationColor:
                                                   Color(0xFF004797),
@@ -232,7 +257,7 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                                           ),
                                           const Spacer(),
                                           Text(
-                                            membershipFormattedRenewalDate,
+                                            membershipFormatteNextRenewalDate,
                                             style: const TextStyle(
                                               decorationColor:
                                                   Color(0xFF004797),
@@ -275,24 +300,23 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                               SizedBox(
                                   width: double.infinity,
                                   child: customButton(
-                                      sideColor: transactions.isNotEmpty &&
-                                              transactions[0].status ==
+                                      sideColor:
+                                          subscription.membership?.status ==
                                                   'accepted'
-                                          ? Colors.green
-                                          : Colors.red,
-                                      buttonColor: transactions.isNotEmpty &&
-                                              transactions[0].status ==
+                                              ? Colors.green
+                                              : Colors.red,
+                                      buttonColor:
+                                          subscription.membership?.status ==
                                                   'accepted'
-                                          ? Colors.green
-                                          : Colors.red,
-                                      label:
-                                          transactions[0].status == 'accepted'
-                                              ? 'ACTIVE'
-                                              : 'INACTIVE',
+                                              ? Colors.green
+                                              : Colors.red,
+                                      label: subscription.membership?.status ==
+                                              'accepted'
+                                          ? 'ACTIVE'
+                                          : 'INACTIVE',
                                       onPressed: () {
-                                        if (transactions.isNotEmpty &&
-                                            transactions[0].status !=
-                                                'accepted') {
+                                        if (subscription.membership?.status !=
+                                            'accepted') {
                                           _openModalSheet(
                                               sheet: 'payment',
                                               subscriptionType: 'membership');
@@ -306,17 +330,21 @@ class _MembershipSubscriptionState extends State<MembershipSubscription> {
                   ),
                 );
               } else {
-                Navigator.pushReplacement(
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const MainPage(),
-                    ));
+                    ),
+                  );
+                });
+                return const SizedBox.shrink();
               }
             },
-            loading: () => Center(child: LoadingAnimation()),
+            loading: () => const Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
               // Handle error state
-              return Center(
+              return const Center(
                 child: Text(''),
               );
             },

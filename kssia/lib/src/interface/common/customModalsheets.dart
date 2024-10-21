@@ -17,6 +17,7 @@ import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/validate_urls.dart';
 
@@ -1906,16 +1907,24 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                   child: customButton(
                       label: 'Get Quote',
                       onPressed: () async {
-                        await sendChatMessage(
-                            productId: widget.product.id,
-                            userId: widget.product.sellerId!.id!,
-                            content:
-                                '''I need ${_quantityController.text}\nLet\'s Connect!''');
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => IndividualPage(
-                                  receiver: widget.receiver,
-                                  sender: widget.sender,
-                                )));
+                        if (subscription == 'accepted') {
+                          await sendChatMessage(
+                              productId: widget.product.id,
+                              userId: widget.product.sellerId!.id!,
+                              content:
+                                  '''I need ${_quantityController.text}\nLet\'s Connect!''');
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => IndividualPage(
+                                    receiver: widget.receiver,
+                                    sender: widget.sender,
+                                  )));
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const UpgradeDialog(),
+                          );
+                        }
                       },
                       fontSize: 16),
                 ),
@@ -2043,15 +2052,22 @@ class RequirementModalSheet extends StatelessWidget {
                             return customButton(
                               label: buttonText,
                               onPressed: () async {
-                                await sendChatMessage(
-                                    userId: requirement.author!.id!,
-                                    content: requirement.content!,
-                                    requirementId: requirement.id);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => IndividualPage(
-                                          receiver: receiver,
-                                          sender: sender,
-                                        )));
+                                if (subscription == 'accepted') {
+                                  await sendChatMessage(
+                                      userId: requirement.author!.id!,
+                                      content: requirement.content!,
+                                      requirementId: requirement.id);
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => IndividualPage(
+                                            receiver: receiver,
+                                            sender: sender,
+                                          )));
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const UpgradeDialog(),
+                                  );
+                                }
                               },
                               fontSize: 16,
                             );

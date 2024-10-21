@@ -787,8 +787,8 @@ Future<List<Event>> fetchUserRsvpdEvents(
 }
 
 @riverpod
-Future<List<Subscription>> getUserPayments(GetUserPaymentsRef ref) async {
-  final String url = '$baseUrl/payments/user/$id';
+Future<Subscription> getSubscription(GetSubscriptionRef ref) async {
+  final String url = '$baseUrl/payments/user/$id/subscriptions/app';
   try {
     final response = await http.get(
       Uri.parse(url),
@@ -799,22 +799,19 @@ Future<List<Subscription>> getUserPayments(GetUserPaymentsRef ref) async {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['data'];
+      final dynamic data = json.decode(response.body)['data'];
       print('Response Data: $data');
-      List<Subscription> subscription = [];
-      for (var item in data) {
-        print(item);
-        subscription.add(Subscription.fromJson(item));
-        // log(item);
-      }
+
+      Subscription subscription = Subscription.fromJson(data);
+
       log('sub details:$subscription');
       return subscription;
     } else {
       print('Failed to load data. Status code: ${response.statusCode}');
-      return [];
+      return Subscription();
     }
   } catch (e) {
     print('Error in loading subscription details: $e');
-    return [];
+    return Subscription();
   }
 }

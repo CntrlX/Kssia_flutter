@@ -301,7 +301,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncTransactions = ref.watch(fetchTransactionsProvider(token));
+        final asyncSubscription = ref.watch(getSubscriptionProvider);
         return Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -318,18 +318,20 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
               ),
             ),
             backgroundColor: Colors.white,
-            body: asyncTransactions.when(
-              data: (transactions) {
+            body: asyncSubscription.when(
+              data: (subscription) {
                 String membershipFormattedRenewalDate =
-                    transactions[0].renewal == null
+                    subscription.membership?.lastRenewed == null ||
+                            subscription.membership?.lastRenewed == ''
                         ? ''
                         : DateFormat('dd MMMM yyyy')
-                            .format(transactions[0].renewal!);
-                String membershipFormattedRenewedDate =
-                    transactions[0].renewal == null
+                            .format(subscription.membership!.lastRenewed!);
+                String membershipFormatteNextRenewalDate =
+                    subscription.membership?.nextRenewal == null ||
+                            subscription.membership?.nextRenewal == ''
                         ? ''
                         : DateFormat('dd MMMM yyyy')
-                            .format(transactions[0].time ?? DateTime.parse(''));
+                            .format(subscription.membership!.nextRenewal!);
                 return SingleChildScrollView(
                   child: Column(
                     children: [
@@ -413,31 +415,28 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                  color:
-                                                      transactions[0].status ==
-                                                              'accepted'
-                                                          ? Colors.green
-                                                          : Colors.red,
+                                                  color: subscription.membership
+                                                              ?.status ==
+                                                          'accepted'
+                                                      ? Colors.green
+                                                      : Colors.red,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(16),
                                               ),
                                               child: Text(
-                                                transactions.isNotEmpty &&
-                                                        transactions[0]
-                                                                .status ==
-                                                            'accepted'
+                                                subscription.membership
+                                                            ?.status ==
+                                                        'accepted'
                                                     ? 'Active'
                                                     : 'Inactive',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color:
-                                                      transactions.isNotEmpty &&
-                                                              transactions[0]
-                                                                      .status ==
-                                                                  'accepted'
-                                                          ? Colors.green
-                                                          : Colors.red,
+                                                  color: subscription.membership
+                                                              ?.status ==
+                                                          'accepted'
+                                                      ? Colors.green
+                                                      : Colors.red,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -455,7 +454,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             ),
                                             const Spacer(),
                                             Text(
-                                              membershipFormattedRenewedDate,
+                                              membershipFormattedRenewalDate,
                                               style: const TextStyle(
                                                 decorationColor:
                                                     Color(0xFF004797),
@@ -481,7 +480,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             ),
                                             const Spacer(),
                                             Text(
-                                              membershipFormattedRenewalDate,
+                                              membershipFormatteNextRenewalDate,
                                               style: const TextStyle(
                                                 decorationColor:
                                                     Color(0xFF004797),
@@ -516,7 +515,6 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                       _buildBasicCard(
                                           'Access to Product search'),
                                       _buildBasicCard('Access to Requirements'),
-                                      _buildBasicCard('Access to Requirements'),
                                     ],
                                   ),
                                 ),
@@ -526,24 +524,22 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                 SizedBox(
                                     width: double.infinity,
                                     child: customButton(
-                                        sideColor: transactions.isNotEmpty &&
-                                                transactions[0].status ==
+                                        sideColor:
+                                            subscription.membership?.status ==
                                                     'accepted'
-                                            ? Colors.green
-                                            : Colors.red,
-                                        buttonColor: transactions.isNotEmpty &&
-                                                transactions[0].status ==
+                                                ? Colors.green
+                                                : Colors.red,
+                                        buttonColor:
+                                            subscription.membership?.status ==
                                                     'accepted'
-                                            ? Colors.green
-                                            : Colors.red,
-                                        label:
-                                            transactions[0].status == 'accepted'
-                                                ? 'ACTIVE'
-                                                : 'INACTIVE',
+                                                ? Colors.green
+                                                : Colors.red,
+                                        label: subscription.membership?.status
+                                                ?.toUpperCase() ??
+                                            'SUBSCRIBE',
                                         onPressed: () {
-                                          if (transactions.isNotEmpty &&
-                                              transactions[0].status !=
-                                                  'accepted') {
+                                          if (subscription.membership?.status !=
+                                              'accepted') {
                                             _openModalSheet(
                                                 sheet: 'payment',
                                                 subscriptionType: 'membership');
@@ -621,39 +617,32 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                   child: Column(
                                     children: [
                                       _buildPremiumCard(
-                                          'Access to news and updates'),
+                                          'QR code linked micro-website'),
                                       _buildPremiumCard(
-                                          'Access to product search'),
+                                          'Self-manage products and services'),
                                       _buildPremiumCard(
-                                          'Chat with unlimited members'),
+                                          'Post requirements (admin approval needed)'),
                                       _buildPremiumCard(
-                                          'Access to add products and requirements'),
+                                          'Search and send enquiries to suppliers'),
                                       _buildPremiumCard(
-                                          'Register to attend exciting events'),
-                                      // _buildPremiumCard('Access to report and block'),
+                                          'Receive product and service enquiries'),
+                                      _buildPremiumCard(
+                                          'Provide feedback to KSSIA office'),
+                                      _buildPremiumCard('Chat with everyone'),
                                     ],
                                   ),
                                 ),
                                 const SizedBox(height: 15),
-
-                                // Subscribe Button
                                 SizedBox(
                                     width: double.infinity,
                                     child: customButton(
                                         buttonHeight: 40,
                                         sideColor: const Color(0xFFF76412),
                                         buttonColor: const Color(0xFFF76412),
-                                        label: transactions.length > 1 &&
-                                                transactions[1].status ==
-                                                    'accepted'
-                                            ? 'ACTIVE'
-                                            : 'SUBSCRIBE',
+                                        label: subscription.app?.status ??
+                                            'SUBSCRIBE',
                                         onPressed: () {
-                                          if (transactions.length < 2) {
-                                            _openModalSheet(
-                                                sheet: 'payment',
-                                                subscriptionType: 'app');
-                                          } else if (transactions[1].status !=
+                                          if (subscription.app?.status !=
                                               'accepted') {
                                             _openModalSheet(
                                                 sheet: 'payment',
