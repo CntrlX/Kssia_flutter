@@ -31,7 +31,10 @@ class ReviewsCard extends StatelessWidget {
                       backgroundImage:
                           NetworkImage(review.reviewer!.profilePicture!),
                     )
-                  : const Icon(Icons.person),
+                  : Image.asset(
+                      'assets/icons/dummy_person_small.png',
+                      scale: .8,
+                    ),
             ],
           ),
           const SizedBox(width: 10),

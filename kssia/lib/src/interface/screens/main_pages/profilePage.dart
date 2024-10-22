@@ -100,7 +100,8 @@ class ProfilePage extends StatelessWidget {
                                             ),
                                           )
                                         : Image.asset(
-                                            'assets/icons/dummy_person.png'),
+                                            scale: 1.1,
+                                            'assets/icons/dummy_person_large.png'),
                                     const SizedBox(height: 10),
                                     Text(
                                       '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name!.lastName!}',
@@ -123,12 +124,18 @@ class ProfilePage extends StatelessWidget {
                                                             null &&
                                                         user.companyLogo != ''
                                                     ? Image.network(
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                              'assets/icons/dummy_company.png');
+                                                        },
                                                         user.companyLogo!,
                                                         height: 33,
                                                         width: 40,
                                                         fit: BoxFit.cover,
                                                       )
-                                                    : const SizedBox())
+                                                    : Image.asset(
+                                                        'assets/icons/dummy_company.png'))
                                           ],
                                         ),
                                         const SizedBox(width: 10),

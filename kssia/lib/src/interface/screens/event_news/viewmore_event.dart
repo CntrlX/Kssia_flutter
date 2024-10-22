@@ -338,7 +338,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
               ? NetworkImage(imagePath)
               : null, // Use image if available
           child: (imagePath == null || imagePath.isEmpty)
-              ? const Icon(Icons.person, size: 40)
+              ? Image.asset('assets/icons/dummy_person_small.png')
               : null, // Show icon if no image is provided
         ),
         title: Text(

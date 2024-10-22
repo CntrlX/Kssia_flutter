@@ -187,7 +187,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                             context: context,
                             userId: widget.receiver.id ?? '',
                             onBlockStatusChanged: () {
-                              Future.delayed(Duration(seconds: 1));
+                              Future.delayed(const Duration(seconds: 1));
                               setState(() {
                                 if (isBlocked) {
                                   isBlocked = false;
@@ -264,10 +264,10 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               padding: const EdgeInsets.symmetric(
                                 vertical: 20,
                               ),
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Color(0xFF004797),
                                 boxShadow: [
-                                  const BoxShadow(
+                                  BoxShadow(
                                     color: Colors.black26,
                                     blurRadius: 10,
                                     offset: Offset(4, 4),
@@ -308,56 +308,120 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                                   .width -
                                               65,
                                           child: Card(
-                                            elevation: 0,
-                                            color: Colors.white,
-                                            margin: const EdgeInsets.only(
-                                                left: 15, right: 2, bottom: 22),
-                                            shape: const RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                color: Color.fromARGB(
-                                                    255, 220, 215, 215),
-                                                width: .5,
-                                              ),
-                                            ),
-                                            child: TextFormField(
-                                              controller: _controller,
-                                              focusNode: focusNode,
-                                              textAlignVertical:
-                                                  TextAlignVertical.center,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              maxLines: 5,
-                                              minLines: 1,
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText:
-                                                    "What would you share?",
-                                                hintStyle: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 14),
-                                                suffixIcon: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    // IconButton(
-                                                    //   icon: const Icon(
-                                                    //       Icons.attach_file),
-                                                    //   onPressed: () {
-                                                    //     showModalBottomSheet(
-                                                    //         backgroundColor:
-                                                    //             Colors.transparent,
-                                                    //         context: context,
-                                                    //         builder: (builder) =>
-                                                    //             bottomSheet());
-                                                    //   },
-                                                    // ),
-                                                  ],
+                                              elevation: 0,
+                                              color: Colors.white,
+                                              margin: const EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 2,
+                                                  bottom: 22),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 220, 215, 215),
+                                                  width: .5,
                                                 ),
-                                                contentPadding:
-                                                    const EdgeInsets.all(5),
                                               ),
-                                            ),
-                                          ),
+                                              child: TextFormField(
+                                                controller: _controller,
+                                                focusNode: focusNode,
+                                                textAlignVertical:
+                                                    TextAlignVertical.center,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                maxLines: 5,
+                                                minLines: 1,
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1.0),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          236,
+                                                          238,
+                                                          239), // Color when TextFormField is focused
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1.0),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          236,
+                                                          238,
+                                                          239), // Color when TextFormField is focused
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1.0),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          236,
+                                                          238,
+                                                          239), // Color when TextFormField is focused
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  errorBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1.0),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          236,
+                                                          238,
+                                                          239), // Color when TextFormField is focused
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  focusedErrorBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1.0),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255,
+                                                          236,
+                                                          238,
+                                                          239), // Color when TextFormField is focused
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  hintText:
+                                                      "What would you share?",
+                                                  hintStyle: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14),
+                                                  suffixIcon: const Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      // You can add your IconButton here as needed
+                                                    ],
+                                                  ),
+                                                  contentPadding:
+                                                      const EdgeInsets.all(5),
+                                                ),
+                                              )),
                                         ),
                                         const SizedBox(
                                           width: 5,
@@ -370,7 +434,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                           ),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: Color(0xFF004797),
+                                                color: const Color(0xFF004797),
                                                 borderRadius:
                                                     BorderRadius.circular(5)),
                                             child: IconButton(

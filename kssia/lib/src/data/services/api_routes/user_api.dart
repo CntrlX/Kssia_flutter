@@ -386,7 +386,7 @@ class ApiRoutes {
   }
 
   Future<String?> uploadRequirement(String token, String author, String content,
-      String status, File file, BuildContext context) async {
+      String status, File? file, BuildContext context) async {
     const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
 
     // Create a multipart request
@@ -404,20 +404,20 @@ class ApiRoutes {
     request.fields['content'] = content;
     request.fields['status'] = status;
 
-    // Add the file
-    var stream = http.ByteStream(file.openRead());
-    stream.cast();
-    var length = await file.length();
-    var multipartFile = http.MultipartFile(
-      'file',
-      stream,
-      length,
-      filename: basename(file.path),
-      contentType: MediaType('image', 'png'),
-    );
+    if (file != null) {
+      var stream = http.ByteStream(file.openRead());
+      stream.cast();
+      var length = await file.length();
+      var multipartFile = http.MultipartFile(
+        'file',
+        stream,
+        length,
+        filename: basename(file.path),
+        contentType: MediaType('image', 'png'),
+      );
 
-    request.files.add(multipartFile);
-
+      request.files.add(multipartFile);
+    }
     // Send the request
     var response = await request.send();
 
@@ -641,8 +641,6 @@ class ApiRoutes {
       print('An error occurred: $e');
     }
   }
-
- 
 }
 
 const String baseUrl = 'https://api.kssiathrissur.com/api/v1';

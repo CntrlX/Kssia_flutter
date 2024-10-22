@@ -1321,43 +1321,34 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               color: Colors.grey,
                                               strokeWidth: 2,
                                               child: ClipOval(
-                                                child: Container(
-                                                    width: 120,
-                                                    height: 120,
-                                                    color: const Color.fromARGB(
-                                                        255, 255, 255, 255),
-                                                    child:
-                                                        user.profilePicture !=
-                                                                null
-                                                            ? Image.network(
-                                                                errorBuilder:
-                                                                    (context,
-                                                                        error,
-                                                                        stackTrace) {
-                                                                  return const Icon(
-                                                                      Icons
-                                                                          .person);
-                                                                },
-                                                                user.profilePicture ??
-                                                                    'https://placehold.co/600x400',
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              )
-                                                            : const Icon(
-                                                                Icons.person)),
-                                              ),
+                                                  child: Container(
+                                                width: 120,
+                                                height: 120,
+                                                color: const Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                child: user.profilePicture !=
+                                                        null
+                                                    ? Image.network(
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return const Icon(
+                                                              Icons.person);
+                                                        },
+                                                        user.profilePicture ??
+                                                            'https://placehold.co/600x400',
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/icons/dummy_person_large.png'),
+                                              )),
                                             ),
                                             Positioned(
                                               bottom: 4,
                                               right: 4,
                                               child: InkWell(
                                                 onTap: () {
-                                                  showModalBottomSheet(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        _buildImagePickerOptions(
-                                                            context, 'profile'),
-                                                  );
+                                                  _pickFile(
+                                                      imageType: 'profile');
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -1600,12 +1591,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               right: -4,
                                               child: InkWell(
                                                 onTap: () {
-                                                  showModalBottomSheet(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        _buildImagePickerOptions(
-                                                            context, 'company'),
-                                                  );
+                                                  _pickFile(
+                                                      imageType: 'company');
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(

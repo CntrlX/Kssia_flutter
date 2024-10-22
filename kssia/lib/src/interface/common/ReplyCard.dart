@@ -135,11 +135,11 @@ class ReplyCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 5),
-                    Icon(
-                      Icons.done_all,
-                      size: 20,
-                      color: status == 'seen' ? Colors.blue[300] : Colors.grey,
-                    ),
+                    // Icon(
+                    //   Icons.done_all,
+                    //   size: 20,
+                    //   color: status == 'seen' ? Colors.blue[300] : Colors.grey,
+                    // ),
                   ],
                 ),
               ],

@@ -119,7 +119,7 @@ class ProfilePreview extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        user.profilePicture != null
+                        user.profilePicture != null && user.profilePicture != ''
                             ? CircleAvatar(
                                 radius: 45,
                                 backgroundImage:
@@ -142,17 +142,24 @@ class ProfilePreview extends ConsumerWidget {
                           children: [
                             Column(
                               children: [
-                                if (user.companyLogo != null &&
-                                    user.companyLogo != '')
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(9),
-                                    child: Image.network(
-                                      user.companyLogo!,
-                                      height: 33,
-                                      width: 40,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                user.companyLogo != null &&
+                                        user.companyLogo != ''
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(9),
+                                        child: Image.network(
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                                'assets/icons/dummy_company.png');
+                                          },
+                                          user.companyLogo!,
+                                          height: 33,
+                                          width: 40,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        'assets/icons/dummy_company.png'),
                               ],
                             ),
                             const SizedBox(width: 10),

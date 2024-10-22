@@ -48,7 +48,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> {
               data: (transactions) {
                 // Filtered lists based on status
                 final approved = transactions
-                    .where((transaction) => transaction.status == 'approved')
+                    .where((transaction) => transaction.status == 'accepted')
                     .toList();
                 final pending = transactions
                     .where((transaction) => transaction.status == 'pending')
@@ -202,7 +202,8 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> {
               _detailRow('Type', transaction.category ?? ''),
               if (transaction.date != null)
                 _detailRow('Date & time', formattedDate),
-              _detailRow('Amount paid', '₹2000'), // Placeholder for now
+              _detailRow('Amount paid',
+                  '${transaction.amount}'), // Placeholder for now
               // if (transaction.status == 'rejected')
               //   Column(
               //     crossAxisAlignment: CrossAxisAlignment.start,

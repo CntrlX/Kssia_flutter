@@ -7,7 +7,7 @@ class LoadingAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoadingAnimationWidget.dotsTriangle(
-      color: Color(0xFF004797),
+      color: const Color(0xFF004797),
       size: 40,
     );
   }

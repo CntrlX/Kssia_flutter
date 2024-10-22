@@ -24,9 +24,16 @@ class NewsPage extends ConsumerWidget {
     return asyncNews.when(
       data: (news) {
         if (news.isNotEmpty) {
-          return Scaffold(
-            appBar: CustomAppBar(),
-            body: NewsPageView(news: news),
+          return PopScope(
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) {
+                ref.read(currentIndexProvider.notifier).state = 0;
+              }
+            },
+            child: Scaffold(
+              appBar: CustomAppBar(),
+              body: NewsPageView(news: news),
+            ),
           );
         } else {
           return const Center(child: Text('No News'));

@@ -31,16 +31,21 @@ class _ProductViewState extends ConsumerState<ProductView> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+  bool _hasSearched = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _fetchInitialFeeds();
+    _searchFocus.addListener(_onSearchFocusChange);
   }
 
-  Future<void> _fetchInitialFeeds() async {
-    await ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
+  void _onSearchFocusChange() {
+    if (_searchFocus.hasFocus && !_hasSearched) {
+      // Display all products when search bar is focused
+      ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
+      _hasSearched = true; // Set flag to avoid fetching multiple times
+    }
   }
 
   void _onScroll() {
@@ -51,13 +56,15 @@ class _ProductViewState extends ConsumerState<ProductView> {
   }
 
   void _onSearchChanged(String query) {
-    log('im inside search');
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref
-          .read(productsNotifierProvider.notifier)
-          .searchProducts(query); // Call the search function
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      ref.read(productsNotifierProvider.notifier).searchProducts(query);
     });
+  }
+
+  void _onSearchSubmitted(String query) {
+    // Perform search when search is submitted
+    ref.read(productsNotifierProvider.notifier).searchProducts(query);
   }
 
   void _showProductDetails(
@@ -90,21 +97,18 @@ class _ProductViewState extends ConsumerState<ProductView> {
         },
         child: Scaffold(
             body: SingleChildScrollView(
-          controller: _scrollController, // Attach scroll controller here
+          controller: _scrollController,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: SearchField(
-                    suggestions: products
-                        .map((e) => SearchFieldListItem(e.name.toString(),
-                            child: Text(e.name.toString())))
-                        .toList(),
+                  child: TextField(
                     controller: _searchController,
-                    suggestionState: Suggestion.expand,
-                    searchInputDecoration: SearchInputDecoration(
+                    focusNode: _searchFocus,
+
+                    decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: const Icon(Icons.search),
@@ -128,8 +132,10 @@ class _ProductViewState extends ConsumerState<ProductView> {
                         ),
                       ),
                     ),
-                    onSubmit: (query) =>
-                        _onSearchChanged(query), // Trigger search
+                    onChanged: (query) =>
+                        _onSearchChanged(query), // Trigger dynamic search
+                    onSubmitted: (query) =>
+                        _onSearchSubmitted(query), // Trigger search on submit
                   )),
               const SizedBox(height: 16),
               if (products.isNotEmpty)
@@ -182,6 +188,19 @@ class _ProductViewState extends ConsumerState<ProductView> {
                     );
                   },
                 )
+              else if (!_hasSearched)
+                Column(
+                  children: [
+                    const SizedBox(height: 100),
+                    Image.asset('assets/searchproduct.png'),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Search for Products',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
               else
                 const Column(
                   children: [
@@ -205,6 +224,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
     _scrollController.dispose();
     _searchController.dispose();
     _debounce?.cancel();
+    _searchFocus.dispose();
     super.dispose();
   }
 }

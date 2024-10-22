@@ -84,6 +84,7 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
+      ref.read(currentIndexProvider.notifier).state = 0;
       _selectedIndex = index;
     });
   }
@@ -119,7 +120,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-          ref.watch(fetchStatusProvider);
+      ref.watch(fetchStatusProvider);
       final asyncUser = ref.watch(userProvider);
       return asyncUser.when(
         loading: () {
@@ -151,11 +152,18 @@ class _MainPageState extends ConsumerState<MainPage> {
                   return BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     icon: index == 2 // Assuming profile is the third item
-                        ? CircleAvatar(
-                            backgroundImage: NetworkImage(user.profilePicture ??
-                                'https://placehold.co/600x400'),
-                            radius: 15,
-                          )
+                        ? user.profilePicture != null &&
+                                user.profilePicture != ''
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  user.profilePicture ?? '',
+                                ),
+                                radius: 15,
+                              )
+                            : Image.asset(
+                                'assets/icons/dummy_person_small.png',
+                                scale: 1.5,
+                              )
                         : IconResolver(
                             iconPath: _inactiveIcons[index],
                             color: _selectedIndex == index
@@ -163,11 +171,18 @@ class _MainPageState extends ConsumerState<MainPage> {
                                 : Colors.grey,
                           ),
                     activeIcon: index == 2
-                        ? CircleAvatar(
-                            backgroundImage: NetworkImage(user.profilePicture ??
-                                'https://placehold.co/600x400'),
-                            radius: 15,
-                          )
+                        ? user.profilePicture != null &&
+                                user.profilePicture != ''
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  user.profilePicture ?? '',
+                                ),
+                                radius: 15,
+                              )
+                            : Image.asset(
+                                'assets/icons/dummy_person_small.png',
+                                scale: 1.5,
+                              )
                         : IconResolver(
                             iconPath: _activeIcons[index],
                             color: Color(0xFF004797),

@@ -208,15 +208,13 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                     right: 16,
                     child: FloatingActionButton.extended(
                       onPressed: () {
-                        if (subscription == 'accepted') {
+                        if (subscription == 'premium') {
                           _openModalSheet(sheet: 'product');
-                        }
-                        else{
-                             showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                const UpgradeDialog(),
-                                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const UpgradeDialog(),
+                          );
                         }
                       },
                       label: Padding(

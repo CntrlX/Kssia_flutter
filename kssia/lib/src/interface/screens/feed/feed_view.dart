@@ -31,6 +31,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
       TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+
   @override
   void initState() {
     super.initState();
@@ -284,7 +285,8 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                           child: Image.network(
                                             errorBuilder:
                                                 (context, error, stackTrace) {
-                                              return Icon(Icons.person);
+                                              return Image.asset(
+                                                  'assets/icons/dummy_person_small.png');
                                             },
                                             receiver.profilePicture ??
                                                 'https://placehold.co/600x400', // Replace with your image URL

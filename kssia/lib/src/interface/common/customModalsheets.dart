@@ -1210,13 +1210,15 @@ class ShowAddRequirementSheet extends StatefulWidget {
   final String imageType;
   File? requirementImage;
   final BuildContext context1;
-  ShowAddRequirementSheet(
-      {super.key,
-      required this.textController,
-      required this.imageType,
-      required this.pickImage,
-      this.requirementImage,
-      required this.context1});
+
+  ShowAddRequirementSheet({
+    super.key,
+    required this.textController,
+    required this.imageType,
+    required this.pickImage,
+    this.requirementImage,
+    required this.context1,
+  });
 
   @override
   State<ShowAddRequirementSheet> createState() =>
@@ -1224,45 +1226,50 @@ class ShowAddRequirementSheet extends StatefulWidget {
 }
 
 class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     ApiRoutes api = ApiRoutes();
     return Padding(
       padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(widget.context1).viewInsets.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Post a Requirement',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(widget.context1).viewInsets.bottom,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Post a Requirement',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () async {
-              final pickedImage =
-                  await widget.pickImage(imageType: widget.imageType);
-              setState(() {
-                widget.requirementImage = pickedImage;
-              });
-            },
-            child: Container(
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () async {
+                final pickedImage =
+                    await widget.pickImage(imageType: widget.imageType);
+                setState(() {
+                  widget.requirementImage = pickedImage;
+                });
+              },
+              child: Container(
                 height: 110,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1278,46 +1285,62 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                             Text(
                               'Upload Image',
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 102, 101, 101)),
+                                color: Color.fromARGB(255, 102, 101, 101),
+                              ),
                             ),
                           ],
                         ),
                       )
-                    : Image.file(widget.requirementImage!)),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: widget.textController,
-            maxLines:
-                ((MediaQuery.sizeOf(widget.context1).height) / 200).toInt(),
-            decoration: InputDecoration(
-              hintText: 'Add content',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                    : Image.file(widget.requirementImage!),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: widget.textController,
+              maxLines:
+                  ((MediaQuery.sizeOf(widget.context1).height) / 200).toInt(),
+              decoration: InputDecoration(
+                hintText: 'Add content',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Content is required';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
               onPressed: () async {
-                await api.uploadRequirement(
+                if (_formKey.currentState!.validate()) {
+                  // Proceed only if the form is valid
+                  await api.uploadRequirement(
                     token,
                     id,
                     widget.textController.text,
                     'pending',
-                    widget.requirementImage!,
-                    context);
+                    widget.requirementImage,
+                    context,
+                  );
 
-                CustomSnackbar.showSnackbar(
-                    context, "Your requirement will be reviewed by ADMIN");
-                Navigator.pop(context);
+                  CustomSnackbar.showSnackbar(
+                    context,
+                    "Your requirement will be reviewed by ADMIN",
+                  );
+                  Navigator.pop(context);
+                }
               },
               style: ButtonStyle(
-                foregroundColor:
-                    WidgetStateProperty.all<Color>(const Color(0xFF004797)),
-                backgroundColor:
-                    WidgetStateProperty.all<Color>(const Color(0xFF004797)),
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                foregroundColor: WidgetStatePropertyAll<Color>(
+                  const Color(0xFF004797),
+                ),
+                backgroundColor: WidgetStatePropertyAll<Color>(
+                  const Color(0xFF004797),
+                ),
+                shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
                     side: const BorderSide(color: Color(0xFF004797)),
@@ -1327,11 +1350,11 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
               child: const Text(
                 'POST REQUIREMENT/UPDATE',
                 style: TextStyle(color: Colors.white),
-              )),
-          const SizedBox(
-            height: 10,
-          )
-        ],
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
