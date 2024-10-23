@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/models/events_model.dart';
@@ -100,7 +99,7 @@ Widget eventWidget({
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        event.status ?? '',
+                        event.status?.toUpperCase() ?? '',
                         style: TextStyle(
                           color: const Color.fromARGB(255, 134, 163, 136),
                           fontWeight: FontWeight.bold,

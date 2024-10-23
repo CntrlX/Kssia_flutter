@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
@@ -9,14 +10,25 @@ import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
-class PeoplePage extends StatelessWidget {
+class PeoplePage extends ConsumerStatefulWidget {
   const PeoplePage({super.key});
+
+  @override
+  ConsumerState<PeoplePage> createState() => _PeoplePageState();
+}
+
+class _PeoplePageState extends ConsumerState<PeoplePage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.invalidate(fetchStatusProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 2, // Number of tabs
-
+    
         child: Scaffold(
             backgroundColor: Colors.white,
             appBar: const CustomAppBar(
@@ -54,7 +66,7 @@ class PeoplePage extends StatelessWidget {
                   ),
                 ),
                 // Wrap TabBar with a Container to adjust margin
-
+    
                 Expanded(
                   child: TabBarView(
                     children: [

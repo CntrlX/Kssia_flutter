@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class RequestNFCPage extends StatelessWidget {
   @override
@@ -51,9 +52,30 @@ class RequestNFCPage extends StatelessWidget {
             ),
             customButton(
                 label: 'REQUEST NFC',
-                onPressed: () {
-                  ApiRoutes userApi = ApiRoutes();
-                  userApi.requestNFC(context);
+                onPressed: () async {
+                  // Show the loading dialog
+                  showDialog(
+                    context: context,
+                    barrierDismissible:
+                        false, // Prevent dismissal by tapping outside
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Center(
+                          child: LoadingAnimation(),
+                        ),
+                      );
+                    },
+                  );
+
+                  try {
+                    // Make the NFC request
+                    ApiRoutes userApi = ApiRoutes();
+                    await userApi.requestNFC(context);
+                  } finally {
+                    // Remove the loading dialog once the request is completed
+                    Navigator.of(context).pop();
+                  }
                 },
                 fontSize: 16),
           ],

@@ -84,7 +84,7 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      ref.read(currentIndexProvider.notifier).state = 0;
+      ref.read(currentNewsIndexProvider.notifier).state = 0;
       _selectedIndex = index;
     });
   }

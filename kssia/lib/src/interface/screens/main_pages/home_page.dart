@@ -10,6 +10,7 @@ import 'package:kssia/src/data/notifiers/events_notifier.dart';
 import 'package:kssia/src/data/notifiers/promotions_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/promotions_api.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/promotions_model.dart';
@@ -66,6 +67,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     _videoCountController.addListener(_onScroll);
     _fetchInitialPromotions();
     _fetchInitialEvents();
+          
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+     ref.invalidate(fetchStatusProvider);
   }
 
   Future<void> _fetchInitialEvents() async {
