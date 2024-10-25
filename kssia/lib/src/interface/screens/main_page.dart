@@ -73,7 +73,7 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   void dispose() {
-    webSocketClient.disconnect();
+
 
     super.dispose();
   }

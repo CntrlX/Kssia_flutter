@@ -170,15 +170,6 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search),
-                            hintText: 'Search',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 16),
                         Expanded(
                           child: GridView.builder(

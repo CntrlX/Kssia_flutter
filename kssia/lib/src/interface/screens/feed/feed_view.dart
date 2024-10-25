@@ -31,7 +31,6 @@ class _FeedViewState extends ConsumerState<FeedView> {
       TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-
   @override
   void initState() {
     super.initState();
@@ -186,8 +185,8 @@ class _FeedViewState extends ConsumerState<FeedView> {
     return Consumer(
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
-        final asyncRequirementOwner =
-            ref.watch(fetchUserDetailsProvider(token, requirement.author!.id!));
+        final asyncRequirementOwner = ref.watch(
+            fetchUserDetailsProvider(token, requirement.author?.id ?? ''));
         return asyncRequirementOwner.when(
           data: (requirementOwner) {
             final receiver = Participant(

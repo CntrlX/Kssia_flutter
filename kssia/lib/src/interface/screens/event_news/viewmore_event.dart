@@ -289,7 +289,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 bottom: 16,
                 left: 16,
                 right: 16,
-                child: customButton(
+                child: customButton(sideColor:      registered ? Colors.green : const Color(0xFF004797) ,
                   buttonColor:
                       registered ? Colors.green : const Color(0xFF004797),
                   label: widget.event.status == 'cancelled'

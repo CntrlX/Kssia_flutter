@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
@@ -11,9 +13,21 @@ import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
 import 'package:open_share_plus/open.dart';
 import 'package:share_plus/share_plus.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   final UserModel user;
   const ProfilePage({super.key, required this.user});
+
+  @override
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.invalidate(fetchStatusProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +85,7 @@ class ProfilePage extends StatelessWidget {
                                             pageBuilder: (context, animation,
                                                     secondaryAnimation) =>
                                                 ProfilePreview(
-                                              user: user,
+                                              user: widget.user,
                                             ),
                                             transitionsBuilder: (context,
                                                 animation,
@@ -91,12 +105,12 @@ class ProfilePage extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    user.profilePicture != null &&
-                                            user.profilePicture != ''
+                                    widget.user.profilePicture != null &&
+                                            widget.user.profilePicture != ''
                                         ? CircleAvatar(
                                             radius: 40,
                                             backgroundImage: NetworkImage(
-                                              user.profilePicture ?? '',
+                                              widget.user.profilePicture ?? '',
                                             ),
                                           )
                                         : Image.asset(
@@ -104,7 +118,7 @@ class ProfilePage extends StatelessWidget {
                                             'assets/icons/dummy_person_large.png'),
                                     const SizedBox(height: 10),
                                     Text(
-                                      '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name!.lastName!}',
+                                      '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name!.lastName!}',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -120,16 +134,20 @@ class ProfilePage extends StatelessWidget {
                                             ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(9),
-                                                child: user.companyLogo !=
+                                                child: widget.user
+                                                                .companyLogo !=
                                                             null &&
-                                                        user.companyLogo != ''
+                                                        widget.user
+                                                                .companyLogo !=
+                                                            ''
                                                     ? Image.network(
                                                         errorBuilder: (context,
                                                             error, stackTrace) {
                                                           return Image.asset(
                                                               'assets/icons/dummy_company.png');
                                                         },
-                                                        user.companyLogo!,
+                                                        widget
+                                                            .user.companyLogo!,
                                                         height: 33,
                                                         width: 40,
                                                         fit: BoxFit.cover,
@@ -143,9 +161,9 @@ class ProfilePage extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if (user.designation != null)
+                                            if (widget.user.designation != null)
                                               Text(
-                                                user.designation ?? '',
+                                                widget.user.designation ?? '',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
@@ -153,9 +171,9 @@ class ProfilePage extends StatelessWidget {
                                                       255, 42, 41, 41),
                                                 ),
                                               ),
-                                            if (user.companyName != null)
+                                            if (widget.user.companyName != null)
                                               Text(
-                                                user.companyName ?? '',
+                                                widget.user.companyName ?? '',
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.grey,
@@ -195,7 +213,8 @@ class ProfilePage extends StatelessWidget {
                                 const Icon(Icons.phone,
                                     color: Color(0xFF004797)),
                                 const SizedBox(width: 10),
-                                Text(user.phoneNumbers?.personal.toString() ??
+                                Text(widget.user.phoneNumbers?.personal
+                                        .toString() ??
                                     ''),
                               ],
                             ),
@@ -205,17 +224,17 @@ class ProfilePage extends StatelessWidget {
                                 const Icon(Icons.email,
                                     color: Color(0xFF004797)),
                                 const SizedBox(width: 10),
-                                Text(user.email!),
+                                Text(widget.user.email!),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            if (user.address != null)
+                            if (widget.user.address != null)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Icon(Icons.location_on,
                                       color: Color(0xFF004797)),
-                                  if (user.address != null)
+                                  if (widget.user.address != null)
                                     Flexible(
                                       child: Row(
                                         children: [
@@ -223,7 +242,8 @@ class ProfilePage extends StatelessWidget {
                                             width: 10,
                                           ),
                                           Flexible(
-                                              child: Text(user.address ?? '')),
+                                              child: Text(
+                                                  widget.user.address ?? '')),
                                         ],
                                       ),
                                     ),
@@ -269,7 +289,7 @@ class ProfilePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Member ID: ${user.membershipId}',
+                              'Member ID: ${widget.user.membershipId}',
                               style: TextStyle(
                                 color: Colors.grey,
                               ),
@@ -287,7 +307,7 @@ class ProfilePage extends StatelessWidget {
                             onTap: () {
                               if (subscription != 'free') {
                                 Share.share(
-                                    'https://admin.kssiathrissur.com/user/${user.id}');
+                                    'https://admin.kssiathrissur.com/user/${widget.user.id}');
                               } else {
                                 showDialog(
                                   context: context,
@@ -326,7 +346,7 @@ class ProfilePage extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProfileCard(
-                                      user: user,
+                                      user: widget.user,
                                     ), // Navigate to CardPage
                                   ),
                                 );

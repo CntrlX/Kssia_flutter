@@ -255,25 +255,25 @@ class ApiRoutes {
     }
   }
 
-  Future<void> markNotificationAsRead(String notificationId) async {
-    final url = Uri.parse(
-        'https://api.kssiathrissur.com/api/v1/notification/in-app/$notificationId/read/$id');
+  // Future<void> markNotificationAsRead(String notificationId) async {
+  //   final url = Uri.parse(
+  //       'https://api.kssiathrissur.com/api/v1/notification/in-app/$notificationId/read/$id');
 
-    final response = await http.put(
-      url,
-      headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+  //   final response = await http.put(
+  //     url,
+  //     headers: {
+  //       'accept': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     },
+  //   );
 
-    if (response.statusCode == 200) {
-      print('Notification marked as read successfully.');
-    } else {
-      print(
-          'Failed to mark notification as read. Status code: ${response.statusCode}');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     print('Notification marked as read successfully.');
+  //   } else {
+  //     print(
+  //         'Failed to mark notification as read. Status code: ${response.statusCode}');
+  //   }
+  // }
 
   Future<Product?> uploadProduct(
       String token,

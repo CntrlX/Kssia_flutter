@@ -21,27 +21,28 @@ class NewsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncNews = ref.watch(fetchNewsProvider(token));
 
-    return asyncNews.when(
-      data: (news) {
-        if (news.isNotEmpty) {
-          return PopScope(
-            onPopInvokedWithResult: (didPop, result) {
-              if (didPop) {
-                ref.read(currentNewsIndexProvider.notifier).state = 0;
-              }
-            },
-            child: Scaffold(
-              appBar: CustomAppBar(),
-              body: NewsPageView(news: news),
-            ),
-          );
-        } else {
-          return const Center(child: Text('No News'));
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(currentNewsIndexProvider.notifier).state = 0;
         }
       },
-      loading: () => const Center(child: LoadingAnimation()),
-      error: (error, stackTrace) =>
-          const Center(child: Text('Failed to load news')),
+      child: Scaffold(
+          appBar: CustomAppBar(),
+          body: asyncNews.when(
+            data: (news) {
+              if (news.isEmpty) {
+                return Center(
+                  child: Text('No News'),
+                );
+              } else {
+                return NewsPageView(news: news);
+              }
+            },
+            loading: () => const Center(child: LoadingAnimation()),
+            error: (error, stackTrace) =>
+                const Center(child: Text('Failed to load news')),
+          )),
     );
   }
 }

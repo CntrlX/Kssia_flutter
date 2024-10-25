@@ -176,10 +176,12 @@ class ProfileCard extends StatelessWidget {
                                       Row(
                                         children: [
                                           CircleAvatar(
+                                            onBackgroundImageError: (_, __) =>
+                                                Image.asset(
+                                                    'assets/dummy_person_large.png'),
                                             radius: 40,
                                             backgroundImage: NetworkImage(
-                                              user.profilePicture ??
-                                                  'https://placehold.co/600x400',
+                                              user.profilePicture ?? '',
                                             ),
                                           ),
                                           const SizedBox(height: 10),

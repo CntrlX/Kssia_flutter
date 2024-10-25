@@ -987,7 +987,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       "name": {
         "first_name": user.name?.firstName,
         // if (user.name?.middleName != null && user.name?.middleName != '')
-        "middle_name": user.name?.middleName,
+        "middle_name": user.name?.middleName ?? "",
         "last_name": user.name?.lastName,
       },
       // if (user.bloodGroup != null)
@@ -1010,8 +1010,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       },
       // if (user.designation != null && user.designation != '')
       "designation": user.designation,
-      // if (user.companyLogo != null && user.companyLogo != '')
-      "company_logo": user.companyLogo,
+      if (user.companyLogo != null && user.companyLogo != '')
+        "company_logo": user.companyLogo,
       // if (user.companyName != null && user.companyName != '')
       "company_name": user.companyName,
       if (user.companyEmail != null && user.companyEmail != '')
