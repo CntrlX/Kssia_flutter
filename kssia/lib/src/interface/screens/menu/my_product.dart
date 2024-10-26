@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -53,7 +54,8 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     return null;
   }
 
-  _addNewProduct() async {
+  Future<void> _addNewProduct() async {
+    log('product price type:${productPriceType.text}');
     final createdProduct = await api.uploadProduct(
         token,
         productNameController.text,
@@ -103,7 +105,6 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         if (sheet == 'product') {
           return ShowEnterProductsSheet(
             productPriceTypeController: productPriceType,
-            productImage: _productImageFIle,
             imageType: sheet,
             pickImage: _pickFile,
             addProductCard: _addNewProduct,

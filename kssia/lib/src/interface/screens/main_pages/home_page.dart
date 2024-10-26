@@ -67,12 +67,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     _videoCountController.addListener(_onScroll);
     _fetchInitialPromotions();
     _fetchInitialEvents();
-          
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-     ref.invalidate(fetchStatusProvider);
+    ref.invalidate(fetchStatusProvider);
   }
 
   Future<void> _fetchInitialEvents() async {
@@ -374,7 +374,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                     // const SizedBox(
                     //   height: 20,
                     // ),
-
+                    if (promotions.isEmpty)
+                      Center(
+                        child: Text(
+                          'NO PROMOTIONS YET',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF004797)),
+                        ),
+                      ),
                     if (banners.isNotEmpty)
                       Card(
                         color: Colors.transparent,
@@ -412,15 +421,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                           },
                         ),
                       ),
-
+if(events.isNotEmpty)
                     Column(
                       children: [
                         if (events.isNotEmpty)
                           const Row(
                             children: [
                               Padding(
-                                padding:
-                                    EdgeInsets.only(left: 25, top: 10),
+                                padding: EdgeInsets.only(left: 25, top: 10),
                                 child: Text(
                                   'Events',
                                   style: TextStyle(

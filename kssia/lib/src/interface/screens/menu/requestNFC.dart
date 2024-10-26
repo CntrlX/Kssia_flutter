@@ -78,6 +78,7 @@ class RequestNFCPage extends StatelessWidget {
                   }
                 },
                 fontSize: 16),
+         
           ],
         ),
       ),

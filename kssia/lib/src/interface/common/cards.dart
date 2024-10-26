@@ -283,7 +283,7 @@ class CertificateCard extends StatelessWidget {
                 image: DecorationImage(
                   image: NetworkImage(
                       certificate.url!), // Replace with your image path
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

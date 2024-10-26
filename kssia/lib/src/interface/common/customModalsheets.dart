@@ -391,9 +391,8 @@ void showWlinkorVlinkSheet(
 class ShowEnterAwardSheet extends StatefulWidget {
   final TextEditingController textController1;
   final TextEditingController textController2;
-  final VoidCallback addAwardCard;
+  final Future<void> Function() addAwardCard;
   final String imageType;
-  File? awardImage;
   final Future<File?> Function({required String imageType}) pickImage;
 
   ShowEnterAwardSheet({
@@ -402,7 +401,6 @@ class ShowEnterAwardSheet extends StatefulWidget {
     required this.addAwardCard,
     required this.pickImage,
     required this.imageType,
-    this.awardImage,
     super.key,
   });
 
@@ -412,6 +410,7 @@ class ShowEnterAwardSheet extends StatefulWidget {
 
 class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   final _formKey = GlobalKey<FormState>();
+  File? awardImage; // Moved awardImage to State
 
   @override
   Widget build(BuildContext context) {
@@ -446,7 +445,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
             ),
             const SizedBox(height: 10),
             FormField<File>(
-              initialValue: widget.awardImage,
+              initialValue: awardImage, // Updated to use awardImage in State
               validator: (value) {
                 if (value == null) {
                   return 'Please upload an image';
@@ -461,7 +460,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                         final pickedFile =
                             await widget.pickImage(imageType: widget.imageType);
                         setState(() {
-                          widget.awardImage = pickedFile;
+                          awardImage = pickedFile;
                           state
                               .didChange(pickedFile); // Update form field state
                         });
@@ -475,7 +474,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                               ? Border.all(color: Colors.red)
                               : null,
                         ),
-                        child: widget.awardImage == null
+                        child: awardImage == null
                             ? const Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -494,7 +493,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                               )
                             : Center(
                                 child: Image.file(
-                                widget.awardImage!,
+                                awardImage!,
                                 fit: BoxFit.cover,
                                 width: 120,
                                 height: 120,
@@ -541,10 +540,30 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
             const SizedBox(height: 10),
             customButton(
               label: 'SAVE',
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  widget.addAwardCard();
-                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) =>
+                        const Center(child: LoadingAnimation()),
+                  );
+
+                  try {
+                    // Pass awardImage to addAwardCard
+                    await widget.addAwardCard();
+                    widget.textController1.clear();
+                    widget.textController2.clear();
+
+                    if (awardImage != null) {
+                      setState(() {
+                        awardImage = null; // Clear the image after saving
+                      });
+                    }
+                  } finally {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                  }
                 }
               },
               fontSize: 16,
@@ -560,15 +579,14 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
 class ShowAddCertificateSheet extends StatefulWidget {
   final TextEditingController textController;
   final String imageType;
-  File? certificateImage;
+
   final Future<File?> Function({required String imageType}) pickImage;
-  final VoidCallback addCertificateCard;
+  final Future<void> Function() addCertificateCard;
 
   ShowAddCertificateSheet({
     super.key,
     required this.textController,
     required this.imageType,
-    this.certificateImage,
     required this.pickImage,
     required this.addCertificateCard,
   });
@@ -579,6 +597,7 @@ class ShowAddCertificateSheet extends StatefulWidget {
 }
 
 class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
+  File? certificateImage;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -614,7 +633,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
             ),
             const SizedBox(height: 10),
             FormField<File>(
-              initialValue: widget.certificateImage,
+              initialValue: certificateImage,
               validator: (value) {
                 if (value == null) {
                   return 'Please upload an image';
@@ -629,7 +648,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                         final pickedFile =
                             await widget.pickImage(imageType: widget.imageType);
                         setState(() {
-                          widget.certificateImage = pickedFile;
+                          certificateImage = pickedFile;
                           state
                               .didChange(pickedFile); // Update form field state
                         });
@@ -643,7 +662,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                               ? Border.all(color: Colors.red)
                               : null,
                         ),
-                        child: widget.certificateImage == null
+                        child: certificateImage == null
                             ? const Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -662,7 +681,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                               )
                             : Center(
                                 child: Image.file(
-                                  widget.certificateImage!,
+                                  certificateImage!,
                                   fit: BoxFit.cover,
                                   width: 120,
                                   height: 120,
@@ -699,10 +718,29 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
             const SizedBox(height: 10),
             customButton(
               label: 'SAVE',
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  widget.addCertificateCard();
-                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) =>
+                        const Center(child: LoadingAnimation()),
+                  );
+
+                  try {
+                    // Pass awardImage to addAwardCard
+                    await widget.addCertificateCard();
+                    widget.textController.clear();
+
+                    if (certificateImage != null) {
+                      setState(() {
+                        certificateImage = null; // Clear the image after saving
+                      });
+                    }
+                  } finally {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                  }
                 }
               },
               fontSize: 16,
@@ -718,7 +756,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
 class ShowAddBrochureSheet extends StatefulWidget {
   final TextEditingController textController;
   final Future<File?> Function({required String imageType}) pickPdf;
-  final VoidCallback addBrochureCard;
+  final Future<void> Function() addBrochureCard;
   final String brochureName;
   String imageType;
 
@@ -857,10 +895,29 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
             const SizedBox(height: 10),
             customButton(
               label: 'SAVE',
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  widget.addBrochureCard();
-                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) =>
+                        const Center(child: LoadingAnimation()),
+                  );
+
+                  try {
+                    // Pass awardImage to addAwardCard
+                    await widget.addBrochureCard();
+                    widget.textController.clear();
+
+                    if (brochurePdf != null) {
+                      setState(() {
+                        brochurePdf = null; // Clear the image after saving
+                      });
+                    }
+                  } finally {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                  }
                 }
               },
               fontSize: 16,
@@ -881,9 +938,9 @@ class ShowEnterProductsSheet extends StatefulWidget {
   final TextEditingController actualPriceText;
   final TextEditingController offerPriceText;
 
-  final VoidCallback addProductCard;
+  final Future<void> Function() addProductCard;
   final String imageType;
-  File? productImage;
+
   final Future<File?> Function({required String imageType}) pickImage;
 
   ShowEnterProductsSheet({
@@ -895,7 +952,7 @@ class ShowEnterProductsSheet extends StatefulWidget {
     required this.offerPriceText,
     required this.addProductCard,
     required this.imageType,
-    this.productImage,
+
     required this.pickImage,
     required this.productPriceTypeController,
   });
@@ -905,6 +962,7 @@ class ShowEnterProductsSheet extends StatefulWidget {
 }
 
 class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
+    File? productImage;
   String productPriceType = 'Price per unit';
   final _formKey = GlobalKey<FormState>();
 
@@ -942,7 +1000,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
               ),
               const SizedBox(height: 10),
               FormField<File>(
-                initialValue: widget.productImage,
+                initialValue: productImage,
                 validator: (value) {
                   if (value == null) {
                     return 'Please upload an image';
@@ -967,7 +1025,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                           final pickedFile = await widget.pickImage(
                               imageType: widget.imageType);
                           setState(() {
-                            widget.productImage = pickedFile;
+                            productImage = pickedFile;
                             state.didChange(pickedFile); // Update form state
                           });
 
@@ -982,7 +1040,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                                 ? Border.all(color: Colors.red)
                                 : null,
                           ),
-                          child: widget.productImage == null
+                          child: productImage == null
                               ? const Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1001,7 +1059,7 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                                 )
                               : Center(
                                   child: Image.file(
-                                    widget.productImage!,
+                                    productImage!,
                                     fit: BoxFit.cover,
                                     width: 120,
                                     height: 120,
@@ -1140,17 +1198,41 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                 ),
               ),
               const SizedBox(height: 10),
-              customButton(
-                label: 'Save',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    widget.addProductCard();
+                  customButton(
+              label: 'SAVE',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) =>
+                        const Center(child: LoadingAnimation()),
+                  );
+
+                  try {
+                    // Pass awardImage to addAwardCard
+                    await widget.addProductCard();
+                    widget.actualPriceText.clear();
+                    widget.descriptionText.clear();
+                    widget.moqText.clear();
+                    widget.offerPriceText.clear();
+                    widget.productNameText.clear();
+                    widget.productPriceTypeController.clear();
+
+                    if (productImage != null) {
+                      setState(() {
+                        productImage = null; // Clear the image after saving
+                      });
+                    }
+                  } finally {
+                    Navigator.of(context).pop();
                     Navigator.pop(context);
                   }
-                },
-                fontSize: 16,
-              ),
-              const SizedBox(
+                }
+              },
+              fontSize: 16,
+            ),
+               SizedBox(
                 height: 30,
               ),
             ],

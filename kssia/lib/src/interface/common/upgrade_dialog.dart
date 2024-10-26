@@ -8,6 +8,7 @@ class UpgradeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
@@ -24,7 +25,7 @@ class UpgradeDialog extends StatelessWidget {
 
             // Title
             const Text(
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               'Upgrade required !',
             ),
             const SizedBox(height: 8),
