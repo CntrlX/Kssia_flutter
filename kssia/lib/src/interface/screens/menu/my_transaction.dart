@@ -203,7 +203,7 @@ class _MyTransactionsPageState extends State<MyTransactionsPage> {
               if (transaction.date != null)
                 _detailRow('Date & time', formattedDate),
               _detailRow('Amount paid',
-                  '${transaction.amount}'), // Placeholder for now
+                  '${transaction.amount??''}'), // Placeholder for now
               // if (transaction.status == 'rejected')
               //   Column(
               //     crossAxisAlignment: CrossAxisAlignment.start,

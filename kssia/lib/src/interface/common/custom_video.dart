@@ -127,14 +127,14 @@ Widget customVideo({required BuildContext context, required Promotion video}) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Auto-scrolling marquee for the video title
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: AutoScrollText(
-            text: video.videoTitle ?? '',
-            width: MediaQuery.of(context).size.width *
-                0.9, // Set width to avoid taking full screen
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.only(top: 10),
+        //   child: AutoScrollText(
+        //     text: video.videoTitle ?? '',
+        //     width: MediaQuery.of(context).size.width *
+        //         0.9, // Set width to avoid taking full screen
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Container(

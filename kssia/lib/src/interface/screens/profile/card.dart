@@ -10,7 +10,6 @@ import 'package:kssia/src/data/services/share_qr.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
-
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -30,16 +29,14 @@ class ProfileCard extends StatelessWidget {
           backgroundColor: Colors.white,
           appBar: !isFullScreen
               ? PreferredSize(
-                  preferredSize: const Size.fromHeight(
-                      65.0), // Adjust the size to fit the border and content
+                  preferredSize: const Size.fromHeight(65.0),
                   child: Container(
                     decoration: const BoxDecoration(
-                      color: Colors.white, // AppBar background color
+                      color: Colors.white,
                       border: Border(
                         bottom: BorderSide(
-                          color: Color.fromARGB(
-                              255, 231, 226, 226), // Border color
-                          width: 1.0, // Border width
+                          color: Color.fromARGB(255, 231, 226, 226),
+                          width: 1.0,
                         ),
                       ),
                     ),
@@ -78,8 +75,7 @@ class ProfileCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      MenuPage()), // Navigate to MenuPage
+                                  builder: (context) => MenuPage()),
                             );
                           },
                         ),
@@ -92,22 +88,16 @@ class ProfileCard extends StatelessWidget {
                           },
                           child: const Column(
                             children: [
-                              SizedBox(
-                                height: 10,
-                              ),
+                              SizedBox(height: 10),
                               Row(
                                 children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
+                                  SizedBox(width: 10),
                                   Icon(
                                     Icons.arrow_back,
                                     color: Colors.red,
                                     size: 15,
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
+                                  SizedBox(width: 10),
                                   Text('Profile')
                                 ],
                               ),
@@ -128,27 +118,18 @@ class ProfileCard extends StatelessWidget {
                     children: [
                       Consumer(
                         builder: (context, ref, child) {
-                          if (!isFullScreen) {
-                            return IconButton(
-                              icon: const Icon(Icons.open_in_full),
-                              onPressed: () {
-                                SystemChrome.setEnabledSystemUIMode(
-                                    SystemUiMode.immersiveSticky);
-                                ref.read(isFullScreenProvider.notifier).state =
-                                    true;
-                              },
-                            );
-                          } else {
-                            return IconButton(
-                              icon: const Icon(Icons.close_fullscreen),
-                              onPressed: () {
-                                SystemChrome.setEnabledSystemUIMode(
-                                    SystemUiMode.edgeToEdge);
-                                ref.read(isFullScreenProvider.notifier).state =
-                                    false;
-                              },
-                            );
-                          }
+                          return IconButton(
+                            icon: Icon(isFullScreen
+                                ? Icons.close_fullscreen
+                                : Icons.open_in_full),
+                            onPressed: () {
+                              SystemChrome.setEnabledSystemUIMode(isFullScreen
+                                  ? SystemUiMode.edgeToEdge
+                                  : SystemUiMode.immersiveSticky);
+                              ref.read(isFullScreenProvider.notifier).state =
+                                  !isFullScreen;
+                            },
+                          );
                         },
                       ),
                     ],
@@ -156,36 +137,32 @@ class ProfileCard extends StatelessWidget {
                   Screenshot(
                     controller: screenshotController,
                     child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 25, right: 15),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          CircleAvatar(
-                                            onBackgroundImageError: (_, __) =>
-                                                Image.asset(
-                                                    'assets/dummy_person_large.png'),
-                                            radius: 40,
-                                            backgroundImage: NetworkImage(
-                                              user.profilePicture ?? '',
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Padding(
+                      color: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          Stack(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          onBackgroundImageError: (_, __) =>
+                                              Image.asset(
+                                                  'assets/dummy_person_large.png'),
+                                          radius: 40,
+                                          backgroundImage: NetworkImage(
+                                              user.profilePicture ?? ''),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Padding(
                                             padding:
                                                 const EdgeInsets.only(left: 20),
                                             child: Column(
@@ -193,135 +170,144 @@ class ProfileCard extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name!.lastName!}',
+                                                  '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                   ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
                                                   children: [
-                                                    Column(
-                                                      children: [
-                                                        ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        9),
-                                                            child: user.companyLogo !=
-                                                                        null &&
-                                                                    user.companyLogo !=
-                                                                        ''
-                                                                ? Image.network(
-                                                                    user.companyLogo!,
-                                                                    height: 33,
-                                                                    width: 40,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  )
-                                                                : const SizedBox())
-                                                      ],
-                                                    ),
+                                                    if (user.companyLogo !=
+                                                            null &&
+                                                        user.companyLogo!
+                                                            .isNotEmpty)
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(9),
+                                                        child: Image.network(
+                                                          user.companyLogo!,
+                                                          height: 33,
+                                                          width: 40,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                    else
+                                                      Image.asset(
+                                                        'assets/icons/dummy_company.png',
+                                                        height: 33,
+                                                        width: 40,
+                                                      ),
                                                     const SizedBox(width: 10),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        if (user.designation !=
-                                                            null)
-                                                          Text(
-                                                            user.designation ??
-                                                                '',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 16,
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      42,
-                                                                      41,
-                                                                      41),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          if (user.designation !=
+                                                              null)
+                                                            Text(
+                                                              user.designation!,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 16,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        42,
+                                                                        41,
+                                                                        41),
+                                                              ),
+                                                              maxLines: 2,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
-                                                          ),
-                                                        if (user.companyName !=
-                                                            null)
-                                                          Text(
-                                                            user.companyName ??
-                                                                '',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.grey,
+                                                          if (user.companyName !=
+                                                              null)
+                                                            Text(
+                                                              maxLines: 2,
+                                                              user.companyName!,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
-                                                          ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          QrImageView(
+                            size: 300,
+                            data:
+                                'https://admin.kssiathrissur.com/user/${user.id}',
+                          ),
+                          const SizedBox(height: 20),
+                          if (user.phoneNumbers != null)
+                            Row(
+                              children: [
+                                const Icon(Icons.phone,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Text(user.phoneNumbers?.personal ?? ''),
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          if (user.email != null)
+                            Row(
+                              children: [
+                                const Icon(Icons.email,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Text(user.email!),
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          if (user.address != null)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.location_on,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    user.address!,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 20),
-                            QrImageView(
-                              size: 300,
-                              data:
-                                  'https://admin.kssiathrissur.com/user/${user.id}',
-                            ),
-                            const SizedBox(height: 20),
-                            if (user.phoneNumbers != null)
-                              Row(
-                                children: [
-                                  const Icon(Icons.phone,
-                                      color: Color(0xFF004797)),
-                                  const SizedBox(width: 10),
-                                  Text(user.phoneNumbers?.personal.toString() ??
-                                      ''),
-                                ],
-                              ),
-                            const SizedBox(height: 10),
-                            if (user.email != null)
-                              Row(
-                                children: [
-                                  const Icon(Icons.email,
-                                      color: Color(0xFF004797)),
-                                  const SizedBox(width: 10),
-                                  Text(user.email ?? ''),
-                                ],
-                              ),
-                            const SizedBox(height: 10),
-                            if (user.address != null)
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on,
-                                      color: Color(0xFF004797)),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      user.address ?? '',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                          ],
-                        ),
+                          const SizedBox(height: 30),
+                        ],
                       ),
                     ),
                   ),
@@ -329,49 +315,44 @@ class ProfileCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
-                      child: SizedBox(
-                          height: 50,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Flexible(
-                                child: customButton(
-                                    buttonHeight: 60,
-                                    fontSize: 16,
-                                    label: 'SHARE',
-                                    onPressed: () async {
-                                      shareQr(
-                                          context: context,
-                                          screenshotController:
-                                              screenshotController);
-                                    }),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Flexible(
-                                child: customButton(
-                                    sideColor: const Color.fromARGB(
-                                        255, 219, 217, 217),
-                                    labelColor: const Color(0xFF2C2829),
-                                    buttonColor: const Color.fromARGB(
-                                        255, 222, 218, 218),
-                                    buttonHeight: 60,
-                                    fontSize: 16,
-                                    label: 'DOWNLOAD QR',
-                                    onPressed: () async {
-                                      saveQr(
-                                          context: context,
-                                          screenshotController:
-                                              screenshotController);
-                                    }),
-                              ),
-                            ],
-                          )),
-                    ),
-                  const SizedBox(
-                    height: 40,
-                  )
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: customButton(
+                              buttonHeight: 60,
+                              fontSize: 16,
+                              label: 'SHARE',
+                              onPressed: () async {
+                                shareQr(
+                                  context: context,
+                                  screenshotController: screenshotController,
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: customButton(
+                              sideColor:
+                                  const Color.fromARGB(255, 219, 217, 217),
+                              labelColor: const Color(0xFF2C2829),
+                              buttonColor:
+                                  const Color.fromARGB(255, 222, 218, 218),
+                              buttonHeight: 60,
+                              fontSize: 16,
+                              label: 'DOWNLOAD QR',
+                              onPressed: () async {
+                                await saveQr(
+                                  context: context,
+                                  screenshotController: screenshotController,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -22,8 +23,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-
-    @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     ref.invalidate(fetchStatusProvider);
@@ -47,7 +47,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(40.0),
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: const Color.fromARGB(255, 237, 231, 231)),
@@ -69,8 +68,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           children: [
                             Stack(
                               children: [
-                                Align(
-                                  alignment: Alignment.topRight,
+                                Positioned(
+                                  top: 20,
+                                  right: 20,
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Color(0xFFF2F2F2),
@@ -102,88 +102,132 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     ),
                                   ),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    widget.user.profilePicture != null &&
-                                            widget.user.profilePicture != ''
-                                        ? CircleAvatar(
-                                            radius: 40,
-                                            backgroundImage: NetworkImage(
-                                              widget.user.profilePicture ?? '',
-                                            ),
-                                          )
-                                        : Image.asset(
-                                            scale: 1.1,
-                                            'assets/icons/dummy_person_large.png'),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name!.lastName!}',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                Padding(
+                                  padding: const EdgeInsets.all(40.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
                                       ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(9),
-                                                child: widget.user
-                                                                .companyLogo !=
-                                                            null &&
-                                                        widget.user
-                                                                .companyLogo !=
-                                                            ''
-                                                    ? Image.network(
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return Image.asset(
-                                                              'assets/icons/dummy_company.png');
-                                                        },
-                                                        widget
-                                                            .user.companyLogo!,
-                                                        height: 33,
-                                                        width: 40,
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : Image.asset(
-                                                        'assets/icons/dummy_company.png'))
-                                          ],
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (widget.user.designation != null)
-                                              Text(
-                                                widget.user.designation ?? '',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16,
-                                                  color: Color.fromARGB(
-                                                      255, 42, 41, 41),
+                                      Row(
+                                        children: [
+                                          widget.user.profilePicture != null &&
+                                                  widget.user.profilePicture !=
+                                                      ''
+                                              ? CircleAvatar(
+                                                  radius: 40,
+                                                  backgroundImage: NetworkImage(
+                                                      widget.user
+                                                              .profilePicture ??
+                                                          ''),
+                                                )
+                                              : Image.asset(
+                                                  scale: 1.3,
+                                                  'assets/icons/dummy_person_large.png',
                                                 ),
-                                              ),
-                                            if (widget.user.companyName != null)
-                                              Text(
-                                                widget.user.companyName ?? '',
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey,
+                                          const SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name!.lastName!}',
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevents text overflow
+                                                  maxLines:
+                                                      3, // Limits to a single line
                                                 ),
-                                              ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                                if (widget.user.designation !=
+                                                    null)
+                                                  Text(
+                                                    widget.user.designation ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 16,
+                                                      color: Color.fromARGB(
+                                                          255, 42, 41, 41),
+                                                    ),
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Prevents text overflow
+                                                    maxLines:
+                                                        2, // Limits to a single line
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            children: [
+                                              ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(9),
+                                                  child: widget.user
+                                                                  .companyLogo !=
+                                                              null &&
+                                                          widget.user
+                                                                  .companyLogo !=
+                                                              ''
+                                                      ? Image.network(
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Image.asset(
+                                                                'assets/icons/dummy_company.png');
+                                                          },
+                                                          widget.user
+                                                              .companyLogo!,
+                                                          height: 33,
+                                                          width: 40,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          'assets/icons/dummy_company.png'))
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                if (widget.user.companyName !=
+                                                    null)
+                                                  Text(
+                                                    widget.user.companyName ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -300,91 +344,161 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (subscription != 'free') {
-                                Share.share(
-                                    'https://admin.kssiathrissur.com/user/${widget.user.id}');
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => const UpgradeDialog(),
-                                );
-                              }
-                            },
-                            child: Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF004797),
-                                borderRadius: BorderRadius.circular(
-                                    50), // Apply circular border to the outer container
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Color(0xFF004797),
-                                  ),
-                                  child: Icon(
-                                    Icons.share,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 40),
-                          GestureDetector(
-                            onTap: () {
-                              if (subscription != 'free') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileCard(
-                                      user: widget.user,
-                                    ), // Navigate to CardPage
-                                  ),
-                                );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => const UpgradeDialog(),
-                                );
-                              }
-                            },
-                            child: Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                    50), // Apply circular border to the outer container
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.white,
-                                  ),
-                                  child: Icon(
-                                    Icons.qr_code,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     GestureDetector(
+                      //       onTap: () {
+                      //         if (subscription != 'free') {
+                      //           Share.share(
+                      //               'https://admin.kssiathrissur.com/user/${widget.user.id}');
+                      //         } else {
+                      //           showDialog(
+                      //             context: context,
+                      //             builder: (context) => const UpgradeDialog(),
+                      //           );
+                      //         }
+                      //       },
+                      //       child: Container(
+                      //         width: 90,
+                      //         height: 90,
+                      //         decoration: BoxDecoration(
+                      //           color: Color(0xFF004797),
+                      //           borderRadius: BorderRadius.circular(
+                      //               50), // Apply circular border to the outer container
+                      //         ),
+                      //         child: Padding(
+                      //           padding: const EdgeInsets.all(4.0),
+                      //           child: Container(
+                      //             decoration: BoxDecoration(
+                      //               borderRadius: BorderRadius.circular(50),
+                      //               color: Color(0xFF004797),
+                      //             ),
+                      //             child: Icon(
+                      //               Icons.share,
+                      //               color: Colors.white,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const SizedBox(width: 40),
+                      //     GestureDetector(
+                      //       onTap: () {
+                      //         if (subscription != 'free') {
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //               builder: (context) => ProfileCard(
+                      //                 user: widget.user,
+                      //               ), // Navigate to CardPage
+                      //             ),
+                      //           );
+                      //         } else {
+                      //           showDialog(
+                      //             context: context,
+                      //             builder: (context) => const UpgradeDialog(),
+                      //           );
+                      //         }
+                      //       },
+                      //       child: Container(
+                      //         width: 90,
+                      //         height: 90,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.circular(
+                      //               50), // Apply circular border to the outer container
+                      //         ),
+                      //         child: Padding(
+                      //           padding: const EdgeInsets.all(4.0),
+                      //           child: Container(
+                      //             decoration: BoxDecoration(
+                      //               borderRadius: BorderRadius.circular(50),
+                      //               color: Colors.white,
+                      //             ),
+                      //             child: Icon(
+                      //               Icons.qr_code,
+                      //               color: Colors.grey,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // )
                     ],
                   ),
                 ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Share.share(
+                        'https://admin.kssiathrissur.com/user/${widget.user.id}');
+                  },
+                  child: SvgPicture.asset('assets/icons/shareButton.svg'),
+                  // child: Container(
+                  //   width: 90,
+                  //   height: 90,
+                  //   decoration: BoxDecoration(
+                  //     color: Color(0xFFE30613),
+                  //     borderRadius: BorderRadius.circular(
+                  //         50), // Apply circular border to the outer container
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(4.0),
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(50),
+                  //         color: Color(0xFFE30613),
+                  //       ),
+                  //       child: Icon(
+                  //         Icons.share,
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                ),
+                const SizedBox(width: 40),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileCard(
+                            user: widget.user,
+                          ), // Navigate to CardPage
+                        ),
+                      );
+                    },
+                    child: SvgPicture.asset('assets/icons/qrButton.svg')
+                    // Container(
+                    //   width: 90,
+                    //   height: 90,
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(
+                    //         50), // Apply circular border to the outer container
+                    //   ),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(4.0),
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(50),
+                    //         color: Colors.white,
+                    //       ),
+                    //       child: Icon(
+                    //         Icons.qr_code,
+                    //         color: Colors.grey,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    )
               ],
             ),
           ],

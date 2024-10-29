@@ -517,6 +517,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
             ),
             const SizedBox(height: 20),
             ModalSheetTextFormField(
+              maxLength: 15,
               label: 'Add name',
               textController: widget.textController1,
               validator: (value) {
@@ -528,6 +529,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
             ),
             const SizedBox(height: 10),
             ModalSheetTextFormField(
+              maxLength: 15,
               label: 'Add Authority name',
               textController: widget.textController2,
               validator: (value) {
@@ -706,6 +708,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
             ),
             const SizedBox(height: 20),
             ModalSheetTextFormField(
+              maxLength: 15,
               label: 'Add Name',
               textController: widget.textController,
               validator: (value) {
@@ -883,6 +886,7 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
             ),
             const SizedBox(height: 20),
             ModalSheetTextFormField(
+              maxLength: 15,
               label: 'Add Name',
               textController: widget.textController,
               validator: (value) {
@@ -952,7 +956,6 @@ class ShowEnterProductsSheet extends StatefulWidget {
     required this.offerPriceText,
     required this.addProductCard,
     required this.imageType,
-
     required this.pickImage,
     required this.productPriceTypeController,
   });
@@ -962,7 +965,7 @@ class ShowEnterProductsSheet extends StatefulWidget {
 }
 
 class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
-    File? productImage;
+  File? productImage;
   String productPriceType = 'Price per unit';
   final _formKey = GlobalKey<FormState>();
 
@@ -1198,41 +1201,41 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                 ),
               ),
               const SizedBox(height: 10),
-                  customButton(
-              label: 'SAVE',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) =>
-                        const Center(child: LoadingAnimation()),
-                  );
+              customButton(
+                label: 'SAVE',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: LoadingAnimation()),
+                    );
 
-                  try {
-                    // Pass awardImage to addAwardCard
-                    await widget.addProductCard();
-                    widget.actualPriceText.clear();
-                    widget.descriptionText.clear();
-                    widget.moqText.clear();
-                    widget.offerPriceText.clear();
-                    widget.productNameText.clear();
-                    widget.productPriceTypeController.clear();
+                    try {
+                      // Pass awardImage to addAwardCard
+                      await widget.addProductCard();
+                      widget.actualPriceText.clear();
+                      widget.descriptionText.clear();
+                      widget.moqText.clear();
+                      widget.offerPriceText.clear();
+                      widget.productNameText.clear();
+                      widget.productPriceTypeController.clear();
 
-                    if (productImage != null) {
-                      setState(() {
-                        productImage = null; // Clear the image after saving
-                      });
+                      if (productImage != null) {
+                        setState(() {
+                          productImage = null; // Clear the image after saving
+                        });
+                      }
+                    } finally {
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
                     }
-                  } finally {
-                    Navigator.of(context).pop();
-                    Navigator.pop(context);
                   }
-                }
-              },
-              fontSize: 16,
-            ),
-               SizedBox(
+                },
+                fontSize: 16,
+              ),
+              SizedBox(
                 height: 30,
               ),
             ],
@@ -1290,7 +1293,7 @@ class ShowAddRequirementSheet extends StatefulWidget {
   final Future<File?> Function({required String imageType}) pickImage;
   final TextEditingController textController;
   final String imageType;
-  File? requirementImage;
+
   final BuildContext context1;
 
   ShowAddRequirementSheet({
@@ -1298,7 +1301,6 @@ class ShowAddRequirementSheet extends StatefulWidget {
     required this.textController,
     required this.imageType,
     required this.pickImage,
-    this.requirementImage,
     required this.context1,
   });
 
@@ -1308,6 +1310,7 @@ class ShowAddRequirementSheet extends StatefulWidget {
 }
 
 class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
+  File? requirementImage;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -1348,7 +1351,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                 final pickedImage =
                     await widget.pickImage(imageType: widget.imageType);
                 setState(() {
-                  widget.requirementImage = pickedImage;
+                  requirementImage = pickedImage;
                 });
               },
               child: Container(
@@ -1357,7 +1360,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: widget.requirementImage == null
+                child: requirementImage == null
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1373,7 +1376,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                           ],
                         ),
                       )
-                    : Image.file(widget.requirementImage!),
+                    : Image.file(requirementImage!),
               ),
             ),
             const SizedBox(height: 20),
@@ -1395,44 +1398,44 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
               },
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
+            customButton(
+              label: 'SAVE',
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  // Proceed only if the form is valid
-                  await api.uploadRequirement(
-                    token,
-                    id,
-                    widget.textController.text,
-                    'pending',
-                    widget.requirementImage,
-                    context,
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) =>
+                        const Center(child: LoadingAnimation()),
                   );
 
-                  CustomSnackbar.showSnackbar(
-                    context,
-                    "Your requirement will be reviewed by ADMIN",
-                  );
-                  Navigator.pop(context);
+                  try {
+                    // Pass awardImage to addAwardCard
+                    await api.uploadRequirement(
+                      token,
+                      id,
+                      widget.textController.text,
+                      'pending',
+                      requirementImage,
+                      context,
+                    );
+
+                    CustomSnackbar.showSnackbar(
+                      context,
+                      "Your requirement will be reviewed by ADMIN",
+                    );
+                    if (requirementImage != null) {
+                      setState(() {
+                        requirementImage = null; // Clear the image after saving
+                      });
+                    }
+                  } finally {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                  }
                 }
               },
-              style: ButtonStyle(
-                foregroundColor: WidgetStatePropertyAll<Color>(
-                  const Color(0xFF004797),
-                ),
-                backgroundColor: WidgetStatePropertyAll<Color>(
-                  const Color(0xFF004797),
-                ),
-                shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: const BorderSide(color: Color(0xFF004797)),
-                  ),
-                ),
-              ),
-              child: const Text(
-                'POST REQUIREMENT/UPDATE',
-                style: TextStyle(color: Colors.white),
-              ),
+              fontSize: 16,
             ),
             const SizedBox(height: 10),
           ],
@@ -1700,7 +1703,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   @override
   void initState() {
     super.initState();
-    _quantityController.text = widget.product.moq.toString() ?? '';
+    _quantityController.text = widget.product.moq.toString() ?? '0';
   }
 
   @override
@@ -1835,10 +1838,13 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                   padding: const EdgeInsets.only(left: 10),
                   child: Row(
                     children: [
-                      Text(
-                        widget.product.description!,
-                        style:
-                            const TextStyle(fontSize: 16, color: Colors.grey),
+                      Expanded(
+                        // Wrap the Text widget in Expanded to prevent overflow issues
+                        child: Text(
+                          widget.product.description ?? '',
+                          style:
+                              const TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
                       ),
                     ],
                   ),
@@ -1867,16 +1873,18 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
-                              Text('${user.companyName}'),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                                Text('${user.companyName ?? ''}'),
+                              ],
+                            ),
                           ),
-                          const Spacer(),
                           Row(
                             children: [
                               Icon(

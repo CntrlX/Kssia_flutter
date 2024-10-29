@@ -33,6 +33,18 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             data: (chats) {
               return Stack(
                 children: [
+                  if(chats.isEmpty)
+                        Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(child: Image.asset('assets/nochat.png')),
+                    ),
+                    const Text('No chat yet!')
+                  ],
+                ),
+                  if(chats.isNotEmpty)
                   ListView.builder(
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
@@ -107,12 +119,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                 width: 24,
                                 height: 24,
                                 child: Container(
-                                  padding: EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  constraints: BoxConstraints(
+                                  constraints: const BoxConstraints(
                                     minWidth: 16,
                                     minHeight: 16,
                                   ),
@@ -122,7 +134,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                 null
                                             ? Text(
                                                 '${chats[index].unreadCount?[sender!.id]}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12,
                                                 ),
@@ -200,8 +212,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             },
             loading: () => const Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
-              return Center(
-                child: LoadingAnimation(),
+              return const Center(
+                child: Text('NO CHATS'),
               );
             },
           ));

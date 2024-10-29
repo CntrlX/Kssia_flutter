@@ -269,20 +269,27 @@ class MenuPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${user.name!.firstName!} ${user.name?.middleName ?? ''!} ${user.name!.lastName!}',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name!.lastName!}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                   ),
-                                ),
-                                Text(user.phoneNumbers!.personal.toString()),
-                              ],
+                                  Text(
+                                    user.phoneNumbers!.personal.toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
                             ),
-                            Spacer(),
                             TextButton(
                               onPressed: () {
                                 ref.invalidate(userProvider);

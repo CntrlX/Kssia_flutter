@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/notifiers/events_notifier.dart';
 import 'package:kssia/src/data/notifiers/promotions_notifier.dart';
+import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/promotions_api.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
@@ -84,19 +85,23 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _onScroll() {
-    if (_bannerScrollController.position.pixels ==
+    if (_bannerScrollController.hasClients) if (_bannerScrollController
+            .position.pixels ==
         _bannerScrollController.position.maxScrollExtent) {
       ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
     }
-    if (_noticeScrollController.position.pixels ==
+    if (_noticeScrollController.hasClients) if (_noticeScrollController
+            .position.pixels ==
         _noticeScrollController.position.maxScrollExtent) {
       ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
     }
-    if (_posterScrollController.position.pixels ==
+    if (_posterScrollController.hasClients) if (_posterScrollController
+            .position.pixels ==
         _posterScrollController.position.maxScrollExtent) {
       ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
     }
-    if (_videoCountController.position.pixels ==
+    if (_videoCountController.hasClients) if (_videoCountController
+            .position.pixels ==
         _videoCountController.position.maxScrollExtent) {
       ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
     }
@@ -334,203 +339,215 @@ class _HomePageState extends ConsumerState<HomePage> {
             scrollTimer: _posterScrollTimer,
           );
         }
-        return Scaffold(
-            backgroundColor: Colors.white,
-            body: GestureDetector(
-              onPanDown: (_) =>
-                  _onUserGestureDetected(banners, notices, posters),
-              onTap: () => _onUserGestureDetected(banners, notices, posters),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomAppBar(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    // Padding(
-                    //   padding:
-                    //       const EdgeInsets.only(top: 8, left: 8, right: 8),
-                    //   child: TextField(
-                    //     decoration: InputDecoration(
-                    //       prefixIcon: const Icon(Icons.search),
-                    //       hintText: 'Search promotions',
-                    //       enabledBorder: OutlineInputBorder(
-                    //         borderSide: const BorderSide(
-                    //             color: Color.fromARGB(255, 214, 211, 211)),
-                    //         borderRadius: BorderRadius.circular(8.0),
-                    //       ),
-                    //       focusedBorder: OutlineInputBorder(
-                    //         borderSide: const BorderSide(
-                    //             color: Color.fromARGB(255, 217, 212, 212)),
-                    //         borderRadius: BorderRadius.circular(8.0),
-                    //       ),
-                    //       border: OutlineInputBorder(
-                    //         borderRadius: BorderRadius.circular(8.0),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 20,
-                    // ),
-                    if (promotions.isEmpty)
-                      Center(
-                        child: Text(
-                          'NO PROMOTIONS YET',
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF004797)),
-                        ),
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(fetchPromotionsProvider);
+            ref.invalidate(fetchEventsProvider);
+          },
+          child: Scaffold(
+              backgroundColor: Colors.white,
+              body: GestureDetector(
+                onPanDown: (_) =>
+                    _onUserGestureDetected(banners, notices, posters),
+                onTap: () => _onUserGestureDetected(banners, notices, posters),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomAppBar(),
+                      const SizedBox(
+                        height: 20,
                       ),
-                    if (banners.isNotEmpty)
-                      Card(
-                        color: Colors.transparent,
-                        elevation: 0,
-                        child: Container(
+                      // Padding(
+                      //   padding:
+                      //       const EdgeInsets.only(top: 8, left: 8, right: 8),
+                      //   child: TextField(
+                      //     decoration: InputDecoration(
+                      //       prefixIcon: const Icon(Icons.search),
+                      //       hintText: 'Search promotions',
+                      //       enabledBorder: OutlineInputBorder(
+                      //         borderSide: const BorderSide(
+                      //             color: Color.fromARGB(255, 214, 211, 211)),
+                      //         borderRadius: BorderRadius.circular(8.0),
+                      //       ),
+                      //       focusedBorder: OutlineInputBorder(
+                      //         borderSide: const BorderSide(
+                      //             color: Color.fromARGB(255, 217, 212, 212)),
+                      //         borderRadius: BorderRadius.circular(8.0),
+                      //       ),
+                      //       border: OutlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(8.0),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 20,
+                      // ),
+                      if (promotions.isEmpty)
+                        Center(
+                          child: Text(
+                            'NO PROMOTIONS YET',
+                            style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF004797)),
+                          ),
+                        ),
+                      if (banners.isNotEmpty)
+                        Card(
                           color: Colors.transparent,
-                          height: 175,
-                          child: ListView.builder(
-                            key: _bannerKey,
-                            controller: _bannerScrollController,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: banners.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 20.0),
-                                child: _buildBanners(
-                                    context: context, banner: banners[index]),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                    if (notices.isNotEmpty)
-                      SizedBox(
-                        height: _calculateDynamicHeight(notices),
-                        child: ListView.builder(
-                          key: _noticeKey,
-                          controller: _noticeScrollController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: notices.length,
-                          itemBuilder: (context, index) {
-                            return customNotice(
-                                context: context, notice: notices[index]);
-                          },
-                        ),
-                      ),
-if(events.isNotEmpty)
-                    Column(
-                      children: [
-                        if (events.isNotEmpty)
-                          const Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 25, top: 10),
-                                child: Text(
-                                  'Events',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ],
-                          ),
-                        GestureDetector(
-                            onPanDown: (_) =>
-                                _onUserEventGestureDetected(events),
-                            onTap: () => _onUserEventGestureDetected(events),
-                            child: SizedBox(
-                              height:
-                                  320, // Limit the total height for the ListView
-                              child: ListView.builder(
-                                key: _eventKey,
-                                controller: _eventScrollController,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: events.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ViewMoreEventPage(
-                                                  event: events[index]),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.85, // Adjust width to fit horizontally
-                                      child: eventWidget(
-                                        withImage: true,
-                                        context: context,
-                                        event: events[index],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-                    if (posters.isNotEmpty)
-                      SizedBox(
-                        height: 380,
-                        child: ListView.builder(
-                          key: _posterKey,
-                          controller: _posterScrollController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: posters.length,
-                          itemBuilder: (context, index) {
-                            return customPoster(
-                                context: context, poster: posters[index]);
-                          },
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                    if (filteredVideos.isNotEmpty)
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 265,
+                          elevation: 0,
+                          child: Container(
+                            color: Colors.transparent,
+                            height: 175,
                             child: ListView.builder(
-                              controller: _videoCountController,
+                              key: _bannerKey,
+                              controller: _bannerScrollController,
                               scrollDirection: Axis.horizontal,
-                              itemCount: filteredVideos.length,
+                              itemCount: banners.length,
                               itemBuilder: (context, index) {
-                                return customVideo(
-                                    context: context,
-                                    video: filteredVideos[index]);
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 20.0),
+                                  child: _buildBanners(
+                                      context: context, banner: banners[index]),
+                                );
                               },
                             ),
                           ),
-                          ValueListenableBuilder<int>(
-                            valueListenable: _currentVideo,
-                            builder: (context, value, child) {
-                              return SmoothPageIndicator(
-                                controller: _videoCountController,
-                                count: videos.length,
-                                effect: const ExpandingDotsEffect(
-                                  dotHeight: 8,
-                                  dotWidth: 6,
-                                  activeDotColor: Colors.black,
-                                  dotColor: Colors.grey,
-                                ),
-                              );
+                        ),
+                      const SizedBox(height: 16),
+                      if (notices.isNotEmpty)
+                        SizedBox(
+                          height: _calculateDynamicHeight(notices),
+                          child: ListView.builder(
+                            key: _noticeKey,
+                            controller: _noticeScrollController,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: notices.length,
+                            itemBuilder: (context, index) {
+                              return customNotice(
+                                  context: context, notice: notices[index]);
                             },
                           ),
-                        ],
-                      ),
-                  ],
+                        ),
+                      if (events.isNotEmpty)
+                        Column(
+                          children: [
+                            if (events.isNotEmpty)
+                              const Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 25, top: 10),
+                                    child: Text(
+                                      'Events',
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            GestureDetector(
+                                onPanDown: (_) =>
+                                    _onUserEventGestureDetected(events),
+                                onTap: () =>
+                                    _onUserEventGestureDetected(events),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: SizedBox(
+                                    height:
+                                        345, // Limit the total height for the ListView
+                                    child: ListView.builder(
+                                      key: _eventKey,
+                                      controller: _eventScrollController,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: events.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ViewMoreEventPage(
+                                                        event: events[index]),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.95, // Adjust width to fit horizontally
+                                            child: eventWidget(
+                                              withImage: true,
+                                              context: context,
+                                              event: events[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ),
+
+                      const SizedBox(height: 16),
+                      if (posters.isNotEmpty)
+                        SizedBox(
+                          height: 380,
+                          child: ListView.builder(
+                            key: _posterKey,
+                            controller: _posterScrollController,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: posters.length,
+                            itemBuilder: (context, index) {
+                              return customPoster(
+                                  context: context, poster: posters[index]);
+                            },
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      if (filteredVideos.isNotEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 225,
+                              child: ListView.builder(
+                                controller: _videoCountController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: filteredVideos.length,
+                                itemBuilder: (context, index) {
+                                  return customVideo(
+                                      context: context,
+                                      video: filteredVideos[index]);
+                                },
+                              ),
+                            ),
+                            ValueListenableBuilder<int>(
+                              valueListenable: _currentVideo,
+                              builder: (context, value, child) {
+                                return SmoothPageIndicator(
+                                  controller: _videoCountController,
+                                  count: videos.length,
+                                  effect: const ExpandingDotsEffect(
+                                    dotHeight: 8,
+                                    dotWidth: 6,
+                                    activeDotColor: Colors.black,
+                                    dotColor: Colors.grey,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ));
+              )),
+        );
       },
     );
   }

@@ -177,11 +177,10 @@ class MyRequirementsPage extends StatelessWidget {
                       return TextButton(
                         style: TextButton.styleFrom(
                             backgroundColor: Color(0xFFEB5757)),
-                        onPressed: () {
-                          ref.invalidate(fetchUserRequirementsProvider);
+                        onPressed: () async {
                           ApiRoutes userApi = ApiRoutes();
-                          userApi.deleteFile(token, imageUrl);
-                          userApi.deleteRequirement(
+                          // userApi.deleteFile(token, imageUrl);
+                          await userApi.deleteRequirement(
                               token, requirementId, context);
                           ref.invalidate(fetchUserRequirementsProvider);
 

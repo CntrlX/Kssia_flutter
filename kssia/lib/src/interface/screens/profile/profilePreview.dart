@@ -38,7 +38,8 @@ class ProfilePreview extends ConsumerWidget {
   final List<String> svgIcons = [
     'assets/icons/instagram.svg',
     'assets/icons/linkedin.svg',
-    'assets/icons/twitter.svg'
+    'assets/icons/twitter.svg',
+    'assets/icons/icons8-facebook.svg'
   ];
 
   final ValueNotifier<int> _currentVideo = ValueNotifier<int>(0);
@@ -531,7 +532,6 @@ class ProfilePreview extends ConsumerWidget {
                         crossAxisCount: 2, // Number of columns
                         crossAxisSpacing: 8.0, // Space between columns
                         mainAxisSpacing: 8.0, // Space between rows
-                        childAspectRatio: .9, // Aspect ratio for the cards
                       ),
                       itemCount: user.awards!.length,
                       itemBuilder: (context, index) {

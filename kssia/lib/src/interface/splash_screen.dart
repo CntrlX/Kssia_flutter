@@ -129,7 +129,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!isAppUpdateRequired) {
         print('Logged in : $LoggedIn');
         if (LoggedIn) {
-          Navigator.pushReplacementNamed(context, '/membership');
+          Navigator.pushReplacementNamed(context, '/mainpage');
         } else {
           Navigator.pushReplacementNamed(context, '/login_screen');
         }
@@ -149,7 +149,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         id = savedId;
       });
     }
-
   }
 
   @override

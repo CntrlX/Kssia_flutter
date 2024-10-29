@@ -31,7 +31,7 @@ class AwardCard extends StatelessWidget {
               children: [
                 // Upper part: Image fitted to the card
                 Container(
-                  height: 120.0, // Adjusted height to fit within the 150px card
+                  height: 90.0, // Adjusted height to fit within the 150px card
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -312,10 +312,13 @@ class CertificateCard extends StatelessWidget {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              certificate.name!,
-                              style: const TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.w600),
+                            Flexible(
+                              child: Text(
+                                certificate.name ?? '',
+                                style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ],
                         ),

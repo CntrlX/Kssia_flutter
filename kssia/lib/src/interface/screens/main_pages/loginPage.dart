@@ -1022,13 +1022,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "company_address": user.companyAddress,
       if (user.bio != null && user.bio != '') "bio": user.bio,
       if (user.address != null && user.address != '') "address": user.address,
-      if (user.socialMedia != null &&
-          user.socialMedia!.any((e) => e.url != null && e.url!.isNotEmpty))
-        "social_media": [
-          for (var i in user.socialMedia!)
-            if (i.url != null && i.url!.isNotEmpty)
-              {"platform": i.platform, "url": i.url}
-        ],
+      // if (user.socialMedia != null &&
+      //     user.socialMedia!.any((e) => e.url != null && e.url!.isNotEmpty))
+      "social_media": [
+        for (var i in user.socialMedia!)
+          {"platform": "${i.platform}", "url": i.url}
+      ],
       "websites": [
         for (var i in user.websites!) {"name": i.name.toString(), "url": i.url}
       ],
@@ -1936,7 +1935,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                     validator: (value) =>
                                         isValidUri(igController.text),
                                     textController: igController,
-                                    labelText: 'Enter Ig',
+                                    labelText: 'Enter Instagram',
                                     prefixIcon: const SvgIcon(
                                       assetName: 'assets/icons/instagram.svg',
                                       size: 10,
@@ -2183,8 +2182,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           8.0, // Space between columns
                                       mainAxisSpacing:
                                           8.0, // Space between rows
-                                      childAspectRatio:
-                                          .9, // Aspect ratio for the cards
                                     ),
                                     itemCount: user.awards!.length,
                                     itemBuilder: (context, index) {

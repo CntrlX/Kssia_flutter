@@ -9,12 +9,14 @@ class ModalSheetTextFormField extends StatelessWidget {
   final TextEditingController textController;
   final String? label;
   final int maxLines;
+    final int? maxLength;
   final String? Function(String?)? validator;
 
   const ModalSheetTextFormField({
     required this.textController,
     required this.label,
     this.maxLines = 1,
+   this.  maxLength,
     this.validator,
     super.key,
   });
@@ -22,6 +24,7 @@ class ModalSheetTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLength: maxLength??null,
       controller: textController,
       maxLines: maxLines,
       validator: validator,
@@ -81,11 +84,10 @@ class CustomTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-
         return TextFormField(
           onChanged: (value) {
             switch (labelText) {
-               case 'Enter your First name':
+              case 'Enter your First name':
                 ref.read(userProvider.notifier).updateName(
                     firstName: textController!.text,
                     middleName: null,
@@ -118,11 +120,13 @@ class CustomTextFormField extends StatelessWidget {
                     .read(userProvider.notifier)
                     .updateCompanyAddress(textController!.text);
               case 'Enter phone number':
-                ref.read(userProvider.notifier).updatePhoneNumbers(
-                    personal: textController!.text);
+                ref
+                    .read(userProvider.notifier)
+                    .updatePhoneNumbers(personal: textController!.text);
               case 'Enter landline number':
-                ref.read(userProvider.notifier).updatePhoneNumbers(
-                    landline: textController!.text);
+                ref
+                    .read(userProvider.notifier)
+                    .updatePhoneNumbers(landline: textController!.text);
               case 'Enter Email':
                 ref
                     .read(userProvider.notifier)
@@ -131,20 +135,20 @@ class CustomTextFormField extends StatelessWidget {
                 ref.read(userProvider.notifier).updatePhoneNumbers(
                     whatsappBusinessNumber: textController!.text);
               case 'Enter Whatsapp':
-                ref.read(userProvider.notifier).updatePhoneNumbers(
-                    whatsappNumber: textController!.text);
+                ref
+                    .read(userProvider.notifier)
+                    .updatePhoneNumbers(whatsappNumber: textController!.text);
               case 'Enter Address':
                 ref
                     .read(userProvider.notifier)
                     .updateAddress(textController!.text);
-              case 'Enter Ig':
+              case 'Enter Instagram':
                 ref.read(userProvider.notifier).updateSocialMedia(
                     [...?ref.read(userProvider).value?.socialMedia],
                     'instagram',
                     textController!.text);
 
               case 'Enter Linkedin':
-              
                 ref.read(userProvider.notifier).updateSocialMedia(
                     [...?ref.read(userProvider).value?.socialMedia],
                     'linkedin',
@@ -153,6 +157,11 @@ class CustomTextFormField extends StatelessWidget {
                 ref.read(userProvider.notifier).updateSocialMedia(
                     [...?ref.read(userProvider).value?.socialMedia],
                     'twitter',
+                    textController!.text);
+              case 'Enter Facebook':
+                ref.read(userProvider.notifier).updateSocialMedia(
+                    [...?ref.read(userProvider).value?.socialMedia],
+                    'facebook',
                     textController!.text);
 
               default:
