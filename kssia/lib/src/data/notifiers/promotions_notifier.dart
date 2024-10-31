@@ -1,12 +1,6 @@
 import 'dart:developer';
-
-import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/promotions_model.dart';
-import 'package:kssia/src/data/models/user_model.dart';
-import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/promotions_api.dart';
-import 'package:kssia/src/data/services/api_routes/user_api.dart';
-import 'package:kssia/src/interface/screens/feed/product_view.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'promotions_notifier.g.dart';

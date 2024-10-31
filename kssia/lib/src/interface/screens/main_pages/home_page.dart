@@ -457,7 +457,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   padding: const EdgeInsets.only(left: 15),
                                   child: SizedBox(
                                     height:
-                                        345, // Limit the total height for the ListView
+                                        365, // Limit the total height for the ListView
                                     child: ListView.builder(
                                       key: _eventKey,
                                       controller: _eventScrollController,

@@ -340,7 +340,7 @@ class ProfileCard extends StatelessWidget {
                               buttonColor:
                                   const Color.fromARGB(255, 222, 218, 218),
                               buttonHeight: 60,
-                              fontSize: 16,
+                              fontSize: 14,
                               label: 'DOWNLOAD QR',
                               onPressed: () async {
                                 await saveQr(

@@ -261,88 +261,71 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                 ),
                               )
                             ],
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: 16),
-                                    Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      requirement.content ?? '',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                    SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        ClipOval(
-                                          child: Container(
-                                            width: 30,
-                                            height: 30,
-                                            color: const Color.fromARGB(
-                                                255, 255, 255, 255),
-                                            child: Image.network(
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                    'assets/icons/dummy_person_small.png');
-                                              },
-                                              receiver.profilePicture ??
-                                                  'https://placehold.co/600x400', // Replace with your image URL
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}',
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              // Uncomment if you need to display the company name as well
-                                              // Text(
-                                              //   user.companyName ?? '',
-                                              //   style: TextStyle(
-                                              //     color: Colors.grey,
-                                              //     fontSize: 12,
-                                              //   ),
-                                              // ),
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              overflow: TextOverflow.ellipsis,
-                                              formattedDateTime,
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 10),
-                                            ),
-                                            if (requirementOwner.id != id)
-                                              CustomDropDown(
-                                                isBlocked: false,
-                                                requirement: requirement,
-                                              )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                      Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: Column( // Remove Expanded and directly use Column here
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 16),
+      Text(
+        requirement.content ?? '',
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        style: const TextStyle(fontSize: 14),
+      ),
+      const SizedBox(height: 16),
+      Row(
+        children: [
+          ClipOval(
+            child: Container(
+              width: 30,
+              height: 30,
+              color: const Color.fromARGB(255, 255, 255, 255),
+              child: Image.network(
+                receiver.profilePicture ?? 'https://placehold.co/600x400',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/icons/dummy_person_small.png');
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Text(
+                formattedDateTime,
+                style: const TextStyle(color: Colors.grey, fontSize: 10),
+              ),
+              if (requirementOwner.id != id)
+                CustomDropDown(
+                  isBlocked: false,
+                  requirement: requirement,
+                ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  ),
+)
+
                           ],
                         );
                       } else
