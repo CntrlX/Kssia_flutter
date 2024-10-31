@@ -222,7 +222,7 @@ class NewsContent extends StatelessWidget {
             children: [
               // Image Section
               SizedBox(
-                height: 250,
+                height: 200,
                 width: double.infinity,
                 child: Image.network(
                   loadingBuilder: (context, child, loadingProgress) {
@@ -276,7 +276,7 @@ class NewsContent extends StatelessWidget {
                     Text(
                       newsItem.title ?? '',
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

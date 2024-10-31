@@ -25,6 +25,7 @@ import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'dart:async';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -35,520 +36,294 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  ScrollController _bannerScrollController = ScrollController();
-  ScrollController _noticeScrollController = ScrollController();
-  ScrollController _posterScrollController = ScrollController();
-  ScrollController _eventScrollController = ScrollController();
-  PageController _videoCountController = PageController();
-
-  Timer? _bannerScrollTimer;
-  Timer? _noticeScrollTimer;
-  Timer? _posterScrollTimer;
-  Timer? _eventScrollTimer;
-  Timer? _restartAutoScrollTimer;
-  bool _isUserInteracting = false; // To track user interaction
-
   int _currentBannerIndex = 0;
   int _currentNoticeIndex = 0;
   int _currentPosterIndex = 0;
   int _currentEventIndex = 0;
-
-  final GlobalKey _bannerKey = GlobalKey();
-  final GlobalKey _noticeKey = GlobalKey();
-  final GlobalKey _posterKey = GlobalKey();
-  final GlobalKey _eventKey = GlobalKey();
+  int _currentVideoIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _posterScrollController.addListener(_onScroll);
-    _bannerScrollController.addListener(_onScroll);
-    _eventScrollController.addListener(_onScroll);
-    _bannerScrollController.addListener(_onScroll);
-    _videoCountController.addListener(_onScroll);
     _fetchInitialPromotions();
     _fetchInitialEvents();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    ref.invalidate(fetchStatusProvider);
-  }
-
-  Future<void> _fetchInitialEvents() async {
-    await ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
   }
 
   Future<void> _fetchInitialPromotions() async {
     await ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
   }
 
-  void _onScroll() {
-    if (_bannerScrollController.hasClients) if (_bannerScrollController
-            .position.pixels ==
-        _bannerScrollController.position.maxScrollExtent) {
-      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
-    }
-    if (_noticeScrollController.hasClients) if (_noticeScrollController
-            .position.pixels ==
-        _noticeScrollController.position.maxScrollExtent) {
-      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
-    }
-    if (_posterScrollController.hasClients) if (_posterScrollController
-            .position.pixels ==
-        _posterScrollController.position.maxScrollExtent) {
-      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
-    }
-    if (_videoCountController.hasClients) if (_videoCountController
-            .position.pixels ==
-        _videoCountController.position.maxScrollExtent) {
-      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
-    }
+  Future<void> _fetchInitialEvents() async {
+    await ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
   }
 
-  double _getItemWidth(GlobalKey key) {
-    final RenderBox? renderBox =
-        key.currentContext?.findRenderObject() as RenderBox?;
-    return renderBox?.size.width ?? 200.0;
+  void _onPageChanged(int index, int totalItems) {
+    if (index == totalItems - 1) {
+      ref.read(promotionsNotifierProvider.notifier).fetchMorePromotions();
+    }
   }
 
   double _calculateDynamicHeight(List<Promotion> notices) {
     double maxHeight = 0.0;
 
     for (var notice in notices) {
-      // Estimate height based on the length of title and description
-      final double titleHeight = _estimateTextHeight(
-          notice.noticeTitle!, 18.0); // Font size 18 for title
-      final double descriptionHeight = _estimateTextHeight(
-          notice.noticeDescription!, 14.0); // Font size 14 for description
-
-      final double itemHeight =
-          titleHeight + descriptionHeight; // Adding padding
+      final double titleHeight =
+          _estimateTextHeight(notice.noticeTitle ?? '', 18.0);
+      final double descriptionHeight =
+          _estimateTextHeight(notice.noticeDescription ?? '', 14.0);
+      final double itemHeight = titleHeight + descriptionHeight;
       if (itemHeight > maxHeight) {
-        maxHeight = itemHeight + 57;
+        maxHeight = itemHeight + 40;
       }
     }
     return maxHeight;
   }
 
   double _estimateTextHeight(String text, double fontSize) {
-    // Estimate text height based on string length, font size, and max width
-    final double screenWidth =
-        MediaQuery.sizeOf(context).width; // Adjust based on available space
+    final double screenWidth = MediaQuery.sizeOf(context).width;
     final int numLines = (text.length / (screenWidth / fontSize)).ceil();
-    return numLines * fontSize * 1.2; // Multiplying by 1.2 for line height
+    return numLines * fontSize * 1.2;
   }
-
-  // Updated auto-scroll start
-  void startAutoScroll({
-    required ScrollController controller,
-    required List<dynamic> items,
-    required int currentIndex,
-    required GlobalKey itemKey,
-    required Function(int) onIndexChanged,
-    required Timer? scrollTimer,
-    Duration scrollInterval = const Duration(seconds: 5),
-  }) {
-    // Ensure the timer is cleared before starting a new one
-    scrollTimer?.cancel();
-    scrollTimer = Timer.periodic(scrollInterval, (timer) {
-      if (!_isUserInteracting && mounted) {
-        currentIndex++;
-        if (currentIndex >= items.length) {
-          currentIndex = 0;
-        }
-        final itemWidth = _getItemWidth(itemKey);
-        if (controller.hasClients) {
-          controller.animateTo(
-            currentIndex * itemWidth,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-        }
-        if (mounted) {
-          setState(() {
-            onIndexChanged(currentIndex);
-          });
-        }
-      }
-    });
-  }
-
-  void stopAutoScroll() {
-    _bannerScrollTimer?.cancel();
-    _noticeScrollTimer?.cancel();
-    _posterScrollTimer?.cancel();
-    _eventScrollTimer?.cancel();
-    _isUserInteracting = true;
-  }
-
-  void restartAutoScroll(
-      List<dynamic> banners, List<dynamic> notices, List<dynamic> posters) {
-    _restartAutoScrollTimer
-        ?.cancel(); // Cancel the previous restart timer if any
-    _restartAutoScrollTimer = Timer(const Duration(seconds: 7), () {
-      _isUserInteracting = false; // Reset the interaction flag
-
-      // Restart auto-scroll for all promotion types
-      startAutoScroll(
-        controller: _bannerScrollController,
-        items: banners,
-        currentIndex: _currentBannerIndex,
-        itemKey: _bannerKey,
-        onIndexChanged: (index) => setState(() {
-          _currentBannerIndex = index;
-        }),
-        scrollTimer: _bannerScrollTimer,
-      );
-      startAutoScroll(
-        controller: _noticeScrollController,
-        items: notices,
-        currentIndex: _currentNoticeIndex,
-        itemKey: _noticeKey,
-        onIndexChanged: (index) => setState(() {
-          _currentNoticeIndex = index;
-        }),
-        scrollTimer: _noticeScrollTimer,
-      );
-      startAutoScroll(
-        controller: _posterScrollController,
-        items: posters,
-        currentIndex: _currentPosterIndex,
-        itemKey: _posterKey,
-        onIndexChanged: (index) => setState(() {
-          _currentPosterIndex = index;
-        }),
-        scrollTimer: _posterScrollTimer,
-      );
-    });
-  }
-
-  void restartEventAutoScroll(List<dynamic> events) {
-    _restartAutoScrollTimer
-        ?.cancel(); // Cancel the previous restart timer if any
-    _restartAutoScrollTimer = Timer(const Duration(seconds: 7), () {
-      _isUserInteracting = false; // Reset the interaction flag
-
-      // Restart auto-scroll for all promotion types
-      if (_eventScrollController.hasClients) {
-        startAutoScroll(
-          controller: _eventScrollController,
-          items: events,
-          currentIndex: _currentEventIndex,
-          itemKey: _bannerKey,
-          onIndexChanged: (index) => setState(() {
-            _currentEventIndex = index;
-          }),
-          scrollTimer: _eventScrollTimer,
-        );
-      }
-    });
-  }
-
-  void _onUserGestureDetected(
-      List<dynamic> banners, List<dynamic> notices, List<dynamic> posters) {
-    stopAutoScroll(); // Stop auto-scroll when a gesture is detected
-    restartAutoScroll(
-      banners,
-      notices,
-      posters,
-    ); // Restart auto-scroll after 10 seconds
-  }
-
-  void _onUserEventGestureDetected(List<dynamic> events) {
-    stopAutoScroll(); // Stop auto-scroll when a gesture is detected
-    restartEventAutoScroll(events); // Restart auto-scroll after 10 seconds
-  }
-
-  @override
-  void dispose() {
-    _bannerScrollTimer?.cancel();
-    _noticeScrollTimer?.cancel();
-    _posterScrollTimer?.cancel();
-    _eventScrollTimer?.cancel();
-    _restartAutoScrollTimer?.cancel();
-
-    _bannerScrollController.dispose();
-    _noticeScrollController.dispose();
-    _posterScrollController.dispose();
-    _eventScrollController.dispose();
-
-    super.dispose();
-  }
-
-  final ValueNotifier<int> _currentVideo = ValueNotifier<int>(0);
 
   @override
   Widget build(BuildContext context) {
-    _videoCountController.addListener(() {
-      _currentVideo.value = _videoCountController.page!.round();
-    });
-    return Consumer(
-      builder: (context, ref, child) {
-        final promotions = ref.watch(promotionsNotifierProvider);
+    final promotions = ref.watch(promotionsNotifierProvider);
+    final events = ref.watch(eventsNotifierProvider);
+    final filteredVideos = promotions
+        .where((promo) => promo.type == 'video')
+        .where((video) => video.ytLink.startsWith('http'))
+        .toList();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: promotions.isNotEmpty
+          ? SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomAppBar(),
+                  const SizedBox(height: 20),
 
-        final events = ref.watch(eventsNotifierProvider);
-        log('events: $events');
-        final banners =
-            promotions.where((promo) => promo.type == 'banner').toList();
-        final posters =
-            promotions.where((promo) => promo.type == 'poster').toList();
-        final notices =
-            promotions.where((promo) => promo.type == 'notice').toList();
-        final videos =
-            promotions.where((promo) => promo.type == 'video').toList();
-        final filteredVideos =
-            videos.where((video) => video.ytLink!.startsWith('http')).toList();
-        // Start auto-scroll for all promotions when data is ready
-        if (banners.isNotEmpty) {
-          startAutoScroll(
-            controller: _bannerScrollController,
-            items: banners,
-            currentIndex: _currentBannerIndex,
-            itemKey: _bannerKey,
-            onIndexChanged: (index) => setState(() {
-              _currentBannerIndex = index;
-            }),
-            scrollTimer: _bannerScrollTimer,
-          );
-        }
-
-        if (notices.isNotEmpty) {
-          startAutoScroll(
-            controller: _noticeScrollController,
-            items: notices,
-            currentIndex: _currentNoticeIndex,
-            itemKey: _noticeKey,
-            onIndexChanged: (index) => setState(() {
-              _currentNoticeIndex = index;
-            }),
-            scrollTimer: _noticeScrollTimer,
-          );
-        }
-
-        if (posters.isNotEmpty) {
-          startAutoScroll(
-            controller: _posterScrollController,
-            items: posters,
-            currentIndex: _currentPosterIndex,
-            itemKey: _posterKey,
-            onIndexChanged: (index) => setState(() {
-              _currentPosterIndex = index;
-            }),
-            scrollTimer: _posterScrollTimer,
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(fetchPromotionsProvider);
-            ref.invalidate(fetchEventsProvider);
-          },
-          child: Scaffold(
-              backgroundColor: Colors.white,
-              body: GestureDetector(
-                onPanDown: (_) =>
-                    _onUserGestureDetected(banners, notices, posters),
-                onTap: () => _onUserGestureDetected(banners, notices, posters),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const CustomAppBar(),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // Padding(
-                      //   padding:
-                      //       const EdgeInsets.only(top: 8, left: 8, right: 8),
-                      //   child: TextField(
-                      //     decoration: InputDecoration(
-                      //       prefixIcon: const Icon(Icons.search),
-                      //       hintText: 'Search promotions',
-                      //       enabledBorder: OutlineInputBorder(
-                      //         borderSide: const BorderSide(
-                      //             color: Color.fromARGB(255, 214, 211, 211)),
-                      //         borderRadius: BorderRadius.circular(8.0),
-                      //       ),
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderSide: const BorderSide(
-                      //             color: Color.fromARGB(255, 217, 212, 212)),
-                      //         borderRadius: BorderRadius.circular(8.0),
-                      //       ),
-                      //       border: OutlineInputBorder(
-                      //         borderRadius: BorderRadius.circular(8.0),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 20,
-                      // ),
-                      if (promotions.isEmpty)
-                        Center(
-                          child: Text(
-                            'NO PROMOTIONS YET',
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF004797)),
-                          ),
-                        ),
-                      if (banners.isNotEmpty)
-                        Card(
-                          color: Colors.transparent,
-                          elevation: 0,
-                          child: Container(
-                            color: Colors.transparent,
+                  // Banner Carousel with Dot Indicator
+                  if (promotions.any((promo) => promo.type == 'banner'))
+                    Column(
+                      children: [
+                        CarouselSlider(
+                          items: promotions
+                              .where((promo) => promo.type == 'banner')
+                              .map((banner) {
+                            return _buildBanners(
+                                context: context, banner: banner);
+                          }).toList(),
+                          options: CarouselOptions(
                             height: 175,
-                            child: ListView.builder(
-                              key: _bannerKey,
-                              controller: _bannerScrollController,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: banners.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 20.0),
-                                  child: _buildBanners(
-                                      context: context, banner: banners[index]),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 16),
-                      if (notices.isNotEmpty)
-                        SizedBox(
-                          height: _calculateDynamicHeight(notices),
-                          child: ListView.builder(
-                            key: _noticeKey,
-                            controller: _noticeScrollController,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: notices.length,
-                            itemBuilder: (context, index) {
-                              return customNotice(
-                                  context: context, notice: notices[index]);
+                            scrollPhysics: promotions
+                                        .where(
+                                            (promo) => promo.type == 'banner')
+                                        .length >
+                                    1
+                                ? null
+                                : NeverScrollableScrollPhysics(),
+                            autoPlay: promotions.length > 1 ? true : false,
+                            viewportFraction: 1,
+                            autoPlayInterval: Duration(seconds: 3),
+                            onPageChanged: (index, reason) {
+                              _onPageChanged(index, promotions.length);
+                              setState(() {
+                                _currentBannerIndex = index;
+                              });
                             },
                           ),
                         ),
-                      if (events.isNotEmpty)
-                        Column(
-                          children: [
-                            if (events.isNotEmpty)
-                              const Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 25, top: 10),
-                                    child: Text(
-                                      'Events',
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            GestureDetector(
-                                onPanDown: (_) =>
-                                    _onUserEventGestureDetected(events),
-                                onTap: () =>
-                                    _onUserEventGestureDetected(events),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: SizedBox(
-                                    height:
-                                        365, // Limit the total height for the ListView
-                                    child: ListView.builder(
-                                      key: _eventKey,
-                                      controller: _eventScrollController,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: events.length,
-                                      itemBuilder: (context, index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ViewMoreEventPage(
-                                                        event: events[index]),
-                                              ),
-                                            );
-                                          },
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.95, // Adjust width to fit horizontally
-                                            child: eventWidget(
-                                              withImage: true,
-                                              context: context,
-                                              event: events[index],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
+                      ],
+                    ),
 
-                      const SizedBox(height: 16),
-                      if (posters.isNotEmpty)
-                        SizedBox(
-                          height: 380,
-                          child: ListView.builder(
-                            key: _posterKey,
-                            controller: _posterScrollController,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: posters.length,
-                            itemBuilder: (context, index) {
-                              return customPoster(
-                                  context: context, poster: posters[index]);
+                  // Notices Carousel with Dot Indicator
+                  if (promotions.any((promo) => promo.type == 'notice'))
+                    Column(
+                      children: [
+                        CarouselSlider(
+                          items: promotions
+                              .where((promo) => promo.type == 'notice')
+                              .map((notice) {
+                            return customNotice(
+                                context: context, notice: notice);
+                          }).toList(),
+                          options: CarouselOptions(
+                            height: _calculateDynamicHeight(promotions
+                                .where((promo) => promo.type == 'notice')
+                                .toList()),
+                            scrollPhysics: promotions
+                                        .where(
+                                            (promo) => promo.type == 'notice')
+                                        .length >
+                                    1
+                                ? null
+                                : NeverScrollableScrollPhysics(),
+                            autoPlay: promotions
+                                        .where(
+                                            (promo) => promo.type == 'notice')
+                                        .length >
+                                    1
+                                ? true
+                                : false,
+                            viewportFraction: 1,
+                            autoPlayInterval: Duration(seconds: 5),
+                            onPageChanged: (index, reason) {
+                              _onPageChanged(index, promotions.length);
+                              setState(() {
+                                _currentNoticeIndex = index;
+                              });
                             },
                           ),
                         ),
-                      const SizedBox(height: 16),
-                      if (filteredVideos.isNotEmpty)
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 225,
-                              child: ListView.builder(
-                                controller: _videoCountController,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: filteredVideos.length,
-                                itemBuilder: (context, index) {
-                                  return customVideo(
-                                      context: context,
-                                      video: filteredVideos[index]);
-                                },
-                              ),
-                            ),
-                            ValueListenableBuilder<int>(
-                              valueListenable: _currentVideo,
-                              builder: (context, value, child) {
-                                return SmoothPageIndicator(
-                                  controller: _videoCountController,
-                                  count: videos.length,
-                                  effect: const ExpandingDotsEffect(
-                                    dotHeight: 8,
-                                    dotWidth: 6,
-                                    activeDotColor: Colors.black,
-                                    dotColor: Colors.grey,
-                                  ),
-                                );
+                        SizedBox(
+                          height: 10,
+                        ),
+                        _buildDotIndicator(
+                            _currentNoticeIndex,
+                            promotions
+                                .where((promo) => promo.type == 'notice')
+                                .length,
+                            const Color.fromARGB(255, 62, 61, 61)),
+                      ],
+                    ),
+                  if (promotions.any((promo) => promo.type == 'poster'))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Column(
+                        children: [
+                          CarouselSlider(
+                            items: promotions
+                                .where((promo) => promo.type == 'poster')
+                                .map((poster) {
+                              return customPoster(
+                                  context: context, poster: poster);
+                            }).toList(),
+                            options: CarouselOptions(
+                              height: 420,
+                              scrollPhysics: promotions
+                                          .where(
+                                              (promo) => promo.type == 'poster')
+                                          .length >
+                                      1
+                                  ? null
+                                  : NeverScrollableScrollPhysics(),
+                              autoPlay: promotions
+                                          .where(
+                                              (promo) => promo.type == 'poster')
+                                          .length >
+                                      1
+                                  ? true
+                                  : false,
+                              viewportFraction: 1,
+                              autoPlayInterval: Duration(seconds: 5),
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  _currentPosterIndex = index;
+                                });
                               },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Events Carousel
+
+                  if (events.isNotEmpty)
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25, top: 10),
+                              child: Text(
+                                'Events',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ],
                         ),
-                    ],
-                  ),
-                ),
-              )),
-        );
-      },
+                        CarouselSlider(
+                          items: events.map((event) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              child: eventWidget(
+                                withImage: true,
+                                context: context,
+                                event: event,
+                              ),
+                            );
+                          }).toList(),
+                          options: CarouselOptions(
+                            height: 365,
+                            scrollPhysics: events.length > 1
+                                ? null
+                                : NeverScrollableScrollPhysics(),
+                            autoPlay: events.length > 1 ? true : false,
+                            viewportFraction: 1,
+                            autoPlayInterval: Duration(seconds: 5),
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _currentEventIndex = index;
+                              });
+                            },
+                          ),
+                        ),
+                        _buildDotIndicator(_currentEventIndex, events.length,
+                            Color(0xFF004797)),
+                      ],
+                    ),
+
+                  const SizedBox(height: 16),
+
+                  // Videos Carousel
+                  if (filteredVideos.isNotEmpty)
+                    Column(
+                      children: [
+                        CarouselSlider(
+                          items: filteredVideos.map((video) {
+                            return customVideo(context: context, video: video);
+                          }).toList(),
+                          options: CarouselOptions(
+                            height: 225,
+                            scrollPhysics: filteredVideos.length > 1
+                                ? null
+                                : NeverScrollableScrollPhysics(),
+                            viewportFraction: 1,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _currentVideoIndex = index;
+                              });
+                            },
+                          ),
+                        ),
+                        _buildDotIndicator(_currentVideoIndex,
+                            filteredVideos.length, Colors.black),
+                      ],
+                    ),
+                  // Repeat similar approach for Posters, Events, and Videos
+                ],
+              ),
+            )
+          : Center(child: LoadingAnimation()),
+    );
+  }
+
+  // Dot indicator builder for carousels
+  Widget _buildDotIndicator(int currentIndex, int itemCount, Color color) {
+    return Center(
+      child: SmoothPageIndicator(
+        controller: PageController(initialPage: currentIndex),
+        count: itemCount,
+        effect: WormEffect(
+          dotHeight: 10,
+          dotWidth: 10,
+          activeDotColor: color,
+          dotColor: Colors.grey,
+        ),
+      ),
     );
   }
 
@@ -653,7 +428,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         width: MediaQuery.of(context).size.width - 32,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white, // Set the background color to white
+          color: Color(0xFFF5D0D0), // Set the background color to white
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
             color: const Color.fromARGB(
@@ -689,7 +464,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if (notice.noticeLink != null && notice.noticeLink != '')
                     GestureDetector(
                       onTap: () {
-                        if (subscription != 'premium' ) {
+                        if (subscription != 'premium') {
                           showDialog(
                             context: context,
                             builder: (context) => const UpgradeDialog(),

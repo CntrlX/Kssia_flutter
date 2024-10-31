@@ -129,7 +129,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         },
         error: (error, stackTrace) {
           log('im inside details main page error $error $stackTrace');
-          return LoginPage();
+          return PhoneNumberScreen();
         },
         data: (user) {
           print(user.profilePicture);

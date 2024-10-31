@@ -2075,148 +2075,137 @@ class RequirementModalSheet extends StatelessWidget {
       builder: (context, ref, child) {
         final asyncUser =
             ref.watch(fetchUserDetailsProvider(token, requirement.author!.id!));
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height *
-                    0.8, // Fixed height (75% of screen height)
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (requirement.image != null && requirement.image != '')
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(20.0)),
-                        child: Image.network(
-                          requirement.image!,
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    if (requirement.image != null && requirement.image != '')
-                      const SizedBox(height: 20),
-                    // Make only the text content scrollable
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(requirement.content ?? ''),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(20.0)),
+          ),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height *
+                0.8, // Fixed height (75% of screen height)
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    width: 70,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[600],
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    asyncUser.when(
-                      data: (user) {
-                        final averageRating = getAverageRating(user);
-                        final totalReviews = user.reviews!.length;
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10),
-                          child: Row(
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                asyncUser.when(
+                  data: (user) {
+                    final averageRating = getAverageRating(user);
+                    final totalReviews = user.reviews!.length;
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 20),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            height: 36,
+                            width: 36,
+                            child: ClipOval(
+                              child: Image.network(
+                                user.profilePicture ?? '',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                      'assets/icons/dummy_person_small.png');
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: ClipOval(
-                                  child: Image.network(
-                                    user.profilePicture ?? '',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                          'assets/icons/dummy_person_small.png');
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
-                                  Text('${user.companyName}'),
-                                ],
-                              ),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Icon(Icons.star, color: Colors.orange),
-                                  Text(averageRating.toStringAsFixed(2)),
-                                  Text('($totalReviews)'),
-                                ],
-                              )
+                              Text(
+                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                              Text('${user.companyName}'),
                             ],
                           ),
-                        );
-                      },
-                      loading: () => const Center(child: LoadingAnimation()),
-                      error: (error, stackTrace) {
-                        return Center(
-                          child: LoadingAnimation(),
-                        );
-                      },
-                    ),
-                    if (id != requirement.author?.id)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            return customButton(
-                              label: buttonText,
-                              onPressed: () async {
-                                if (subscription != 'free') {
-                                  await sendChatMessage(
-                                      userId: requirement.author!.id!,
-                                      content: requirement.content!,
-                                      requirementId: requirement.id);
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => IndividualPage(
-                                            receiver: receiver,
-                                            sender: sender,
-                                          )));
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => const UpgradeDialog(),
-                                  );
-                                }
-                              },
-                              fontSize: 16,
-                            );
-                          },
-                        ),
+                          const Spacer(),
+                          Row(
+                            children: [
+                              Icon(Icons.star, color: Colors.orange),
+                              Text(averageRating.toStringAsFixed(2)),
+                              Text('($totalReviews)'),
+                            ],
+                          )
+                        ],
                       ),
-                    const SizedBox(height: 10),
-                  ],
+                    );
+                  },
+                  loading: () => const Center(child: LoadingAnimation()),
+                  error: (error, stackTrace) {
+                    return Center(
+                      child: Text('User not found'),
+                    );
+                  },
                 ),
-              ),
-            ),
-            Positioned(
-              right: 5,
-              top: -50,
-              child: Container(
-                padding: const EdgeInsets.all(0),
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      offset: Offset(0, 2),
-                      blurRadius: 4.0,
+                if (requirement.image != null && requirement.image != '')
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: Image.network(
+                      requirement.image!,
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
                     ),
-                  ],
+                  ),
+                if (requirement.image != null && requirement.image != '')
+                  const SizedBox(height: 20),
+                // Make only the text content scrollable
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(requirement.content ?? ''),
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
+
+                if (id != requirement.author?.id)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return customButton(
+                          label: buttonText,
+                          onPressed: () async {
+                            if (subscription != 'free') {
+                              await sendChatMessage(
+                                  userId: requirement.author!.id!,
+                                  content: requirement.content!,
+                                  requirementId: requirement.id);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => IndividualPage(
+                                        receiver: receiver,
+                                        sender: sender,
+                                      )));
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const UpgradeDialog(),
+                              );
+                            }
+                          },
+                          fontSize: 16,
+                        );
+                      },
+                    ),
+                  ),
+                const SizedBox(height: 10),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

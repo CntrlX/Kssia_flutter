@@ -91,11 +91,14 @@ class ProfileCard extends StatelessWidget {
                                   SizedBox(width: 10),
                                   Icon(
                                     Icons.arrow_back,
-                                    color: Colors.red,
-                                    size: 15,
+                                    color: Colors.blue,
+                                    size: 17,
                                   ),
                                   SizedBox(width: 10),
-                                  Text('Profile')
+                                  Text(
+                                    'Profile',
+                                    style: TextStyle(fontSize: 17),
+                                  )
                                 ],
                               ),
                             ],
@@ -179,28 +182,28 @@ class ProfileCard extends StatelessWidget {
                                                 const SizedBox(height: 5),
                                                 Row(
                                                   children: [
-                                                    if (user.companyLogo !=
-                                                            null &&
-                                                        user.companyLogo!
-                                                            .isNotEmpty)
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(9),
-                                                        child: Image.network(
-                                                          user.companyLogo!,
-                                                          height: 33,
-                                                          width: 40,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      )
-                                                    else
-                                                      Image.asset(
-                                                        'assets/icons/dummy_company.png',
-                                                        height: 33,
-                                                        width: 40,
-                                                      ),
-                                                    const SizedBox(width: 10),
+                                                    // if (user.companyLogo !=
+                                                    //         null &&
+                                                    //     user.companyLogo!
+                                                    //         .isNotEmpty)
+                                                    //   ClipRRect(
+                                                    //     borderRadius:
+                                                    //         BorderRadius
+                                                    //             .circular(9),
+                                                    //     child: Image.network(
+                                                    //       user.companyLogo!,
+                                                    //       height: 33,
+                                                    //       width: 40,
+                                                    //       fit: BoxFit.cover,
+                                                    //     ),
+                                                    //   )
+                                                    // else
+                                                    //   Image.asset(
+                                                    //     'assets/icons/dummy_company.png',
+                                                    //     height: 33,
+                                                    //     width: 40,
+                                                    //   ),
+                                                    // const SizedBox(width: 10),
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
@@ -262,7 +265,7 @@ class ProfileCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           QrImageView(
-                            size: 300,
+                            size: 250,
                             data:
                                 'https://admin.kssiathrissur.com/user/${user.id}',
                           ),

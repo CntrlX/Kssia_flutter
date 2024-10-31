@@ -37,16 +37,16 @@ class _ProductViewState extends ConsumerState<ProductView> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _searchFocus.addListener(_onSearchFocusChange);
+    // _searchFocus.addListener(_onSearchFocusChange);
   }
 
-  void _onSearchFocusChange() {
-    if (_searchFocus.hasFocus && !_hasSearched) {
-      // Display all products when search bar is focused
-      ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
-      _hasSearched = true; // Set flag to avoid fetching multiple times
-    }
-  }
+  // void _onSearchFocusChange() {
+  //   if (_searchFocus.hasFocus && !_hasSearched) {
+  //     // Display all products when search bar is focused
+  //     ref.read(productsNotifierProvider.notifier).fetchMoreProducts();
+  //     _hasSearched = true; // Set flag to avoid fetching multiple times
+  //   }
+  // }
 
   void _onScroll() {
     if (_scrollController.position.pixels ==

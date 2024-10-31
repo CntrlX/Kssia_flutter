@@ -101,75 +101,85 @@ class _FeedViewState extends ConsumerState<FeedView> {
               .read(requirementsNotifierProvider.notifier)
               .refreshRequirements(),
           child: Scaffold(
-            body: ListView(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16.0),
+            body: Stack(
               children: [
-                if (requirements.isNotEmpty)
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: requirements.length + (isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == requirements.length && isLoading) {
-                        // Show loading spinner when fetching more requirements
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: LoadingAnimation(),
-                          ),
-                        );
-                      }
+                ListView(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16.0),
+                  children: [
+                    if (requirements.isNotEmpty)
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: requirements.length + (isLoading ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == requirements.length && isLoading) {
+                            // Show loading spinner when fetching more requirements
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: LoadingAnimation(),
+                              ),
+                            );
+                          }
 
-                      final requirement = requirements[index];
-                      if (requirement.status == 'approved') {
-                        return _buildPost(
-                          withImage: requirement.image != null &&
-                              requirement.image!.isNotEmpty,
-                          requirement: requirement,
-                        );
+                          final requirement = requirements[index];
+                          if (requirement.status == 'approved') {
+                            return _buildPost(
+                              withImage: requirement.image != null &&
+                                  requirement.image!.isNotEmpty,
+                              requirement: requirement,
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    if (requirements.isEmpty && !isLoading)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Center(
+                            child: Text('No Requirements'),
+                          ),
+                        ],
+                      ),
+                    if (isLoading && requirements.isEmpty)
+                      const Center(
+                        child: LoadingAnimation(),
+                      ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+                Positioned(
+                  right: 30,
+                  bottom: 30,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (subscription != 'free') {
+                        _openModalSheet(sheet: 'requirement');
                       } else {
-                        return const SizedBox.shrink();
+                        showDialog(
+                          context: context,
+                          builder: (context) => const UpgradeDialog(),
+                        );
                       }
                     },
-                  ),
-                if (requirements.isEmpty && !isLoading)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Center(
-                        child: Text('No Requirements'),
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color(0xFF004797),
                       ),
-                    ],
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 27,
+                      ),
+                    ),
                   ),
-                if (isLoading && requirements.isEmpty)
-                  const Center(
-                    child: LoadingAnimation(),
-                  ),
-                const SizedBox(height: 40),
+                ),
               ],
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: () {
-                if (subscription != 'free') {
-                  _openModalSheet(sheet: 'requirement');
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const UpgradeDialog(),
-                  );
-                }
-              },
-              label: const Text(
-                'Add Requirement',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 27,
-              ),
-              backgroundColor: const Color(0xFF004797),
             ),
           ),
         );
@@ -181,11 +191,13 @@ class _FeedViewState extends ConsumerState<FeedView> {
       {bool withImage = false, required Requirement requirement}) {
     String formattedDateTime = DateFormat('h:mm a · MMM d, yyyy')
         .format(DateTime.parse(requirement.createdAt.toString()).toLocal());
+
     return Consumer(
       builder: (context, ref, child) {
         final asyncUser = ref.watch(userProvider);
         final asyncRequirementOwner = ref.watch(
             fetchUserDetailsProvider(token, requirement.author?.id ?? ''));
+
         return asyncRequirementOwner.when(
           data: (requirementOwner) {
             final receiver = Participant(
@@ -194,6 +206,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                 lastName: requirementOwner.name?.lastName ?? '',
                 id: requirementOwner.id,
                 profilePicture: requirementOwner.profilePicture);
+
             return GestureDetector(
               onTap: () {
                 showRequirementModalSheet(
@@ -205,40 +218,105 @@ class _FeedViewState extends ConsumerState<FeedView> {
                     receiver: receiver);
               },
               child: Card(
-                  color: Colors.white,
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 16.0),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color.fromARGB(255, 213, 208, 208)),
-                    borderRadius: BorderRadius.circular(6.0),
-                  ),
-                  child: asyncUser.when(
-                    loading: () => Center(child: ReusableFeedPostSkeleton()),
-                    error: (error, stackTrace) {
-                      // Handle error state
-                      return Center(
-                        child: ReusableFeedPostSkeleton(),
-                      );
-                    },
-                    data: (user) {
-                      print(user);
-                      if (requirement.author != null) {
-                        return Column(
-                          children: [
-                            if (withImage) ...[
-                              SizedBox(height: 16),
-                              AspectRatio(
-                                aspectRatio: 4 / 4,
-                                child: Image.network(
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      // If the image is fully loaded, show the image
-                                      return child;
-                                    }
-                                    // While the image is loading, show shimmer effect
-                                    return Container(
-                                      child: Shimmer.fromColors(
+                color: Colors.white,
+                elevation: 0,
+                margin: const EdgeInsets.only(bottom: 16.0),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Color.fromARGB(255, 213, 208, 208)),
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                child: asyncUser.when(
+                  loading: () => Center(child: ReusableFeedPostSkeleton()),
+                  error: (error, stackTrace) {
+                    // Handle error state
+                    return Center(
+                      child: ReusableFeedPostSkeleton(),
+                    );
+                  },
+                  data: (user) {
+                    if (requirement.author != null) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 10, top: 20),
+                            child: Row(
+                              children: [
+                                ClipOval(
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255),
+                                    child: Image.network(
+                                      receiver.profilePicture ??
+                                          'https://placehold.co/600x400',
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                            'assets/icons/dummy_person_small.png');
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      formattedDateTime,
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 10),
+                                    ),
+                                    if (requirementOwner.id != id)
+                                      CustomDropDown(
+                                        isBlocked: false,
+                                        requirement: requirement,
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (withImage) ...[
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxHeight:
+                                        400, // Adjust as needed for max display size
+                                  ),
+                                  child: Image.network(
+                                    requirement.image!,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      }
+                                      // While the image is loading, show shimmer effect
+                                      return Shimmer.fromColors(
                                         baseColor: Colors.grey[300]!,
                                         highlightColor: Colors.grey[100]!,
                                         child: Container(
@@ -248,90 +326,51 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  fit: BoxFit.contain,
-                                  requirement.image!,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.network(
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.network(
+                                        'https://placehold.co/600x400',
                                         fit: BoxFit.cover,
-                                        'https://placehold.co/600x400');
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
-                              )
-                            ],
-                      Padding(
-  padding: const EdgeInsets.all(16.0),
-  child: Column( // Remove Expanded and directly use Column here
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const SizedBox(height: 16),
-      Text(
-        requirement.content ?? '',
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-        style: const TextStyle(fontSize: 14),
-      ),
-      const SizedBox(height: 16),
-      Row(
-        children: [
-          ClipOval(
-            child: Container(
-              width: 30,
-              height: 30,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: Image.network(
-                receiver.profilePicture ?? 'https://placehold.co/600x400',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset('assets/icons/dummy_person_small.png');
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}',
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              Text(
-                formattedDateTime,
-                style: const TextStyle(color: Colors.grey, fontSize: 10),
-              ),
-              if (requirementOwner.id != id)
-                CustomDropDown(
-                  isBlocked: false,
-                  requirement: requirement,
-                ),
-            ],
-          ),
-        ],
-      ),
-    ],
-  ),
-)
-
+                              ),
+                            ),
                           ],
-                        );
-                      } else
-                        return SizedBox();
-                    },
-                  )),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 16,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Text(
+                                      requirement.content ?? '',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  },
+                ),
+              ),
             );
           },
           loading: () => Center(child: ReusableFeedPostSkeleton()),
