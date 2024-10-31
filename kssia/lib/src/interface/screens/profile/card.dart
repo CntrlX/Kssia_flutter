@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/user_model.dart';
-import 'package:kssia/src/data/services/request_permissions.dart';
 import 'package:kssia/src/data/services/save_qr.dart';
 import 'package:kssia/src/data/services/share_qr.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
