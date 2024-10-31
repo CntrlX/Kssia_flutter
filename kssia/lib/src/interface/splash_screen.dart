@@ -142,6 +142,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     String? savedtoken = preferences.getString('token');
     String? savedId = preferences.getString('id');
     log('token:$savedtoken');
+        log('userId:$savedId');
     if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
       setState(() {
         LoggedIn = true;

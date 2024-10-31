@@ -475,7 +475,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   },
                 ),
               ),
-              if (subscription == 'free')
+        if (subscription != 'premium' )
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),

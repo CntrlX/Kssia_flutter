@@ -10,6 +10,7 @@ import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 
 class ViewMoreEventPage extends ConsumerStatefulWidget {
   final Event event;
@@ -279,7 +280,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                     ),
                   ),
                 const SizedBox(
-                    height: 50), // Add spacing to avoid overlap with the button
+                    height: 50), 
               ],
             ),
           ),
@@ -289,7 +290,9 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                 bottom: 16,
                 left: 16,
                 right: 16,
-                child: customButton(sideColor:      registered ? Colors.green : const Color(0xFF004797) ,
+                child: customButton(
+                  sideColor:
+                      registered ? Colors.green : const Color(0xFF004797),
                   buttonColor:
                       registered ? Colors.green : const Color(0xFF004797),
                   label: widget.event.status == 'cancelled'
@@ -299,16 +302,24 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                           : 'REGISTER EVENT',
                   onPressed: () async {
                     if (!registered && widget.event.status != 'cancelled') {
-                      ApiRoutes userApi = ApiRoutes();
-                      await userApi.markEventAsRSVP(widget.event.id!, context);
+                      if (subscription != 'premium') {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const UpgradeDialog(),
+                        );
+                      } else {
+                        ApiRoutes userApi = ApiRoutes();
+                        await userApi.markEventAsRSVP(
+                            widget.event.id!, context);
 
-                      setState(() {
-                        widget.event.rsvp?.add(id); // Add the user to RSVP
-                        registered = widget.event.rsvp?.contains(id) ?? false;
-                      });
+                        setState(() {
+                          widget.event.rsvp?.add(id); 
+                          registered = widget.event.rsvp?.contains(id) ?? false;
+                        });
 
-                      ref.invalidate(
-                          fetchEventsProvider); // Update your global state if needed
+                        ref.invalidate(
+                            fetchEventsProvider); 
+                      }
                     }
                   },
                   fontSize: 16,
@@ -339,7 +350,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
               : null, // Use image if available
           child: (imagePath == null || imagePath.isEmpty)
               ? Image.asset('assets/icons/dummy_person_small.png')
-              : null, // Show icon if no image is provided
+              : null, 
         ),
         title: Text(
           name,

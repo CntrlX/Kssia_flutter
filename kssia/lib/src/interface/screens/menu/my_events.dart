@@ -17,7 +17,8 @@ class MyEventsPage extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final asyncEvents = ref.watch(fetchUserRsvpdEventsProvider);
-        return Scaffold(backgroundColor: Colors.white,
+        return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text(
               'My Events',
@@ -179,19 +180,23 @@ class MyEventsPage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      event.name!,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Text(
+                        event.name ?? '',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(
-                      event.description!,
-                      style: TextStyle(fontSize: 14),
+                    Flexible(
+                      child: Text(
+                        event.description ?? '',
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   ],
                 ),

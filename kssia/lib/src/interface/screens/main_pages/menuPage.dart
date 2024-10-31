@@ -349,19 +349,20 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
-                      _buildListTile(
-                        context,
-                        Icons.subscriptions,
-                        'My subscriptions',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MySubscriptionPage()),
-                          );
-                        },
-                      ),
+                      if (user.id != '671b6f9bf2d53b1740fd77e8') Divider(),
+                      if (user.id != '671b6f9bf2d53b1740fd77e8')
+                        _buildListTile(
+                          context,
+                          Icons.subscriptions,
+                          'My subscriptions',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MySubscriptionPage()),
+                            );
+                          },
+                        ),
                       Divider(),
                       _buildListTile(
                         context,
