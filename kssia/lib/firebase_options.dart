@@ -61,7 +61,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD2xzhxTiagytZENDC4nLOQu8wxpoW4cs8',
-    appId: '1:730513867054:ios:32ec20319c12e5b4777abf',
+    appId: '1:730513867054:ios:1e2a00a3a0ff6d68777abf',
     messagingSenderId: '730513867054',
     projectId: 'kssia-fcde5',
     databaseURL:
