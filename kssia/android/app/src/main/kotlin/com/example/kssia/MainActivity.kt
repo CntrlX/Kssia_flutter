@@ -1,4 +1,4 @@
-package com.skybertech.kssia
+package com.skybertech.kssiacommunity
 
 import io.flutter.embedding.android.FlutterActivity
 
