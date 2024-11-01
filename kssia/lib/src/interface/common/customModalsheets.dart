@@ -2155,13 +2155,16 @@ class RequirementModalSheet extends StatelessWidget {
                   },
                 ),
                 if (requirement.image != null && requirement.image != '')
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: Image.network(
-                      requirement.image!,
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.network(
+                        requirement.image!,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 if (requirement.image != null && requirement.image != '')

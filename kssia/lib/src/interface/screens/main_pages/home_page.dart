@@ -257,7 +257,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             );
                           }).toList(),
                           options: CarouselOptions(
-                            height: 365,
+                            height: 395,
                             scrollPhysics: events.length > 1
                                 ? null
                                 : NeverScrollableScrollPhysics(),
