@@ -12,7 +12,6 @@ import 'package:kssia/src/data/notifiers/requirements_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/customdialog.dart';
 
-
 class CustomDropDown extends ConsumerWidget {
   final Requirement? requirement;
   final Product? product;
@@ -82,7 +81,7 @@ class CustomDropDown extends ConsumerWidget {
     String reportType = '';
     if (requirement != null) {
       reportType = 'requirement';
-      showReportPersonDialog(
+      showReportDialog(
         reportedItemId: requirement?.id ?? '',
         context: context,
         onReportStatusChanged: () {},
@@ -91,7 +90,7 @@ class CustomDropDown extends ConsumerWidget {
     } else if (product != null) {
       log('product id: ${product?.id ?? ''}');
       reportType = 'product';
-      showReportPersonDialog(
+      showReportDialog(
         reportedItemId: product?.id ?? '',
         context: context,
         onReportStatusChanged: () {},
@@ -100,16 +99,15 @@ class CustomDropDown extends ConsumerWidget {
     } else if (userId != null) {
       log(userId.toString());
       reportType = 'user';
-      showReportPersonDialog(
+      showReportDialog(
         reportedItemId: userId ?? '',
         context: context,
-        userId: userId ?? '',
         onReportStatusChanged: () {},
         reportType: reportType,
       );
     } else {
       reportType = 'chat';
-      showReportPersonDialog(
+      showReportDialog(
         reportedItemId: msg?.id ?? '',
         context: context,
         onReportStatusChanged: () {},

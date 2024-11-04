@@ -357,7 +357,7 @@ class ApiRoutes {
         'reportType': reportType,
         'reportedItemId': reportedItemId
       };
-
+      log('Report details:$body');
       // Send the POST request
       final response = await http.post(
         Uri.parse(url),

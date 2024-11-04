@@ -20,6 +20,7 @@ import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/validate_urls.dart';
+import 'package:shimmer/shimmer.dart';
 
 void showWebsiteSheet({
   required VoidCallback addWebsite,
@@ -1758,10 +1759,15 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       widget.product.image!, // Replace with your image URL
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return Image.network(
-                          'https://placehold.co/600x400/png',
-                          fit: BoxFit.cover,
-                        );
+                        return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                            );
                       },
                     ),
                   ),

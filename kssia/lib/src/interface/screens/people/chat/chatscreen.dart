@@ -172,7 +172,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                         color: Color(0xFF004797),
                       ),
                       onPressed: () {
-                        showReportPersonDialog(
+                        showReportDialog(
                             context: context,
                             onReportStatusChanged: () {},
                             reportType: 'user',
@@ -230,7 +230,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                             } else {
                               return GestureDetector(
                                 onLongPress: () {
-                                  showReportPersonDialog(
+                                  showReportDialog(
                                       reportedItemId: message.id ?? '',
                                       context: context,
                                       onReportStatusChanged: () {
@@ -475,7 +475,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   },
                 ),
               ),
-        if (subscription != 'premium' )
+              if (subscription != 'premium')
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),

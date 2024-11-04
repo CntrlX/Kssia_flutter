@@ -6,7 +6,8 @@ import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/interface/common/loading.dart';
-import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart'; // Import the ViewMoreEventPage
+import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
+import 'package:shimmer/shimmer.dart'; // Import the ViewMoreEventPage
 
 class EventPage extends ConsumerStatefulWidget {
   const EventPage({super.key});
@@ -126,9 +127,15 @@ class _EventPageState extends ConsumerState<EventPage> {
                           ),
                           child: Image.network(
                             errorBuilder: (context, error, stackTrace) {
-                              return Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://placehold.co/600x400/png');
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                              );
                             },
                             event.image!, // Replace with your image URL
                             fit: BoxFit.cover,

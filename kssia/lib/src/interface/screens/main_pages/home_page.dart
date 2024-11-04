@@ -123,7 +123,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     1
                                 ? null
                                 : NeverScrollableScrollPhysics(),
-                            autoPlay: promotions.length > 1 ? true : false,
+                            autoPlay: promotions
+                                        .where(
+                                            (promo) => promo.type == 'banner')
+                                        .length >
+                                    1
+                                ? true
+                                : false,
                             viewportFraction: 1,
                             autoPlayInterval: Duration(seconds: 3),
                             onPageChanged: (index, reason) {
@@ -139,53 +145,56 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                   // Notices Carousel with Dot Indicator
                   if (promotions.any((promo) => promo.type == 'notice'))
-                    Column(
-                      children: [
-                        CarouselSlider(
-                          items: promotions
-                              .where((promo) => promo.type == 'notice')
-                              .map((notice) {
-                            return customNotice(
-                                context: context, notice: notice);
-                          }).toList(),
-                          options: CarouselOptions(
-                            height: _calculateDynamicHeight(promotions
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: Column(
+                        children: [
+                          CarouselSlider(
+                            items: promotions
                                 .where((promo) => promo.type == 'notice')
-                                .toList()),
-                            scrollPhysics: promotions
-                                        .where(
-                                            (promo) => promo.type == 'notice')
-                                        .length >
-                                    1
-                                ? null
-                                : NeverScrollableScrollPhysics(),
-                            autoPlay: promotions
-                                        .where(
-                                            (promo) => promo.type == 'notice')
-                                        .length >
-                                    1
-                                ? true
-                                : false,
-                            viewportFraction: 1,
-                            autoPlayInterval: Duration(seconds: 5),
-                            onPageChanged: (index, reason) {
-                              _onPageChanged(index, promotions.length);
-                              setState(() {
-                                _currentNoticeIndex = index;
-                              });
-                            },
+                                .map((notice) {
+                              return customNotice(
+                                  context: context, notice: notice);
+                            }).toList(),
+                            options: CarouselOptions(
+                              height: _calculateDynamicHeight(promotions
+                                  .where((promo) => promo.type == 'notice')
+                                  .toList()),
+                              scrollPhysics: promotions
+                                          .where(
+                                              (promo) => promo.type == 'notice')
+                                          .length >
+                                      1
+                                  ? null
+                                  : NeverScrollableScrollPhysics(),
+                              autoPlay: promotions
+                                          .where(
+                                              (promo) => promo.type == 'notice')
+                                          .length >
+                                      1
+                                  ? true
+                                  : false,
+                              viewportFraction: 1,
+                              autoPlayInterval: Duration(seconds: 5),
+                              onPageChanged: (index, reason) {
+                                _onPageChanged(index, promotions.length);
+                                setState(() {
+                                  _currentNoticeIndex = index;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        _buildDotIndicator(
-                            _currentNoticeIndex,
-                            promotions
-                                .where((promo) => promo.type == 'notice')
-                                .length,
-                            const Color.fromARGB(255, 62, 61, 61)),
-                      ],
+                          SizedBox(
+                            height: 10,
+                          ),
+                          _buildDotIndicator(
+                              _currentNoticeIndex,
+                              promotions
+                                  .where((promo) => promo.type == 'notice')
+                                  .length,
+                              const Color.fromARGB(255, 62, 61, 61)),
+                        ],
+                      ),
                     ),
                   if (promotions.any((promo) => promo.type == 'poster'))
                     Padding(
@@ -331,38 +340,27 @@ class _HomePageState extends ConsumerState<HomePage> {
       {required BuildContext context, required Promotion banner}) {
     return Container(
       width: MediaQuery.sizeOf(context).width / 1.15,
-      child: Stack(
-        clipBehavior: Clip.none, // This allows overflow
-        children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 175,
-              // decoration: BoxDecoration(
-              //   gradient: const LinearGradient(
-              //     colors: [
-              //       Color.fromARGB(41, 249, 180, 6),
-              //       Color.fromARGB(113, 249, 180, 6)
-              //     ],
-              //     begin: Alignment.topLeft,
-              //     end: Alignment.bottomRight,
-              //   ),
-              //   borderRadius: BorderRadius.circular(8.0),
-              // ),
-              child: Image.network(
-                banner.bannerImageUrl ?? 'https://placehold.co/600x400/png',
-                width: double.infinity,
-                fit: BoxFit.fill,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    // If the image is fully loaded, show the image
-                    return child;
-                  }
-                  // While the image is loading, show shimmer effect
-                  return Container(
-                    width: MediaQuery.sizeOf(context).width / 1.15,
-                    height: 175,
-                    child: Shimmer.fromColors(
+      child: AspectRatio(
+        aspectRatio: 2 / 1, // Custom aspect ratio as 2:1
+        child: Stack(
+          clipBehavior: Clip.none, // This allows overflow
+          children: [
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Image.network(
+                  banner.bannerImageUrl ,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child; // Image loaded successfully
+                    }
+                    // While the image is loading, show shimmer effect
+                    return Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
                       child: Container(
@@ -371,13 +369,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -385,13 +383,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget customPoster(
       {required BuildContext context, required Promotion poster}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16), // Adjust spacing between notices
-      child: Container(
-        width: MediaQuery.of(context).size.width -
-            32, // Poster width matches screen width
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: AspectRatio(
+        aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
         child: Image.network(
-          poster.posterImageUrl ?? 'https://placehold.co/600x400/png',
+          poster.posterImageUrl ,
           fit: BoxFit.fill,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
@@ -402,17 +398,21 @@ class _HomePageState extends ConsumerState<HomePage> {
                 highlightColor: Colors.grey[100]!,
                 child: Container(
                   width: double.infinity,
-                  height: 400, // Adjust height based on your poster size
                   color: Colors.white,
                 ),
               );
             }
           },
           errorBuilder: (context, error, stackTrace) {
-            return Image.network(
-              'https://placehold.co/600x400/png',
-              fit: BoxFit.contain,
-            );
+            return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                              );
           },
         ),
       ),

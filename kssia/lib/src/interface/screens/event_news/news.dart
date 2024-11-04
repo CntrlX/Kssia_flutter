@@ -221,10 +221,11 @@ class NewsContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Image Section
-              SizedBox(
-                height: 200,
-                width: double.infinity,
+              AspectRatio(
+                aspectRatio: 16 / 9,
                 child: Image.network(
+                  newsItem.image ?? '',
+                  fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Shimmer.fromColors(
@@ -232,17 +233,19 @@ class NewsContent extends StatelessWidget {
                       highlightColor: Colors.grey[100]!,
                       child: Container(
                         width: double.infinity,
-                        height: 250,
                         color: Colors.grey[300],
                       ),
                     );
                   },
-                  newsItem.image ?? 'https://placehold.co/600x400/png',
-                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Image.network(
-                      'https://placehold.co/600x400/png',
-                      fit: BoxFit.cover,
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                        ),
+                      ),
                     );
                   },
                 ),

@@ -262,7 +262,7 @@ class MenuPage extends StatelessWidget {
                                       'assets/icons/dummy_person_small.png');
                                 },
                                 user.profilePicture ??
-                                    'https://placehold.co/600x400',
+                                    '',
                                 height: 70,
                                 width: 75,
                                 fit: BoxFit.cover,

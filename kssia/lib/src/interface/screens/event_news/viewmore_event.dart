@@ -11,6 +11,7 @@ import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ViewMoreEventPage extends ConsumerStatefulWidget {
   final Event event;
@@ -60,18 +61,27 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
               children: [
                 Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 200,
-                      color: Colors.grey[300],
-                      child: Image.network(
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.network(
-                              fit: BoxFit.fill,
-                              'https://placehold.co/600x400/png');
-                        },
-                        widget.event.image!, // Replace with your image URL
-                        fit: BoxFit.cover,
+                    AspectRatio(
+                      aspectRatio: 16 / 9, // Set aspect ratio to 16:9
+                      child: Container(
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        child: Image.network(
+                          widget.event.image ??
+                              '', // Replace with your image URL
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     Positioned(
@@ -279,8 +289,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                       ),
                     ),
                   ),
-                const SizedBox(
-                    height: 50), 
+                const SizedBox(height: 50),
               ],
             ),
           ),
@@ -313,12 +322,11 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                             widget.event.id!, context);
 
                         setState(() {
-                          widget.event.rsvp?.add(id); 
+                          widget.event.rsvp?.add(id);
                           registered = widget.event.rsvp?.contains(id) ?? false;
                         });
 
-                        ref.invalidate(
-                            fetchEventsProvider); 
+                        ref.invalidate(fetchEventsProvider);
                       }
                     }
                   },
@@ -350,7 +358,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
               : null, // Use image if available
           child: (imagePath == null || imagePath.isEmpty)
               ? Image.asset('assets/icons/dummy_person_small.png')
-              : null, 
+              : null,
         ),
         title: Text(
           name,

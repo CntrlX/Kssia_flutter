@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MyRequirementsPage extends StatelessWidget {
   @override
@@ -85,10 +86,23 @@ class MyRequirementsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (imageUrl != "")
+            if (imageUrl != null)
               Column(
                 children: [
-                  Image.network(imageUrl!),
+                  Image.network(
+                    imageUrl ?? "",
+                    errorBuilder: (context, error, stackTrace) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 10),
                 ],
               ),

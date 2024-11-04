@@ -5,13 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/report_widgets/reportmodal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BlockPersonDialog extends ConsumerStatefulWidget {
   final String userId;
   final VoidCallback onBlockStatusChanged;
 
-  BlockPersonDialog( {
+  BlockPersonDialog({
     required this.userId,
     required this.onBlockStatusChanged,
     super.key,
@@ -207,10 +208,10 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
 }
 
 // Function to show the BlockPersonDialog
-void showBlockPersonDialog(
-    {required BuildContext context,
-    required String userId,
-    required VoidCallback onBlockStatusChanged,
+void showBlockPersonDialog({
+  required BuildContext context,
+  required String userId,
+  required VoidCallback onBlockStatusChanged,
 }) {
   showDialog(
     context: context,
@@ -223,21 +224,19 @@ void showBlockPersonDialog(
   );
 }
 
-class ReportPersonDialog extends StatelessWidget {
-  final String? userId;
+class ReportDialog extends StatelessWidget {
   final VoidCallback onReportStatusChanged;
   final String reportType;
   final String reportedItemId;
 
-  ReportPersonDialog({
-    this.userId,
+  ReportDialog({
     required this.onReportStatusChanged,
     super.key,
     required this.reportType,
     required this.reportedItemId,
   });
 
-  TextEditingController reasonController = TextEditingController();
+  // TextEditingController reasonController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -257,7 +256,7 @@ class ReportPersonDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Are you sure you want to report this ?',
+              'Are you sure you want to submit the report?',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18.0,
@@ -265,46 +264,46 @@ class ReportPersonDialog extends StatelessWidget {
                 color: Colors.blueGrey[900],
               ),
             ),
-            const SizedBox(height: 30.0),
-            TextFormField(
-              controller: reasonController,
-              decoration: InputDecoration(
-                labelText: 'Content',
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey,
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Color(0xFF004797),
-                    width: 2.0,
-                  ),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-              ),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Reason is required'; // Error message when the field is empty
-                }
-                return null; // Return null if the input is valid
-              },
-            ),
+            const SizedBox(height: 10.0),
+            // TextFormField(
+            //   controller: reasonController,
+            //   decoration: InputDecoration(
+            //     labelText: 'Content',
+            //     labelStyle: TextStyle(
+            //       color: Colors.grey,
+            //       fontSize: 16,
+            //       fontWeight: FontWeight.w500,
+            //     ),
+            //     enabledBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(10.0),
+            //       borderSide: BorderSide(
+            //         color: Colors.grey,
+            //         width: 1.5,
+            //       ),
+            //     ),
+            //     focusedBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(10.0),
+            //       borderSide: BorderSide(
+            //         color: Color(0xFF004797),
+            //         width: 2.0,
+            //       ),
+            //     ),
+            //     filled: true,
+            //     fillColor: Colors.white,
+            //     contentPadding:
+            //         EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            //   ),
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.w400,
+            //   ),
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Reason is required'; // Error message when the field is empty
+            //     }
+            //     return null; // Return null if the input is valid
+            //   },
+            // ),
             const SizedBox(height: 20.0),
             _buildActions(context),
           ],
@@ -339,15 +338,10 @@ class ReportPersonDialog extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () async {
-            ApiRoutes userAPi = ApiRoutes();
-            await userAPi.createReport(
-                reportedItemId: reportedItemId,
-                context: context,
-                content: reasonController.text,
-                reportType: reportType);
-            Navigator.pop(context);
-          },
+          onPressed: () => showReportMemberModal(
+              context: context,
+              reportType: reportType,
+              reportedItemId: reportedItemId),
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF004797),
             shape: RoundedRectangleBorder(
@@ -359,7 +353,7 @@ class ReportPersonDialog extends StatelessWidget {
             elevation: 6,
           ),
           child: Text(
-            'Report',
+            'Submit',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -373,9 +367,8 @@ class ReportPersonDialog extends StatelessWidget {
 }
 
 // Function to show the BlockPersonDialog
-void showReportPersonDialog({
+void showReportDialog({
   required BuildContext context,
-  String? userId,
   required VoidCallback onReportStatusChanged,
   required String reportType,
   required String reportedItemId,
@@ -383,9 +376,8 @@ void showReportPersonDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return ReportPersonDialog(
+      return ReportDialog(
         reportType: reportType,
-        userId: userId,
         onReportStatusChanged: onReportStatusChanged,
         reportedItemId: reportedItemId,
       );

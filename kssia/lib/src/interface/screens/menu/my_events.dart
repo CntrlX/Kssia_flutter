@@ -8,6 +8,7 @@ import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MyEventsPage extends StatelessWidget {
   const MyEventsPage({Key? key}) : super(key: key);
@@ -90,7 +91,18 @@ class MyEventsPage extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Image.network(
-                event.image ?? 'https://via.placeholder.com/400x200',
+                errorBuilder: (context, error, stackTrace) {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  );
+                },
+                event.image ?? '',
                 width: double.infinity,
                 height: 200,
                 fit: BoxFit.cover,

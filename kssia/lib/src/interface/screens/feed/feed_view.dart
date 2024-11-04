@@ -250,7 +250,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                         255, 255, 255, 255),
                                     child: Image.network(
                                       receiver.profilePicture ??
-                                          'https://placehold.co/600x400',
+                                          '',
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
@@ -329,10 +329,15 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                       );
                                     },
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Image.network(
-                                        'https://placehold.co/600x400',
-                                        fit: BoxFit.cover,
-                                      );
+                                      return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                              );
                                     },
                                   ),
                                 ),
