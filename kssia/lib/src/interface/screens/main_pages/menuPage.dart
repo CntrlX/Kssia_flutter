@@ -261,8 +261,7 @@ class MenuPage extends StatelessWidget {
                                       scale: .7,
                                       'assets/icons/dummy_person_small.png');
                                 },
-                                user.profilePicture ??
-                                    '',
+                                user.profilePicture ?? '',
                                 height: 70,
                                 width: 75,
                                 fit: BoxFit.cover,
@@ -349,20 +348,21 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      if (user.id != '671b6f9bf2d53b1740fd77e8') Divider(),
-                      if (user.id != '671b6f9bf2d53b1740fd77e8')
-                        _buildListTile(
-                          context,
-                          Icons.subscriptions,
-                          'My subscriptions',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MySubscriptionPage()),
-                            );
-                          },
-                        ),
+                      // if (user.id != '671b6f9bf2d53b1740fd77e8')
+                      Divider(),
+                      // if (user.id != '671b6f9bf2d53b1740fd77e8')
+                      _buildListTile(
+                        context,
+                        Icons.subscriptions,
+                        'My subscriptions',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MySubscriptionPage()),
+                          );
+                        },
+                      ),
                       Divider(),
                       _buildListTile(
                         context,

@@ -964,7 +964,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "last_name": user.name?.lastName,
       },
       // if (user.bloodGroup != null)
-      "blood_group": user.bloodGroup,
+      "blood_group": user.bloodGroup ?? '',
       if (user.email != null) "email": user.email,
       if (user.profilePicture != null) "profile_picture": user.profilePicture,
       "phone_numbers": {
@@ -986,7 +986,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       if (user.companyLogo != null && user.companyLogo != '')
         "company_logo": user.companyLogo,
       // if (user.companyName != null && user.companyName != '')
-      "company_name": user.companyName,
+      "company_name": user.companyName ?? '',
       if (user.companyEmail != null && user.companyEmail != '')
         "company_email": user.companyEmail,
       if (user.companyAddress != null && user.companyAddress != '')

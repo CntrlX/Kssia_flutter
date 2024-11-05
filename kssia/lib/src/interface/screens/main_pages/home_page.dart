@@ -352,7 +352,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Image.network(
-                  banner.bannerImageUrl ,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    );
+                  },
+                  banner.bannerImageUrl,
                   width: double.infinity,
                   fit: BoxFit.fill,
                   loadingBuilder: (context, child, loadingProgress) {
@@ -387,7 +398,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       child: AspectRatio(
         aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
         child: Image.network(
-          poster.posterImageUrl ,
+          poster.posterImageUrl,
           fit: BoxFit.fill,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
@@ -405,14 +416,14 @@ class _HomePageState extends ConsumerState<HomePage> {
           },
           errorBuilder: (context, error, stackTrace) {
             return Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                  ),
-                                ),
-                              );
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                ),
+              ),
+            );
           },
         ),
       ),
