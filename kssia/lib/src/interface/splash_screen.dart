@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_upgrade_version/flutter_upgrade_version.dart';
 import 'package:flutter_upgrade_version/models/package_info.dart';
 import 'package:kssia/main.dart';
@@ -142,7 +143,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     String? savedtoken = preferences.getString('token');
     String? savedId = preferences.getString('id');
     log('token:$savedtoken');
-        log('userId:$savedId');
+    log('userId:$savedId');
     if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
       setState(() {
         LoggedIn = true;
@@ -157,11 +158,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset(
-          'assets/icons/kssiaLogo.png',
-          scale: 0.5,
-        ),
-      ),
+          child: SvgPicture.asset(
+        'assets/kssia_logo.svg',
+        height: 140,
+        width: 140,
+      )
+          // Image.asset(
+          //   'assets/icons/kssiaLogo.png',
+          //   scale: 0.5,
+          // ),
+          ),
     );
   }
 }

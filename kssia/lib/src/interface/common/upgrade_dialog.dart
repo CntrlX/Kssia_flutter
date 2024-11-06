@@ -59,6 +59,7 @@ class UpgradeDialog extends StatelessWidget {
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: customButton(
+                      fontSize: 12,
                       label: 'Upgrade',
                       onPressed: () {
                         Navigator.pushReplacement(

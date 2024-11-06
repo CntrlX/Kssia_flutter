@@ -130,7 +130,7 @@ class ProfilePreview extends ConsumerWidget {
                                 'assets/icons/dummy_person_large.png'),
                         const SizedBox(height: 10),
                         Text(
-                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}',
+                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}',
                           style: const TextStyle(
                             color: Color(0xFF2C2829),
                             fontSize: 20,

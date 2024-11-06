@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -335,8 +336,10 @@ class CertificateCard extends StatelessWidget {
 class BrochureCard extends StatelessWidget {
   final Brochure brochure;
   final VoidCallback? onRemove;
+
   const BrochureCard({super.key, required this.brochure, this.onRemove});
-  Future<void> _launchUrl({required url}) async {
+
+  Future<void> _launchUrl({required String url}) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
     }
@@ -354,29 +357,35 @@ class BrochureCard extends StatelessWidget {
             color: const Color(0xFFF2F2F2),
             borderRadius: BorderRadius.circular(5),
           ),
-          // Set the desired fixed height for the card
-          width: double.infinity, // Ensure the card width fits the screen
+          width: double.infinity,
           child: ListTile(
             leading: Icon(
               Icons.picture_as_pdf,
               color: Colors.red,
             ),
             title: Text(brochure.name!),
-            trailing: IconButton(
-              icon: Icon(Icons.download),
-              onPressed: () {
-                // Replace this with the actual download URL
-                String downloadUrl = brochure.url!;
-                _launchUrl(url: downloadUrl);
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.download),
+                  onPressed: () {
+                    String downloadUrl = brochure.url!;
+                    _launchUrl(url: downloadUrl);
+                  },
+                ),
+                if (onRemove != null)
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: onRemove,
+                  ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
-
-  canLaunch(String url) {}
 }
 
 class DropDownMenu extends StatelessWidget {

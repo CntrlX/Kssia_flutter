@@ -1886,7 +1886,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                                 Text(
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                                    '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}'),
                                 Text('${user.companyName ?? ''}'),
                               ],
                             ),
@@ -2137,7 +2137,7 @@ class RequirementModalSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name!.lastName}'),
+                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}'),
                               Text('${user.companyName}'),
                             ],
                           ),

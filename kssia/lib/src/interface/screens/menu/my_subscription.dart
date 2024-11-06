@@ -376,7 +376,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                       style: TextStyle(
                                           fontSize: 26,
                                           fontWeight: FontWeight.w600),
-                                      '₹2000  ',
+                                      '₹1000  ',
                                     ),
                                     Text(
                                       style: TextStyle(
@@ -417,86 +417,72 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                  color: subscription.membership
-                                                              ?.status ==
-                                                          'accepted'
-                                                      ? Colors.green
-                                                      : Colors.red,
+                                                  color: Colors.green,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(16),
                                               ),
                                               child: Text(
-                                                subscription.membership
-                                                            ?.status ==
-                                                        'accepted'
-                                                    ? 'Active'
-                                                    : 'Inactive',
+                                                'Active',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: subscription.membership
-                                                              ?.status ==
-                                                          'accepted'
-                                                      ? Colors.green
-                                                      : Colors.red,
+                                                  color: Colors.green,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              'Last renewed on:',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              membershipFormattedRenewalDate,
-                                              style: const TextStyle(
-                                                decorationColor:
-                                                    Color(0xFF004797),
-                                                decoration: TextDecoration
-                                                    .underline, // Adds underline
-                                                fontStyle: FontStyle
-                                                    .italic, // Makes text italic
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFF004797),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              'Next renewal on:',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              membershipFormatteNextRenewalDate,
-                                              style: const TextStyle(
-                                                decorationColor:
-                                                    Color(0xFF004797),
-                                                decoration: TextDecoration
-                                                    .underline, // Adds underline
-                                                fontStyle: FontStyle
-                                                    .italic, // Makes text italic
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFF004797),
-                                              ),
-                                            ),
-                                          ],
-                                        )
+                                        //
+                                        // Row(
+                                        //   children: [
+                                        //     const Text(
+                                        //       'Last renewed on:',
+                                        //       style: TextStyle(fontSize: 14),
+                                        //     ),
+                                        //     const Spacer(),
+                                        //     Text(
+                                        //       membershipFormattedRenewalDate,
+                                        //       style: const TextStyle(
+                                        //         decorationColor:
+                                        //             Color(0xFF004797),
+                                        //         decoration: TextDecoration
+                                        //             .underline, // Adds underline
+                                        //         fontStyle: FontStyle
+                                        //             .italic, // Makes text italic
+                                        //         fontSize: 14,
+                                        //         fontWeight: FontWeight.w600,
+                                        //         color: Color(0xFF004797),
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                        // const SizedBox(
+                                        //   height: 10,
+                                        // ),
+                                        // Row(
+                                        //   children: [
+                                        //     const Text(
+                                        //       'Next renewal on:',
+                                        //       style: TextStyle(fontSize: 14),
+                                        //     ),
+                                        //     const Spacer(),
+                                        //     Text(
+                                        //       membershipFormatteNextRenewalDate,
+                                        //       style: const TextStyle(
+                                        //         decorationColor:
+                                        //             Color(0xFF004797),
+                                        //         decoration: TextDecoration
+                                        //             .underline, // Adds underline
+                                        //         fontStyle: FontStyle
+                                        //             .italic, // Makes text italic
+                                        //         fontSize: 14,
+                                        //         fontWeight: FontWeight.w600,
+                                        //         color: Color(0xFF004797),
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        // )
                                       ],
                                     ),
                                   ),
@@ -523,30 +509,30 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                 const SizedBox(height: 15),
 
                                 // Action Button
-                                SizedBox(
-                                    width: double.infinity,
-                                    child: customButton(
-                                        sideColor:
-                                            subscription.membership?.status ==
-                                                    'accepted'
-                                                ? Colors.green
-                                                : Colors.red,
-                                        buttonColor:
-                                            subscription.membership?.status ==
-                                                    'accepted'
-                                                ? Colors.green
-                                                : Colors.red,
-                                        label: subscription.membership?.status
-                                                ?.toUpperCase() ??
-                                            'SUBSCRIBE',
-                                        onPressed: () {
-                                          if (subscription.membership?.status !=
-                                              'accepted') {
-                                            _openModalSheet(
-                                                sheet: 'payment',
-                                                subscriptionType: 'membership');
-                                          }
-                                        })),
+                                // SizedBox(
+                                //     width: double.infinity,
+                                //     child: customButton(
+                                //         sideColor:
+                                //             subscription.membership?.status ==
+                                //                     'accepted'
+                                //                 ? Colors.green
+                                //                 : Colors.red,
+                                //         buttonColor:
+                                //             subscription.membership?.status ==
+                                //                     'accepted'
+                                //                 ? Colors.green
+                                //                 : Colors.red,
+                                //         label: subscription.membership?.status
+                                //                 ?.toUpperCase() ??
+                                //             'SUBSCRIBE',
+                                //         onPressed: () {
+                                //           if (subscription.membership?.status !=
+                                //               'accepted') {
+                                //             _openModalSheet(
+                                //                 sheet: 'payment',
+                                //                 subscriptionType: 'membership');
+                                //           }
+                                //         })),
                               ],
                             ),
                           ),

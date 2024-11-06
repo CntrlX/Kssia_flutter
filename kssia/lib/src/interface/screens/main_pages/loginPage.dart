@@ -98,7 +98,10 @@ class PhoneNumberScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 40),
-                    Image.asset('assets/icons/kssiaLogo.png'),
+                    Image.asset(
+                      'assets/icons/kssiaLogo.png',
+                      scale: 8,
+                    ),
                     const SizedBox(height: 80),
                     Expanded(
                       child: SingleChildScrollView(
@@ -385,8 +388,9 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
                 const SizedBox(height: 40),
                 Image.asset(
                   'assets/icons/kssiaLogo.png',
+                  scale: 8,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 80),
                 const Text(
                   'Enter your OTP',
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
@@ -599,6 +603,7 @@ class ProfileCompletionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -961,7 +966,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "first_name": user.name?.firstName,
         // if (user.name?.middleName != null && user.name?.middleName != '')
         "middle_name": user.name?.middleName ?? "",
-        "last_name": user.name?.lastName,
+        "last_name": user.name?.lastName ?? '',
       },
       // if (user.bloodGroup != null)
       "blood_group": user.bloodGroup ?? '',
@@ -1404,12 +1409,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       ),
                                       const SizedBox(height: 20.0),
                                       CustomTextFormField(
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please Enter Your Full Name';
-                                          }
-                                          return null;
-                                        },
+                                        // validator: (value) {
+                                        //   if (value == null || value.isEmpty) {
+                                        //     return 'Please Enter Your Full Name';
+                                        //   }
+                                        //   return null;
+                                        // },
                                         textController: lastNameController,
                                         labelText: 'Enter your Last name',
                                       ),

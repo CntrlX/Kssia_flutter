@@ -488,30 +488,30 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                           children: [
                             const Icon(
                               Icons.lock_outline,
-                              size: 60,
+                              size: 50,
                               color: Colors.white,
                             ),
                             const SizedBox(height: 16),
                             const Text(
                               'Unlock Premium Content',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 22,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Buy Premium to access this article and more.',
+                              'Buy Premium to access this page and more.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: Colors.white70,
                               ),
                             ),
                             const SizedBox(height: 24),
                             SizedBox(
-                                width: 250,
+                                width: 230,
                                 child: customButton(
                                     label: 'Buy Premium',
                                     onPressed: () {

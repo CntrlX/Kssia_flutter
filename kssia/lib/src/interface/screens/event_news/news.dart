@@ -28,6 +28,7 @@ class NewsPage extends ConsumerWidget {
         }
       },
       child: Scaffold(
+          backgroundColor: Colors.white,
           appBar: CustomAppBar(),
           body: asyncNews.when(
             data: (news) {
@@ -347,7 +348,7 @@ class NewsContent extends StatelessWidget {
         //               ),
         //               const SizedBox(height: 8),
         //               const Text(
-        //                 'Buy Premium to access this article and more.',
+        //                 'Buy Premium to access this page and more.',
         //                 textAlign: TextAlign.center,
         //                 style: TextStyle(
         //                   fontSize: 16,

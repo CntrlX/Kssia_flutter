@@ -134,7 +134,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name!.lastName!}',
+                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name?.lastName??''}',
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -174,34 +174,37 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                           SizedBox(
                                             width: 10,
                                           ),
-                                          Column(
-                                            children: [
-                                              ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(9),
-                                                  child: widget.user
-                                                                  .companyLogo !=
-                                                              null &&
-                                                          widget.user
-                                                                  .companyLogo !=
-                                                              ''
-                                                      ? Image.network(
-                                                          errorBuilder:
-                                                              (context, error,
-                                                                  stackTrace) {
-                                                            return Image.asset(
-                                                                'assets/icons/dummy_company.png');
-                                                          },
-                                                          widget.user
-                                                              .companyLogo!,
-                                                          height: 33,
-                                                          width: 40,
-                                                          fit: BoxFit.cover,
-                                                        )
-                                                      : Image.asset(
-                                                          'assets/icons/dummy_company.png'))
-                                            ],
-                                          ),
+                                          if (widget.user.companyName != null &&
+                                              widget.user.companyName != '')
+                                            Column(
+                                              children: [
+                                                ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            9),
+                                                    child: widget.user
+                                                                    .companyLogo !=
+                                                                null &&
+                                                            widget.user
+                                                                    .companyLogo !=
+                                                                ''
+                                                        ? Image.network(
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return Image.asset(
+                                                                  'assets/icons/dummy_company.png');
+                                                            },
+                                                            widget.user
+                                                                .companyLogo!,
+                                                            height: 33,
+                                                            width: 40,
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : Image.asset(
+                                                            'assets/icons/dummy_company.png'))
+                                              ],
+                                            ),
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(

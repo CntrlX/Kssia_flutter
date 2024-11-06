@@ -439,13 +439,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         width: MediaQuery.of(context).size.width - 32,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Color(0xFFF5D0D0), // Set the background color to white
+          color: Color(0xFFF5D0D0),
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: const Color.fromARGB(
-                255, 225, 231, 236), // Set the border color to blue
-            width: 2.0, // Adjust the width as needed
-          ),
+          // border: Border.all(
+          //   color: const Color.fromARGB(
+          //       255, 225, 231, 236), // Set the border color to blue
+          //   width: 2.0, // Adjust the width as needed
+          // ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
