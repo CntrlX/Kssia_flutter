@@ -146,7 +146,7 @@ Widget customVideo({required BuildContext context, required Promotion video}) {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
-              child: YoutubePlayer(
+              child: YoutubePlayer(  
                 controller: ytController,
                 aspectRatio: 16 / 9,
               ),

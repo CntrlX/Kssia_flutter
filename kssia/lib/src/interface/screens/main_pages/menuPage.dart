@@ -273,7 +273,7 @@ class MenuPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}',
+                                    '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -496,7 +496,7 @@ class MenuPage extends StatelessWidget {
                       //   ],
                       // ),
 
-                      Container(color: Color(0xFFF2F2F2), height: 20),
+                      // Container(color: Color(0xFFF2F2F2), height: 20),
 
                       Container(
                         color: const Color(0xFFF2F2F2),
