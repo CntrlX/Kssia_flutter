@@ -1395,7 +1395,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       CustomTextFormField(
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please Enter Your Full Name';
+                                            return 'Please Enter Your First Name';
                                           }
                                           return null;
                                         },
