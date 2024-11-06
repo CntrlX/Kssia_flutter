@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ class MembersPage extends ConsumerStatefulWidget {
 
 class _MembersPageState extends ConsumerState<MembersPage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  FocusNode _searchFocus = FocusNode();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -41,95 +45,113 @@ class _MembersPageState extends ConsumerState<MembersPage> {
     }
   }
 
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      ref.read(peopleNotifierProvider.notifier).searchUsers(query);
+    });
+  }
+
+  void _onSearchSubmitted(String query) {
+    ref.read(peopleNotifierProvider.notifier).searchUsers(query);
+  }
+
   @override
   Widget build(BuildContext context) {
     final users = ref.watch(peopleNotifierProvider);
     final isLoading = ref.read(peopleNotifierProvider.notifier).isLoading;
     final asyncChats = ref.watch(fetchChatThreadProvider(token));
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: users.isEmpty
-            ? Center(child: Text('No Members')) // Show loader when no data
-            : asyncChats.when(
-                data: (chats) {
-                  log('im inside chat');
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: users.length +
-                        (isLoading
-                            ? 1
-                            : 0), // Add 1 to show the loading indicator
-                    itemBuilder: (context, index) {
-                      if (index == users.length) {
-                        // This is the loading indicator at the end of the list
-                        return Center(
-                          child:
-                              LoadingAnimation(), // Show loading indicator when fetching more users
-                        );
-                      }
 
-                      // Regular user item
-                      var chatForUser = chats.firstWhere(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Search Bar
+            Container(
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+              child: TextField(
+                controller: _searchController,
+                focusNode: _searchFocus,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search Members',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 216, 211, 211),
+                    ),
+                  ),
+                ),
+                onChanged: _onSearchChanged,
+                onSubmitted: _onSearchSubmitted,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Display User List or No Data Message
+            if (users.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true, // Prevents infinite height
+                physics:
+                    const NeverScrollableScrollPhysics(), // Disable scrolling inside Column
+                itemCount: users.length + (isLoading ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == users.length) {
+                    return Center(child: LoadingAnimation());
+                  }
+                  final user = users[index];
+                  final asyncUserChat = asyncChats.when(
+                    data: (chats) {
+                      final chatForUser = chats.firstWhere(
                         (chat) =>
-                            chat.participants?.any((participant) =>
-                                participant.id == users[index].id) ??
+                            chat.participants?.any((p) => p.id == user.id) ??
                             false,
                         orElse: () => ChatModel(
                           participants: [
                             Participant(
-                              id: users[index].id,
-                              firstName: users[index].name?.firstName ?? '',
-                              middleName: users[index].name?.middleName ?? '',
-                              lastName: users[index].name?.lastName ?? '',
-                              profilePicture: users[index].profilePicture,
+                              id: user.id,
+                              firstName: user.name?.firstName ?? '',
+                              lastName: user.name?.lastName ?? '',
+                              profilePicture: user.profilePicture,
                             ),
-                            Participant(
-                                id: id), // Replace with current user if needed
+                            Participant(id: id),
                           ],
                         ),
                       );
 
-                      var receiver = chatForUser.participants?.firstWhere(
-                        (participant) => participant.id != id,
+                      final receiver = chatForUser.participants?.firstWhere(
+                        (p) => p.id != id,
                         orElse: () => Participant(
-                          id: users[index].id,
-                          firstName: users[index].name?.firstName ?? '',
-                          middleName: users[index].name?.middleName ?? '',
-                          lastName: users[index].name?.lastName ?? '',
-                          profilePicture: users[index].profilePicture,
+                          id: user.id,
+                          firstName: user.name?.firstName ?? '',
+                          lastName: user.name?.lastName ?? '',
+                          profilePicture: user.profilePicture,
                         ),
                       );
-
-                      var sender = chatForUser.participants?.firstWhere(
-                        (participant) => participant.id == id,
+                      final sender = chatForUser.participants?.firstWhere(
+                        (p) => p.id == id,
                         orElse: () => Participant(),
                       );
 
-                      final user = users[index];
-
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ProfilePreview(user: user),
-                            ),
-                          );
-                        },
-                        child: ListTile(
-                          leading: SizedBox(
-                            height: 40,
-                            width: 40,
-                            child: ClipOval(
-                              child: Image.network(
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    // If the image is fully loaded, show the image
-                                    return child;
-                                  }
-                                  // While the image is loading, show shimmer effect
-                                  return Container(
-                                    child: Shimmer.fromColors(
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: ClipOval(
+                                child: Image.network(
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[100]!,
                                       child: Container(
@@ -139,52 +161,85 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                                               BorderRadius.circular(8.0),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
-                                user.profilePicture ?? 'error',
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
+                                    );
+                                  },
+                                  user.profilePicture ?? 'error',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/icons/dummy_person_small.png',
                                       scale: .9,
-                                      'assets/icons/dummy_person_small.png');
-                                },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
+                            title: Text(
+                              '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                            ),
+                            subtitle: user.designation != null
+                                ? Text(user.designation!)
+                                : null,
+                            trailing: IconButton(
+                              icon: Icon(Icons.chat_bubble_outline),
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => IndividualPage(
+                                      receiver: receiver!,
+                                      sender: sender!,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                          title: Text(
-                              '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
-                          subtitle: user.designation != null
-                              ? Text(user.designation!)
-                              : null,
-                          trailing: IconButton(
-                            icon: Icon(Icons.chat_bubble_outline),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => IndividualPage(
-                                  receiver: receiver!,
-                                  sender: sender!,
-                                ),
-                              ));
-                            },
+                          const Divider(
+                            thickness: 1,
+                            color: Color.fromARGB(255, 227, 221, 221),
+                            height: 1,
                           ),
+                        ],
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (error, stackTrace) => Text('Error loading chats'),
+                  );
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePreview(user: user),
                         ),
                       );
                     },
+                    child: asyncUserChat,
                   );
                 },
-                loading: () => Center(child: LoadingAnimation()),
-                error: (error, stackTrace) {
-                  return Center(
-                    child: Text('No Members'),
-                  );
-                },
-              ));
+              )
+            else
+              const Column(
+                children: [
+                  SizedBox(height: 100),
+                  Text(
+                    'No Members Found',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
+    _searchFocus.dispose();
     super.dispose();
   }
 }

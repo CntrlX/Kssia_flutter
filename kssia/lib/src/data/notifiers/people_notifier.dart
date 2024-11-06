@@ -13,6 +13,7 @@ class PeopleNotifier extends _$PeopleNotifier {
   int pageNo = 1;
   final int limit = 9;
   bool hasMore = true;
+  String? searchQuery;
 
   @override
   List<UserModel> build() {
@@ -30,8 +31,9 @@ class PeopleNotifier extends _$PeopleNotifier {
     });
 
     try {
-      final newUsers = await ref
-          .read(fetchUsersProvider(pageNo: pageNo, limit: limit).future);
+      final newUsers = await ref.read(
+          fetchUsersProvider(pageNo: pageNo, limit: limit, query: searchQuery)
+              .future);
 
       users = [...users, ...newUsers];
       pageNo++;
@@ -53,6 +55,29 @@ class PeopleNotifier extends _$PeopleNotifier {
       });
 
       log('Fetched users: $users');
+    }
+  }
+
+  Future<void> searchUsers(String query) async {
+    isLoading = true;
+    pageNo = 1;
+    users = []; // Reset the user list when searching
+    searchQuery = query;
+
+    try {
+      final newUsers = await ref.read(
+          fetchUsersProvider(pageNo: pageNo, limit: limit, query: query)
+              .future);
+
+      users = [...newUsers];
+      hasMore = newUsers.length == limit;
+
+      state = [...users];
+    } catch (e, stackTrace) {
+      log(e.toString());
+      log(stackTrace.toString());
+    } finally {
+      isLoading = false;
     }
   }
 }

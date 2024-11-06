@@ -673,9 +673,18 @@ Future<UserModel> fetchUserDetails(
 
 @riverpod
 Future<List<UserModel>> fetchUsers(FetchUsersRef ref,
-    {int pageNo = 1, int limit = 20}) async {
+    {int pageNo = 1, int limit = 20, String? query}) async {
+  // Construct the base URL
+  Uri url = Uri.parse('$baseUrl/admin/users?pageNo=$pageNo&limit=$limit');
+
+  // Append query parameter if provided
+  if (query != null && query.isNotEmpty) {
+    url = Uri.parse(
+        '$baseUrl/admin/users?pageNo=$pageNo&limit=$limit&search=$query');
+  }
+
   final response = await http.get(
-    Uri.parse('$baseUrl/admin/users?pageNo=$pageNo&limit=$limit'),
+    url,
     headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"

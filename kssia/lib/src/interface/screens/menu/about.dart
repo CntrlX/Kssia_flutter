@@ -35,7 +35,7 @@ class AboutPage extends StatelessWidget {
               children: [
                 Icon(Icons.phone, color: Color(0xFF004797)),
                 SizedBox(width: 10),
-                Text('9425726433', style: TextStyle(fontSize: 16)),
+                Text('8078955514', style: TextStyle(fontSize: 16)),
               ],
             ),
             SizedBox(height: 10),
@@ -43,7 +43,7 @@ class AboutPage extends StatelessWidget {
               children: [
                 Icon(Icons.email, color: Color(0xFF004797)),
                 SizedBox(width: 10),
-                Text('kssia@gmail.com', style: TextStyle(fontSize: 16)),
+                Text('kssiatrisur@gmail.com', style: TextStyle(fontSize: 16)),
               ],
             ),
             SizedBox(height: 10),
@@ -54,11 +54,10 @@ class AboutPage extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    '''Building No. 11/673 A,
-HMT Industrial Estate,
-HMT Colony.P.O.,
-Kalamassery,
-Kerala-683 503''',
+                    '''
+Kerala State Small Industries Association Thrissur,
+KSSIA Building, Patturaikkal, Shornur Road, Thiruvamapadi P. O, Thrissur - 680022
+Tel 0487-2321562''',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

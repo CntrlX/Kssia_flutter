@@ -525,7 +525,7 @@ class MenuPage extends StatelessWidget {
                                   launchURL('https://www.skybertech.com');
                                 },
                                 child: const Text(
-                                  'Powered By SkyberTech',
+                                  'Powered By Skybertech',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.grey,
