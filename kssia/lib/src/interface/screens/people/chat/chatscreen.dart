@@ -475,58 +475,58 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                   },
                 ),
               ),
-              if (subscription != 'premium')
-                Positioned.fill(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                    child: Container(
-                      color: Colors.black
-                          .withOpacity(0.6), // Semi-transparent overlay
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.lock_outline,
-                              size: 50,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Unlock Premium Content',
-                              style: TextStyle(
-                                fontSize: 22,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Buy Premium to access this page and more.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            SizedBox(
-                                width: 230,
-                                child: customButton(
-                                    label: 'Buy Premium',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            const UpgradeDialog(),
-                                      );
-                                    }))
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              // if (subscription != 'premium')
+              //   Positioned.fill(
+              //     child: BackdropFilter(
+              //       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              //       child: Container(
+              //         color: Colors.black
+              //             .withOpacity(0.6), // Semi-transparent overlay
+              //         child: Center(
+              //           child: Column(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               const Icon(
+              //                 Icons.lock_outline,
+              //                 size: 50,
+              //                 color: Colors.white,
+              //               ),
+              //               const SizedBox(height: 16),
+              //               const Text(
+              //                 'Unlock Premium Content',
+              //                 style: TextStyle(
+              //                   fontSize: 22,
+              //                   color: Colors.white,
+              //                   fontWeight: FontWeight.bold,
+              //                 ),
+              //               ),
+              //               const SizedBox(height: 8),
+              //               const Text(
+              //                 'Buy Premium to access this page and more.',
+              //                 textAlign: TextAlign.center,
+              //                 style: TextStyle(
+              //                   fontSize: 14,
+              //                   color: Colors.white70,
+              //                 ),
+              //               ),
+              //               const SizedBox(height: 24),
+              //               SizedBox(
+              //                   width: 230,
+              //                   child: customButton(
+              //                       label: 'Buy Premium',
+              //                       onPressed: () {
+              //                         showDialog(
+              //                           context: context,
+              //                           builder: (context) =>
+              //                               const UpgradeDialog(),
+              //                         );
+              //                       }))
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
         ),

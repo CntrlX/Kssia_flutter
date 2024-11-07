@@ -311,23 +311,15 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
                           : 'REGISTER EVENT',
                   onPressed: () async {
                     if (!registered && widget.event.status != 'cancelled') {
-                      if (subscription != 'premium') {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const UpgradeDialog(),
-                        );
-                      } else {
-                        ApiRoutes userApi = ApiRoutes();
-                        await userApi.markEventAsRSVP(
-                            widget.event.id!, context);
+                      ApiRoutes userApi = ApiRoutes();
+                      await userApi.markEventAsRSVP(widget.event.id!, context);
 
-                        setState(() {
-                          widget.event.rsvp?.add(id);
-                          registered = widget.event.rsvp?.contains(id) ?? false;
-                        });
+                      setState(() {
+                        widget.event.rsvp?.add(id);
+                        registered = widget.event.rsvp?.contains(id) ?? false;
+                      });
 
-                        ref.invalidate(fetchEventsProvider);
-                      }
+                      ref.invalidate(fetchEventsProvider);
                     }
                   },
                   fontSize: 16,

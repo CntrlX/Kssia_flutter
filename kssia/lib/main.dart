@@ -63,7 +63,7 @@ class MainApp extends StatelessWidget {
           '/': (context) => SplashScreen(),
           '/login_screen': (context) => PhoneNumberScreen(),
           '/mainpage': (context) => MainPage(),
-          '/membership': (context) => MembershipSubscription(),
+          // '/membership': (context) => MembershipSubscription(),
         });
   }
 }

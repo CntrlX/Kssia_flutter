@@ -14,6 +14,7 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
@@ -55,25 +56,28 @@ class _FeedViewState extends ConsumerState<FeedView> {
   File? _requirementImage;
   ApiRoutes api = ApiRoutes();
 
-  Future<File?> _pickFile({required String imageType}) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'png',
-        'jpg',
-        'jpeg',
-      ],
-    );
+Future<File?> _pickFile({required String imageType}) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['png', 'jpg', 'jpeg'],
+  );
 
-    if (result != null) {
-      setState(() {
-        _requirementImage = File(result.files.single.path!);
-      });
-      return _requirementImage;
+  if (result != null) {
+    // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
+    if (result.files.single.size >= 1024 * 1024) {
+           CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
+
+      return null; // Exit the function if the file is too large
     }
-    return null;
-  }
 
+    // Set the selected file if it's within the size limit
+    setState(() {
+      _requirementImage = File(result.files.single.path!);
+    });
+    return _requirementImage;
+  }
+  return null;
+}
   void _openModalSheet({required String sheet}) {
     showModalBottomSheet(
         isScrollControlled: true,

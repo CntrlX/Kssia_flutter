@@ -10,6 +10,7 @@ import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
@@ -45,6 +46,14 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     );
 
     if (result != null) {
+      // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
+      if (result.files.single.size >= 1024 * 1024) {
+        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
+
+        return null; // Exit the function if the file is too large
+      }
+
+      // Set the selected file if it's within the size limit and matches the specified image type
       if (imageType == 'product') {
         _productImageFIle = File(result.files.single.path!);
         return _productImageFIle;

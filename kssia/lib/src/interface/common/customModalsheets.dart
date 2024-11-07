@@ -460,6 +460,9 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                       onTap: () async {
                         final pickedFile =
                             await widget.pickImage(imageType: widget.imageType);
+                        if (pickedFile == null) {
+                          Navigator.pop(context);
+                        }
                         setState(() {
                           awardImage = pickedFile;
                           state
@@ -650,6 +653,9 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                       onTap: () async {
                         final pickedFile =
                             await widget.pickImage(imageType: widget.imageType);
+                        if (pickedFile == null) {
+                          Navigator.pop(context);
+                        }
                         setState(() {
                           certificateImage = pickedFile;
                           state
@@ -828,6 +834,9 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
                       onTap: () async {
                         final pickedFile =
                             await widget.pickPdf(imageType: widget.imageType);
+                        if (pickedFile == null) {
+                          Navigator.pop(context);
+                        }
                         setState(() {
                           brochurePdf = pickedFile;
                           state.didChange(pickedFile);
@@ -1028,6 +1037,10 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
 
                           final pickedFile = await widget.pickImage(
                               imageType: widget.imageType);
+                          if (pickedFile == null) {
+                            Navigator.pop(context);
+                          }
+
                           setState(() {
                             productImage = pickedFile;
                             state.didChange(pickedFile); // Update form state
@@ -1351,6 +1364,9 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
               onTap: () async {
                 final pickedImage =
                     await widget.pickImage(imageType: widget.imageType);
+                if (pickedImage == null) {
+                  Navigator.pop(context);
+                }
                 setState(() {
                   requirementImage = pickedImage;
                 });
@@ -1500,6 +1516,9 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
           GestureDetector(
             onTap: () async {
               final pickedFile = await widget.pickImage(imageType: 'payment');
+              if (pickedFile == null) {
+                Navigator.pop(context);
+              }
               setState(() {
                 widget.paymentImage = pickedFile;
               });
@@ -1760,14 +1779,14 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                ),
-                              ),
-                            );
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -1886,7 +1905,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                                 Text(
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}'),
+                                    '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
                                 Text('${user.companyName ?? ''}'),
                               ],
                             ),
@@ -2137,7 +2156,7 @@ class RequirementModalSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}'),
+                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
                               Text('${user.companyName}'),
                             ],
                           ),

@@ -475,14 +475,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if (notice.noticeLink != null && notice.noticeLink != '')
                     GestureDetector(
                       onTap: () {
-                        if (subscription != 'premium') {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const UpgradeDialog(),
-                          );
-                        } else {
-                          launchURL(notice.noticeLink);
-                        }
+                        launchURL(notice.noticeLink);
                       },
                       child: const Padding(
                         padding: EdgeInsets.only(top: 10),

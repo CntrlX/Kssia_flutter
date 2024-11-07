@@ -246,6 +246,7 @@ import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/data/services/api_routes/transactions_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
@@ -281,21 +282,24 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
   Future<File?> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: [
-        'png',
-        'jpg',
-        'jpeg',
-      ],
+      allowedExtensions: ['png', 'jpg', 'jpeg'],
     );
 
     if (result != null) {
+      // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
+      if (result.files.single.size >= 1024 * 1024) {
+        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
+
+        return null; // Exit the function if the file is too large
+      }
+
+      // Set the selected file if it's within the size limit
       setState(() {
         _paymentImage = File(result.files.single.path!);
       });
       return _paymentImage;
-    } else {
-      return null;
     }
+    return null;
   }
 
   @override
