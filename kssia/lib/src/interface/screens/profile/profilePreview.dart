@@ -130,7 +130,7 @@ class ProfilePreview extends ConsumerWidget {
                                 'assets/icons/dummy_person_large.png'),
                         const SizedBox(height: 10),
                         Text(
-                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName??''}',
+                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
                           style: const TextStyle(
                             color: Color(0xFF2C2829),
                             fontSize: 20,
@@ -432,7 +432,7 @@ class ProfilePreview extends ConsumerWidget {
                                 count: user.video!.length,
                                 effect: const ExpandingDotsEffect(
                                   dotHeight: 8,
-                                  dotWidth: 3,
+                                  dotWidth: 4,
                                   activeDotColor: Colors.black,
                                   dotColor: Colors.grey,
                                 ),
@@ -653,17 +653,17 @@ class ProfilePreview extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(video.name!,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     Padding(
+          //       padding: const EdgeInsets.only(top: 10),
+          //       child: Text(video.name!,
+          //           style: const TextStyle(
+          //               fontWeight: FontWeight.bold, fontSize: 18)),
+          //     ),
+          //   ],
+          // ),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(

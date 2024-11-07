@@ -268,7 +268,7 @@ class CertificateCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: const Color.fromARGB(255, 201, 198, 198)),
         ),
-        height: 200.0, // Set the desired fixed height for the card
+        height: 220.0, // Set the desired fixed height for the card
         width: double.infinity, // Ensure the card width fits the screen
         child: Column(
           mainAxisSize:
