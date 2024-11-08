@@ -618,9 +618,9 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                           'Search and send enquiries to suppliers'),
                                       _buildPremiumCard(
                                           'Receive product and service enquiries'),
-                                      _buildPremiumCard(
-                                          'Provide feedback to KSSIA office'),
-                                      _buildPremiumCard('Chat with everyone'),
+                                      // _buildPremiumCard(
+                                      //     'Provide feedback to KSSIA office'),
+                                      // _buildPremiumCard('Chat with everyone'),
                                     ],
                                   ),
                                 ),
