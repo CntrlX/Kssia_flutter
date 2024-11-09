@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -73,8 +74,6 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   void dispose() {
-
-
     super.dispose();
   }
 
@@ -83,6 +82,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   static List<Widget> _widgetOptions = <Widget>[];
 
   void _onItemTapped(int index) {
+    HapticFeedback.selectionClick();
     setState(() {
       ref.read(currentNewsIndexProvider.notifier).state = 0;
       _selectedIndex = index;

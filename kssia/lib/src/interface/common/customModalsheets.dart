@@ -1441,6 +1441,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                       context,
                       "Your requirement will be reviewed by ADMIN",
                     );
+                    widget.textController.clear();
                     if (requirementImage != null) {
                       setState(() {
                         requirementImage = null; // Clear the image after saving

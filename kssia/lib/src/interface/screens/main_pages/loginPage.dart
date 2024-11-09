@@ -748,11 +748,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
     if (result != null) {
       // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
-      if (result.files.single.size >= 1024 * 1024) {
-        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
+      // if (result.files.single.size >= 1024 * 1024) {
+      //   CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
 
-        return null; // Exit the function if the file is too large
-      }
+      //   return null; // Exit the function if the file is too large
+      // }
 
       // Continue with your logic based on imageType
       if (imageType == 'profile') {
@@ -799,7 +799,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     );
 
     if (result != null) {
-      // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
       if (result.files.single.size >= 1024 * 1024) {
         CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
 
@@ -807,6 +806,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       }
 
       _brochurePdfFile = File(result.files.single.path!);
+      log('picked pdf :$_brochurePdfFile');
       return _brochurePdfFile;
     }
     return null;
@@ -913,14 +913,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   }
 
   Future<void> _addNewBrochure() async {
-    await api.createFileUrl(file: _brochurePdfFile!, token: token).then((url) {
-      final String brochureUrl = url;
-      final newBrochure =
-          Brochure(name: brochureNameController.text, url: brochureUrl);
+    log("picked pdf while add:$_brochurePdfFile");
+    final String brochureUrl =
+        await api.createFileUrl(file: _brochurePdfFile!, token: token);
 
-      ref.read(userProvider.notifier).updateBrochure(
-          [...?ref.read(userProvider).value?.brochure, newBrochure]);
-    });
+    final newBrochure =
+        Brochure(name: brochureNameController.text, url: brochureUrl);
+
+    ref.read(userProvider.notifier).updateBrochure(
+        [...?ref.read(userProvider).value?.brochure, newBrochure]);
   }
 
   void _removeBrochure(int index) async {

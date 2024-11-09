@@ -85,14 +85,14 @@ class SocketIoClient {
     _socket.connect();
   }
 
-  void disconnect() {
-    log('im inside disconnect');
-    _socket.disconnect();
-    _socket.dispose(); // To prevent memory leaks
-    if (!_controller.isClosed) {
-      _controller.close();
-    }
-  }
+  // void disconnect() {
+  //   log('im inside disconnect');
+  //   _socket.disconnect();
+  //   _socket.dispose(); // To prevent memory leaks
+  //   if (!_controller.isClosed) {
+  //     _controller.close();
+  //   }
+  // }
 }
 
 Future<void> sendChatMessage(

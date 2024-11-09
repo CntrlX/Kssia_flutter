@@ -18,7 +18,7 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 part 'user_api.g.dart';
 
@@ -159,9 +159,10 @@ class ApiRoutes {
     }
   }
 
-  Future<dynamic> createFileUrl({required File file, required token}) async {
+  Future<dynamic> createFileUrl(
+      {required File file, required String token}) async {
     final url = Uri.parse('$baseUrl/files/upload');
-
+    log('Im inside file creation');
     // Determine MIME type
     String fileName = file.path.split('/').last;
     String? mimeType;
@@ -172,8 +173,56 @@ class ApiRoutes {
     } else if (fileName.endsWith('.pdf')) {
       mimeType = 'application/pdf';
     } else {
-      return null; // Return null if the file type is unsupported
+      return null; // Unsupported file type
     }
+
+    // Log initial file size
+    log('Original file size: ${(file.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
+
+    // Check file size and compress if necessary
+    if (file.lengthSync() > 1 * 1024 * 1024) {
+      // File size > 1 MB
+      if (mimeType.startsWith('image/')) {
+        int quality = 80;
+        File? compressedFile = file;
+
+        // Iteratively compress until below 1 MB
+        while (compressedFile!.lengthSync() > 1 * 1024 * 1024 && quality > 20) {
+          final compressedImage = await FlutterImageCompress.compressWithFile(
+            file.absolute.path,
+            quality: quality,
+            minWidth: 1080,
+            minHeight: 1080,
+          );
+
+          if (compressedImage != null) {
+            compressedFile =
+                await File('${file.path}').writeAsBytes(compressedImage);
+            print(
+                'Compressed file size at quality $quality: ${(compressedFile.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
+            quality -=
+                5; // Lower quality for further compression if still above 1 MB
+          } else {
+            print('Compression failed');
+            return null;
+          }
+        }
+
+        // If compression is successful and below 1 MB, assign the compressed file
+        if (compressedFile.lengthSync() <= 1 * 1024 * 1024) {
+          file = compressedFile;
+        } else {
+          print('File could not be compressed below 1 MB');
+          return null;
+        }
+      } else {
+        print('File is too large and not an image, cannot compress');
+        return null;
+      }
+    }
+
+    // Log final file size before upload
+    log('Final file size: ${(file.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
 
     // Create multipart request
     final request = http.MultipartRequest('PUT', url)
@@ -192,16 +241,15 @@ class ApiRoutes {
       if (response.statusCode == 200) {
         final responseData = await response.stream.bytesToString();
         final jsonResponse = json.decode(responseData);
-
-        return jsonResponse['data']; // Return the data part of the response
+        return jsonResponse['data'];
       } else {
         final responseBody = await response.stream.bytesToString();
         print('Error Response Body: $responseBody');
-        return null; // Return null or an error message
+        return null;
       }
     } catch (e) {
       print(e);
-      return null; // Return null or an error message in case of an exception
+      return null;
     }
   }
 
