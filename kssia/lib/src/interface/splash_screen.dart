@@ -49,7 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           'your_channel_name',
           importance: Importance.max,
           priority: Priority.high,
-          showWhen: false,
+          showWhen: false,  sound: RawResourceAndroidNotificationSound('default') 
         );
         const NotificationDetails platformChannelSpecifics =
             NotificationDetails(android: androidPlatformChannelSpecifics);
