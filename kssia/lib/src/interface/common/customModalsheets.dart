@@ -998,278 +998,289 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Add Products',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              FormField<File>(
-                initialValue: productImage,
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please upload an image';
-                  }
-                  return null;
-                },
-                builder: (FormFieldState<File> state) {
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return Center(
-                                child: LoadingAnimation(),
-                              );
-                            },
-                          );
-
-                          final pickedFile = await widget.pickImage(
-                              imageType: widget.imageType);
-                          if (pickedFile == null) {
-                            Navigator.pop(context);
-                          }
-
-                          setState(() {
-                            productImage = pickedFile;
-                            state.didChange(pickedFile); // Update form state
-                          });
-
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          height: 110,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                            border: state.hasError
-                                ? Border.all(color: Colors.red)
-                                : null,
-                          ),
-                          child: productImage == null
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.add,
-                                          size: 27, color: Color(0xFF004797)),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        'Upload Image',
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 102, 101, 101)),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Center(
-                                  child: Image.file(
-                                    productImage!,
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  ),
-                                ),
-                        ),
-                      ),
-                      if (state.hasError)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            state.errorText!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-              Center(
-                child: Text('Must be less than 1mb'),
-              ),
-              const SizedBox(height: 20),
-              ModalSheetTextFormField(
-                textController: widget.productNameText,
-                label: 'Add name',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a product name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              ModalSheetTextFormField(
-                textController: widget.descriptionText,
-                label: 'Add description',
-                maxLines: 4,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              ModalSheetTextFormField(
-                textController: widget.moqText,
-                label: 'Add MOQ',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the MOQ';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Flexible(
-                    child: ModalSheetTextFormField(
-                      textController: widget.actualPriceText,
-                      label: 'Actual price',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the actual price';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: ModalSheetTextFormField(
-                      textController: widget.offerPriceText,
-                      label: 'Offer price',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the offer price';
-                        }
-                        if (int.parse(widget.offerPriceText.text) >
-                            int.parse(widget.actualPriceText.text)) {
-                          return 'Actual price is higher';
-                        }
-                        if (int.parse(widget.offerPriceText.text) ==
-                            int.parse(widget.actualPriceText.text)) {
-                          return 'Prices should be different';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: const BorderSide(
-                      color: Color.fromARGB(255, 185, 181, 181),
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                onPressed: () {
-                  _showProductPriceTypeDialog(context).then((value) {
-                    if (value != null) {
-                      setState(() {
-                        productPriceType = value;
-                        widget.productPriceTypeController.text = value;
-                      });
-
-                      log('Selected price per unit: ${productPriceType}'); // Log the updated value
-                    }
-                  });
-                },
-                child: Row(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.productPriceTypeController.text = '';
+        widget.productNameText.text = '';
+        widget.descriptionText.text = '';
+        widget.moqText.text = '';
+        widget.actualPriceText.text = '';
+        widget.offerPriceText.text = '';
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      productPriceType,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 94, 93, 93)),
+                    const Text(
+                      'Add Products',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey,
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              customButton(
-                label: 'SAVE',
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) =>
-                          const Center(child: LoadingAnimation()),
-                    );
-
-                    try {
-                      // Pass awardImage to addAwardCard
-                      await widget.addProductCard();
-                      widget.actualPriceText.clear();
-                      widget.descriptionText.clear();
-                      widget.moqText.clear();
-                      widget.offerPriceText.clear();
-                      widget.productNameText.clear();
-                      widget.productPriceTypeController.clear();
-
-                      if (productImage != null) {
-                        setState(() {
-                          productImage = null; // Clear the image after saving
-                        });
-                      }
-                    } finally {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
+                const SizedBox(height: 10),
+                FormField<File>(
+                  initialValue: productImage,
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please upload an image';
                     }
-                  }
-                },
-                fontSize: 16,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-            ],
+                    return null;
+                  },
+                  builder: (FormFieldState<File> state) {
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return Center(
+                                  child: LoadingAnimation(),
+                                );
+                              },
+                            );
+
+                            final pickedFile = await widget.pickImage(
+                                imageType: widget.imageType);
+                            if (pickedFile == null) {
+                              Navigator.pop(context);
+                            }
+
+                            setState(() {
+                              productImage = pickedFile;
+                              state.didChange(pickedFile); // Update form state
+                            });
+
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            height: 110,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10),
+                              border: state.hasError
+                                  ? Border.all(color: Colors.red)
+                                  : null,
+                            ),
+                            child: productImage == null
+                                ? const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.add,
+                                            size: 27, color: Color(0xFF004797)),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Upload Image',
+                                          style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 102, 101, 101)),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Center(
+                                    child: Image.file(
+                                      productImage!,
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        if (state.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              state.errorText!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                Center(
+                  child: Text('Must be less than 1mb'),
+                ),
+                const SizedBox(height: 20),
+                ModalSheetTextFormField(
+                  textController: widget.productNameText,
+                  label: 'Add name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a product name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                ModalSheetTextFormField(
+                  textController: widget.descriptionText,
+                  label: 'Add description',
+                  maxLines: 4,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                ModalSheetTextFormField(
+                  textController: widget.moqText,
+                  label: 'Add MOQ',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the MOQ';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Flexible(
+                      child: ModalSheetTextFormField(
+                        textController: widget.actualPriceText,
+                        label: 'Actual price',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the actual price';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: ModalSheetTextFormField(
+                        textController: widget.offerPriceText,
+                        label: 'Offer price',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the offer price';
+                          }
+                          if (int.parse(widget.offerPriceText.text) >
+                              int.parse(widget.actualPriceText.text)) {
+                            return 'Actual price is higher';
+                          }
+                          if (int.parse(widget.offerPriceText.text) ==
+                              int.parse(widget.actualPriceText.text)) {
+                            return 'Prices should be different';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: const BorderSide(
+                        color: Color.fromARGB(255, 185, 181, 181),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    _showProductPriceTypeDialog(context).then((value) {
+                      if (value != null) {
+                        setState(() {
+                          productPriceType = value;
+                          widget.productPriceTypeController.text = value;
+                        });
+
+                        log('Selected price per unit: ${productPriceType}'); // Log the updated value
+                      }
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        productPriceType,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 94, 93, 93)),
+                      ),
+                      const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                customButton(
+                  label: 'SAVE',
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            const Center(child: LoadingAnimation()),
+                      );
+
+                      try {
+                        // Pass awardImage to addAwardCard
+                        await widget.addProductCard();
+                        widget.actualPriceText.clear();
+                        widget.descriptionText.clear();
+                        widget.moqText.clear();
+                        widget.offerPriceText.clear();
+                        widget.productNameText.clear();
+                        widget.productPriceTypeController.clear();
+
+                        if (productImage != null) {
+                          setState(() {
+                            productImage = null; // Clear the image after saving
+                          });
+                        }
+                      } finally {
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                  fontSize: 16,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
           ),
         ),
       ),
