@@ -300,10 +300,13 @@ class CertificateCard extends StatelessWidget {
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              certificate.name!,
-                              style: const TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.w600),
+                            Flexible(
+                              child: Text(
+                                certificate.name ?? '',
+                                style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
                             IconButton(
                                 onPressed: () => onRemove!(),
