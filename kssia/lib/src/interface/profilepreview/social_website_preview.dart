@@ -95,11 +95,20 @@ Padding customWebsitePreview(int index, {Website? website}) {
                 ),
               ),
               if (website != null)
-                Padding(
+                Expanded(
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 15),
                     child: Text(
-                        '${website.name != null && website.name != 'null' ? website.name : 'Website'}')),
+                      '${website?.name != '' && website?.name != null && website?.name != 'null' ? website?.name : website?.url ?? ''}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16, // Adjust font size as needed
+                      ),
+                    ),
+                  ),
+                ),
             ],
           )),
     ),

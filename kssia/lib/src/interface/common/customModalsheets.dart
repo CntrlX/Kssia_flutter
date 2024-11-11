@@ -64,12 +64,12 @@ void showWebsiteSheet({
                   ),
                   const SizedBox(height: 20),
                   ModalSheetTextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is a required field';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'This is a required field';
+                    //   }
+                    //   return null;
+                    // },
                     label: 'Add name',
                     textController: textController1,
                   ),
@@ -180,12 +180,12 @@ void showVideoLinkSheet({
                   ),
                   const SizedBox(height: 20),
                   ModalSheetTextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is a required field';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'This is a required field';
+                    //   }
+                    //   return null;
+                    // },
                     label: 'Add name',
                     textController: textController1,
                   ),
@@ -415,167 +415,173 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Awards',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            FormField<File>(
-              initialValue: awardImage, // Updated to use awardImage in State
-              validator: (value) {
-                if (value == null) {
-                  return 'Please upload an image';
-                }
-                return null;
-              },
-              builder: (FormFieldState<File> state) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        final pickedFile =
-                            await widget.pickImage(imageType: widget.imageType);
-                        if (pickedFile == null) {
-                          Navigator.pop(context);
-                        }
-                        setState(() {
-                          awardImage = pickedFile;
-                          state
-                              .didChange(pickedFile); // Update form field state
-                        });
-                      },
-                      child: Container(
-                        height: 110,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                          border: state.hasError
-                              ? Border.all(color: Colors.red)
-                              : null,
-                        ),
-                        child: awardImage == null
-                            ? const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.add,
-                                        size: 27, color: Color(0xFF004797)),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Upload Image',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 102, 101, 101)),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Center(
-                                child: Image.file(
-                                awardImage!,
-                                fit: BoxFit.cover,
-                                width: 120,
-                                height: 120,
-                              )),
-                      ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.textController1.text = '';
+        widget.textController2.text = '';
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add Awards',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    if (state.hasError)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          state.errorText!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FormField<File>(
+                initialValue: awardImage, // Updated to use awardImage in State
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please upload an image';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<File> state) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final pickedFile = await widget.pickImage(
+                              imageType: widget.imageType);
+                          if (pickedFile == null) {
+                            Navigator.pop(context);
+                          }
+                          setState(() {
+                            awardImage = pickedFile;
+                            state.didChange(
+                                pickedFile); // Update form field state
+                          });
+                        },
+                        child: Container(
+                          height: 110,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                            border: state.hasError
+                                ? Border.all(color: Colors.red)
+                                : null,
+                          ),
+                          child: awardImage == null
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add,
+                                          size: 27, color: Color(0xFF004797)),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Upload Image',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 102, 101, 101)),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Center(
+                                  child: Image.file(
+                                  awardImage!,
+                                  fit: BoxFit.cover,
+                                  width: 120,
+                                  height: 120,
+                                )),
+                        ),
+                      ),
+                      if (state.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            state.errorText!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ModalSheetTextFormField(
-              maxLength: 15,
-              label: 'Add name',
-              textController: widget.textController1,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            ModalSheetTextFormField(
-              maxLength: 15,
-              label: 'Add Authority name',
-              textController: widget.textController2,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter the authority name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            customButton(
-              label: 'SAVE',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) =>
-                        const Center(child: LoadingAnimation()),
+                    ],
                   );
-
-                  try {
-                    // Pass awardImage to addAwardCard
-                    await widget.addAwardCard();
-                    widget.textController1.clear();
-                    widget.textController2.clear();
-
-                    if (awardImage != null) {
-                      setState(() {
-                        awardImage = null; // Clear the image after saving
-                      });
-                    }
-                  } finally {
-                    Navigator.of(context).pop();
-                    Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 20),
+              ModalSheetTextFormField(
+                maxLength: 15,
+                label: 'Add name',
+                textController: widget.textController1,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
                   }
-                }
-              },
-              fontSize: 16,
-            ),
-            const SizedBox(height: 10),
-          ],
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              ModalSheetTextFormField(
+                maxLength: 15,
+                label: 'Add Authority name',
+                textController: widget.textController2,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the authority name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              customButton(
+                label: 'SAVE',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: LoadingAnimation()),
+                    );
+
+                    try {
+                      // Pass awardImage to addAwardCard
+                      await widget.addAwardCard();
+                      widget.textController1.clear();
+                      widget.textController2.clear();
+
+                      if (awardImage != null) {
+                        setState(() {
+                          awardImage = null; // Clear the image after saving
+                        });
+                      }
+                    } finally {
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                fontSize: 16,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
@@ -608,155 +614,161 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Certificates',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            FormField<File>(
-              initialValue: certificateImage,
-              validator: (value) {
-                if (value == null) {
-                  return 'Please upload an image';
-                }
-                return null;
-              },
-              builder: (FormFieldState<File> state) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        final pickedFile =
-                            await widget.pickImage(imageType: widget.imageType);
-                        if (pickedFile == null) {
-                          Navigator.pop(context);
-                        }
-                        setState(() {
-                          certificateImage = pickedFile;
-                          state
-                              .didChange(pickedFile); // Update form field state
-                        });
-                      },
-                      child: Container(
-                        height: 110,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                          border: state.hasError
-                              ? Border.all(color: Colors.red)
-                              : null,
-                        ),
-                        child: certificateImage == null
-                            ? const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.add,
-                                        size: 27, color: Color(0xFF004797)),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Upload Image',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 102, 101, 101)),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Center(
-                                child: Image.file(
-                                  certificateImage!,
-                                  fit: BoxFit.cover,
-                                  width: 120,
-                                  height: 120,
-                                ),
-                              ),
-                      ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.textController.text = '';
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add Certificates',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    if (state.hasError)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          state.errorText!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FormField<File>(
+                initialValue: certificateImage,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please upload an image';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<File> state) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final pickedFile = await widget.pickImage(
+                              imageType: widget.imageType);
+                          if (pickedFile == null) {
+                            Navigator.pop(context);
+                          }
+                          setState(() {
+                            certificateImage = pickedFile;
+                            state.didChange(
+                                pickedFile); // Update form field state
+                          });
+                        },
+                        child: Container(
+                          height: 110,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                            border: state.hasError
+                                ? Border.all(color: Colors.red)
+                                : null,
+                          ),
+                          child: certificateImage == null
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add,
+                                          size: 27, color: Color(0xFF004797)),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Upload Image',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 102, 101, 101)),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Center(
+                                  child: Image.file(
+                                    certificateImage!,
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (state.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            state.errorText!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ModalSheetTextFormField(
-              maxLength: 15,
-              label: 'Add Name',
-              textController: widget.textController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            customButton(
-              label: 'SAVE',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) =>
-                        const Center(child: LoadingAnimation()),
+                    ],
                   );
-
-                  try {
-                    // Pass awardImage to addAwardCard
-                    await widget.addCertificateCard();
-                    widget.textController.clear();
-
-                    if (certificateImage != null) {
-                      setState(() {
-                        certificateImage = null; // Clear the image after saving
-                      });
-                    }
-                  } finally {
-                    Navigator.of(context).pop();
-                    Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 20),
+              ModalSheetTextFormField(
+                maxLength: 15,
+                label: 'Add Name',
+                textController: widget.textController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
                   }
-                }
-              },
-              fontSize: 16,
-            ),
-            const SizedBox(height: 10),
-          ],
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              customButton(
+                label: 'SAVE',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: LoadingAnimation()),
+                    );
+
+                    try {
+                      // Pass awardImage to addAwardCard
+                      await widget.addCertificateCard();
+                      widget.textController.clear();
+
+                      if (certificateImage != null) {
+                        setState(() {
+                          certificateImage =
+                              null; // Clear the image after saving
+                        });
+                      }
+                    } finally {
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                fontSize: 16,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
@@ -789,155 +801,160 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Add Brochure',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            FormField<File>(
-              initialValue: brochurePdf,
-              validator: (value) {
-                if (value == null) {
-                  return 'Please upload a PDF';
-                }
-                return null;
-              },
-              builder: (FormFieldState<File> state) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        final pickedFile =
-                            await widget.pickPdf(imageType: widget.imageType);
-                        if (pickedFile == null) {
-                          Navigator.pop(context);
-                        }
-                        setState(() {
-                          brochurePdf = pickedFile;
-                          state.didChange(pickedFile);
-                        });
-                      },
-                      child: brochurePdf == null
-                          ? Container(
-                              height: 110,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
-                                border: state.hasError
-                                    ? Border.all(color: Colors.red)
-                                    : null,
-                              ),
-                              child: const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.add,
-                                        size: 27, color: Color(0xFF004797)),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Upload PDF',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 102, 101, 101)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : const Center(
-                              child: Text(
-                                'PDF ADDED',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.textController.text = '';
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add Brochure',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    if (state.hasError)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          state.errorText!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FormField<File>(
+                initialValue: brochurePdf,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please upload a PDF';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<File> state) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final pickedFile =
+                              await widget.pickPdf(imageType: widget.imageType);
+                          if (pickedFile == null) {
+                            Navigator.pop(context);
+                          }
+                          setState(() {
+                            brochurePdf = pickedFile;
+                            state.didChange(pickedFile);
+                          });
+                        },
+                        child: brochurePdf == null
+                            ? Container(
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: state.hasError
+                                      ? Border.all(color: Colors.red)
+                                      : null,
+                                ),
+                                child: const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add,
+                                          size: 27, color: Color(0xFF004797)),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Upload PDF',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 102, 101, 101)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : const Center(
+                                child: Text(
+                                  'PDF ADDED',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ),
+                      ),
+                      if (state.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            state.errorText!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ModalSheetTextFormField(
-              maxLength: 15,
-              label: 'Add Name',
-              textController: widget.textController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name for the brochure';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            customButton(
-              label: 'SAVE',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) =>
-                        const Center(child: LoadingAnimation()),
+                    ],
                   );
-
-                  try {
-                    // Pass awardImage to addAwardCard
-                    await widget.addBrochureCard();
-                    widget.textController.clear();
-
-                    if (brochurePdf != null) {
-                      setState(() {
-                        brochurePdf = null; // Clear the image after saving
-                      });
-                    }
-                  } finally {
-                    Navigator.of(context).pop();
-                    Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 20),
+              ModalSheetTextFormField(
+                maxLength: 15,
+                label: 'Add Name',
+                textController: widget.textController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name for the brochure';
                   }
-                }
-              },
-              fontSize: 16,
-            ),
-            const SizedBox(height: 10),
-          ],
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              customButton(
+                label: 'SAVE',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: LoadingAnimation()),
+                    );
+
+                    try {
+                      // Pass awardImage to addAwardCard
+                      await widget.addBrochureCard();
+                      widget.textController.clear();
+
+                      if (brochurePdf != null) {
+                        setState(() {
+                          brochurePdf = null; // Clear the image after saving
+                        });
+                      }
+                    } finally {
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                fontSize: 16,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
@@ -1427,13 +1444,18 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                   );
 
                   try {
-                    // Pass awardImage to addAwardCard
+                    ApiRoutes userApi = ApiRoutes();
+                    String? image;
+                    if (requirementImage != null) {
+                      image = await userApi.createFileUrl(
+                          file: requirementImage!, token: token);
+                    }
                     await api.uploadRequirement(
                       token,
                       id,
                       widget.textController.text,
                       'pending',
-                      requirementImage,
+                      image,
                       context,
                     );
 

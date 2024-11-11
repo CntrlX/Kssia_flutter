@@ -1,15 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
-import 'package:kssia/src/interface/common/membership_subscription.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); 
+   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -63,6 +64,7 @@ class MainApp extends StatelessWidget {
           '/': (context) => SplashScreen(),
           '/login_screen': (context) => PhoneNumberScreen(),
           '/mainpage': (context) => MainPage(),
+          '/profile_completion': (context) => ProfileCompletionScreen(),
           // '/membership': (context) => MembershipSubscription(),
         });
   }

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -23,6 +24,7 @@ import 'package:kssia/src/interface/common/custom_switch.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/common/website_video_cards.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -633,7 +635,7 @@ class ProfileCompletionScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => DetailsPage()));
+                                    builder: (context) => const DetailsPage()));
                             ref.invalidate(userProvider);
                           },
                           fontSize: 16);
@@ -1197,10 +1199,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               body: asyncUser.when(
                 loading: () {
                   log('im inside details page');
-                  return Center(child: LoadingAnimation());
+                  return const Center(child: LoadingAnimation());
                 },
                 error: (error, stackTrace) {
-                  return Center(
+                  return const Center(
                     child: LoadingAnimation(),
                   );
                 },
@@ -1317,7 +1319,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                               context) =>
                                                           const MainPage()));
                                             },
-                                            child: Icon(Icons.close)),
+                                            child: const Icon(Icons.close)),
                                       ],
                                     ),
                                   ),
@@ -1698,14 +1700,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
+                                  const Padding(
+                                    padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 20),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'Phone Number',
                                           style: TextStyle(
                                               fontSize: 16,
@@ -1796,14 +1798,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           color: Color(0xFF004797)),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
+                                  const Padding(
+                                    padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 20),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'Contact Details',
                                           style: TextStyle(
                                               fontSize: 16,
@@ -1932,670 +1934,982 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                  if (subscription == 'premium')
+                                    Column(
                                       children: [
-                                        const Text(
-                                          'Social Media',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        // CustomSwitch(
-                                        //   value: ref.watch(
-                                        //       isSocialDetailsVisibleProvider),
-                                        //   onChanged: (bool value) async {
-                                        //     SharedPreferences switchPreference =
-                                        //         await SharedPreferences
-                                        //             .getInstance();
-                                        //     switchPreference.setBool(
-                                        //         'socialSwitch', value);
-                                        //     ref
-                                        //         .read(isSocialDetailsVisibleProvider
-                                        //             .notifier)
-                                        //         .state = value;
-                                        //     if (value == false) {
-                                        //       ref
-                                        //           .read(userProvider.notifier)
-                                        //           .updateSocialMedia([], '', '');
-                                        //       log(user.socialMedia.toString());
-                                        //     }
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  // if (isSocialDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 20,
-                                        bottom: 10),
-                                    child: CustomTextFormField(
-                                      validator: (value) =>
-                                          isValidUri(igController.text),
-                                      textController: igController,
-                                      labelText: 'Enter Instagram',
-                                      prefixIcon: const SvgIcon(
-                                        assetName: 'assets/icons/instagram.svg',
-                                        size: 10,
-                                        color: Color(0xFF004797),
-                                      ),
-                                    ),
-                                  ),
-                                  // if (isSocialDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 20,
-                                        bottom: 10),
-                                    child: CustomTextFormField(
-                                      validator: (value) =>
-                                          isValidUri(linkedinController.text),
-                                      textController: linkedinController,
-                                      labelText: 'Enter Linkedin',
-                                      prefixIcon: const SvgIcon(
-                                        assetName: 'assets/icons/linkedin.svg',
-                                        color: Color(0xFF004797),
-                                        size: 10,
-                                      ),
-                                    ),
-                                  ),
-                                  // if (isSocialDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 20,
-                                        bottom: 10),
-                                    child: CustomTextFormField(
-                                      validator: (value) =>
-                                          isValidUri(twtitterController.text),
-                                      textController: twtitterController,
-                                      labelText: 'Enter Twitter',
-                                      prefixIcon: const SvgIcon(
-                                        assetName: 'assets/icons/twitter.svg',
-                                        color: Color(0xFF004797),
-                                        size: 13,
-                                      ),
-                                    ),
-                                  ),
-                                  // if (isSocialDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 20,
-                                        bottom: 10),
-                                    child: CustomTextFormField(
-                                      validator: (value) =>
-                                          isValidUri(facebookController.text),
-                                      textController: facebookController,
-                                      labelText: 'Enter Facebook',
-                                      prefixIcon: const Icon(
-                                        Icons.facebook,
-                                        color: Color(0xFF004797),
-                                        size: 28,
-                                      ),
-                                    ),
-                                  ),
-                                  // if (isSocialDetailsVisible)
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(right: 20, bottom: 50),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        // Text(
-                                        //   'Add more',
-                                        //   style: TextStyle(
-                                        //       color: Color(0xFF004797),
-                                        //       fontWeight: FontWeight.w600,
-                                        //       fontSize: 15),
-                                        // ),
-                                        // Icon(
-                                        //   Icons.add,
-                                        //   color: Color(0xFF004797),
-                                        //   size: 18,
-                                        // )
-                                      ],
-                                    ),
-                                  ),
-                                  ListView.builder(
-                                    shrinkWrap:
-                                        true, // Let ListView take up only as much space as it needs
-                                    physics:
-                                        NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                    itemCount: user.websites?.length,
-                                    itemBuilder: (context, index) {
-                                      log('Websites count: ${user.websites?.length}');
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical:
-                                                4.0), // Space between items
-                                        child: customWebsiteCard(
-                                            onRemove: () =>
-                                                _removeWebsite(index),
-                                            website: user.websites?[index]),
-                                      );
-                                    },
-                                  ),
-                                  // if (isWebsiteDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                    ),
-                                    child: CustomTextFormField(
-                                      textController: websiteLinkController,
-                                      readOnly: true,
-                                      labelText: 'Enter Website Link',
-                                      suffixIcon: const Icon(
-                                        Icons.add,
-                                        color: Color(0xFF004797),
-                                      ),
-                                      onTap: () {
-                                        showWebsiteSheet(
-                                            addWebsite: _addNewWebsite,
-                                            textController1:
-                                                websiteNameController,
-                                            textController2:
-                                                websiteLinkController,
-                                            fieldName: 'Add Website Link',
-                                            title: 'Add Website',
-                                            context: context);
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Add Video Link',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        // CustomSwitch(
-                                        //   value:
-                                        //       ref.watch(isVideoDetailsVisibleProvider),
-                                        //   onChanged: (bool value) {
-                                        //     setState(() {
-                                        //       ref
-                                        //           .read(isVideoDetailsVisibleProvider
-                                        //               .notifier)
-                                        //           .state = value;
-                                        //     });
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  ListView.builder(
-                                    shrinkWrap:
-                                        true, // Let ListView take up only as much space as it needs
-                                    physics:
-                                        NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                    itemCount: user.video?.length,
-                                    itemBuilder: (context, index) {
-                                      log('video count: ${user.video?.length}');
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical:
-                                                4.0), // Space between items
-                                        child: customVideoCard(
-                                            onRemove: () => _removeVideo(index),
-                                            video: user.video?[index]),
-                                      );
-                                    },
-                                  ),
-                                  // if (isVideoDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20, bottom: 70),
-                                    child: CustomTextFormField(
-                                      textController: videoLinkController,
-                                      readOnly: true,
-                                      onTap: () {
-                                        showVideoLinkSheet(
-                                            addVideo: _addNewVideo,
-                                            textController1:
-                                                videoNameController,
-                                            textController2:
-                                                videoLinkController,
-                                            fieldName: 'Add Youtube Link',
-                                            title: 'Add Video Link',
-                                            context: context);
-                                      },
-                                      labelText: 'Enter Video Link',
-                                      suffixIcon: const Icon(
-                                        Icons.add,
-                                        color: Color(0xFF004797),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // if (isVideoDetailsVisible)
-
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 10,
-                                        bottom: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Enter Awards',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        // CustomSwitch(
-                                        //   value: ref.watch(
-                                        //       isAwardsDetailsVisibleProvider),
-                                        //   onChanged: (bool value) async {
-                                        //     SharedPreferences switchPreference =
-                                        //         await SharedPreferences
-                                        //             .getInstance();
-                                        //     switchPreference.setBool(
-                                        //         'awardSwitch', value);
-                                        //     ref
-                                        //         .read(isAwardsDetailsVisibleProvider
-                                        //             .notifier)
-                                        //         .state = value;
-
-                                        //     // if (value == false) {
-                                        //     //   setState(
-                                        //     //     () {
-                                        //     //       awards = [];
-                                        //     //     },
-                                        //     //   );
-                                        //     // }
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  // if (isAwardsDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, bottom: 10, right: 10),
-                                    child: GridView.builder(
-                                      shrinkWrap:
-                                          true, // Let GridView take up only as much space as it needs
-                                      physics:
-                                          const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2, // Number of columns
-                                        crossAxisSpacing:
-                                            8.0, // Space between columns
-                                        mainAxisSpacing:
-                                            8.0, // Space between rows
-                                      ),
-                                      itemCount: user.awards!.length,
-                                      itemBuilder: (context, index) {
-                                        return AwardCard(
-                                          award: user.awards![index],
-                                          onRemove: () => _removeAward(index),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  // if (isAwardsDetailsVisible)
-                                  GestureDetector(
-                                    onTap: () {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-
-                                      Future.delayed(Duration(milliseconds: 50),
-                                          () {
-                                        _openModalSheet(sheet: 'award');
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 25, right: 25, bottom: 60),
-                                      child: Container(
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF2F2F2),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: const Center(
-                                          child: Column(
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Icon(
-                                                Icons.add,
-                                                color: Color(0xFF004797),
+                                              Text(
+                                                'Social Media',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
                                               ),
-                                              SizedBox(
-                                                height: 10,
+                                              // CustomSwitch(
+                                              //   value: ref.watch(
+                                              //       isSocialDetailsVisibleProvider),
+                                              //   onChanged: (bool value) async {
+                                              //     SharedPreferences switchPreference =
+                                              //         await SharedPreferences
+                                              //             .getInstance();
+                                              //     switchPreference.setBool(
+                                              //         'socialSwitch', value);
+                                              //     ref
+                                              //         .read(isSocialDetailsVisibleProvider
+                                              //             .notifier)
+                                              //         .state = value;
+                                              //     if (value == false) {
+                                              //       ref
+                                              //           .read(userProvider.notifier)
+                                              //           .updateSocialMedia([], '', '');
+                                              //       log(user.socialMedia.toString());
+                                              //     }
+                                              //   },
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                        // if (isSocialDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 20,
+                                              bottom: 10),
+                                          child: CustomTextFormField(
+                                            validator: (value) =>
+                                                isValidUri(igController.text),
+                                            textController: igController,
+                                            labelText: 'Enter Instagram',
+                                            prefixIcon: const SvgIcon(
+                                              assetName:
+                                                  'assets/icons/instagram.svg',
+                                              size: 10,
+                                              color: Color(0xFF004797),
+                                            ),
+                                          ),
+                                        ),
+                                        // if (isSocialDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 20,
+                                              bottom: 10),
+                                          child: CustomTextFormField(
+                                            validator: (value) => isValidUri(
+                                                linkedinController.text),
+                                            textController: linkedinController,
+                                            labelText: 'Enter Linkedin',
+                                            prefixIcon: const SvgIcon(
+                                              assetName:
+                                                  'assets/icons/linkedin.svg',
+                                              color: Color(0xFF004797),
+                                              size: 10,
+                                            ),
+                                          ),
+                                        ),
+                                        // if (isSocialDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 20,
+                                              bottom: 10),
+                                          child: CustomTextFormField(
+                                            validator: (value) => isValidUri(
+                                                twtitterController.text),
+                                            textController: twtitterController,
+                                            labelText: 'Enter Twitter',
+                                            prefixIcon: const SvgIcon(
+                                              assetName:
+                                                  'assets/icons/twitter.svg',
+                                              color: Color(0xFF004797),
+                                              size: 13,
+                                            ),
+                                          ),
+                                        ),
+                                        // if (isSocialDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 20,
+                                              bottom: 10),
+                                          child: CustomTextFormField(
+                                            validator: (value) => isValidUri(
+                                                facebookController.text),
+                                            textController: facebookController,
+                                            labelText: 'Enter Facebook',
+                                            prefixIcon: const Icon(
+                                              Icons.facebook,
+                                              color: Color(0xFF004797),
+                                              size: 28,
+                                            ),
+                                          ),
+                                        ),
+                                        // if (isSocialDetailsVisible)
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              right: 20, bottom: 50),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              // Text(
+                                              //   'Add more',
+                                              //   style: TextStyle(
+                                              //       color: Color(0xFF004797),
+                                              //       fontWeight: FontWeight.w600,
+                                              //       fontSize: 15),
+                                              // ),
+                                              // Icon(
+                                              //   Icons.add,
+                                              //   color: Color(0xFF004797),
+                                              //   size: 18,
+                                              // )
+                                            ],
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Add Website Link',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
                                               ),
+                                              // CustomSwitch(
+                                              //   value: false,
+                                              //   onChanged: (bool value) {
+                                              //     setState(() {
+                                              //       // ref
+                                              //       // .read(isVideoDetailsVisibleProvider
+                                              //       //     .notifier)
+                                              //       // .state = value;
+                                              //     });
+                                              //   },
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                        ListView.builder(
+                                          shrinkWrap:
+                                              true, // Let ListView take up only as much space as it needs
+                                          physics:
+                                              const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                          itemCount: user.websites?.length,
+                                          itemBuilder: (context, index) {
+                                            log('Websites count: ${user.websites?.length}');
+                                            return Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  vertical:
+                                                      4.0), // Space between items
+                                              child: customWebsiteCard(
+                                                  onRemove: () =>
+                                                      _removeWebsite(index),
+                                                  website:
+                                                      user.websites?[index]),
+                                            );
+                                          },
+                                        ),
+                                        // if (isWebsiteDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 20,
+                                            right: 20,
+                                          ),
+                                          child: CustomTextFormField(
+                                            textController:
+                                                websiteLinkController,
+                                            readOnly: true,
+                                            labelText: 'Enter Website Link',
+                                            suffixIcon: const Icon(
+                                              Icons.add,
+                                              color: Color(0xFF004797),
+                                            ),
+                                            onTap: () {
+                                              showWebsiteSheet(
+                                                  addWebsite: _addNewWebsite,
+                                                  textController1:
+                                                      websiteNameController,
+                                                  textController2:
+                                                      websiteLinkController,
+                                                  fieldName: 'Add Website Link',
+                                                  title: 'Add Website',
+                                                  context: context);
+                                            },
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Add Video Link',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              // CustomSwitch(
+                                              //   value:
+                                              //       ref.watch(isVideoDetailsVisibleProvider),
+                                              //   onChanged: (bool value) {
+                                              //     setState(() {
+                                              //       ref
+                                              //           .read(isVideoDetailsVisibleProvider
+                                              //               .notifier)
+                                              //           .state = value;
+                                              //     });
+                                              //   },
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                        ListView.builder(
+                                          shrinkWrap:
+                                              true, // Let ListView take up only as much space as it needs
+                                          physics:
+                                              const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                          itemCount: user.video?.length,
+                                          itemBuilder: (context, index) {
+                                            log('video count: ${user.video?.length}');
+                                            return Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  vertical:
+                                                      4.0), // Space between items
+                                              child: customVideoCard(
+                                                  onRemove: () =>
+                                                      _removeVideo(index),
+                                                  video: user.video?[index]),
+                                            );
+                                          },
+                                        ),
+                                        // if (isVideoDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 70),
+                                          child: CustomTextFormField(
+                                            textController: videoLinkController,
+                                            readOnly: true,
+                                            onTap: () {
+                                              showVideoLinkSheet(
+                                                  addVideo: _addNewVideo,
+                                                  textController1:
+                                                      videoNameController,
+                                                  textController2:
+                                                      videoLinkController,
+                                                  fieldName: 'Add Youtube Link',
+                                                  title: 'Add Video Link',
+                                                  context: context);
+                                            },
+                                            labelText: 'Enter Video Link',
+                                            suffixIcon: const Icon(
+                                              Icons.add,
+                                              color: Color(0xFF004797),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // if (isVideoDetailsVisible)
+
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 10,
+                                              bottom: 20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
                                               Text(
                                                 'Enter Awards',
                                                 style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 17),
-                                              )
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              // CustomSwitch(
+                                              //   value: ref.watch(
+                                              //       isAwardsDetailsVisibleProvider),
+                                              //   onChanged: (bool value) async {
+                                              //     SharedPreferences switchPreference =
+                                              //         await SharedPreferences
+                                              //             .getInstance();
+                                              //     switchPreference.setBool(
+                                              //         'awardSwitch', value);
+                                              //     ref
+                                              //         .read(isAwardsDetailsVisibleProvider
+                                              //             .notifier)
+                                              //         .state = value;
+
+                                              //     // if (value == false) {
+                                              //     //   setState(
+                                              //     //     () {
+                                              //     //       awards = [];
+                                              //     //     },
+                                              //     //   );
+                                              //     // }
+                                              //   },
+                                              // ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 10,
-                                        bottom: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Enter Products',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
+                                        // if (isAwardsDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, bottom: 10, right: 10),
+                                          child: GridView.builder(
+                                            shrinkWrap:
+                                                true, // Let GridView take up only as much space as it needs
+                                            physics:
+                                                const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount:
+                                                  2, // Number of columns
+                                              crossAxisSpacing:
+                                                  8.0, // Space between columns
+                                              mainAxisSpacing:
+                                                  8.0, // Space between rows
+                                            ),
+                                            itemCount: user.awards!.length,
+                                            itemBuilder: (context, index) {
+                                              return AwardCard(
+                                                award: user.awards![index],
+                                                onRemove: () =>
+                                                    _removeAward(index),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                        // CustomSwitch(
-                                        //   value: ref.watch(
-                                        //       isProductsDetailsVisibleProvider),
-                                        //   onChanged: (bool value) async {
-                                        //     SharedPreferences switchPreference =
-                                        //         await SharedPreferences
-                                        //             .getInstance();
-                                        //     switchPreference.setBool(
-                                        //         'productSwitch', value);
-                                        //     ref
-                                        //         .read(
-                                        //             isProductsDetailsVisibleProvider
-                                        //                 .notifier)
-                                        //         .state = value;
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  // if (user.products != null &&
-                                  //     isProductsDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, bottom: 10, right: 10),
-                                    child: GridView.builder(
-                                      shrinkWrap:
-                                          true, // Let GridView take up only as much space as it needs
-                                      physics:
-                                          const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        mainAxisExtent: 212,
-                                        crossAxisCount: 2,
-                                        crossAxisSpacing: 0.0,
-                                        mainAxisSpacing: 20.0,
-                                      ),
-                                      itemCount: user.products!.length,
-                                      itemBuilder: (context, index) {
-                                        return ProductCard(
-                                            product: user.products![index],
-                                            onRemove: () =>
-                                                _removeProduct(index));
-                                      },
-                                    ),
-                                  ),
-                                  // if (isProductsDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25, right: 25, bottom: 60),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
+                                        // if (isAwardsDetailsVisible)
+                                        GestureDetector(
+                                          onTap: () {
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
 
-                                        _openModalSheet(
-                                          sheet: 'product',
-                                        );
-                                      },
-                                      child: Container(
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF2F2F2),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: const Center(
-                                          child: Column(
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 50), () {
+                                              _openModalSheet(sheet: 'award');
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 25,
+                                                right: 25,
+                                                bottom: 60),
+                                            child: Container(
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFF2F2F2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: Color(0xFF004797),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      'Enter Awards',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 17),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 10,
+                                              bottom: 20),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Icon(
-                                                Icons.add,
-                                                color: Color(0xFF004797),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
                                               Text(
                                                 'Enter Products',
                                                 style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 17),
-                                              )
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              // CustomSwitch(
+                                              //   value: ref.watch(
+                                              //       isProductsDetailsVisibleProvider),
+                                              //   onChanged: (bool value) async {
+                                              //     SharedPreferences switchPreference =
+                                              //         await SharedPreferences
+                                              //             .getInstance();
+                                              //     switchPreference.setBool(
+                                              //         'productSwitch', value);
+                                              //     ref
+                                              //         .read(
+                                              //             isProductsDetailsVisibleProvider
+                                              //                 .notifier)
+                                              //         .state = value;
+                                              //   },
+                                              // ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 10,
-                                        bottom: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Enter Certificates',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
+                                        // if (user.products != null &&
+                                        //     isProductsDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, bottom: 10, right: 10),
+                                          child: GridView.builder(
+                                            shrinkWrap:
+                                                true, // Let GridView take up only as much space as it needs
+                                            physics:
+                                                const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              mainAxisExtent: 212,
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: 0.0,
+                                              mainAxisSpacing: 20.0,
+                                            ),
+                                            itemCount: user.products!.length,
+                                            itemBuilder: (context, index) {
+                                              return ProductCard(
+                                                  product:
+                                                      user.products![index],
+                                                  onRemove: () =>
+                                                      _removeProduct(index));
+                                            },
+                                          ),
                                         ),
-                                        // CustomSwitch(
-                                        //   value: ref.watch(
-                                        //       isCertificateDetailsVisibleProvider),
-                                        //   onChanged: (bool value) async {
-                                        //     SharedPreferences switchPreference =
-                                        //         await SharedPreferences
-                                        //             .getInstance();
-                                        //     switchPreference.setBool(
-                                        //         'certificateSwitch', value);
-                                        //     ref
-                                        //         .read(
-                                        //             isCertificateDetailsVisibleProvider
-                                        //                 .notifier)
-                                        //         .state = value;
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  // if (user.certificates!.isNotEmpty &&
-                                  //     isCertificateDetailsVisible)
-                                  ListView.builder(
-                                    shrinkWrap:
-                                        true, // Let ListView take up only as much space as it needs
-                                    physics:
-                                        const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                    itemCount: user.certificates!.length,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical:
-                                                4.0), // Space between items
-                                        child: CertificateCard(
-                                          certificate:
-                                              user.certificates![index],
-                                          onRemove: () =>
-                                              _removeCertificate(index),
+                                        // if (isProductsDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 25, right: 25, bottom: 60),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+
+                                              _openModalSheet(
+                                                sheet: 'product',
+                                              );
+                                            },
+                                            child: Container(
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFF2F2F2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: Color(0xFF004797),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      'Enter Products',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 17),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                  // if (isCertificateDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25, right: 25, bottom: 60),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                        _openModalSheet(sheet: 'certificate');
-                                      },
-                                      child: Container(
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF2F2F2),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: const Center(
-                                          child: Column(
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 10,
+                                              bottom: 20),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Icon(
-                                                Icons.add,
-                                                color: Color(0xFF004797),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
                                               Text(
                                                 'Enter Certificates',
                                                 style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 17),
-                                              )
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              // CustomSwitch(
+                                              //   value: ref.watch(
+                                              //       isCertificateDetailsVisibleProvider),
+                                              //   onChanged: (bool value) async {
+                                              //     SharedPreferences switchPreference =
+                                              //         await SharedPreferences
+                                              //             .getInstance();
+                                              //     switchPreference.setBool(
+                                              //         'certificateSwitch', value);
+                                              //     ref
+                                              //         .read(
+                                              //             isCertificateDetailsVisibleProvider
+                                              //                 .notifier)
+                                              //         .state = value;
+                                              //   },
+                                              // ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 10,
-                                        bottom: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Enter Brochure',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
+                                        // if (user.certificates!.isNotEmpty &&
+                                        //     isCertificateDetailsVisible)
+                                        ListView.builder(
+                                          shrinkWrap:
+                                              true, // Let ListView take up only as much space as it needs
+                                          physics:
+                                              const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                          itemCount: user.certificates!.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  vertical:
+                                                      4.0), // Space between items
+                                              child: CertificateCard(
+                                                certificate:
+                                                    user.certificates![index],
+                                                onRemove: () =>
+                                                    _removeCertificate(index),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                        // CustomSwitch(
-                                        //   value: ref.watch(
-                                        //       isBrochureDetailsVisibleProvider),
-                                        //   onChanged: (bool value) async {
-                                        //     SharedPreferences switchPreference =
-                                        //         await SharedPreferences
-                                        //             .getInstance();
-                                        //     switchPreference.setBool(
-                                        //         'brochureSwitch', value);
-                                        //     ref
-                                        //         .read(
-                                        //             isBrochureDetailsVisibleProvider
-                                        //                 .notifier)
-                                        //         .state = value;
-                                        //   },
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                  // if (user.brochure!.isNotEmpty &&
-                                  //     isBrochureDetailsVisible)
-                                  ListView.builder(
-                                    shrinkWrap:
-                                        true, // Let ListView take up only as much space as it needs
-                                    physics:
-                                        const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                                    itemCount: user.brochure!.length,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical:
-                                                4.0), // Space between items
-                                        child: BrochureCard(
-                                          brochure: user.brochure![index],
-                                          onRemove: () =>
-                                              _removeBrochure(index),
+                                        // if (isCertificateDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 25, right: 25, bottom: 60),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                              _openModalSheet(
+                                                  sheet: 'certificate');
+                                            },
+                                            child: Container(
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFF2F2F2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: Color(0xFF004797),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      'Enter Certificates',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 17),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                  // if (isBrochureDetailsVisible)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25, right: 25, bottom: 60),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                        _openModalSheet(sheet: 'brochure');
-                                      },
-                                      child: Container(
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF2F2F2),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: const Center(
-                                          child: Column(
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              top: 10,
+                                              bottom: 20),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Icon(
-                                                Icons.add,
-                                                color: Color(0xFF004797),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
                                               Text(
                                                 'Enter Brochure',
                                                 style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 17),
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              // CustomSwitch(
+                                              //   value: ref.watch(
+                                              //       isBrochureDetailsVisibleProvider),
+                                              //   onChanged: (bool value) async {
+                                              //     SharedPreferences switchPreference =
+                                              //         await SharedPreferences
+                                              //             .getInstance();
+                                              //     switchPreference.setBool(
+                                              //         'brochureSwitch', value);
+                                              //     ref
+                                              //         .read(
+                                              //             isBrochureDetailsVisibleProvider
+                                              //                 .notifier)
+                                              //         .state = value;
+                                              //   },
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                        // if (user.brochure!.isNotEmpty &&
+                                        //     isBrochureDetailsVisible)
+                                        ListView.builder(
+                                          shrinkWrap:
+                                              true, // Let ListView take up only as much space as it needs
+                                          physics:
+                                              const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                                          itemCount: user.brochure!.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  vertical:
+                                                      4.0), // Space between items
+                                              child: BrochureCard(
+                                                brochure: user.brochure![index],
+                                                onRemove: () =>
+                                                    _removeBrochure(index),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        // if (isBrochureDetailsVisible)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 25, right: 25, bottom: 60),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                              _openModalSheet(
+                                                  sheet: 'brochure');
+                                            },
+                                            child: Container(
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFF2F2F2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: Color(0xFF004797),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      'Enter Brochure',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 17),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 60),
+                                      ],
+                                    ),
+                                  if (subscription != 'premium')
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          color: const Color(0xFFF2F2F2),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 30,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20, right: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Social Media',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Add Website',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Add Video Link',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Enter Awards',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Enter Products',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Enter Certicates',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    top: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Enter Borchure',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    CustomSwitch(
+                                                      value: false,
+                                                      onChanged:
+                                                          (bool value) async {},
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 80,
                                               )
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 60),
+                                        GestureDetector(
+                                          onTap: () => showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const UpgradeDialog(),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 10,
+                                                  spreadRadius: 2,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SvgPicture.asset(
+                                                    'assets/icons/lock_person.svg'),
+                                                const SizedBox(height: 8),
+                                                const Text(
+                                                  "Upgrade to",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                const Text(
+                                                  "unlock",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
                                 ],
                               ),
                             ),
@@ -2619,8 +2933,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           //   api.deleteFile(token, files);
                                           // }
                                           if (response.contains('success')) {
-                                            CustomSnackbar.showSnackbar(
-                                                context, response);
+                                            // CustomSnackbar.showSnackbar(
+                                            //     context, response);
                                             Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(

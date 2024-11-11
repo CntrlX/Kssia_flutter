@@ -9,6 +9,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
@@ -17,6 +18,7 @@ import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IconResolver extends StatelessWidget {
   final String iconPath;
@@ -135,69 +137,149 @@ class _MainPageState extends ConsumerState<MainPage> {
           print(user.profilePicture);
           _initialize(user: user);
           return PopScope(
-            canPop: _selectedIndex != 0 ? false : true,
-            onPopInvokedWithResult: (didPop, result) {
-              if (_selectedIndex != 0) {
-                setState(() {
-                  _selectedIndex = 0;
-                });
-              }
-            },
-            child: Scaffold(
-              body: Center(
-                child: _widgetOptions.elementAt(_selectedIndex),
-              ),
-              bottomNavigationBar: BottomNavigationBar(
-                items: List.generate(5, (index) {
-                  return BottomNavigationBarItem(
-                    backgroundColor: Colors.white,
-                    icon: index == 2 // Assuming profile is the third item
-                        ? user.profilePicture != null &&
-                                user.profilePicture != ''
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  user.profilePicture ?? '',
-                                ),
-                                radius: 15,
-                              )
-                            : Image.asset(
-                                'assets/icons/dummy_person_small.png',
-                                scale: 1.5,
-                              )
-                        : IconResolver(
-                            iconPath: _inactiveIcons[index],
-                            color: _selectedIndex == index
-                                ? Colors.blue
-                                : Colors.grey,
+              canPop: _selectedIndex != 0 ? false : true,
+              onPopInvokedWithResult: (didPop, result) {
+                if (_selectedIndex != 0) {
+                  setState(() {
+                    _selectedIndex = 0;
+                  });
+                }
+              },
+              child: user.status == 'active'
+                  ? Scaffold(
+                      body: Center(
+                        child: _widgetOptions.elementAt(_selectedIndex),
+                      ),
+                      bottomNavigationBar: BottomNavigationBar(
+                        items: List.generate(5, (index) {
+                          return BottomNavigationBarItem(
+                            backgroundColor: Colors.white,
+                            icon:
+                                index == 2 // Assuming profile is the third item
+                                    ? user.profilePicture != null &&
+                                            user.profilePicture != ''
+                                        ? CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              user.profilePicture ?? '',
+                                            ),
+                                            radius: 15,
+                                          )
+                                        : Image.asset(
+                                            'assets/icons/dummy_person_small.png',
+                                            scale: 1.5,
+                                          )
+                                    : IconResolver(
+                                        iconPath: _inactiveIcons[index],
+                                        color: _selectedIndex == index
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                            activeIcon: index == 2
+                                ? user.profilePicture != null &&
+                                        user.profilePicture != ''
+                                    ? CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          user.profilePicture ?? '',
+                                        ),
+                                        radius: 15,
+                                      )
+                                    : Image.asset(
+                                        'assets/icons/dummy_person_small.png',
+                                        scale: 1.5,
+                                      )
+                                : IconResolver(
+                                    iconPath: _activeIcons[index],
+                                    color: Color(0xFF004797),
+                                  ),
+                            label: [
+                              'Home',
+                              'Feed',
+                              'Profile',
+                              'News',
+                              'People'
+                            ][index],
+                          );
+                        }),
+                        currentIndex: _selectedIndex,
+                        selectedItemColor: Color(0xFF004797),
+                        unselectedItemColor: Colors.grey,
+                        onTap: _onItemTapped,
+                        showUnselectedLabels: true,
+                      ),
+                    )
+                  : Scaffold(
+                      body: Center(
+                        child: Container(
+                          padding: EdgeInsets.all(20.0),
+                          margin: EdgeInsets.symmetric(horizontal: 20.0),
+                          decoration: BoxDecoration(
+                            color: Colors.red[50],
+                            borderRadius: BorderRadius.circular(15.0),
+                            border: Border.all(
+                              color: Colors.redAccent,
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
                           ),
-                    activeIcon: index == 2
-                        ? user.profilePicture != null &&
-                                user.profilePicture != ''
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  user.profilePicture ?? '',
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.redAccent,
+                                size: 48,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "Your account is Suspended",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                radius: 15,
-                              )
-                            : Image.asset(
-                                'assets/icons/dummy_person_small.png',
-                                scale: 1.5,
-                              )
-                        : IconResolver(
-                            iconPath: _activeIcons[index],
-                            color: Color(0xFF004797),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Please contact Admin to know more",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 20),
+                              customButton(
+                                  labelColor: Colors.redAccent,
+                                  sideColor:
+                                      const Color.fromARGB(255, 239, 236, 236),
+                                  buttonColor:
+                                      const Color.fromARGB(255, 239, 236, 236),
+                                  label: 'Logout',
+                                  onPressed: () async {
+                                    final SharedPreferences preferences =
+                                        await SharedPreferences.getInstance();
+                                    preferences.remove('token');
+                                    preferences.remove('id');
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhoneNumberScreen(),
+                                        ));
+                                  })
+                            ],
                           ),
-                    label: ['Home', 'Feed', 'Profile', 'News', 'People'][index],
-                  );
-                }),
-                currentIndex: _selectedIndex,
-                selectedItemColor: Color(0xFF004797),
-                unselectedItemColor: Colors.grey,
-                onTap: _onItemTapped,
-                showUnselectedLabels: true,
-              ),
-            ),
-          );
+                        ),
+                      ),
+                    ));
         },
       );
     });

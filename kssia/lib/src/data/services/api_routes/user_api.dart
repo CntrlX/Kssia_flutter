@@ -19,6 +19,13 @@ import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:minio_flutter/io.dart';
+import 'package:minio_flutter/minio.dart';
+import 'package:path/path.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 
 part 'user_api.g.dart';
 
@@ -162,98 +169,57 @@ class ApiRoutes {
     }
   }
 
-  Future<dynamic> createFileUrl(
-      {required File file, required String token}) async {
-    final url = Uri.parse('$baseUrl/files/upload');
-    log('Im inside file creation');
-    // Determine MIME type
-    String fileName = file.path.split('/').last;
-    String? mimeType;
-    if (fileName.endsWith('.png')) {
-      mimeType = 'image/png';
-    } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
-      mimeType = 'image/jpeg';
-    } else if (fileName.endsWith('.pdf')) {
-      mimeType = 'application/pdf';
-    } else {
-      return null; // Unsupported file type
+  Future<dynamic> createFileUrl({
+    required File file,
+    required String token,
+  }) async {
+    // Initialize Minio client
+    Minio.init(
+      endPoint: 's3.amazonaws.com',
+      accessKey: dotenv.env['AWS_ACCESS_KEY_ID']!,
+      secretKey: dotenv.env['AWS_SECRET_ACCESS_KEY']!,
+      region: 'ap-south-1',
+    );
+
+    // Load the file as bytes
+    Uint8List imageBytes = await file.readAsBytes();
+    print("Original image size: ${imageBytes.lengthInBytes / 1024} KB");
+
+    // Define initial quality and resize factor
+    int quality = 80;
+    double resizeFactor = 0.9;
+
+    // Compress until the image is less than 1 MB
+    while (imageBytes.lengthInBytes > 1024 * 1024) {
+      img.Image? image = img.decodeImage(imageBytes);
+      if (image == null) break; // Exit if the image can't be decoded
+
+      // Resize and re-encode the image
+      img.Image resizedImage = img.copyResize(
+        image,
+        width: (image.width * resizeFactor).toInt(),
+        height: (image.height * resizeFactor).toInt(),
+      );
+      imageBytes = Uint8List.fromList(
+        img.encodeJpg(resizedImage, quality: quality),
+      );
+
+      // Decrease quality and resize factor for the next iteration
+      quality = (quality * 0.9).toInt(); // Reduce quality by 10%
+      resizeFactor -= 0.1; // Reduce size by an additional 10% in each loop
+
+      print("Compressed image size: ${imageBytes.lengthInBytes / 1024} KB");
     }
 
-    // Log initial file size
-    log('Original file size: ${(file.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
+    // Save the compressed image temporarily for upload
+    await file.writeAsBytes(imageBytes);
 
-    // Check file size and compress if necessary
-    if (file.lengthSync() > 1 * 1024 * 1024) {
-      // File size > 1 MB
-      if (mimeType.startsWith('image/')) {
-        int quality = 80;
-        File? compressedFile = file;
-
-        // Iteratively compress until below 1 MB
-        while (compressedFile!.lengthSync() > 1 * 1024 * 1024 && quality > 20) {
-          final compressedImage = await FlutterImageCompress.compressWithFile(
-            file.absolute.path,
-            quality: quality,
-            minWidth: 1080,
-            minHeight: 1080,
-          );
-
-          if (compressedImage != null) {
-            compressedFile =
-                await File('${file.path}').writeAsBytes(compressedImage);
-            print(
-                'Compressed file size at quality $quality: ${(compressedFile.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
-            quality -=
-                5; // Lower quality for further compression if still above 1 MB
-          } else {
-            print('Compression failed');
-            return null;
-          }
-        }
-
-        // If compression is successful and below 1 MB, assign the compressed file
-        if (compressedFile.lengthSync() <= 1 * 1024 * 1024) {
-          file = compressedFile;
-        } else {
-          print('File could not be compressed below 1 MB');
-          return null;
-        }
-      } else {
-        print('File is too large and not an image, cannot compress');
-        return null;
-      }
-    }
-
-    // Log final file size before upload
-    log('Final file size: ${(file.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB');
-
-    // Create multipart request
-    final request = http.MultipartRequest('PUT', url)
-      ..headers['Authorization'] = 'Bearer $token'
-      ..headers['accept'] = 'application/json'
-      ..headers['Content-Type'] = 'multipart/form-data'
-      ..files.add(await http.MultipartFile.fromPath(
-        'file',
-        file.path,
-        contentType: MediaType.parse(mimeType),
-      ));
-
-    try {
-      final response = await request.send();
-
-      if (response.statusCode == 200) {
-        final responseData = await response.stream.bytesToString();
-        final jsonResponse = json.decode(responseData);
-        return jsonResponse['data'];
-      } else {
-        final responseBody = await response.stream.bytesToString();
-        print('Error Response Body: $responseBody');
-        return null;
-      }
-    } catch (e) {
-      print(e);
-      return null;
-    }
+    // Upload the image to Minio
+    final imageName = basename(file.path);
+    await Minio.shared.fPutObject('akcaf-bucket', imageName, file.path);
+    final imageUrl =
+        "https://akcaf-bucket.s3.ap-south-1.amazonaws.com/$imageName";
+    return imageUrl;
   }
 
   String removeBaseUrl(String url) {
@@ -437,12 +403,12 @@ class ApiRoutes {
   }
 
   Future<String?> uploadRequirement(String token, String author, String content,
-      String status, File? file, BuildContext context) async {
+      String status, String? image, BuildContext context) async {
     const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
 
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
-
+    log('author:$author\nContent:$content');
     // Add headers
     request.headers.addAll({
       'accept': 'application/json',
@@ -455,20 +421,11 @@ class ApiRoutes {
     request.fields['content'] = content;
     request.fields['status'] = status;
 
-    if (file != null) {
-      var stream = http.ByteStream(file.openRead());
-      stream.cast();
-      var length = await file.length();
-      var multipartFile = http.MultipartFile(
-        'file',
-        stream,
-        length,
-        filename: basename(file.path),
-        contentType: MediaType('image', 'png'),
-      );
-
-      request.files.add(multipartFile);
+    // Add the image as a string if provided
+    if (image != null) {
+      request.fields['image'] = image;
     }
+    log('request:${request.fields}');
     // Send the request
     var response = await request.send();
 
