@@ -991,7 +991,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     super.dispose();
   }
 
-  Future<void> _submitData({required UserModel user}) async {
+  Future<String> _submitData({required UserModel user}) async {
     log('profile: ${user.profilePicture}');
     log('company logo: ${user.companyLogo}');
     final Map<String, dynamic> profileData = {
@@ -1001,6 +1001,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         "middle_name": user.name?.middleName ?? "",
         "last_name": user.name?.lastName ?? '',
       },
+
       // if (user.bloodGroup != null)
       "blood_group": user.bloodGroup ?? '',
       if (user.email != null) "email": user.email,
@@ -1071,7 +1072,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       ]
     };
     log(profileData.toString());
-    await api.editUser(profileData);
+    String response = await api.editUser(profileData);
+    return response;
   }
   // Future<void> _selectImageFile(ImageSource source, String imageType) async {
   //   final XFile? image = await _picker.pickImage(source: source);
@@ -2607,22 +2609,28 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                   child: customButton(
                                       fontSize: 16,
                                       label: 'Save & Proceed',
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (_formKey.currentState!.validate()) {
                                           log('Updating social media: ${user.socialMedia.toString()}');
-                                          _submitData(user: user);
+                                          String response =
+                                              await _submitData(user: user);
                                           ApiRoutes api = ApiRoutes();
-                                          for (var files in filesToBeDeleted) {
-                                            api.deleteFile(token, files);
+                                          // for (var files in filesToBeDeleted) {
+                                          //   api.deleteFile(token, files);
+                                          // }
+                                          if (response.contains('success')) {
+                                            CustomSnackbar.showSnackbar(
+                                                context, response);
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        const MainPage()));
+                                          } else {
+                                            CustomSnackbar.showSnackbar(
+                                                context, response);
                                           }
-                                          CustomSnackbar.showSnackbar(
-                                              context, "Success!");
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          const MainPage()));
                                         }
                                       }))),
                         ],

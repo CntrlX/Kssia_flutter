@@ -152,14 +152,20 @@ class ProfileCard extends StatelessWidget {
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        CircleAvatar(
-                                          onBackgroundImageError: (_, __) =>
-                                              Image.asset(
-                                                  'assets/dummy_person_large.png'),
-                                          radius: 40,
-                                          backgroundImage: NetworkImage(
-                                              user.profilePicture ?? ''),
-                                        ),
+                                        user.profilePicture == null ||
+                                                user.profilePicture == ''
+                                            ? Image.asset(
+                                                scale: 1.3,
+                                                'assets/icons/dummy_person_large.png',
+                                              )
+                                            : CircleAvatar(
+                                                onBackgroundImageError:
+                                                    (_, __) => Image.asset(
+                                                        'assets/dummy_person_large.png'),
+                                                radius: 40,
+                                                backgroundImage: NetworkImage(
+                                                    user.profilePicture ?? ''),
+                                              ),
                                         const SizedBox(width: 10),
                                         Expanded(
                                           child: Padding(
