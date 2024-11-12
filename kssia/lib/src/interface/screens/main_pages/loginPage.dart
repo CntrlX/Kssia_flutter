@@ -2933,6 +2933,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           //   api.deleteFile(token, files);
                                           // }
                                           if (response.contains('success')) {
+                                            ref.invalidate(userProvider);
                                             // CustomSnackbar.showSnackbar(
                                             //     context, response);
                                             Navigator.pushReplacement(

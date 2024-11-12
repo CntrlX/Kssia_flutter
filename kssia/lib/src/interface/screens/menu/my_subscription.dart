@@ -87,21 +87,20 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
               ),
             ),
             backgroundColor: Colors.white,
-            body: asyncSubscription.when(
-              data: (subscription) {
-                String membershipFormattedRenewalDate =
-                    subscription.membership?.lastRenewed == null ||
-                            subscription.membership?.lastRenewed == ''
-                        ? ''
-                        : DateFormat('dd MMMM yyyy')
-                            .format(subscription.membership!.lastRenewed!);
-                String membershipFormatteNextRenewalDate =
-                    subscription.membership?.nextRenewal == null ||
-                            subscription.membership?.nextRenewal == ''
-                        ? ''
-                        : DateFormat('dd MMMM yyyy')
-                            .format(subscription.membership!.nextRenewal!);
-                return SingleChildScrollView(
+            body: 
+                // String membershipFormattedRenewalDate =
+                //     userSubscription.membership?.lastRenewed == null ||
+                //             userSubscription.membership?.lastRenewed == ''
+                //         ? ''
+                //         : DateFormat('dd MMMM yyyy')
+                //             .format(userSubscription.membership!.lastRenewed!);
+                // String membershipFormatteNextRenewalDate =
+                //     userSubscription.membership?.nextRenewal == null ||
+                //             userSubscription.membership?.nextRenewal == ''
+                //         ? ''
+                //         : DateFormat('dd MMMM yyyy')
+                //             .format(userSubscription.membership!.nextRenewal!);
+                 SingleChildScrollView(
                   child: Column(
                     children: [
                       // Center(
@@ -394,9 +393,9 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         buttonHeight: 40,
                                         sideColor: const Color(0xFFF76412),
                                         buttonColor: const Color(0xFFF76412),
-                                        label: subscription.app?.status
-                                                ?.toUpperCase() ??
-                                            'SUBSCRIBE',
+                                        label: subscription == 'free'
+                                            ? 'SUBSCRIBE'
+                                            : 'SUBSCRIBED',
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -421,15 +420,8 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                       )
                     ],
                   ),
-                );
-              },
-              loading: () => const Center(child: LoadingAnimation()),
-              error: (error, stackTrace) {
-                return const Center(
-                  child: Text(''),
-                );
-              },
-            ));
+                )
+            );
       },
     );
   }

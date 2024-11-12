@@ -11,6 +11,7 @@ import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
@@ -39,6 +40,12 @@ class _FeedViewState extends ConsumerState<FeedView> {
     _fetchInitialFeeds();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.invalidate(fetchStatusProvider);
+  }
+
   Future<void> _fetchInitialFeeds() async {
     await ref
         .read(requirementsNotifierProvider.notifier)
@@ -56,28 +63,29 @@ class _FeedViewState extends ConsumerState<FeedView> {
   File? _requirementImage;
   ApiRoutes api = ApiRoutes();
 
-Future<File?> _pickFile({required String imageType}) async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['png', 'jpg', 'jpeg'],
-  );
+  Future<File?> _pickFile({required String imageType}) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg'],
+    );
 
-  if (result != null) {
-    // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
-    // if (result.files.single.size >= 1024 * 1024) {
-    //        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
+    if (result != null) {
+      // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
+      // if (result.files.single.size >= 1024 * 1024) {
+      //        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
 
-    //   return null; // Exit the function if the file is too large
-    // }
+      //   return null; // Exit the function if the file is too large
+      // }
 
-    // Set the selected file if it's within the size limit
-    setState(() {
-      _requirementImage = File(result.files.single.path!);
-    });
-    return _requirementImage;
+      // Set the selected file if it's within the size limit
+      setState(() {
+        _requirementImage = File(result.files.single.path!);
+      });
+      return _requirementImage;
+    }
+    return null;
   }
-  return null;
-}
+
   void _openModalSheet({required String sheet}) {
     showModalBottomSheet(
         isScrollControlled: true,
@@ -253,8 +261,7 @@ Future<File?> _pickFile({required String imageType}) async {
                                     color: const Color.fromARGB(
                                         255, 255, 255, 255),
                                     child: Image.network(
-                                      receiver.profilePicture ??
-                                          '',
+                                      receiver.profilePicture ?? '',
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
@@ -334,14 +341,14 @@ Future<File?> _pickFile({required String imageType}) async {
                                     },
                                     errorBuilder: (context, error, stackTrace) {
                                       return Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                  ),
-                                ),
-                              );
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[100]!,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),
