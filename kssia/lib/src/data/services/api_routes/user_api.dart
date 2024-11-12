@@ -402,47 +402,44 @@ class ApiRoutes {
     }
   }
 
-  Future<String?> uploadRequirement(String token, String author, String content,
-      String status, String? image, BuildContext context) async {
-    const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
+Future<String?> uploadRequirement(String token, String author, String content,
+    String status, String? image, BuildContext context) async {
+  const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
 
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', Uri.parse(url));
-    log('author:$author\nContent:$content');
-    // Add headers
-    request.headers.addAll({
-      'accept': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'multipart/form-data',
-    });
+  // Prepare the request headers
+  final headers = {
+    'accept': 'application/json',
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
+  };
 
-    // Add fields
-    request.fields['author'] = author;
-    request.fields['content'] = content;
-    request.fields['status'] = status;
+  // Prepare the request body
+  final body = jsonEncode({
+    'author': author,
+    'content': content,
+    'status': status,
+    if (image != null) 'image': image, // Include 'image' only if it's not null
+  });
 
-    // Add the image as a string if provided
-    if (image != null) {
-      request.fields['image'] = image;
-    }
-    log('request:${request.fields}');
-    // Send the request
-    var response = await request.send();
+  // Send the POST request
+  final response = await http.post(
+    Uri.parse(url),
+    headers: headers,
+    body: body,
+  );
 
-    if (response.statusCode == 201) {
-      print('Requirement submitted successfully');
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-
-      return jsonResponse['message'];
-    } else {
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-      print(jsonResponse['message']);
-      print('Failed to submit requirement: ${response.statusCode}');
-      return null;
-    }
+  if (response.statusCode == 201) {
+    print('Requirement submitted successfully');
+    final jsonResponse = json.decode(response.body);
+    return jsonResponse['message'];
+  } else {
+    final jsonResponse = json.decode(response.body);
+    print(jsonResponse['message']);
+    print('Failed to submit requirement: ${response.statusCode}');
+    return null;
   }
+}
+
 
   Future<String?> uploadPayment(
     context,
