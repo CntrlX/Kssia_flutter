@@ -11,6 +11,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
+import 'package:kssia/src/interface/screens/profile/others_profile_preview.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -210,7 +211,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => ProfilePreview( ),
+                          builder: (context) => OthersProfilePreview(user: user, ),
                         ),
                       );
                     },
