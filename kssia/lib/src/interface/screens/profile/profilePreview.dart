@@ -6,6 +6,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/data/services/save_contact.dart';
+import 'package:kssia/src/interface/common/Shimmer/profile_preview_shimmer.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
@@ -32,8 +33,9 @@ final reviewsProvider = StateNotifierProvider<ReviewsState, int>((ref) {
 });
 
 class ProfilePreview extends ConsumerWidget {
-  final UserModel user;
-  ProfilePreview({Key? key, required this.user}) : super(key: key);
+  ProfilePreview({
+    Key? key,
+  }) : super(key: key);
 
   final List<String> svgIcons = [
     'assets/icons/instagram.svg',
@@ -46,591 +48,668 @@ class ProfilePreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reviewsToShow = ref.watch(reviewsProvider);
-    PageController _videoCountController = PageController();
+    final asyncUser = ref.watch(userProvider);
+    return asyncUser.when(
+      data: (user) {
+        final reviewsToShow = ref.watch(reviewsProvider);
+        PageController _videoCountController = PageController();
 
-    _videoCountController.addListener(() {
-      _currentVideo.value = _videoCountController.page!.round();
-    });
-    final ratingDistribution = getRatingDistribution(user);
-    final averageRating = getAverageRating(user);
-    final totalReviews = user.reviews!.length;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (id.toString() == user.id.toString())
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: const Color(0xFFF2F2F2),
-                                borderRadius: BorderRadius.circular(30)),
-                            child: IconButton(
-                              icon: const Icon(
-                                size: 18,
-                                Icons.edit,
-                                color: Color(0xFF004797),
+        _videoCountController.addListener(() {
+          _currentVideo.value = _videoCountController.page!.round();
+        });
+        final ratingDistribution = getRatingDistribution(user);
+        final averageRating = getAverageRating(user);
+        final totalReviews = user.reviews!.length;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (id.toString() == user.id.toString())
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFF2F2F2),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    size: 18,
+                                    Icons.edit,
+                                    color: Color(0xFF004797),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          settings: RouteSettings(
+                                              name: 'ProfilePreview'),
+                                          builder: (context) =>
+                                              DetailsPage()), // Navigate to MenuPage
+                                    );
+                                  },
+                                ),
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          DetailsPage()), // Navigate to MenuPage
-                                );
-                              },
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFFF2F2F2),
+                                  borderRadius: BorderRadius.circular(30)),
+                              child: IconButton(
+                                icon: const Icon(
+                                  size: 20,
+                                  Icons.close,
+                                ),
+                                onPressed: () {
+                                  ref.invalidate(reviewsProvider);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            user.profilePicture != null &&
+                                    user.profilePicture != ''
+                                ? GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => Dialog(
+                                          backgroundColor: Colors.transparent,
+                                          child: GestureDetector(
+                                            onTap: () => Navigator.pop(context),
+                                            child: InteractiveViewer(
+                                              child: Image.network(
+                                                  user.profilePicture ?? '',
+                                                  fit: BoxFit.contain),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 45,
+                                      backgroundImage: NetworkImage(
+                                          user.profilePicture ?? ''),
+                                    ),
+                                  )
+                                : Image.asset(
+                                    'assets/icons/dummy_person_large.png'),
+                            const SizedBox(height: 10),
+                            Text(
+                              '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                              style: const TextStyle(
+                                color: Color(0xFF2C2829),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    user.companyLogo != null &&
+                                            user.companyLogo != ''
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => Dialog(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  child: GestureDetector(
+                                                    onTap: () =>
+                                                        Navigator.pop(context),
+                                                    child: InteractiveViewer(
+                                                      child: Image.network(
+                                                        user.companyLogo ?? '',
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                              'assets/icons/dummy_company.png');
+                                                        },
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(9),
+                                              child: Image.network(
+                                                user.companyLogo ?? '',
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Image.asset(
+                                                      'assets/icons/dummy_company.png');
+                                                },
+                                                height: 33,
+                                                width: 40,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        : Image.asset(
+                                            'assets/icons/dummy_company.png'),
+                                  ],
+                                ),
+                                const SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (user.designation != null &&
+                                        user.designation != '')
+                                      Text(
+                                        user.designation!,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                          color:
+                                              Color.fromARGB(255, 42, 41, 41),
+                                        ),
+                                      ),
+                                    if (user.companyName != null &&
+                                        user.companyName != '')
+                                      Text(
+                                        user.companyName ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: const Color.fromARGB(
+                                      255, 234, 226, 226))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                height: 40,
+                                child: Image.asset(
+                                  'assets/icons/kssiaLogo.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Text(
+                                'Member ID: ${user.membershipId}',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.phone,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Text(user.phoneNumbers!.personal.toString()),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            if (user.email != null)
+                              Row(
+                                children: [
+                                  const Icon(Icons.email,
+                                      color: Color(0xFF004797)),
+                                  const SizedBox(width: 10),
+                                  Text(user.email!),
+                                ],
+                              ),
+                            const SizedBox(height: 10),
+                            if (user.address != null && user.address != '')
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on,
+                                      color: Color(0xFF004797)),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      user.address!,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            const SizedBox(height: 10),
+                            if (user.phoneNumbers?.whatsappNumber != null &&
+                                user.phoneNumbers?.whatsappNumber != '')
+                              Row(
+                                children: [
+                                  const SvgIcon(
+                                    assetName: 'assets/icons/whatsapp.svg',
+                                    color: Color(0xFF004797),
+                                    size: 25,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                        user.phoneNumbers!.whatsappNumber!),
+                                  )
+                                ],
+                              ),
+                            const SizedBox(height: 10),
+                            if (user.phoneNumbers?.whatsappBusinessNumber !=
+                                    null &&
+                                user.phoneNumbers?.whatsappBusinessNumber != '')
+                              Row(
+                                children: [
+                                  const SvgIcon(
+                                    assetName:
+                                        'assets/icons/whatsapp-business.svg',
+                                    color: Color(0xFF004797),
+                                    size: 23,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                        user.phoneNumbers?.whatsappBusinessNumber ??
+                                            ''),
+                                  )
+                                ],
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 60),
+                        if (user.bio != null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.asset('assets/icons/qoutes.png'),
+                              ),
+                            ],
+                          ),
+                        if (user.bio != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Flexible(child: Text('''${user.bio}''')),
+                              ],
                             ),
                           ),
                         const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 50,
                           height: 50,
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFF2F2F2),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: IconButton(
-                            icon: const Icon(
-                              size: 20,
-                              Icons.close,
-                            ),
-                            onPressed: () {
-                              ref.invalidate(reviewsProvider);
-                              Navigator.pop(context);
-                            },
-                          ),
                         ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        user.profilePicture != null && user.profilePicture != ''
-                            ? CircleAvatar(
-                                radius: 45,
-                                backgroundImage:
-                                    NetworkImage(user.profilePicture!),
-                              )
-                            : Image.asset(
-                                'assets/icons/dummy_person_large.png'),
-                        const SizedBox(height: 10),
-                        Text(
-                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
-                          style: const TextStyle(
-                            color: Color(0xFF2C2829),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                user.companyLogo != null &&
-                                        user.companyLogo != ''
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(9),
-                                        child: Image.network(
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                                'assets/icons/dummy_company.png');
-                                          },
-                                          user.companyLogo!,
-                                          height: 33,
-                                          width: 40,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Image.asset(
-                                        'assets/icons/dummy_company.png'),
-                              ],
-                            ),
-                            const SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (user.designation != null &&
-                                    user.designation != '')
-                                  Text(
-                                    user.designation!,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                      color: Color.fromARGB(255, 42, 41, 41),
-                                    ),
-                                  ),
-                                if (user.companyName != null &&
-                                    user.companyName != '')
-                                  Text(
-                                    user.companyName ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 234, 226, 226))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 80,
-                            height: 40,
-                            child: Image.asset(
-                              'assets/icons/kssiaLogo.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          Text(
-                            'Member ID: ${user.membershipId}',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.phone, color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            Text(user.phoneNumbers!.personal.toString()),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        if (user.email != null)
-                          Row(
-                            children: [
-                              const Icon(Icons.email, color: Color(0xFF004797)),
-                              const SizedBox(width: 10),
-                              Text(user.email!),
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (user.address != null)
-                          Row(
-                            children: [
-                              const Icon(Icons.location_on,
-                                  color: Color(0xFF004797)),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  user.address!,
-                                ),
-                              )
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (user.phoneNumbers?.whatsappNumber != null)
-                          Row(
-                            children: [
-                              const SvgIcon(
-                                assetName: 'assets/icons/whatsapp.svg',
-                                color: Color(0xFF004797),
-                                size: 25,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(user.phoneNumbers!.whatsappNumber!),
-                              )
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (user.phoneNumbers?.whatsappBusinessNumber != null)
-                          Row(
-                            children: [
-                              const SvgIcon(
-                                assetName: 'assets/icons/whatsapp-business.svg',
-                                color: Color(0xFF004797),
-                                size: 23,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                    user.phoneNumbers?.whatsappNumber ?? ''),
-                              )
-                            ],
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 60),
-                    if (user.bio != null)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('assets/icons/qoutes.png'),
-                          ),
-                        ],
-                      ),
-                    if (user.bio != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Flexible(child: Text('''${user.bio}''')),
-                          ],
-                        ),
-                      ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ReviewBarChart(
-                        ratingDistribution: ratingDistribution,
-                        averageRating: averageRating,
-                        totalReviews: totalReviews,
-                      ),
-                    ),
-                    if (user.id != id)
-                      Row(
-                        children: [
-                          SizedBox(
-                              width: 100,
-                              child: customButton(
-                                  label: 'Write a Review',
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
-                                      ),
-                                      builder: (context) =>
-                                          ShowWriteReviewSheet(
-                                        userId: user.id!,
-                                      ),
-                                    );
-                                  },
-                                  fontSize: 15)),
-                        ],
-                      ),
-                    if (user.reviews!.isNotEmpty)
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: reviewsToShow,
-                        itemBuilder: (context, index) {
-                          return ReviewsCard(
-                            review: user.reviews![index],
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ReviewBarChart(
                             ratingDistribution: ratingDistribution,
                             averageRating: averageRating,
                             totalReviews: totalReviews,
-                          );
-                        },
-                      ),
-                    if (reviewsToShow < user.reviews!.length)
-                      TextButton(
-                        onPressed: () {
-                          ref
-                              .read(reviewsProvider.notifier)
-                              .showMoreReviews(user.reviews!.length);
-                        },
-                        child: Text('View More'),
-                      ),
-                    if (user.socialMedia!.isNotEmpty)
-                      const Row(
-                        children: [
-                          Text(
-                            'Social Media',
-                            style: TextStyle(
-                                color: Color(0xFF2C2829),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
                           ),
-                        ],
-                      ),
-                    for (int index = 0;
-                        index < user.socialMedia!.length;
-                        index++)
-                      customSocialPreview(index,
-                          social: user.socialMedia![index]),
-                    if (user.websites!.isNotEmpty)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 50),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Websites & Links',
-                              style: TextStyle(
-                                  color: Color(0xFF2C2829),
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
                         ),
-                      ),
-                    for (int index = 0; index < user.websites!.length; index++)
-                      customWebsitePreview(index,
-                          website: user.websites![index]),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    if (user.video!.isNotEmpty)
-                      Column(
-                        children: [
-                          SizedBox(
-                            width: 500,
-                            height: 260,
-                            child: PageView.builder(
-                              controller: _videoCountController,
-                              itemCount: user.video!.length,
-                              physics: const PageScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return profileVideo(
-                                    context: context,
-                                    video: user.video![index]);
-                              },
-                            ),
+                        if (user.id != id)
+                          Row(
+                            children: [
+                              SizedBox(
+                                  width: 100,
+                                  child: customButton(
+                                      label: 'Write a Review',
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(20)),
+                                          ),
+                                          builder: (context) =>
+                                              ShowWriteReviewSheet(
+                                            userId: user.id!,
+                                          ),
+                                        );
+                                      },
+                                      fontSize: 15)),
+                            ],
                           ),
-                          ValueListenableBuilder<int>(
-                            valueListenable: _currentVideo,
-                            builder: (context, value, child) {
-                              return SmoothPageIndicator(
-                                controller: _videoCountController,
-                                count: user.video!.length,
-                                effect: const ExpandingDotsEffect(
-                                  dotHeight: 8,
-                                  dotWidth: 4,
-                                  activeDotColor: Colors.black,
-                                  dotColor: Colors.grey,
-                                ),
+                        if (user.reviews!.isNotEmpty)
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: reviewsToShow,
+                            itemBuilder: (context, index) {
+                              return ReviewsCard(
+                                review: user.reviews![index],
+                                ratingDistribution: ratingDistribution,
+                                averageRating: averageRating,
+                                totalReviews: totalReviews,
                               );
                             },
                           ),
-                        ],
-                      ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    if (user.products != null && user.products!.isNotEmpty)
-                      const Row(
-                        children: [
-                          Text(
-                            'Products',
-                            style: TextStyle(
-                                color: Color(0xFF2C2829),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
+                        if (reviewsToShow < user.reviews!.length)
+                          TextButton(
+                            onPressed: () {
+                              ref
+                                  .read(reviewsProvider.notifier)
+                                  .showMoreReviews(user.reviews!.length);
+                            },
+                            child: Text('View More'),
                           ),
-                        ],
-                      ),
-                    if (user.products != null)
-                      GridView.builder(
-                        shrinkWrap:
-                            true, // Let GridView take up only as much space as it needs
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 212,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 0.0,
-                          mainAxisSpacing: 20.0,
-                        ),
-                        itemCount: user.products!.length,
-                        itemBuilder: (context, index) {
-                          return ProductCard(
-                            product: user.products![index],
-                            onRemove: null,
-                          );
-                        },
-                      ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    if (user.certificates != null &&
-                        user.certificates!.isNotEmpty)
-                      const Row(
-                        children: [
-                          Text(
-                            'Certificates',
-                            style: TextStyle(
-                                color: Color(0xFF2C2829),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
+                        if (user.socialMedia!.isNotEmpty)
+                          const Row(
+                            children: [
+                              Text(
+                                'Social Media',
+                                style: TextStyle(
+                                    color: Color(0xFF2C2829),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ListView.builder(
-                      shrinkWrap:
-                          true, // Let ListView take up only as much space as it needs
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                      itemCount: user.certificates!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4.0), // Space between items
-                          child: CertificateCard(
-                            certificate: user.certificates![index],
-                            onRemove: null,
+                        for (int index = 0;
+                            index < user.socialMedia!.length;
+                            index++)
+                          customSocialPreview(index,
+                              social: user.socialMedia![index]),
+                        if (user.websites!.isNotEmpty)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Websites & Links',
+                                  style: TextStyle(
+                                      color: Color(0xFF2C2829),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                    if (user.awards != null && user.awards!.isNotEmpty)
-                      const Row(
-                        children: [
-                          Text(
-                            'Awards',
-                            style: TextStyle(
-                                color: Color(0xFF2C2829),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                    GridView.builder(
-                      shrinkWrap:
-                          true, // Let GridView take up only as much space as it needs
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Number of columns
-                        crossAxisSpacing: 8.0, // Space between columns
-                        mainAxisSpacing: 8.0, // Space between rows
-                      ),
-                      itemCount: user.awards!.length,
-                      itemBuilder: (context, index) {
-                        return AwardCard(
-                          award: user.awards![index],
-                          onRemove: null,
-                        );
-                      },
-                    ),
-                    if (user.brochure != null && user.brochure!.isNotEmpty)
-                      const Row(
-                        children: [
-                          Text(
-                            'Brochure',
-                            style: TextStyle(
-                                color: Color(0xFF2C2829),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                    if (user.brochure != null)
-                      ListView.builder(
-                        shrinkWrap:
-                            true, // Let ListView take up only as much space as it needs
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
-                        itemCount: user.brochure!.length,
-                        itemBuilder: (context, index) {
-                          return BrochureCard(
-                            brochure: user.brochure![index],
-                            // onRemove: () => _removeCertificateCard(index),
-                          );
-                        },
-                      ),
-                  ]),
-                ),
-                SizedBox(height: 70)
-              ],
-            ),
-          ),
-          if (user.id != id)
-            Positioned(
-                bottom: 40,
-                left: 15,
-                right: 15,
-                child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          child: customButton(
-                              buttonHeight: 60,
-                              fontSize: 16,
-                              label: 'SAY HI',
-                              onPressed: () {
-                                final Participant receiver = Participant(
-                                    id: user.id,
-                                    profilePicture: user.profilePicture ?? '',
-                                    firstName: user.name?.firstName ?? '',
-                                    middleName: user.name?.middleName ?? '',
-                                    lastName: user.name?.lastName ?? '');
-                                final Participant sender = Participant(id: id);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => IndividualPage(
-                                          receiver: receiver,
-                                          sender: sender,
-                                        )));
-                              }),
-                        ),
+                        for (int index = 0;
+                            index < user.websites!.length;
+                            index++)
+                          customWebsitePreview(index,
+                              website: user.websites![index]),
                         const SizedBox(
-                          width: 10,
+                          height: 30,
                         ),
-                        Flexible(
-                          child: customButton(
-                              sideColor:
-                                  const Color.fromARGB(255, 219, 217, 217),
-                              labelColor: Color(0xFF2C2829),
-                              buttonColor: Color.fromARGB(255, 222, 218, 218),
-                              buttonHeight: 60,
-                              fontSize: 14,
-                              label: 'SAVE CONTACT',
-                              onPressed: () {
-                                if (user.phoneNumbers?.personal != null) {
-                                  saveContact(
-                                      firstName:
-                                          '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''}',
-                                      number: user.phoneNumbers?.personal ?? '',
-                                      lastName: '${user.name?.lastName ?? ''}',
-                                      email: user.email ?? '',
-                                      context: context);
-                                }
-                              }),
+                        if (user.video!.isNotEmpty)
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: 500,
+                                height: 260,
+                                child: PageView.builder(
+                                  controller: _videoCountController,
+                                  itemCount: user.video!.length,
+                                  physics: const PageScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return profileVideo(
+                                        context: context,
+                                        video: user.video![index]);
+                                  },
+                                ),
+                              ),
+                              ValueListenableBuilder<int>(
+                                valueListenable: _currentVideo,
+                                builder: (context, value, child) {
+                                  return SmoothPageIndicator(
+                                    controller: _videoCountController,
+                                    count: user.video!.length,
+                                    effect: const ExpandingDotsEffect(
+                                      dotHeight: 8,
+                                      dotWidth: 4,
+                                      activeDotColor: Colors.black,
+                                      dotColor: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        const SizedBox(
+                          height: 40,
                         ),
-                      ],
-                    ))),
-        ],
-      ),
+                        if (user.products != null && user.products!.isNotEmpty)
+                          const Row(
+                            children: [
+                              Text(
+                                'Products',
+                                style: TextStyle(
+                                    color: Color(0xFF2C2829),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        if (user.products != null)
+                          GridView.builder(
+                            shrinkWrap:
+                                true, // Let GridView take up only as much space as it needs
+                            physics:
+                                const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: 212,
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 0.0,
+                              mainAxisSpacing: 20.0,
+                            ),
+                            itemCount: user.products!.length,
+                            itemBuilder: (context, index) {
+                              return ProductCard(
+                                product: user.products![index],
+                                onRemove: null,
+                              );
+                            },
+                          ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        if (user.certificates != null &&
+                            user.certificates!.isNotEmpty)
+                          const Row(
+                            children: [
+                              Text(
+                                'Certificates',
+                                style: TextStyle(
+                                    color: Color(0xFF2C2829),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ListView.builder(
+                          shrinkWrap:
+                              true, // Let ListView take up only as much space as it needs
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                          itemCount: user.certificates!.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0), // Space between items
+                              child: CertificateCard(
+                                certificate: user.certificates![index],
+                                onRemove: null,
+                              ),
+                            );
+                          },
+                        ),
+                        if (user.awards != null && user.awards!.isNotEmpty)
+                          const Row(
+                            children: [
+                              Text(
+                                'Awards',
+                                style: TextStyle(
+                                    color: Color(0xFF2C2829),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        GridView.builder(
+                          shrinkWrap:
+                              true, // Let GridView take up only as much space as it needs
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable GridView's internal scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns
+                            crossAxisSpacing: 8.0, // Space between columns
+                            mainAxisSpacing: 8.0, // Space between rows
+                          ),
+                          itemCount: user.awards!.length,
+                          itemBuilder: (context, index) {
+                            return AwardCard(
+                              award: user.awards![index],
+                              onRemove: null,
+                            );
+                          },
+                        ),
+                        if (user.brochure != null && user.brochure!.isNotEmpty)
+                          const Row(
+                            children: [
+                              Text(
+                                'Brochure',
+                                style: TextStyle(
+                                    color: Color(0xFF2C2829),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        if (user.brochure != null)
+                          ListView.builder(
+                            shrinkWrap:
+                                true, // Let ListView take up only as much space as it needs
+                            physics:
+                                const NeverScrollableScrollPhysics(), // Disable ListView's internal scrolling
+                            itemCount: user.brochure!.length,
+                            itemBuilder: (context, index) {
+                              return BrochureCard(
+                                brochure: user.brochure![index],
+                                // onRemove: () => _removeCertificateCard(index),
+                              );
+                            },
+                          ),
+                      ]),
+                    ),
+                    SizedBox(height: 70)
+                  ],
+                ),
+              ),
+              if (user.id != id)
+                Positioned(
+                    bottom: 40,
+                    left: 15,
+                    right: 15,
+                    child: SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Flexible(
+                              child: customButton(
+                                  buttonHeight: 60,
+                                  fontSize: 16,
+                                  label: 'SAY HI',
+                                  onPressed: () {
+                                    final Participant receiver = Participant(
+                                        id: user.id,
+                                        profilePicture:
+                                            user.profilePicture ?? '',
+                                        firstName: user.name?.firstName ?? '',
+                                        middleName: user.name?.middleName ?? '',
+                                        lastName: user.name?.lastName ?? '');
+                                    final Participant sender =
+                                        Participant(id: id);
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                IndividualPage(
+                                                  receiver: receiver,
+                                                  sender: sender,
+                                                )));
+                                  }),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Flexible(
+                              child: customButton(
+                                  sideColor:
+                                      const Color.fromARGB(255, 219, 217, 217),
+                                  labelColor: Color(0xFF2C2829),
+                                  buttonColor:
+                                      Color.fromARGB(255, 222, 218, 218),
+                                  buttonHeight: 60,
+                                  fontSize: 14,
+                                  label: 'SAVE CONTACT',
+                                  onPressed: () {
+                                    if (user.phoneNumbers?.personal != null) {
+                                      saveContact(
+                                          firstName:
+                                              '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''}',
+                                          number:
+                                              user.phoneNumbers?.personal ?? '',
+                                          lastName:
+                                              '${user.name?.lastName ?? ''}',
+                                          email: user.email ?? '',
+                                          context: context);
+                                    }
+                                  }),
+                            ),
+                          ],
+                        ))),
+            ],
+          ),
+        );
+      },
+      loading: () => ProfileShimmer(),
+      error: (error, stackTrace) {
+        return Center(
+          child: LoadingAnimation(),
+        );
+      },
     );
   }
 

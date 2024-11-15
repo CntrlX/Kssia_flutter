@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/report_widgets/reportmodal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -380,6 +382,72 @@ void showReportDialog({
         reportType: reportType,
         onReportStatusChanged: onReportStatusChanged,
         reportedItemId: reportedItemId,
+      );
+    },
+  );
+}
+
+void showDeleteConfirmationDialog({
+  required String messageId,
+  required BuildContext context,
+  required VoidCallback onDelete,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: Colors.white,
+        title: Text(
+          'Delete Message',
+          style: TextStyle(
+            color: Color(0xFF004797),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this message?',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await deleteChat(messageId);
+              onDelete();
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF004797), // Button background color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       );
     },
   );

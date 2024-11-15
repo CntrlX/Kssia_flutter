@@ -1126,9 +1126,6 @@ class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
                     );
                   },
                 ),
-                Center(
-                  child: Text('Must be less than 1mb'),
-                ),
                 const SizedBox(height: 20),
                 ModalSheetTextFormField(
                   textController: widget.productNameText,
@@ -1963,7 +1960,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       ),
                     );
                   },
-                  loading: () => const Center(child: LoadingAnimation()),
+                  loading: () => const Center(child: Text('Something Went Wrong, Please try again')),
                   error: (error, stackTrace) {
                     return Center(
                       child: LoadingAnimation(),

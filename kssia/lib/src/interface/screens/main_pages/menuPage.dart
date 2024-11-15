@@ -5,6 +5,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
+import 'package:kssia/src/interface/common/Shimmer/menu_page_shimmer.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
@@ -235,7 +236,7 @@ class MenuPage extends StatelessWidget {
               ),
             ),
             body: asyncUser.when(
-              loading: () => Center(child: LoadingAnimation()),
+              loading: () => MenuPageShimmer(),
               error: (error, stackTrace) {
                 // Handle error state
                 return Center(
@@ -291,16 +292,13 @@ class MenuPage extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: () {
-                                ref.invalidate(userProvider);
+                                ref.read(userProvider.notifier).refreshUser();
                                 Navigator.push(
                                   context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => DetailsPage(),
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                    transitionsBuilder: (_, a, __, c) =>
-                                        FadeTransition(opacity: a, child: c),
-                                  ),
+                                  MaterialPageRoute(
+                                      settings: RouteSettings(name: 'menu'),
+                                      builder: (context) =>
+                                          DetailsPage()), // Navigate to MenuPage
                                 );
                               },
                               child: Text(
@@ -336,18 +334,19 @@ class MenuPage extends StatelessWidget {
                       ),
 
                       // Menu List
-                      _buildListTile(
-                        context,
-                        Icons.credit_card,
-                        'Request NFC',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RequestNFCPage()),
-                          );
-                        },
-                      ),
+
+                      // _buildListTile(
+                      //   context,
+                      //   Icons.credit_card,
+                      //   'Request NFC',
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => RequestNFCPage()),
+                      //     );
+                      //   },
+                      // ),
                       if (user.id != '6731b4722e9c216f74371518') Divider(),
                       if (user.id != '6731b4722e9c216f74371518')
                         _buildListTile(
@@ -362,7 +361,7 @@ class MenuPage extends StatelessWidget {
                             );
                           },
                         ),
-                      Divider(),
+                      if (user.id != '6731b4722e9c216f74371518') Divider(),
                       _buildListTile(
                         context,
                         Icons.shopping_bag,

@@ -210,7 +210,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => ProfilePreview(user: user),
+                          builder: (context) => ProfilePreview( ),
                         ),
                       );
                     },

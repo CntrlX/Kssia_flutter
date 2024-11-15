@@ -74,12 +74,12 @@ class SocketIoClient {
     });
 
     // Handle disconnection
-    _socket.onDisconnect((_) {
-      print('Disconnected from server');
-      if (!_controller.isClosed) {
-        _controller.close();
-      }
-    });
+    // _socket.onDisconnect((_) {
+    //   print('Disconnected from server');
+    //   if (!_controller.isClosed) {
+    //     _controller.close();
+    //   }
+    // });
 
     // Connect manually
     _socket.connect();
@@ -95,7 +95,31 @@ class SocketIoClient {
   // }
 }
 
-Future<void> sendChatMessage(
+Future<void> deleteChat(String chatId) async {
+  const String baseUrl = "https://api.kssiathrissur.com/api/v1/chats/delete";
+
+  try {
+    log('deleted message id:$chatId');
+    final response = await http.delete(
+      Uri.parse("$baseUrl/$chatId"),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': '*/*',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Chat deleted successfully.');
+    } else {
+      print('Failed to delete chat. Status code: ${response.statusCode}');
+      print('Response: ${response.body}');
+    }
+  } catch (e) {
+    print('An error occurred: $e');
+  }
+}
+
+Future<String> sendChatMessage(
     {required String userId,
     String? content,
     String? productId,
@@ -122,15 +146,20 @@ Future<void> sendChatMessage(
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       // Successfully sent the message
+      final jsonResponse = json.decode(response.body);
       print('Message sent: ${response.body}');
+      log('Message: ${jsonResponse['data']['_id']}');
+      return jsonResponse['data']['_id'];
     } else {
       final jsonResponse = json.decode(response.body);
 
       print(jsonResponse['message']);
       print('Failed to send message: ${response.statusCode}');
+      return '';
     }
   } catch (e) {
     print('Error occurred: $e');
+    return '';
   }
 }
 

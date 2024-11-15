@@ -276,7 +276,8 @@ class ProfileCard extends StatelessWidget {
                                 'https://admin.kssiathrissur.com/user/${user.id}',
                           ),
                           const SizedBox(height: 20),
-                          if (user.phoneNumbers != null)
+                          if (user.phoneNumbers != null &&
+                              user.phoneNumbers != '')
                             Row(
                               children: [
                                 const Icon(Icons.phone,
@@ -286,7 +287,7 @@ class ProfileCard extends StatelessWidget {
                               ],
                             ),
                           const SizedBox(height: 10),
-                          if (user.email != null)
+                          if (user.email != null && user.email != '')
                             Row(
                               children: [
                                 const Icon(Icons.email,
@@ -296,7 +297,7 @@ class ProfileCard extends StatelessWidget {
                               ],
                             ),
                           const SizedBox(height: 10),
-                          if (user.address != null)
+                          if (user.address != null && user.address != '')
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

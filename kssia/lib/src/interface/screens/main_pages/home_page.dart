@@ -472,9 +472,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                   const Spacer(),
-                  if (notice.noticeLink != null && notice.noticeLink != '')
+                  if (notice.noticeLink != null &&
+                      notice.noticeLink != '' &&
+                      notice.noticeLink != 'null')
                     GestureDetector(
                       onTap: () {
+                        log(notice.noticeLink);
                         launchURL(notice.noticeLink);
                       },
                       child: const Padding(

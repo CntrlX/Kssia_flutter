@@ -68,40 +68,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           children: [
                             Stack(
                               children: [
-                                Positioned(
-                                  top: 20,
-                                  right: 20,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Color(0xFFF2F2F2),
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
-                                    child: IconButton(
-                                      icon: Icon(Icons.remove_red_eye),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, animation,
-                                                    secondaryAnimation) =>
-                                                ProfilePreview(
-                                              user: widget.user,
-                                            ),
-                                            transitionsBuilder: (context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child) {
-                                              return FadeTransition(
-                                                opacity: animation,
-                                                child: child,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(40.0),
                                   child: Column(
@@ -134,7 +100,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name?.lastName??''}',
+                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name?.lastName ?? ''}',
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -161,74 +127,84 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                     maxLines:
                                                         2, // Limits to a single line
                                                   ),
+                                                Text(
+                                                  widget.user.companyName ?? '',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ],
                                             ),
                                           ),
                                         ],
                                       ),
                                       const SizedBox(height: 20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          if (widget.user.companyName != null &&
-                                              widget.user.companyName != '')
-                                            Column(
-                                              children: [
-                                                ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            9),
-                                                    child: widget.user
-                                                                    .companyLogo !=
-                                                                null &&
-                                                            widget.user
-                                                                    .companyLogo !=
-                                                                ''
-                                                        ? Image.network(
-                                                            errorBuilder:
-                                                                (context, error,
-                                                                    stackTrace) {
-                                                              return Image.asset(
-                                                                  'assets/icons/dummy_company.png');
-                                                            },
-                                                            widget.user
-                                                                .companyLogo!,
-                                                            height: 33,
-                                                            width: 40,
-                                                            fit: BoxFit.cover,
-                                                          )
-                                                        : Image.asset(
-                                                            'assets/icons/dummy_company.png'))
-                                              ],
-                                            ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                if (widget.user.companyName !=
-                                                    null)
-                                                  Text(
-                                                    widget.user.companyName ??
-                                                        '',
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.start,
+                                      //   children: [
+                                      //     SizedBox(
+                                      //       width: 10,
+                                      //     ),
+                                      //     if (widget.user.companyName != null &&
+                                      //         widget.user.companyName != '')
+                                      //       Column(
+                                      //         children: [
+                                      //           ClipRRect(
+                                      //               borderRadius:
+                                      //                   BorderRadius.circular(
+                                      //                       9),
+                                      //               child: widget.user
+                                      //                               .companyLogo !=
+                                      //                           null &&
+                                      //                       widget.user
+                                      //                               .companyLogo !=
+                                      //                           ''
+                                      //                   ? Image.network(
+                                      //                       errorBuilder:
+                                      //                           (context, error,
+                                      //                               stackTrace) {
+                                      //                         return Image.asset(
+                                      //                             'assets/icons/dummy_company.png');
+                                      //                       },
+                                      //                       widget.user
+                                      //                           .companyLogo!,
+                                      //                       height: 33,
+                                      //                       width: 40,
+                                      //                       fit: BoxFit.cover,
+                                      //                     )
+                                      //                   : Image.asset(
+                                      //                       'assets/icons/dummy_company.png'))
+                                      //         ],
+                                      //       ),
+                                      //     const SizedBox(width: 10),
+                                      //     Expanded(
+                                      //       child: Column(
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.start,
+                                      //         children: [
+                                      //           if (widget.user.companyName !=
+                                      //               null)
+                                      //             Text(
+                                      //               widget.user.companyName ??
+                                      //                   '',
+                                      //               style: const TextStyle(
+                                      //                 fontSize: 14,
+                                      //                 color: Colors.grey,
+                                      //               ),
+                                      //               maxLines: 2,
+                                      //               overflow:
+                                      //                   TextOverflow.ellipsis,
+                                      //             ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -266,16 +242,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Icon(Icons.email,
-                                    color: Color(0xFF004797)),
-                                const SizedBox(width: 10),
-                                Text(widget.user.email!),
-                              ],
-                            ),
+                            if (widget.user.email != null &&
+                                widget.user.email != '')
+                              Row(
+                                children: [
+                                  const Icon(Icons.email,
+                                      color: Color(0xFF004797)),
+                                  const SizedBox(width: 10),
+                                  Text(widget.user.email!),
+                                ],
+                              ),
                             const SizedBox(height: 10),
-                            if (widget.user.address != null)
+                            if (widget.user.address != null &&
+                                widget.user.address != '')
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -466,7 +445,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   //   ),
                   // ),
                 ),
-                const SizedBox(width: 40),
+                const SizedBox(width: 20),
                 GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -501,7 +480,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     //     ),
                     //   ),
                     // ),
-                    )
+                    ),
+                const SizedBox(width: 20),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePreview(
+                          
+                          ), // Navigate to CardPage
+                        ),
+                      );
+                    },
+                    child: SvgPicture.asset('assets/icons/eyeButton.svg'))
               ],
             ),
           ],

@@ -16,6 +16,7 @@ import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/customdialog.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IndividualPage extends ConsumerStatefulWidget {
   IndividualPage({required this.receiver, required this.sender, super.key});
@@ -37,6 +38,12 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
   void initState() {
     super.initState();
     getMessageHistory();
+    loadUnsendChat();
+  }
+
+  void loadUnsendChat() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    _controller.text = preferences.getString('chat') ?? '';
   }
 
   void getMessageHistory() async {
@@ -78,19 +85,21 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
     super.dispose();
   }
 
-  void sendMessage() {
+  Future<void> sendMessage() async {
     if (_controller.text.isNotEmpty && mounted) {
-      sendChatMessage(
+      String messageId = await sendChatMessage(
         userId: widget.receiver.id!,
         content: _controller.text,
       );
-      setMessage("sent", _controller.text, widget.sender.id!);
+      setMessage(messageId, "sent", _controller.text, widget.sender.id!);
       _controller.clear();
     }
   }
 
-  void setMessage(String type, String message, String fromId) {
+  void setMessage(
+      String messageId, String type, String message, String fromId) {
     final messageModel = MessageModel(
+      id: messageId,
       from: fromId,
       status: type,
       content: message,
@@ -118,317 +127,278 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
       }
     });
 
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: const Color(0xFFFCFCFC),
-          appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(60),
-              child: AppBar(
-                elevation: 1,
-                shadowColor: Colors.white,
-                backgroundColor: Colors.white,
-                leadingWidth: 90,
-                titleSpacing: 0,
-                leading: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(width: 10),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ClipOval(
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        child: Image.network(
-                          widget.receiver.profilePicture ?? '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                                'assets/icons/dummy_person_small.png');
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) async {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString('chat', _controller.text);
+      },
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            child: Scaffold(
+              backgroundColor: const Color(0xFFFCFCFC),
+              appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(60),
+                  child: AppBar(
+                    elevation: 1,
+                    shadowColor: Colors.white,
+                    backgroundColor: Colors.white,
+                    leadingWidth: 90,
+                    titleSpacing: 0,
+                    leading: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
                           },
+                          child: const Icon(
+                            Icons.arrow_back,
+                            size: 24,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 10),
+                        ClipOval(
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            child: Image.network(
+                              widget.receiver.profilePicture ?? '',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                    'assets/icons/dummy_person_small.png');
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                title: Text(
-                  '${widget.receiver.firstName ?? ''}  ${widget.receiver.middleName ?? ''} ${widget.receiver.lastName ?? ''}',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                actions: [
-                  IconButton(
-                      icon: const Icon(
-                        Icons.report,
-                        color: Color(0xFF004797),
-                      ),
-                      onPressed: () {
-                        showReportDialog(
-                            context: context,
-                            onReportStatusChanged: () {},
-                            reportType: 'user',
-                            reportedItemId: widget.receiver.id ?? '');
-                      }),
-                  IconButton(
-                      icon: const Icon(
-                        Icons.block,
-                      ),
-                      onPressed: () {
-                        showBlockPersonDialog(
-                            context: context,
-                            userId: widget.receiver.id ?? '',
-                            onBlockStatusChanged: () {
-                              Future.delayed(const Duration(seconds: 1));
-                              setState(() {
-                                if (isBlocked) {
-                                  isBlocked = false;
+                    title: Text(
+                      '${widget.receiver.firstName ?? ''}  ${widget.receiver.middleName ?? ''} ${widget.receiver.lastName ?? ''}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    actions: [
+                      IconButton(
+                          icon: const Icon(
+                            Icons.report,
+                            color: Color(0xFF004797),
+                          ),
+                          onPressed: () {
+                            showReportDialog(
+                                context: context,
+                                onReportStatusChanged: () {},
+                                reportType: 'user',
+                                reportedItemId: widget.receiver.id ?? '');
+                          }),
+                      IconButton(
+                          icon: const Icon(
+                            Icons.block,
+                          ),
+                          onPressed: () {
+                            showBlockPersonDialog(
+                                context: context,
+                                userId: widget.receiver.id ?? '',
+                                onBlockStatusChanged: () {
+                                  Future.delayed(const Duration(seconds: 1));
+                                  setState(() {
+                                    if (isBlocked) {
+                                      isBlocked = false;
+                                    } else {
+                                      isBlocked = true;
+                                    }
+                                  });
+                                });
+                          }),
+                    ],
+                  )),
+              body: Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: PopScope(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              reverse: true,
+                              controller: _scrollController,
+                              itemCount: messages.length,
+                              itemBuilder: (context, index) {
+                                final message = messages[messages.length -
+                                    1 -
+                                    index]; // Reverse the index to get the latest message first
+                                if (message.from == widget.sender.id) {
+                                  return GestureDetector(
+                                    onLongPress: () {
+                                      showDeleteConfirmationDialog(
+                                        messageId: message.id ?? '',
+                                        context: context,
+                                        onDelete: () {
+                                          setState(() {
+                                            messages.removeWhere(
+                                                (singlemessage) =>
+                                                    singlemessage.id ==
+                                                    message.id);
+                                          });
+                                        },
+                                      );
+                                    },
+                                    child: OwnMessageCard(
+                                      requirement: message.requirement,
+                                      status: message.status!,
+                                      product: message.product,
+                                      message: message.content ?? '',
+                                      time: DateFormat('h:mm a').format(
+                                        DateTime.parse(
+                                                message.timestamp.toString())
+                                            .toLocal(),
+                                      ),
+                                    ),
+                                  );
                                 } else {
-                                  isBlocked = true;
+                                  return GestureDetector(
+                                    onLongPress: () {
+                                      showReportDialog(
+                                          reportedItemId: message.id ?? '',
+                                          context: context,
+                                          onReportStatusChanged: () {
+                                            // setState(() {
+                                            //   if (isBlocked) {
+                                            //     isBlocked = false;
+                                            //   } else {
+                                            //     isBlocked = true;
+                                            //   }
+                                            // }
+                                            // );
+                                          },
+                                          reportType: 'chat');
+                                    },
+                                    child: ReplyCard(
+                                      requirement: message.requirement,
+                                      product: message.product,
+                                      message: message.content ?? '',
+                                      time: DateFormat('h:mm a').format(
+                                        DateTime.parse(
+                                                message.timestamp.toString())
+                                            .toLocal(),
+                                      ),
+                                    ),
+                                  );
                                 }
-                              });
-                            });
-                      }),
-                ],
-              )),
-          body: Stack(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: PopScope(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          reverse: true,
-                          controller: _scrollController,
-                          itemCount: messages.length,
-                          itemBuilder: (context, index) {
-                            final message = messages[messages.length -
-                                1 -
-                                index]; // Reverse the index to get the latest message first
-                            if (message.from == widget.sender.id) {
-                              return OwnMessageCard(
-                                requirement: message.requirement,
-                                status: message.status!,
-                                product: message.product,
-                                message: message.content ?? '',
-                                time: DateFormat('h:mm a').format(
-                                  DateTime.parse(message.timestamp.toString())
-                                      .toLocal(),
-                                ),
-                              );
-                            } else {
-                              return GestureDetector(
-                                onLongPress: () {
-                                  showReportDialog(
-                                      reportedItemId: message.id ?? '',
-                                      context: context,
-                                      onReportStatusChanged: () {
-                                        setState(() {
-                                          if (isBlocked) {
-                                            isBlocked = false;
-                                          } else {
-                                            isBlocked = true;
-                                          }
-                                        });
-                                      },
-                                      reportType: 'chat');
-                                },
-                                child: ReplyCard(
-                                  requirement: message.requirement,
-                                  product: message.product,
-                                  message: message.content ?? '',
-                                  time: DateFormat('h:mm a').format(
-                                    DateTime.parse(message.timestamp.toString())
-                                        .toLocal(),
+                              },
+                            ),
+                          ),
+                          isBlocked
+                              ? Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 20,
                                   ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                      isBlocked
-                          ? Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 20,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF004797),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 10,
-                                    offset: Offset(4, 4),
-                                  ),
-                                ],
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'This user is blocked',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 1.5,
-                                    shadows: [
-                                      // Shadow(
-                                      //   color: Colors.black45,
-                                      //   blurRadius: 5,
-                                      //   offset: Offset(2, 2),
-                                      // ),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF004797),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 10,
+                                        offset: Offset(4, 4),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ),
-                            )
-                          : Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 70,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
+                                  child: const Center(
+                                    child: Text(
+                                      'This user is blocked',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        letterSpacing: 1.5,
+                                        shadows: [
+                                          // Shadow(
+                                          //   color: Colors.black45,
+                                          //   blurRadius: 5,
+                                          //   offset: Offset(2, 2),
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    color: Colors.white,
+                                    child: Row(
                                       children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              65,
+                                        Expanded(
                                           child: Card(
-                                              elevation: 0,
-                                              color: Colors.white,
-                                              margin: const EdgeInsets.only(
-                                                  left: 15,
-                                                  right: 2,
-                                                  bottom: 22),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                  color: Color.fromARGB(
-                                                      255, 220, 215, 215),
-                                                  width: .5,
+                                            elevation: 1,
+                                            color: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 220, 215, 215),
+                                                width: 0.5,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0,
+                                                      vertical: 5.0),
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                  maxHeight:
+                                                      150, // Limit the height
+                                                ),
+                                                child: Scrollbar(
+                                                  thumbVisibility: true,
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    reverse:
+                                                        true, // Start from bottom
+                                                    child: TextField(
+                                                      controller: _controller,
+                                                      focusNode: focusNode,
+                                                      keyboardType:
+                                                          TextInputType
+                                                              .multiline,
+                                                      maxLines:
+                                                          null, // Allows for unlimited lines
+                                                      minLines:
+                                                          1, // Starts with a single line
+                                                      decoration:
+                                                          InputDecoration(
+                                                        border:
+                                                            InputBorder.none,
+                                                        hintText:
+                                                            "Type a message",
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                              child: TextFormField(
-                                                controller: _controller,
-                                                focusNode: focusNode,
-                                                textAlignVertical:
-                                                    TextAlignVertical.center,
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                maxLines: 5,
-                                                minLines: 1,
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                      color: Color.fromARGB(
-                                                          255,
-                                                          236,
-                                                          238,
-                                                          239), // Color when TextFormField is focused
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                      color: Color.fromARGB(
-                                                          255,
-                                                          236,
-                                                          238,
-                                                          239), // Color when TextFormField is focused
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                      color: Color.fromARGB(
-                                                          255,
-                                                          236,
-                                                          238,
-                                                          239), // Color when TextFormField is focused
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  errorBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                      color: Color.fromARGB(
-                                                          255,
-                                                          236,
-                                                          238,
-                                                          239), // Color when TextFormField is focused
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  focusedErrorBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                      color: Color.fromARGB(
-                                                          255,
-                                                          236,
-                                                          238,
-                                                          239), // Color when TextFormField is focused
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  hintText:
-                                                      "What would you share?",
-                                                  hintStyle: const TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14),
-                                                  suffixIcon: const Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      // You can add your IconButton here as needed
-                                                    ],
-                                                  ),
-                                                  contentPadding:
-                                                      const EdgeInsets.all(5),
-                                                ),
-                                              )),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
+                                            ),
+                                          ),
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                            bottom: 20,
                                             right: 2,
                                             left: 2,
                                           ),
@@ -450,87 +420,35 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                    ],
-                  ),
-                  onPopInvoked: (didPop) {
-                    if (didPop) {
-                      if (show) {
-                        setState(() {
-                          show = false;
-                        });
-                      } else {
-                        focusNode.unfocus();
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (Navigator.canPop(context)) {
-                            Navigator.pop(context);
+                                  ),
+                                )
+                        ],
+                      ),
+                      onPopInvoked: (didPop) {
+                        if (didPop) {
+                          if (show) {
+                            setState(() {
+                              show = false;
+                            });
+                          } else {
+                            focusNode.unfocus();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                            });
                           }
-                        });
-                      }
-                      ref.invalidate(fetchChatThreadProvider);
-                    }
-                  },
-                ),
+                          ref.invalidate(fetchChatThreadProvider);
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
-              // if (subscription != 'premium')
-              //   Positioned.fill(
-              //     child: BackdropFilter(
-              //       filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              //       child: Container(
-              //         color: Colors.black
-              //             .withOpacity(0.6), // Semi-transparent overlay
-              //         child: Center(
-              //           child: Column(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: [
-              //               const Icon(
-              //                 Icons.lock_outline,
-              //                 size: 50,
-              //                 color: Colors.white,
-              //               ),
-              //               const SizedBox(height: 16),
-              //               const Text(
-              //                 'Unlock Premium Content',
-              //                 style: TextStyle(
-              //                   fontSize: 22,
-              //                   color: Colors.white,
-              //                   fontWeight: FontWeight.bold,
-              //                 ),
-              //               ),
-              //               const SizedBox(height: 8),
-              //               const Text(
-              //                 'Buy Premium to access this page and more.',
-              //                 textAlign: TextAlign.center,
-              //                 style: TextStyle(
-              //                   fontSize: 14,
-              //                   color: Colors.white70,
-              //                 ),
-              //               ),
-              //               const SizedBox(height: 24),
-              //               SizedBox(
-              //                   width: 230,
-              //                   child: customButton(
-              //                       label: 'Buy Premium',
-              //                       onPressed: () {
-              //                         showDialog(
-              //                           context: context,
-              //                           builder: (context) =>
-              //                               const UpgradeDialog(),
-              //                         );
-              //                       }))
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

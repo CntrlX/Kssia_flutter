@@ -16,6 +16,7 @@ import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/interface/common/Shimmer/edit_user_shimmer.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
@@ -505,10 +506,10 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
 
       ApiRoutes userApi = ApiRoutes();
       Map<String, dynamic> responseMap = await userApi.verifyOTP(
-        verificationId: widget.verificationId,
-        fcmToken: fcmToken,
-        smsCode: _otpController.text,
-      );
+          verificationId: widget.verificationId,
+          fcmToken: fcmToken,
+          smsCode: _otpController.text,
+          context: context);
 
       String savedToken = responseMap['token'];
       String savedId = responseMap['userId'];
@@ -526,10 +527,10 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));
       } else {
-        CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+        // CustomSnackbar.showSnackbar(context, 'Wrong OTP');
       }
     } catch (e) {
-      CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+      // CustomSnackbar.showSnackbar(context, 'Wrong OTP');
     } finally {
       ref.read(loadingProvider.notifier).stopLoading();
     }
@@ -635,6 +636,8 @@ class ProfileCompletionScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
+                                    settings: RouteSettings(
+                                        name: 'ProfileCompletion'),
                                     builder: (context) => const DetailsPage()));
                             ref.invalidate(userProvider);
                           },
@@ -1179,6 +1182,20 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     );
   }
 
+  void navigateBasedOnPreviousPage() {
+    final previousPage = ModalRoute.of(context)?.settings.name;
+    log('previousPage: $previousPage');
+    if (previousPage == 'ProfileCompletion') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainPage()),
+      );
+    } else {
+      Navigator.pop(context);
+      ref.read(userProvider.notifier).refreshUser();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(userProvider);
@@ -1186,7 +1203,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
-          ref.invalidate(userProvider);
+          ref.read(userProvider.notifier).refreshUser();
         }
       },
       child: SafeArea(
@@ -1199,7 +1216,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               body: asyncUser.when(
                 loading: () {
                   log('im inside details page');
-                  return const Center(child: LoadingAnimation());
+                  return const EditUserShimmer();
                 },
                 error: (error, stackTrace) {
                   return const Center(
@@ -1312,12 +1329,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               ref
                                                   .read(userProvider.notifier)
                                                   .refreshUser();
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          const MainPage()));
+                                              navigateBasedOnPreviousPage();
                                             },
                                             child: const Icon(Icons.close)),
                                       ],
@@ -2936,12 +2948,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ref.invalidate(userProvider);
                                             // CustomSnackbar.showSnackbar(
                                             //     context, response);
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        const MainPage()));
+                                            navigateBasedOnPreviousPage();
                                           } else {
                                             CustomSnackbar.showSnackbar(
                                                 context, response);

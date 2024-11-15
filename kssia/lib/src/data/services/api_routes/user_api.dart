@@ -93,7 +93,8 @@ class ApiRoutes {
   Future<Map<String, dynamic>> verifyOTP(
       {required String verificationId,
       required String fcmToken,
-      required String smsCode}) async {
+      required String smsCode,
+      required BuildContext context}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationId,
@@ -110,20 +111,21 @@ class ApiRoutes {
         log("fcm token:$fcmToken");
         log("Verification ID:$verificationId");
         final Map<String, dynamic> tokenMap =
-            await verifyUserDB(idToken!, fcmToken);
+            await verifyUserDB(idToken!, fcmToken, context);
         return tokenMap;
       } else {
         print("User signed in, but no user information was found.");
         return {};
       }
     } catch (e) {
+      CustomSnackbar.showSnackbar(context, 'Wrong OTP');
       print("Failed to sign in: ${e.toString()}");
       return {};
     }
   }
 
   Future<Map<String, dynamic>> verifyUserDB(
-      String idToken, String fcmToken) async {
+      String idToken, String fcmToken, BuildContext context) async {
     final response = await http.post(
       Uri.parse('$baseUrl/user/login'),
       headers: {"Content-Type": "application/json"},
@@ -133,13 +135,18 @@ class ApiRoutes {
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
       log(responseBody.toString());
-      return responseBody[
-          'data']; // this will return the map with token and userId
+      CustomSnackbar.showSnackbar(context, responseBody['message']);
+      return responseBody['data'];
     } else if (response.statusCode == 400) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      log(responseBody.toString());
+      CustomSnackbar.showSnackbar(context, responseBody['message']);
       return {};
     } else {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
+
       log(responseBody.toString());
+      CustomSnackbar.showSnackbar(context, responseBody['message']);
       return {};
     }
   }
@@ -216,14 +223,14 @@ class ApiRoutes {
 
     // Upload the image to Minio
     final imageName = basename(file.path);
-    await Minio.shared.fPutObject('akcaf-bucket', imageName, file.path);
+    await Minio.shared.fPutObject('kssia-s3-bucket', imageName, file.path);
     final imageUrl =
-        "https://akcaf-bucket.s3.ap-south-1.amazonaws.com/$imageName";
+        "https://kssia-s3-bucket.s3.ap-south-1.amazonaws.com/$imageName";
     return imageUrl;
   }
 
   String removeBaseUrl(String url) {
-    String baseUrl = 'https://kssia.s3.ap-south-1.amazonaws.com/';
+    String baseUrl = 'https://kssia-s3-bucket.s3.ap-south-1.amazonaws.com/';
     return url.replaceFirst(baseUrl, '');
   }
 
@@ -402,44 +409,44 @@ class ApiRoutes {
     }
   }
 
-Future<String?> uploadRequirement(String token, String author, String content,
-    String status, String? image, BuildContext context) async {
-  const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
+  Future<String?> uploadRequirement(String token, String author, String content,
+      String status, String? image, BuildContext context) async {
+    const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
 
-  // Prepare the request headers
-  final headers = {
-    'accept': 'application/json',
-    'Authorization': 'Bearer $token',
-    'Content-Type': 'application/json',
-  };
+    // Prepare the request headers
+    final headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
 
-  // Prepare the request body
-  final body = jsonEncode({
-    'author': author,
-    'content': content,
-    'status': status,
-    if (image != null) 'image': image, // Include 'image' only if it's not null
-  });
+    // Prepare the request body
+    final body = jsonEncode({
+      'author': author,
+      'content': content,
+      'status': status,
+      if (image != null)
+        'image': image, // Include 'image' only if it's not null
+    });
 
-  // Send the POST request
-  final response = await http.post(
-    Uri.parse(url),
-    headers: headers,
-    body: body,
-  );
+    // Send the POST request
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
 
-  if (response.statusCode == 201) {
-    print('Requirement submitted successfully');
-    final jsonResponse = json.decode(response.body);
-    return jsonResponse['message'];
-  } else {
-    final jsonResponse = json.decode(response.body);
-    print(jsonResponse['message']);
-    print('Failed to submit requirement: ${response.statusCode}');
-    return null;
+    if (response.statusCode == 201) {
+      print('Requirement submitted successfully');
+      final jsonResponse = json.decode(response.body);
+      return jsonResponse['message'];
+    } else {
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse['message']);
+      print('Failed to submit requirement: ${response.statusCode}');
+      return null;
+    }
   }
-}
-
 
   Future<String?> uploadPayment(
     context,
