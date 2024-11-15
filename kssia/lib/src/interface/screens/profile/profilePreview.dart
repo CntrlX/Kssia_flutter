@@ -166,58 +166,58 @@ class ProfilePreview extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                // Column(
+                                //   children: [
+                                //     user.companyLogo != null &&
+                                //             user.companyLogo != ''
+                                //         ? GestureDetector(
+                                //             onTap: () {
+                                //               showDialog(
+                                //                 context: context,
+                                //                 builder: (context) => Dialog(
+                                //                   backgroundColor:
+                                //                       Colors.transparent,
+                                //                   child: GestureDetector(
+                                //                     onTap: () =>
+                                //                         Navigator.pop(context),
+                                //                     child: InteractiveViewer(
+                                //                       child: Image.network(
+                                //                         user.companyLogo ?? '',
+                                //                         errorBuilder: (context,
+                                //                             error, stackTrace) {
+                                //                           return Image.asset(
+                                //                               'assets/icons/dummy_company.png');
+                                //                         },
+                                //                         fit: BoxFit.contain,
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //               );
+                                //             },
+                                //             child: ClipRRect(
+                                //               borderRadius:
+                                //                   BorderRadius.circular(9),
+                                //               child: Image.network(
+                                //                 user.companyLogo ?? '',
+                                //                 errorBuilder: (context, error,
+                                //                     stackTrace) {
+                                //                   return Image.asset(
+                                //                       'assets/icons/dummy_company.png');
+                                //                 },
+                                //                 height: 33,
+                                //                 width: 40,
+                                //                 fit: BoxFit.cover,
+                                //               ),
+                                //             ),
+                                //           )
+                                //         : Image.asset(
+                                //             'assets/icons/dummy_company.png'),
+                                //   ],
+                                // ),
+                                // const SizedBox(width: 10),
                                 Column(
-                                  children: [
-                                    user.companyLogo != null &&
-                                            user.companyLogo != ''
-                                        ? GestureDetector(
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) => Dialog(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  child: GestureDetector(
-                                                    onTap: () =>
-                                                        Navigator.pop(context),
-                                                    child: InteractiveViewer(
-                                                      child: Image.network(
-                                                        user.companyLogo ?? '',
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return Image.asset(
-                                                              'assets/icons/dummy_company.png');
-                                                        },
-                                                        fit: BoxFit.contain,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(9),
-                                              child: Image.network(
-                                                user.companyLogo ?? '',
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Image.asset(
-                                                      'assets/icons/dummy_company.png');
-                                                },
-                                                height: 33,
-                                                width: 40,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          )
-                                        : Image.asset(
-                                            'assets/icons/dummy_company.png'),
-                                  ],
-                                ),
-                                const SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     if (user.designation != null &&
                                         user.designation != '')
@@ -345,9 +345,9 @@ class ProfilePreview extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
-                                    child: Text(
-                                        user.phoneNumbers?.whatsappBusinessNumber ??
-                                            ''),
+                                    child: Text(user.phoneNumbers
+                                            ?.whatsappBusinessNumber ??
+                                        ''),
                                   )
                                 ],
                               ),
