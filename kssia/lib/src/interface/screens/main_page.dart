@@ -127,7 +127,9 @@ class _MainPageState extends ConsumerState<MainPage> {
       return asyncUser.when(
         loading: () {
           log('im inside details main page loading');
-          return Center(child: LoadingAnimation());
+          return Scaffold(
+            body: buildShimmerPromotionsColumn(context: context),
+          );
         },
         error: (error, stackTrace) {
           log('im inside details main page error $error $stackTrace');
