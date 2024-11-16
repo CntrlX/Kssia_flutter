@@ -505,7 +505,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.26;
+				MARKETING_VERSION = 0.1.30;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skybertech.kssia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -698,7 +698,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.26;
+				MARKETING_VERSION = 0.1.30;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skybertech.kssia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -731,7 +731,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.26;
+				MARKETING_VERSION = 0.1.30;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skybertech.kssia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
