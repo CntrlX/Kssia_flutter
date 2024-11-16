@@ -152,16 +152,15 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const SizedBox(width: 10),
-                        InkWell(
-                          onTap: () {
+                        IconButton(
+                          onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Icon(
-                            Icons.arrow_back,
+                          icon: Icon(
+                            Icons.arrow_back_ios,
                             size: 24,
                           ),
                         ),
-                        const SizedBox(width: 10),
                         ClipOval(
                           child: Container(
                             width: 30,
@@ -172,6 +171,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Image.asset(
+                                    scale: .8,
                                     'assets/icons/dummy_person_small.png');
                               },
                             ),
@@ -179,9 +179,16 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                         ),
                       ],
                     ),
-                    title: Text(
-                      '${widget.receiver.firstName ?? ''}  ${widget.receiver.middleName ?? ''} ${widget.receiver.lastName ?? ''}',
-                      style: const TextStyle(fontSize: 18),
+                    title: Row(
+                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          '${widget.receiver.firstName ?? ''}  ${widget.receiver.middleName ?? ''} ${widget.receiver.lastName ?? ''}',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
                     ),
                     actions: [
                       PopupMenuButton<String>(
@@ -199,7 +206,6 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               context: context,
                               userId: widget.receiver.id ?? '',
                               onBlockStatusChanged: () {
-                                
                                 Future.delayed(const Duration(seconds: 1), () {
                                   setState(() {
                                     isBlocked = !isBlocked;
