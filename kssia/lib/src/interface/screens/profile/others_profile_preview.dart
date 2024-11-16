@@ -90,7 +90,7 @@ class OthersProfilePreview extends ConsumerWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          DetailsPage()), // Navigate to MenuPage
+                                          const DetailsPage()), // Navigate to MenuPage
                                 );
                               },
                             ),
@@ -372,29 +372,69 @@ class OthersProfilePreview extends ConsumerWidget {
                         children: [
                           SizedBox(
                               width: 100,
-                              child: customButton(
-                                  label: 'Write a Review',
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
-                                      ),
-                                      builder: (context) =>
-                                          ShowWriteReviewSheet(
-                                        userId: user.id!,
-                                      ),
-                                    );
-                                  },
-                                  fontSize: 15)),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20)),
+                                    ),
+                                    builder: (context) => ShowWriteReviewSheet(
+                                      userId: user.id!,
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding:
+                                      EdgeInsets.zero, // Removed extra padding
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  backgroundColor: const Color(
+                                      0xFF004797), // Your preferred color
+                                  elevation: 4,
+                                ),
+                                child: const IntrinsicWidth(
+                                  // Ensures compact width based on content
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        FittedBox(
+                                          // Ensures text scales to fit within the button
+                                          child: Text(
+                                            'write a',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        FittedBox(
+                                          child: Text(
+                                            'review',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )),
                         ],
                       ),
                     if (user.reviews!.isNotEmpty)
                       ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: reviewsToShow,
                         itemBuilder: (context, index) {
                           return ReviewsCard(
@@ -412,7 +452,7 @@ class OthersProfilePreview extends ConsumerWidget {
                               .read(reviewsProvider.notifier)
                               .showMoreReviews(user.reviews!.length);
                         },
-                        child: Text('View More'),
+                        child: const Text('View More'),
                       ),
                     if (user.socialMedia!.isNotEmpty)
                       const Row(
@@ -614,7 +654,7 @@ class OthersProfilePreview extends ConsumerWidget {
                       ),
                   ]),
                 ),
-                SizedBox(height: 70)
+                const SizedBox(height: 70)
               ],
             ),
           ),
@@ -655,8 +695,9 @@ class OthersProfilePreview extends ConsumerWidget {
                           child: customButton(
                               sideColor:
                                   const Color.fromARGB(255, 219, 217, 217),
-                              labelColor: Color(0xFF2C2829),
-                              buttonColor: Color.fromARGB(255, 222, 218, 218),
+                              labelColor: const Color(0xFF2C2829),
+                              buttonColor:
+                                  const Color.fromARGB(255, 222, 218, 218),
                               buttonHeight: 60,
                               fontSize: 14,
                               label: 'SAVE CONTACT',

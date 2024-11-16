@@ -1,7 +1,7 @@
 name: kssia
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.3.2+43
+version: 1.0.0+44
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -60,6 +60,8 @@ dependencies:
   flutter_image_compress: ^2.3.0
   flutter_dotenv: ^5.2.1
   minio_flutter: ^0.0.1
+  keyboard_avoider: ^0.2.0
+  multi_select_flutter: ^4.1.3
 
 
 

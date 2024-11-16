@@ -300,70 +300,59 @@ class ApiRoutes {
   // }
 
   Future<Product?> uploadProduct(
-      String token,
-      String name,
-      String price,
-      String offerPrice,
-      String description,
-      String moq,
-      File productImage,
-      String sellerId,
-      String productPriceType,
-      context) async {
+    String token,
+    String name,
+    String price,
+    String offerPrice,
+    String description,
+    String moq,
+    String productImage,
+    String productPriceType,
+    List<String> selectedTags,
+    context,
+  ) async {
     final url = Uri.parse('$baseUrl/products');
 
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', url);
+    final body = {
+      'name': name,
+      'price': price,
+      'offer_price': offerPrice,
+      'description': description,
+      'seller_id': id,
+      'moq': moq,
+      'tags': selectedTags,
+      'status': 'pending',
+      'units': productPriceType,
+      'image': productImage,
+   
+    };
 
-    // Add headers
-    request.headers.addAll({
-      'accept': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'multipart/form-data',
-    });
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
 
-    // Add fields
-    request.fields['name'] = name;
-    request.fields['price'] = price;
-    request.fields['offer_price'] = offerPrice;
-    request.fields['description'] = description;
-    request.fields['moq'] = moq;
-    request.fields['status'] = 'pending';
-    request.fields['seller_id'] = sellerId;
-    request.fields['units'] = productPriceType;
-
-    // Add the image file
-    var stream = http.ByteStream(productImage.openRead());
-    stream.cast();
-    var length = await productImage.length();
-    var multipartFile = http.MultipartFile(
-      'image',
-      stream,
-      length,
-      filename: basename(productImage.path),
-      contentType: MediaType('image', 'png'),
-    );
-
-    request.files.add(multipartFile);
-
-    // Send the request
-    var response = await request.send();
-
-    if (response.statusCode == 201) {
-      print('Product uploaded successfully');
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-      print(jsonResponse['message']);
-      final Product product = Product.fromJson(jsonResponse['data']);
-
-      return product;
-    } else {
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
-
-      print(jsonResponse['message']);
-      print('Failed to upload product: ${response.statusCode}');
+      if (response.statusCode == 201) {
+        print('Product uploaded successfully');
+        final jsonResponse = json.decode(response.body);
+        final Product product = Product.fromJson(jsonResponse['data']);
+        return product;
+      } else {
+        final jsonResponse = json.decode(response.body);
+        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
+        print('Failed to upload product: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      CustomSnackbar.showSnackbar(
+          context, 'Something went wrong. Please try again.');
       return null;
     }
   }
@@ -580,7 +569,7 @@ class ApiRoutes {
       log(message);
       if (response.statusCode == 200) {
         // Success
-        ref.read(userProvider.notifier).refreshUser();
+        // ref.read(userProvider.notifier).refreshUser();
         print('User Blocked successfully');
         CustomSnackbar.showSnackbar(context, 'User Blocked');
       } else {
@@ -596,7 +585,7 @@ class ApiRoutes {
     }
   }
 
-  Future<void> unBlockUser(String userId, String reason, context) async {
+  Future<void> unBlockUser(String userId, context,WidgetRef ref) async {
     final String url =
         'https://api.kssiathrissur.com/api/v1/user/unblock/$userId';
 
@@ -610,7 +599,8 @@ class ApiRoutes {
       );
 
       if (response.statusCode == 200) {
-        // Success
+        // Success\
+        // ref.read(userProvider.notifier).refreshUser();
         print('User unBlocked successfully');
         CustomSnackbar.showSnackbar(context, 'User unblocked');
       } else {
