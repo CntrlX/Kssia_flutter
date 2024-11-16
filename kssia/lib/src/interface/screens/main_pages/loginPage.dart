@@ -816,6 +816,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
     return null;
   }
+
   void _removeProduct(int index) async {
     // await api
     //     .deleteFile(
@@ -824,7 +825,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     ref
         .read(userProvider.notifier)
         .removeProduct(ref.read(userProvider).value!.products![index]);
-  } 
+  }
   // void _addAwardCard() async {
   // await api.createFileUrl(file: _awardImageFIle!).then((url) {
   //   awardUrl = url;
@@ -857,8 +858,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         .read(userProvider.notifier)
         .removeAward(ref.read(userProvider).value!.awards![index]);
   }
-
-  
 
   Future<void> _addNewCertificate() async {
     await api
@@ -1108,40 +1107,38 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   void _openModalSheet(
       {required String sheet, String brochureName = 'Sample'}) {
     if (sheet == 'product') {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EnterProductsPage(
-                 )));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => EnterProductsPage()));
+    } else {
+      showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          if (sheet == 'award') {
+            return ShowEnterAwardSheet(
+              pickImage: _pickFile,
+              addAwardCard: _addNewAward,
+              imageType: sheet,
+              textController1: awardNameController,
+              textController2: awardAuthorityController,
+            );
+          } else if (sheet == 'certificate') {
+            return ShowAddCertificateSheet(
+                addCertificateCard: _addNewCertificate,
+                textController: certificateNameController,
+                imageType: sheet,
+                pickImage: _pickFile);
+          } else {
+            return ShowAddBrochureSheet(
+                brochureName: brochureName,
+                textController: brochureNameController,
+                pickPdf: _pickBrochure,
+                imageType: sheet,
+                addBrochureCard: _addNewBrochure);
+          }
+        },
+      );
     }
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        if (sheet == 'award') {
-          return ShowEnterAwardSheet(
-            pickImage: _pickFile,
-            addAwardCard: _addNewAward,
-            imageType: sheet,
-            textController1: awardNameController,
-            textController2: awardAuthorityController,
-          );
-        } else if (sheet == 'certificate') {
-          return ShowAddCertificateSheet(
-              addCertificateCard: _addNewCertificate,
-              textController: certificateNameController,
-              imageType: sheet,
-              pickImage: _pickFile);
-        } else {
-          return ShowAddBrochureSheet(
-              brochureName: brochureName,
-              textController: brochureNameController,
-              pickPdf: _pickBrochure,
-              imageType: sheet,
-              addBrochureCard: _addNewBrochure);
-        }
-      },
-    );
   }
 
   void navigateBasedOnPreviousPage() {
