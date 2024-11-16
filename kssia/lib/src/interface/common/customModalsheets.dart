@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/getRatings.dart';
+import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
@@ -20,7 +22,9 @@ import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/validate_urls.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 void showWebsiteSheet({
   required VoidCallback addWebsite,
@@ -94,7 +98,7 @@ void showWebsiteSheet({
                           if (_formKey.currentState!.validate()) {
                             addWebsite();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Saved')),
+                              const SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -215,7 +219,7 @@ void showVideoLinkSheet({
                           if (_formKey.currentState!.validate()) {
                             addVideo();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Saved')),
+                              const SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           }
@@ -345,7 +349,7 @@ void showWlinkorVlinkSheet(
                               }
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Saved')),
+                              const SnackBar(content: Text('Saved')),
                             );
                             Navigator.pop(context);
                           },
@@ -961,322 +965,564 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
   }
 }
 
-class ShowEnterProductsSheet extends StatefulWidget {
-  final TextEditingController productPriceTypeController;
-  final TextEditingController productNameText;
-  final TextEditingController descriptionText;
-  final TextEditingController moqText;
-  final TextEditingController actualPriceText;
-  final TextEditingController offerPriceText;
-
-  final Future<void> Function() addProductCard;
-  final String imageType;
-
-  final Future<File?> Function({required String imageType}) pickImage;
-
-  ShowEnterProductsSheet({
+class EnterProductsPage extends ConsumerStatefulWidget {
+  EnterProductsPage({
     super.key,
-    required this.productNameText,
-    required this.descriptionText,
-    required this.moqText,
-    required this.actualPriceText,
-    required this.offerPriceText,
-    required this.addProductCard,
-    required this.imageType,
-    required this.pickImage,
-    required this.productPriceTypeController,
   });
 
   @override
-  State<ShowEnterProductsSheet> createState() => _ShowEnterProductsSheetState();
+  ConsumerState<EnterProductsPage> createState() => _EnterProductsPageState();
 }
 
-class _ShowEnterProductsSheetState extends State<ShowEnterProductsSheet> {
+class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   File? productImage;
-  String productPriceType = 'Price per unit';
+
   final _formKey = GlobalKey<FormState>();
+  TextEditingController productPriceType =
+      TextEditingController(text: "Price per unit");
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController productDescriptionController =
+      TextEditingController();
+  final TextEditingController productMoqController = TextEditingController();
+  final TextEditingController productActualPriceController =
+      TextEditingController();
+  final TextEditingController productOfferPriceController =
+      TextEditingController();
+  File? _productImageFIle;
+
+  String productUrl = '';
+  final List<String> _allItems = [
+    "Pipes and Fillings",
+    "Water Tanks",
+    "Water Taps",
+    "Septic Tanks",
+    "Carbuoys",
+    "Garden Hoses",
+    "Chairs",
+    "Printing Machinery",
+    "Printing Work",
+    "Multiwood",
+    "Films",
+    "Adhesive Tapes",
+    "Packing Materials",
+    "Packing Containers",
+    "Moulds",
+    "Bucket and Cups",
+    "Household Items",
+    "Rainguard Materials",
+    "Pots",
+    "Safety Products",
+    "Tread Rubber",
+    "Balloons",
+    "Gloves",
+    "Rubber Moulds",
+    "Dies",
+    "CNC Works",
+    "Cleaning Chemicals",
+    "Water Treatment Chemicals",
+    "Soaps and Detergents",
+    "Paints",
+    "Varnishes",
+    "Solvents",
+    "Process Oil",
+    "Machine Oil",
+    "Hydraulic Oil",
+    "Carton Box",
+    "Plywood Packing",
+    "Boilers",
+    "Industrial Gas",
+    "Rolling Shutters",
+    "Industrial Adhesive",
+    "Door & Window Frames",
+    "Structural Building",
+    "Writing Pen",
+    "Dresses",
+    "Packing Machines",
+    "Designer Tiles and Paver Blocks",
+    "Crusher Machinery",
+    "Industrial Heaters",
+    "Industrial Ovens",
+    "Food Processing Machinery",
+    "Electrical Machinery",
+    "Electroplating",
+    "Rubber Reclaim",
+    "Food Products",
+    "Packaged Snacks",
+    "Lathe Work",
+    "Cosmetic Products",
+    "Ayurvedic Products",
+    "Healthcare Products",
+    "Rubber Machinery",
+    "Clay Tile",
+    "Clay Tile Machinery",
+    "Irrigation Pipes",
+    "Pet Cages",
+    "Rubber Products",
+    "Plastic Containers",
+    "Welding Materials",
+    "Wiring Cables",
+    "Milk and Milk Products",
+    "Plastic Moulded Items",
+    "Manure",
+    "Nails",
+    "Aluminium Products"
+  ];
+
+  // Selected items will be stored here
+  List<String> _selectedItems = [];
+
+  void _showMultiSelect(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return MultiSelectDialog(
+          items: _allItems.map((e) => MultiSelectItem(e, e)).toList(),
+          initialValue: _selectedItems,
+          onConfirm: (values) {
+            setState(() {
+              _selectedItems = values.cast<String>();
+            });
+          },
+          title: const Text(
+            "Select tags",
+            style: TextStyle(
+                color: Color(0xFF004797), fontWeight: FontWeight.bold),
+          ),
+          selectedColor: Color(0xFF004797),
+          checkColor: Colors.white,
+          searchable: true,
+          confirmText: const Text("CONFIRM",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF004797),
+              )),
+          cancelText: const Text("CANCEL",
+              style: TextStyle(color: Color.fromARGB(255, 130, 130, 130))),
+          backgroundColor: Colors.white,
+        );
+      },
+    );
+  }
+
+  ApiRoutes api = ApiRoutes();
+
+  Future<void> _addNewProduct({required List<String> selectedTags}) async {
+    productUrl =
+        await api.createFileUrl(file: _productImageFIle!, token: token);
+    final createdProduct = await api.uploadProduct(
+        token,
+        productNameController.text,
+        productActualPriceController.text,
+        productOfferPriceController.text,
+        productDescriptionController.text,
+        productMoqController.text,
+        productUrl,
+        productPriceType.text,
+        selectedTags,
+        context);
+    if (createdProduct == null) {
+      print('couldnt create new product');
+    } else {
+      final newProduct = Product(
+        id: createdProduct.id,
+        name: productNameController.text,
+        image: productUrl,
+        description: productDescriptionController.text,
+        moq: int.parse(productMoqController.text),
+        offerPrice: int.parse(productOfferPriceController.text),
+        price: int.parse(productActualPriceController.text),
+        sellerId: SellerId(id: id),
+        status: 'pending',
+      );
+      ref.read(userProvider.notifier).updateProduct(
+          [...?ref.read(userProvider).value?.products, newProduct]);
+    }
+  }
+
+  Future<File?> _pickFile({required String imageType}) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'png',
+        'jpg',
+        'jpeg',
+      ],
+    );
+
+    if (result != null) {
+      _productImageFIle = File(result.files.single.path!);
+      return _productImageFIle;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        widget.productPriceTypeController.text = '';
-        widget.productNameText.text = '';
-        widget.descriptionText.text = '';
-        widget.moqText.text = '';
-        widget.actualPriceText.text = '';
-        widget.offerPriceText.text = '';
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Add Products',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(65.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(
+                  color: Color.fromARGB(255, 231, 226, 226),
+                  width: 1.0,
                 ),
-                const SizedBox(height: 10),
-                FormField<File>(
-                  initialValue: productImage,
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please upload an image';
-                    }
-                    return null;
-                  },
-                  builder: (FormFieldState<File> state) {
-                    return Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return Center(
-                                  child: LoadingAnimation(),
-                                );
-                              },
-                            );
-
-                            final pickedFile = await widget.pickImage(
-                                imageType: widget.imageType);
-                            if (pickedFile == null) {
-                              Navigator.pop(context);
-                            }
-
-                            setState(() {
-                              productImage = pickedFile;
-                              state.didChange(pickedFile); // Update form state
-                            });
-
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            height: 110,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10),
-                              border: state.hasError
-                                  ? Border.all(color: Colors.red)
-                                  : null,
-                            ),
-                            child: productImage == null
-                                ? const Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.add,
-                                            size: 27, color: Color(0xFF004797)),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          'Upload Image',
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 102, 101, 101)),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Center(
-                                    child: Image.file(
-                                      productImage!,
-                                      fit: BoxFit.cover,
-                                      width: 120,
-                                      height: 120,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        if (state.hasError)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              state.errorText!,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                ModalSheetTextFormField(
-                  textController: widget.productNameText,
-                  label: 'Add name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a product name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                ModalSheetTextFormField(
-                  textController: widget.descriptionText,
-                  label: 'Add description',
-                  maxLines: 4,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                ModalSheetTextFormField(
-                  textController: widget.moqText,
-                  label: 'Add MOQ',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the MOQ';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Flexible(
-                      child: ModalSheetTextFormField(
-                        textController: widget.actualPriceText,
-                        label: 'Actual price',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the actual price';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: ModalSheetTextFormField(
-                        textController: widget.offerPriceText,
-                        label: 'Offer price',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the offer price';
-                          }
-                          if (int.parse(widget.offerPriceText.text) >
-                              int.parse(widget.actualPriceText.text)) {
-                            return 'Actual price is higher';
-                          }
-                          if (int.parse(widget.offerPriceText.text) ==
-                              int.parse(widget.actualPriceText.text)) {
-                            return 'Prices should be different';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      side: const BorderSide(
-                        color: Color.fromARGB(255, 185, 181, 181),
-                        width: 1.0,
-                      ),
-                    ),
+              ),
+            ),
+            child: AppBar(
+              toolbarHeight: 45.0,
+              scrolledUnderElevation: 0,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leadingWidth: 100,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset(
+                    'assets/icons/kssiaLogo.png',
+                    fit: BoxFit.contain,
                   ),
-                  onPressed: () {
-                    _showProductPriceTypeDialog(context).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          productPriceType = value;
-                          widget.productPriceTypeController.text = value;
-                        });
-
-                        log('Selected price per unit: ${productPriceType}'); // Log the updated value
-                      }
-                    });
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(20),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: const Column(
                     children: [
-                      Text(
-                        productPriceType,
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 94, 93, 93)),
-                      ),
-                      const Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey,
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.arrow_back,
+                            color: Colors.blue,
+                            size: 17,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Add Product',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          )
+                        ],
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                customButton(
-                  label: 'SAVE',
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>
-                            const Center(child: LoadingAnimation()),
-                      );
-
-                      try {
-                        // Pass awardImage to addAwardCard
-                        await widget.addProductCard();
-                        widget.actualPriceText.clear();
-                        widget.descriptionText.clear();
-                        widget.moqText.clear();
-                        widget.offerPriceText.clear();
-                        widget.productNameText.clear();
-                        widget.productPriceTypeController.clear();
-
-                        if (productImage != null) {
-                          setState(() {
-                            productImage = null; // Clear the image after saving
-                          });
+              ),
+            ),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: KeyboardAvoider(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FormField<File>(
+                      initialValue: productImage,
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please upload an image';
                         }
-                      } finally {
-                        Navigator.of(context).pop();
-                        Navigator.pop(context);
-                      }
-                    }
-                  },
-                  fontSize: 16,
+                        return null;
+                      },
+                      builder: (FormFieldState<File> state) {
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                );
+
+                                final pickedFile =
+                                    await _pickFile(imageType: 'product');
+                                if (pickedFile == null) {
+                                  Navigator.pop(context);
+                                }
+
+                                setState(() {
+                                  productImage = pickedFile;
+                                  state.didChange(
+                                      pickedFile); // Update form state
+                                });
+
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: state.hasError
+                                      ? Border.all(color: Colors.red)
+                                      : null,
+                                ),
+                                child: productImage == null
+                                    ? const Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.add,
+                                                size: 27,
+                                                color: Color(0xFF004797)),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'Upload Image',
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 102, 101, 101)),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Center(
+                                        child: Image.file(
+                                          productImage!,
+                                          fit: BoxFit.cover,
+                                          width: 120,
+                                          height: 120,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            if (state.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  state.errorText!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ModalSheetTextFormField(
+                      textController: productNameController,
+                      label: 'Add name',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a product name';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    ModalSheetTextFormField(
+                      textController: productDescriptionController,
+                      label: 'Add description',
+                      maxLines: 4,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a description';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        _showMultiSelect(context);
+                      },
+                      child: Container(
+                        height: 50,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Add Tag",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    MultiSelectChipDisplay(
+                      items: _selectedItems
+                          .map((e) => MultiSelectItem(e, e))
+                          .toList(),
+                      onTap: (value) {
+                        setState(() {
+                          _selectedItems.remove(value);
+                        });
+                      },
+                      icon: Icon(Icons.close),
+                      chipColor: const Color.fromARGB(255, 224, 224, 224),
+                      textStyle: TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 10),
+                    ModalSheetTextFormField(
+                      textController: productMoqController,
+                      label: 'Add MOQ',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the MOQ';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: ModalSheetTextFormField(
+                            textController: productActualPriceController,
+                            label: 'Actual price',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the actual price';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: ModalSheetTextFormField(
+                            textController: productOfferPriceController,
+                            label: 'Offer price',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the offer price';
+                              }
+                              if (int.parse(productOfferPriceController.text) >
+                                  int.parse(
+                                      productActualPriceController.text)) {
+                                return 'Make actual price higher';
+                              }
+                              if (int.parse(
+                                      productActualPriceController.text) ==
+                                  int.parse(productOfferPriceController.text)) {
+                                return 'Prices should be different';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: const BorderSide(
+                            color: Color.fromARGB(255, 185, 181, 181),
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        _showProductPriceTypeDialog(context).then((value) {
+                          if (value != null) {
+                            setState(() {
+                              productPriceType.text = value;
+                            });
+
+                            log('Selected price per unit: ${productPriceType}');
+                          }
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            productPriceType.text,
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 94, 93, 93)),
+                          ),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    customButton(
+                      label: 'SAVE',
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const Center(
+                                child: CircularProgressIndicator()),
+                          );
+
+                          try {
+                            await _addNewProduct(selectedTags: _selectedItems);
+                            productActualPriceController.clear();
+                            productDescriptionController.clear();
+                            productMoqController.clear();
+                            productOfferPriceController.clear();
+                            productNameController.clear();
+                            productPriceType.clear();
+
+                            if (productImage != null) {
+                              setState(() {
+                                productImage = null;
+                              });
+                            }
+                          } finally {
+                            Navigator.of(context).pop(); // Close loader
+                            Navigator.pop(context); // Go back
+                          }
+                        }
+                      },
+                      fontSize: 16,
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -1652,19 +1898,19 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
+              const Flexible(
                 child: Text(
                   'How is your Experience with this Member?',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(5, (index) {
@@ -1681,16 +1927,16 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
               );
             }),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextField(
             controller: feedbackController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Leave Your Feedback here',
               border: OutlineInputBorder(),
             ),
             maxLines: 4,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
@@ -1700,7 +1946,7 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
                       buttonColor: const Color.fromARGB(255, 234, 229, 229),
                       label: 'Cancel',
                       onPressed: () {})),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
@@ -1799,7 +2045,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                   height: 200,
                   width: double.infinity,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(
                           20), // Set the desired radius for the top left corner
                       topRight: Radius.circular(
@@ -1850,11 +2096,12 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                                 fontSize: 12,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
-                              decoration: BoxDecoration(color: Colors.black),
+                              decoration:
+                                  const BoxDecoration(color: Colors.black),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 2),
@@ -1943,26 +2190,27 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                           ),
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.star,
                                 color: Colors.orange,
                                 size: 15,
                               ),
                               Text(
                                 averageRating.toStringAsFixed(2),
-                                style: TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12),
                               ),
                               Text('($totalReviews)',
-                                  style: TextStyle(fontSize: 12)),
+                                  style: const TextStyle(fontSize: 12)),
                             ],
                           )
                         ],
                       ),
                     );
                   },
-                  loading: () => const Center(child: Text('Something Went Wrong, Please try again')),
+                  loading: () => const Center(
+                      child: Text('Something Went Wrong, Please try again')),
                   error: (error, stackTrace) {
-                    return Center(
+                    return const Center(
                       child: LoadingAnimation(),
                     );
                   },
@@ -1975,11 +2223,11 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       onTap: () => _decrementQuantity(),
                       child: Container(
                           decoration: BoxDecoration(
-                              color: Color(0xFFEFEFEF),
+                              color: const Color(0xFFEFEFEF),
                               borderRadius: BorderRadius.circular(20)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const Icon(Icons.remove),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.remove),
                           )),
                     ),
                     const SizedBox(width: 16),
@@ -1988,7 +2236,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                         width:
                             210, // Increase this value to expand the horizontal width
                         child: TextField(
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Color(0xFF004797),
                               fontSize: 18,
                               fontWeight: FontWeight.w600),
@@ -1999,8 +2247,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             // Border when the field is not focused and enabled
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                color: const Color.fromARGB(
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(
                                     255, 224, 218, 218), // Default border color
                                 width: 1.0,
                               ),
@@ -2009,8 +2257,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             // Border when the field is focused
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                color: const Color.fromARGB(255, 220, 223,
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 220, 223,
                                     226), // Border color when focused
                                 width: 2.0,
                               ),
@@ -2029,7 +2277,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             // Border when an error is present (e.g., validation failed)
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Colors.red, // Red border for error state
                                 width: 1.0,
                               ),
@@ -2038,7 +2286,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             // Border when the field is both focused and has an error
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Colors
                                     .red, // Red border when focused and has an error
                                 width: 2.0,
@@ -2046,7 +2294,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                             ),
 
                             // Padding inside the TextField
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 12.0),
                           ),
                           onChanged: (value) {
@@ -2061,11 +2309,11 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       onTap: () => _incrementQuantity(),
                       child: Container(
                           decoration: BoxDecoration(
-                              color: Color(0xFFEFEFEF),
+                              color: const Color(0xFFEFEFEF),
                               borderRadius: BorderRadius.circular(20)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const Icon(Icons.add),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.add),
                           )),
                     ),
                   ],
@@ -2097,7 +2345,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       },
                       fontSize: 16),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 )
               ],
@@ -2132,9 +2380,8 @@ class RequirementModalSheet extends StatelessWidget {
         final asyncUser =
             ref.watch(fetchUserDetailsProvider(token, requirement.author!.id!));
         return Container(
-          decoration: BoxDecoration(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20.0)),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height *
@@ -2156,7 +2403,7 @@ class RequirementModalSheet extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 asyncUser.when(
@@ -2194,7 +2441,7 @@ class RequirementModalSheet extends StatelessWidget {
                           const Spacer(),
                           Row(
                             children: [
-                              Icon(Icons.star, color: Colors.orange),
+                              const Icon(Icons.star, color: Colors.orange),
                               Text(averageRating.toStringAsFixed(2)),
                               Text('($totalReviews)'),
                             ],
@@ -2205,7 +2452,7 @@ class RequirementModalSheet extends StatelessWidget {
                   },
                   loading: () => const Center(child: LoadingAnimation()),
                   error: (error, stackTrace) {
-                    return Center(
+                    return const Center(
                       child: Text('User not found'),
                     );
                   },

@@ -63,7 +63,9 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     return null;
   }
 
-  Future<void> _addNewProduct() async {
+  Future<void> _addNewProduct({required List<String> selectedTags}) async {
+    productUrl =
+        await api.createFileUrl(file: _productImageFIle!, token: token);
     log('product price type:${productPriceType.text}');
     final createdProduct = await api.uploadProduct(
         token,
@@ -72,15 +74,13 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
         productOfferPriceController.text,
         productDescriptionController.text,
         productMoqController.text,
-        _productImageFIle!,
-        id,
+        productUrl,
         productPriceType.text,
+        selectedTags,
         context);
     if (createdProduct == null) {
       print('couldnt create new product');
     } else {
-      productUrl =
-          await api.createFileUrl(file: _productImageFIle!, token: token);
       final newProduct = Product(
         id: createdProduct.id,
         name: productNameController.text,
@@ -107,27 +107,10 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
   }
 
   void _openModalSheet({required String sheet}) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        if (sheet == 'product') {
-          return ShowEnterProductsSheet(
-            productPriceTypeController: productPriceType,
-            imageType: sheet,
-            pickImage: _pickFile,
-            addProductCard: _addNewProduct,
-            productNameText: productNameController,
-            descriptionText: productDescriptionController,
-            moqText: productMoqController,
-            actualPriceText: productActualPriceController,
-            offerPriceText: productOfferPriceController,
-          );
-        } else {
-          return SizedBox();
-        }
-      },
-    );
+    if (sheet == 'product') {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => EnterProductsPage()));
+    }
   }
 
   @override

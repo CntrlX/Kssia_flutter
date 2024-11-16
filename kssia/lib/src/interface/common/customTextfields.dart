@@ -9,14 +9,14 @@ class ModalSheetTextFormField extends StatelessWidget {
   final TextEditingController textController;
   final String? label;
   final int maxLines;
-    final int? maxLength;
+  final int? maxLength;
   final String? Function(String?)? validator;
 
   const ModalSheetTextFormField({
     required this.textController,
     required this.label,
     this.maxLines = 1,
-   this.  maxLength,
+    this.maxLength,
     this.validator,
     super.key,
   });
@@ -24,7 +24,7 @@ class ModalSheetTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      maxLength: maxLength??null,
+      maxLength: maxLength ?? null,
       controller: textController,
       maxLines: maxLines,
       validator: validator,

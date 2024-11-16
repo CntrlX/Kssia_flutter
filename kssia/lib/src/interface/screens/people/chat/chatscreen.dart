@@ -184,37 +184,64 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                       style: const TextStyle(fontSize: 18),
                     ),
                     actions: [
-                      IconButton(
-                          icon: const Icon(
-                            Icons.report,
-                            color: Color(0xFF004797),
-                          ),
-                          onPressed: () {
+                      PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert), // The three-dot icon
+                        onSelected: (value) {
+                          if (value == 'report') {
                             showReportDialog(
-                                context: context,
-                                onReportStatusChanged: () {},
-                                reportType: 'user',
-                                reportedItemId: widget.receiver.id ?? '');
-                          }),
-                      IconButton(
-                          icon: const Icon(
-                            Icons.block,
-                          ),
-                          onPressed: () {
+                              context: context,
+                              onReportStatusChanged: () {},
+                              reportType: 'user',
+                              reportedItemId: widget.receiver.id ?? '',
+                            );
+                          } else if (value == 'block') {
                             showBlockPersonDialog(
-                                context: context,
-                                userId: widget.receiver.id ?? '',
-                                onBlockStatusChanged: () {
-                                  Future.delayed(const Duration(seconds: 1));
+                              context: context,
+                              userId: widget.receiver.id ?? '',
+                              onBlockStatusChanged: () {
+                                
+                                Future.delayed(const Duration(seconds: 1), () {
                                   setState(() {
-                                    if (isBlocked) {
-                                      isBlocked = false;
-                                    } else {
-                                      isBlocked = true;
-                                    }
+                                    isBlocked = !isBlocked;
                                   });
                                 });
-                          }),
+                              },
+                            );
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'report',
+                            child: Row(
+                              children: [
+                                Icon(Icons.report, color: Color(0xFF004797)),
+                                SizedBox(width: 8),
+                                Text('Report'),
+                              ],
+                            ),
+                          ),
+                          // Divider for visual separation
+                          const PopupMenuDivider(height: 1),
+                          PopupMenuItem(
+                            value: 'block',
+                            child: Row(
+                              children: [
+                                Icon(Icons.block),
+                                SizedBox(width: 8),
+                                isBlocked ? Text('Unblock') : Text('Block'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // Border radius for the menu
+                        ),
+                        color: Colors
+                            .white, // Optional: set background color for the menu
+                        offset: const Offset(
+                            0, 40), // Optional: adjust the position of the menu
+                      )
                     ],
                   )),
               body: Stack(
@@ -343,7 +370,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                             elevation: 1,
                                             color: Colors.white,
                                             shape: RoundedRectangleBorder(
-                                              side: BorderSide(
+                                              side: const BorderSide(
                                                 color: Color.fromARGB(
                                                     255, 220, 215, 215),
                                                 width: 0.5,
@@ -357,7 +384,8 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                                       horizontal: 8.0,
                                                       vertical: 5.0),
                                               child: Container(
-                                                constraints: BoxConstraints(
+                                                constraints:
+                                                    const BoxConstraints(
                                                   maxHeight:
                                                       150, // Limit the height
                                                 ),
@@ -379,7 +407,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                                       minLines:
                                                           1, // Starts with a single line
                                                       decoration:
-                                                          InputDecoration(
+                                                          const InputDecoration(
                                                         border:
                                                             InputBorder.none,
                                                         hintText:

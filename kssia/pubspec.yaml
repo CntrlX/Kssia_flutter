@@ -60,6 +60,8 @@ dependencies:
   flutter_image_compress: ^2.3.0
   flutter_dotenv: ^5.2.1
   minio_flutter: ^0.0.1
+  keyboard_avoider: ^0.2.0
+  multi_select_flutter: ^4.1.3
 
 
 

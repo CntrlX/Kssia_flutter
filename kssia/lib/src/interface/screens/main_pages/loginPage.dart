@@ -816,7 +816,15 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     }
     return null;
   }
-
+  void _removeProduct(int index) async {
+    // await api
+    //     .deleteFile(
+    //         token, ref.read(userProvider).value!.products![index].image!)
+    // filesToBeDeleted.add(ref.read(userProvider).value!.products![index].image!);
+    ref
+        .read(userProvider.notifier)
+        .removeProduct(ref.read(userProvider).value!.products![index]);
+  } 
   // void _addAwardCard() async {
   // await api.createFileUrl(file: _awardImageFIle!).then((url) {
   //   awardUrl = url;
@@ -850,49 +858,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         .removeAward(ref.read(userProvider).value!.awards![index]);
   }
 
-  Future<void> _addNewProduct() async {
-    log('product price type:${productPriceType.text}');
-    final createdProduct = await api.uploadProduct(
-        token,
-        productNameController.text,
-        productActualPriceController.text,
-        productOfferPriceController.text,
-        productDescriptionController.text,
-        productMoqController.text,
-        _productImageFIle!,
-        id,
-        productPriceType.text,
-        context);
-    if (createdProduct == null) {
-      print('couldnt create new product');
-    } else {
-      productUrl =
-          await api.createFileUrl(file: _productImageFIle!, token: token);
-      final newProduct = Product(
-        id: createdProduct.id,
-        name: productNameController.text,
-        image: productUrl,
-        description: productDescriptionController.text,
-        moq: int.parse(productMoqController.text),
-        offerPrice: int.parse(productOfferPriceController.text),
-        price: int.parse(productActualPriceController.text),
-        sellerId: SellerId(id: id),
-        status: 'pending',
-      );
-      ref.read(userProvider.notifier).updateProduct(
-          [...?ref.read(userProvider).value?.products, newProduct]);
-    }
-  }
-
-  void _removeProduct(int index) async {
-    // await api
-    //     .deleteFile(
-    //         token, ref.read(userProvider).value!.products![index].image!)
-    filesToBeDeleted.add(ref.read(userProvider).value!.products![index].image!);
-    ref
-        .read(userProvider.notifier)
-        .removeProduct(ref.read(userProvider).value!.products![index]);
-  }
+  
 
   Future<void> _addNewCertificate() async {
     await api
@@ -1141,6 +1107,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   void _openModalSheet(
       {required String sheet, String brochureName = 'Sample'}) {
+    if (sheet == 'product') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EnterProductsPage(
+                 )));
+    }
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -1153,17 +1126,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             textController1: awardNameController,
             textController2: awardAuthorityController,
           );
-        } else if (sheet == 'product') {
-          return ShowEnterProductsSheet(
-              imageType: sheet,
-              pickImage: _pickFile,
-              addProductCard: _addNewProduct,
-              productNameText: productNameController,
-              descriptionText: productDescriptionController,
-              moqText: productMoqController,
-              actualPriceText: productActualPriceController,
-              offerPriceText: productOfferPriceController,
-              productPriceTypeController: productPriceType);
         } else if (sheet == 'certificate') {
           return ShowAddCertificateSheet(
               addCertificateCard: _addNewCertificate,
