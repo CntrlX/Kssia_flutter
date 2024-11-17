@@ -67,7 +67,7 @@ class OthersProfilePreview extends ConsumerWidget {
                   padding: const EdgeInsets.all(10),
                   child: Column(children: [
                     const SizedBox(
-                      height: 20,
+                      height: 40,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -290,7 +290,7 @@ class OthersProfilePreview extends ConsumerWidget {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (user.address != null)
+                        if (user.address != null && user.address != '')
                           Row(
                             children: [
                               const Icon(Icons.location_on,
@@ -304,7 +304,8 @@ class OthersProfilePreview extends ConsumerWidget {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (user.phoneNumbers?.whatsappNumber != null)
+                        if (user.phoneNumbers?.whatsappNumber != null &&
+                            user.phoneNumbers?.whatsappNumber != '')
                           Row(
                             children: [
                               const SvgIcon(
@@ -319,7 +320,8 @@ class OthersProfilePreview extends ConsumerWidget {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (user.phoneNumbers?.whatsappBusinessNumber != null)
+                        if (user.phoneNumbers?.whatsappBusinessNumber != null &&
+                            user.phoneNumbers?.whatsappBusinessNumber != '')
                           Row(
                             children: [
                               const SvgIcon(
