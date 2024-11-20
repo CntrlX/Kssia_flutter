@@ -87,24 +87,20 @@ class CustomTextFormField extends StatelessWidget {
         return TextFormField(
           onChanged: (value) {
             switch (labelText) {
-              case 'Enter your First name':
+              case 'Enter your Full name':
                 ref.read(userProvider.notifier).updateName(
-                    firstName: textController!.text,
-                    middleName: null,
-                    lastName: null);
+                    name: textController!.text,
+);
                 break;
-              case 'Enter your Middle name':
-                ref.read(userProvider.notifier).updateName(
-                    firstName: null,
-                    middleName: textController!.text,
-                    lastName: null);
+             
+           
+              case 'Enter Your abbreviation':
+                ref.read(userProvider.notifier).updateAbbreviation(
+                    abbreviation: textController!.text,
+);
                 break;
-              case 'Enter your Last name':
-                ref.read(userProvider.notifier).updateName(
-                    firstName: null,
-                    middleName: null,
-                    lastName: textController!.text);
-                break;
+             
+           
               case 'Designation':
                 ref
                     .read(userProvider.notifier)

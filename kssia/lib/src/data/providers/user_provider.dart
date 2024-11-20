@@ -6,6 +6,7 @@ import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 
 import '../globals.dart';
+
 class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
   final StateNotifierProviderRef<UserNotifier, AsyncValue<UserModel>> ref;
 
@@ -42,23 +43,20 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
   }
 
   void updateName({
-    String? firstName,
-    String? middleName,
-    String? lastName,
+    String? name,
   }) {
-    state = state.whenData((user) {
-      final newName = user.name?.copyWith(
-            firstName: firstName ?? user.name?.firstName,
-            middleName: middleName ?? user.name?.middleName,
-            lastName: lastName ?? user.name?.lastName,
-          ) ??
-          Name(
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
-          );
-      return user.copyWith(name: newName);
-    });
+
+       state =
+        state.whenData((user) => user.copyWith(name: name));
+
+  }
+  void updateAbbreviation({
+    String? abbreviation,
+  }) {
+
+       state =
+        state.whenData((user) => user.copyWith(abbreviation: abbreviation));
+
   }
 
   void updateVideos(List<Video> videos) {

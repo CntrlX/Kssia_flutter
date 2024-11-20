@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
+import 'package:kssia/src/data/services/share_with_qr.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
@@ -12,6 +13,7 @@ import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
 import 'package:open_share_plus/open.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -32,13 +34,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -48,16 +50,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 237, 231, 231)),
                           color: Colors.white,
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(5),
                               topRight: Radius.circular(5)),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color.fromARGB(255, 182, 181, 181)
-                                  .withOpacity(0.5),
+                              color: Color.fromARGB(255, 182, 181, 181)
+                                  .withOpacity(0.2),
                               spreadRadius: 0,
                               blurRadius: 1,
                               offset: const Offset(.5, .5),
@@ -69,12 +69,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             Stack(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(40.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 40, horizontal: 20),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Row(
@@ -100,7 +101,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${widget.user.name!.firstName!} ${widget.user.name?.middleName ?? ''} ${widget.user.name?.lastName ?? ''}',
+                                                  '${widget.user.abbreviation ?? ''} ${widget.user.name ?? ''}',
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -208,26 +209,59 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     ],
                                   ),
                                 ),
+                                Positioned(
+                                  top: 40,
+                                  right: 40,
+                                  child: SvgPicture.asset(
+                                    'assets/Vector.svg',
+                                    color: Colors.grey.withOpacity(0.1),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 25,
+                                  right: 5,
+                                  child: SvgPicture.asset(
+                                    'assets/Vector2.svg',
+                                    color: Colors.grey.withOpacity(0.1),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 95,
+                                  right: 10,
+                                  child: SvgPicture.asset(
+                                    'assets/Vector3.svg',
+                                    color: Colors.grey.withOpacity(0.3),
+                                  ),
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
+
                       Container(
                         padding: const EdgeInsets.only(
                             left: 35, right: 30, top: 25, bottom: 35),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 237, 231, 231)),
                           color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 0,
-                              blurRadius: 1,
-                              offset: const Offset(.5, .5),
+                          border: const Border(
+                            top: BorderSide(
+                              color: Color.fromARGB(
+                                  255, 237, 231, 231), // Your border color
+                              width: 1.0, // Border width
                             ),
-                          ],
+                          ),
+                          // border: Border.all(
+                          //     color: const Color.fromARGB(255, 237, 231, 231)),
+                          // color: Colors.white,
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.grey.withOpacity(0.5),
+                          //     spreadRadius: 0,
+                          //     blurRadius: 1,
+                          //     offset: const Offset(.5, .5),
+                          //   ),
+                          // ],
                         ),
                         child: Column(
                           children: [
@@ -264,7 +298,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     Flexible(
                                       child: Row(
                                         children: [
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Flexible(
@@ -286,17 +320,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 20),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 237, 231, 231)),
+                          border: const Border(
+                            top: BorderSide(
+                              color: Color.fromARGB(
+                                  255, 237, 231, 231), // Your border color
+                              width: 1.0, // Border width
+                            ),
+                          ),
                           color: Colors.white,
                           borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(5),
                               bottomRight: Radius.circular(5)),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey.withOpacity(0.1),
                               spreadRadius: 0,
                               blurRadius: 1,
                               offset: const Offset(.5, .5),
@@ -316,14 +356,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ),
                             Text(
                               'Member ID: ${widget.user.membershipId}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.grey,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       // Row(
@@ -418,8 +458,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Share.share(
-                        'https://admin.kssiathrissur.com/user/${widget.user.id}');
+                    captureAndShareWidgetScreenshot(context);
+                    // Share.share(
+                    //     'https://admin.kssiathrissur.com/user/${widget.user.id}');
                   },
                   child: SvgPicture.asset('assets/icons/shareButton.svg'),
                   // child: Container(
@@ -487,9 +528,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProfilePreview(
-                          
-                          ), // Navigate to CardPage
+                          builder: (context) =>
+                              ProfilePreview(), // Navigate to CardPage
                         ),
                       );
                     },

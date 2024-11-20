@@ -8,13 +8,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 Future<void> saveContact(
     {required String number,
-    required String firstName,    required String lastName,required String email,
+   required String name,required String email,
     required BuildContext context}) async {
   // Request permission to access contacts
   if (await Permission.contacts.request().isGranted) {
     final Contact contact = Contact(
-        firstname: firstName,
-        lastname: lastName,
+        firstname: name,
 
         phone: number,
         email: email);

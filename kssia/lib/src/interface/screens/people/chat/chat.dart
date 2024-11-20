@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
@@ -90,15 +91,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                     receiver?.profilePicture ?? '',
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                        'assets/icons/dummy_person_small.png',
-                                      );
+                                      return SvgPicture.asset(
+                                          'assets/icons/dummy_person_small.svg');
                                     },
                                   ),
                                 ),
                               ),
                               title: Text(
-                                '${receiver?.firstName ?? ''} ${receiver?.middleName ?? ''} ${receiver?.lastName ?? ''}',
+                                '${receiver?.name ?? ''} ${receiver?.name ?? ''}',
                               ),
                               subtitle: Text(
                                 chats[index].lastMessage?[0].content != null
@@ -222,7 +222,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             },
             loading: () => const Center(child: LoadingAnimation()),
             error: (error, stackTrace) {
-              return const Center(
+              return Center(
                 child: Text('NO CHATS'),
               );
             },

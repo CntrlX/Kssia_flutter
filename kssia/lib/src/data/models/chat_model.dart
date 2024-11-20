@@ -1,24 +1,18 @@
 class Participant {
   final String? id;
-  final String? firstName;
-  final String? middleName;
-  final String? lastName;
+  final String? name;
   final String? profilePicture;
 
   Participant({
     this.id,
-    this.firstName,
-    this.middleName,
-    this.lastName,
+    this.name,
     this.profilePicture,
   });
 
   factory Participant.fromJson(Map<String, dynamic> json) {
     return Participant(
       id: json['_id'] ?? '',
-      firstName: json['name']?['first_name'] ?? '',
-      middleName: json['name']?['middle_name'] ?? '',
-      lastName: json['name']?['last_name'] ?? '',
+      name: json['name'] ?? '',
       profilePicture: json['profile_picture'] ?? '',
     );
   }
@@ -26,11 +20,7 @@ class Participant {
   Map<String, dynamic> toJson() {
     return {
       '_id': id ?? '',
-      'name': {
-        'first_name': firstName ?? '',
-        'middle_name': middleName ?? '',
-        'last_name': lastName ?? '',
-      },
+      'name': name ?? '',
       'profile_picture': profilePicture ?? '',
     };
   }
@@ -77,7 +67,8 @@ class Message {
       'content': content ?? '',
       'attachments': attachments ?? [],
       'status': status ?? '',
-      'timestamp': timestamp?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      'timestamp':
+          timestamp?.toIso8601String() ?? DateTime.now().toIso8601String(),
     };
   }
 }
@@ -124,7 +115,8 @@ class ChatModel {
       'participants': participants?.map((p) => p.toJson()).toList() ?? [],
       'lastMessage': lastMessage?.map((m) => m.toJson()).toList() ?? [],
       'unreadCount': unreadCount ?? {},
-      'createdAt': createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
+      'createdAt':
+          createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
       '__v': version ?? 0,
     };
   }

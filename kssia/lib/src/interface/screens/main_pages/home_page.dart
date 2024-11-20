@@ -73,7 +73,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           _estimateTextHeight(notice.noticeDescription ?? '', 14.0);
       final double itemHeight = titleHeight + descriptionHeight;
       if (itemHeight > maxHeight) {
-        maxHeight = itemHeight + 40;
+        maxHeight = itemHeight + 50;
       }
     }
     return maxHeight;
@@ -100,7 +100,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomAppBar(),
+                  const CustomAppBar(),
                   const SizedBox(height: 20),
 
                   // Banner Carousel with Dot Indicator
@@ -122,7 +122,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                         .length >
                                     1
                                 ? null
-                                : NeverScrollableScrollPhysics(),
+                                : const NeverScrollableScrollPhysics(),
                             autoPlay: promotions
                                         .where(
                                             (promo) => promo.type == 'banner')
@@ -131,7 +131,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 ? true
                                 : false,
                             viewportFraction: 1,
-                            autoPlayInterval: Duration(seconds: 3),
+                            autoPlayInterval: const Duration(seconds: 3),
                             onPageChanged: (index, reason) {
                               _onPageChanged(index, promotions.length);
                               setState(() {
@@ -166,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                           .length >
                                       1
                                   ? null
-                                  : NeverScrollableScrollPhysics(),
+                                  : const NeverScrollableScrollPhysics(),
                               autoPlay: promotions
                                           .where(
                                               (promo) => promo.type == 'notice')
@@ -175,7 +175,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   ? true
                                   : false,
                               viewportFraction: 1,
-                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayInterval: const Duration(seconds: 5),
                               onPageChanged: (index, reason) {
                                 _onPageChanged(index, promotions.length);
                                 setState(() {
@@ -184,7 +184,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           _buildDotIndicator(
@@ -216,7 +216,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                           .length >
                                       1
                                   ? null
-                                  : NeverScrollableScrollPhysics(),
+                                  : const NeverScrollableScrollPhysics(),
                               autoPlay: promotions
                                           .where(
                                               (promo) => promo.type == 'poster')
@@ -225,7 +225,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   ? true
                                   : false,
                               viewportFraction: 1,
-                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayInterval: const Duration(seconds: 5),
                               onPageChanged: (index, reason) {
                                 setState(() {
                                   _currentPosterIndex = index;
@@ -242,10 +242,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   if (events.isNotEmpty)
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 25, top: 10),
+                              padding: EdgeInsets.only(left: 25, top: 10),
                               child: Text(
                                 'Events',
                                 style: TextStyle(
@@ -269,10 +269,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                             height: 395,
                             scrollPhysics: events.length > 1
                                 ? null
-                                : NeverScrollableScrollPhysics(),
+                                : const NeverScrollableScrollPhysics(),
                             autoPlay: events.length > 1 ? true : false,
                             viewportFraction: 1,
-                            autoPlayInterval: Duration(seconds: 5),
+                            autoPlayInterval: const Duration(seconds: 5),
                             onPageChanged: (index, reason) {
                               setState(() {
                                 _currentEventIndex = index;
@@ -281,7 +281,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                         _buildDotIndicator(_currentEventIndex, events.length,
-                            Color(0xFF004797)),
+                            const Color(0xFF004797)),
                       ],
                     ),
 
@@ -299,7 +299,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             height: 225,
                             scrollPhysics: filteredVideos.length > 1
                                 ? null
-                                : NeverScrollableScrollPhysics(),
+                                : const NeverScrollableScrollPhysics(),
                             viewportFraction: 1,
                             onPageChanged: (index, reason) {
                               setState(() {
@@ -316,7 +316,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
             )
-          : Center(child: LoadingAnimation()),
+          : const Column(
+              children: [
+                CustomAppBar(),
+                SizedBox(
+                  height: 50,
+                ),
+                Center(
+                    child: Text(
+                  'No Promotions',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                )),
+              ],
+            ),
     );
   }
 
@@ -439,7 +451,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         width: MediaQuery.of(context).size.width - 32,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Color(0xFFF5D0D0),
+          color: const Color(0xFFF5D0D0),
           borderRadius: BorderRadius.circular(8.0),
           // border: Border.all(
           //   color: const Color.fromARGB(

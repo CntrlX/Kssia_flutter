@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'news_api.g.dart';
-
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<News>> fetchNews(FetchNewsRef ref, String token) async {

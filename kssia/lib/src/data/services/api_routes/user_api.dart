@@ -324,7 +324,6 @@ class ApiRoutes {
       'status': 'pending',
       'units': productPriceType,
       'image': productImage,
-   
     };
 
     try {
@@ -585,7 +584,7 @@ class ApiRoutes {
     }
   }
 
-  Future<void> unBlockUser(String userId, context,WidgetRef ref) async {
+  Future<void> unBlockUser(String userId, context, WidgetRef ref) async {
     final String url =
         'https://api.kssiathrissur.com/api/v1/user/unblock/$userId';
 

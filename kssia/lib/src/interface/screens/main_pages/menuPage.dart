@@ -274,7 +274,7 @@ class MenuPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${user.name!.firstName!} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                                    '${user.abbreviation ?? ''} ${user.name ?? ''}',
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -347,8 +347,9 @@ class MenuPage extends StatelessWidget {
                       //     );
                       //   },
                       // ),
-                      if (user.id != '6731b4722e9c216f74371518') Divider(),
-                      if (user.id != '6731b4722e9c216f74371518')
+                      if (user.phoneNumbers?.personal != '+919645398555')
+                        Divider(),
+                      if (user.phoneNumbers?.personal != '+919645398555')
                         _buildListTile(
                           context,
                           Icons.subscriptions,
@@ -361,7 +362,8 @@ class MenuPage extends StatelessWidget {
                             );
                           },
                         ),
-                      if (user.id != '6731b4722e9c216f74371518') Divider(),
+                      if (user.phoneNumbers?.personal != '+919645398555')
+                        Divider(),
                       _buildListTile(
                         context,
                         Icons.shopping_bag,

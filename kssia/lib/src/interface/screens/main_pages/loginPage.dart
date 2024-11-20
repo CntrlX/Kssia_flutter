@@ -684,11 +684,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   //     StateProvider<bool>((ref) => false);
   // final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
 
-  final TextEditingController firstNameController = TextEditingController();
-
-  final TextEditingController middleNameController = TextEditingController();
-
-  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController abbreviationController = TextEditingController();
 
   final TextEditingController landlineController = TextEditingController();
   final TextEditingController bloodGroupController = TextEditingController();
@@ -941,9 +938,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   @override
   void dispose() {
     // Dispose controllers when the widget is disposed
-    firstNameController.dispose();
-    middleNameController.dispose();
-    lastNameController.dispose();
+    nameController.dispose();
+
     bloodGroupController.dispose();
     emailController.dispose();
     profilePictureController.dispose();
@@ -965,12 +961,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     log('profile: ${user.profilePicture}');
     log('company logo: ${user.companyLogo}');
     final Map<String, dynamic> profileData = {
-      "name": {
-        "first_name": user.name?.firstName,
-        // if (user.name?.middleName != null && user.name?.middleName != '')
-        "middle_name": user.name?.middleName ?? "",
-        "last_name": user.name?.lastName ?? '',
-      },
+      "name": user.name ?? '',
+      "abbreviation": user.abbreviation ?? '',
+      // if (user.name?.middleName != null && user.name?.middleName != '')
 
       // if (user.bloodGroup != null)
       "blood_group": user.bloodGroup ?? '',
@@ -1182,18 +1175,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                 );
               },
               data: (user) {
-                if (firstNameController.text.isEmpty) {
-                  firstNameController.text = user.name?.firstName ?? '';
+                if (nameController.text.isEmpty) {
+                  nameController.text = user.name ?? '';
                 }
-                if (firstNameController.text.isEmpty) {
-                  firstNameController.text = user.name?.firstName ?? '';
+                if (abbreviationController.text.isEmpty) {
+                  abbreviationController.text = user.abbreviation ?? '';
                 }
-                if (middleNameController.text.isEmpty) {
-                  middleNameController.text = user.name?.middleName ?? '';
-                }
-                if (lastNameController.text.isEmpty) {
-                  lastNameController.text = user.name?.lastName ?? '';
-                }
+
                 if (designationController.text.isEmpty) {
                   designationController.text = user.designation ?? '';
                 }
@@ -1227,7 +1215,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                 if (addressController.text.isEmpty) {
                   addressController.text = user.address ?? '';
                 }
-      
+
                 // Set social media URLs based on the platform
                 for (SocialMedia social in user.socialMedia ?? []) {
                   if (social.platform == 'instagram' &&
@@ -1270,8 +1258,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                     elevation: 0,
                                     leadingWidth: 100,
                                     leading: Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 10),
+                                      padding: const EdgeInsets.only(left: 10),
                                       child: SizedBox(
                                         width: 100,
                                         height: 100,
@@ -1348,11 +1335,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.black
-                                                              .withOpacity(
-                                                                  0.2),
-                                                          offset:
-                                                              const Offset(
-                                                                  2, 2),
+                                                              .withOpacity(0.2),
+                                                          offset: const Offset(
+                                                              2, 2),
                                                           blurRadius: 4,
                                                         ),
                                                       ],
@@ -1405,40 +1390,47 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 10,
-                                      bottom: 10),
+                                      left: 20, right: 20, top: 10, bottom: 10),
                                   child: Column(
                                     children: [
                                       CustomTextFormField(
                                         validator: (value) {
-                                          if (value == null ||
-                                              value.isEmpty) {
-                                            return 'Please Enter Your First Name';
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please Enter Your abbreviation';
                                           }
                                           return null;
                                         },
-                                        textController: firstNameController,
-                                        labelText: 'Enter your First name',
+                                        textController: abbreviationController,
+                                        labelText: 'Enter Your abbreviation',
                                       ),
                                       const SizedBox(height: 20.0),
                                       CustomTextFormField(
-                                        textController: middleNameController,
-                                        labelText: 'Enter your Middle name',
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please Enter Your Full Name';
+                                          }
+                                          return null;
+                                        },
+                                        textController: nameController,
+                                        labelText: 'Enter your Full name',
                                       ),
                                       const SizedBox(height: 20.0),
-                                      CustomTextFormField(
-                                        // validator: (value) {
-                                        //   if (value == null || value.isEmpty) {
-                                        //     return 'Please Enter Your Full Name';
-                                        //   }
-                                        //   return null;
-                                        // },
-                                        textController: lastNameController,
-                                        labelText: 'Enter your Last name',
-                                      ),
-                                      const SizedBox(height: 20.0),
+                                      // CustomTextFormField(
+                                      //   textController: middleNameController,
+                                      //   labelText: 'Enter your Middle name',
+                                      // ),
+                                      // const SizedBox(height: 20.0),
+                                      // CustomTextFormField(
+                                      //   // validator: (value) {
+                                      //   //   if (value == null || value.isEmpty) {
+                                      //   //     return 'Please Enter Your Full Name';
+                                      //   //   }
+                                      //   //   return null;
+                                      //   // },
+                                      //   textController: lastNameController,
+                                      //   labelText: 'Enter your Last name',
+                                      // ),
+                                      // const SizedBox(height: 20.0),
                                       CustomTextFormField(
                                           // validator: (value) {
                                           //   if (value == null || value.isEmpty) {
@@ -1446,8 +1438,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           //   }
                                           //   return null;
                                           // },
-                                          textController:
-                                              designationController,
+                                          textController: designationController,
                                           labelText: 'Designation'),
                                       const SizedBox(height: 20.0),
                                       CustomTextFormField(
@@ -1638,10 +1629,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 20,
-                                      left: 20,
-                                      right: 20,
-                                      bottom: 10),
+                                      top: 20, left: 20, right: 20, bottom: 10),
                                   child: CustomTextFormField(
                                       // validator: (value) {
                                       //   if (value == null || value.isEmpty) {
@@ -1756,15 +1744,11 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // if (isPhoneNumberVisible && isLandlineVisible)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 10,
-                                      bottom: 20),
+                                      left: 20, right: 20, top: 10, bottom: 20),
                                   child: CustomTextFormField(
                                     textController: landlineController,
                                     labelText: 'Enter landline number',
-                                    prefixIcon: const Icon(
-                                        Icons.phone_in_talk,
+                                    prefixIcon: const Icon(Icons.phone_in_talk,
                                         color: Color(0xFF004797)),
                                   ),
                                 ),
@@ -1808,7 +1792,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                       //                   personalPhoneController
                                       //                       .text),
                                       //               whatsappNumber: 0);
-      
+
                                       //       whatsappBusinessController.clear();
                                       //       whatsappController.clear();
                                       //     }
@@ -1820,10 +1804,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // if (isContactDetailsVisible)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 0,
-                                      bottom: 10),
+                                      left: 20, right: 20, top: 0, bottom: 10),
                                   child: CustomTextFormField(
                                     textController: emailController,
                                     labelText: 'Enter Email',
@@ -1834,13 +1815,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // if (isContactDetailsVisible)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 20,
-                                      bottom: 10),
+                                      left: 20, right: 20, top: 20, bottom: 10),
                                   child: CustomTextFormField(
-                                    textController:
-                                        whatsappBusinessController,
+                                    textController: whatsappBusinessController,
                                     labelText: 'Enter Business Whatsapp',
                                     prefixIcon: const SvgIcon(
                                       assetName:
@@ -1853,10 +1830,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // if (isContactDetailsVisible)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 20,
-                                      bottom: 10),
+                                      left: 20, right: 20, top: 20, bottom: 10),
                                   child: CustomTextFormField(
                                     textController: whatsappController,
                                     labelText: 'Enter Whatsapp',
@@ -1870,10 +1844,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                 // if (isContactDetailsVisible)
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20,
-                                      right: 20,
-                                      top: 20,
-                                      bottom: 10),
+                                      left: 20, right: 20, top: 20, bottom: 10),
                                   child: CustomTextFormField(
                                     textController: addressController,
                                     labelText: 'Enter Address',
@@ -1918,8 +1889,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Social Media',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: ref.watch(
@@ -2057,8 +2027,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Add Website Link',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: false,
@@ -2083,15 +2052,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         itemBuilder: (context, index) {
                                           log('Websites count: ${user.websites?.length}');
                                           return Padding(
-                                            padding: const EdgeInsets
-                                                .symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical:
                                                     4.0), // Space between items
                                             child: customWebsiteCard(
                                                 onRemove: () =>
                                                     _removeWebsite(index),
-                                                website:
-                                                    user.websites?[index]),
+                                                website: user.websites?[index]),
                                           );
                                         },
                                       ),
@@ -2102,8 +2069,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           right: 20,
                                         ),
                                         child: CustomTextFormField(
-                                          textController:
-                                              websiteLinkController,
+                                          textController: websiteLinkController,
                                           readOnly: true,
                                           labelText: 'Enter Website Link',
                                           suffixIcon: const Icon(
@@ -2133,8 +2099,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Add Video Link',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value:
@@ -2160,8 +2125,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         itemBuilder: (context, index) {
                                           log('video count: ${user.video?.length}');
                                           return Padding(
-                                            padding: const EdgeInsets
-                                                .symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical:
                                                     4.0), // Space between items
                                             child: customVideoCard(
@@ -2196,9 +2160,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           ),
                                         ),
                                       ),
-      
+
                                       // if (isVideoDetailsVisible)
-      
+
                                       const Padding(
                                         padding: EdgeInsets.only(
                                             left: 20,
@@ -2213,8 +2177,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Enter Awards',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: ref.watch(
@@ -2229,7 +2192,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             //         .read(isAwardsDetailsVisibleProvider
                                             //             .notifier)
                                             //         .state = value;
-      
+
                                             //     // if (value == false) {
                                             //     //   setState(
                                             //     //     () {
@@ -2275,26 +2238,22 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         onTap: () {
                                           FocusManager.instance.primaryFocus
                                               ?.unfocus();
-      
+
                                           Future.delayed(
-                                              const Duration(
-                                                  milliseconds: 50), () {
+                                              const Duration(milliseconds: 50),
+                                              () {
                                             _openModalSheet(sheet: 'award');
                                           });
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.only(
-                                              left: 25,
-                                              right: 25,
-                                              bottom: 60),
+                                              left: 25, right: 25, bottom: 60),
                                           child: Container(
                                             height: 120,
                                             decoration: BoxDecoration(
-                                                color:
-                                                    const Color(0xFFF2F2F2),
+                                                color: const Color(0xFFF2F2F2),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10)),
+                                                    BorderRadius.circular(10)),
                                             child: const Center(
                                               child: Column(
                                                 mainAxisAlignment:
@@ -2333,8 +2292,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Enter Products',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: ref.watch(
@@ -2375,8 +2333,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           itemCount: user.products!.length,
                                           itemBuilder: (context, index) {
                                             return ProductCard(
-                                                product:
-                                                    user.products![index],
+                                                product: user.products![index],
                                                 onRemove: () =>
                                                     _removeProduct(index));
                                           },
@@ -2390,7 +2347,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           onTap: () {
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
-      
+
                                             _openModalSheet(
                                               sheet: 'product',
                                             );
@@ -2398,11 +2355,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           child: Container(
                                             height: 120,
                                             decoration: BoxDecoration(
-                                                color:
-                                                    const Color(0xFFF2F2F2),
+                                                color: const Color(0xFFF2F2F2),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10)),
+                                                    BorderRadius.circular(10)),
                                             child: const Center(
                                               child: Column(
                                                 mainAxisAlignment:
@@ -2441,8 +2396,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Enter Certificates',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: ref.watch(
@@ -2473,8 +2427,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         itemCount: user.certificates!.length,
                                         itemBuilder: (context, index) {
                                           return Padding(
-                                            padding: const EdgeInsets
-                                                .symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical:
                                                     4.0), // Space between items
                                             child: CertificateCard(
@@ -2500,11 +2453,9 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           child: Container(
                                             height: 120,
                                             decoration: BoxDecoration(
-                                                color:
-                                                    const Color(0xFFF2F2F2),
+                                                color: const Color(0xFFF2F2F2),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10)),
+                                                    BorderRadius.circular(10)),
                                             child: const Center(
                                               child: Column(
                                                 mainAxisAlignment:
@@ -2543,8 +2494,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                               'Enter Brochure',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                             // CustomSwitch(
                                             //   value: ref.watch(
@@ -2575,8 +2525,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         itemCount: user.brochure!.length,
                                         itemBuilder: (context, index) {
                                           return Padding(
-                                            padding: const EdgeInsets
-                                                .symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical:
                                                     4.0), // Space between items
                                             child: BrochureCard(
@@ -2595,17 +2544,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           onTap: () {
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
-                                            _openModalSheet(
-                                                sheet: 'brochure');
+                                            _openModalSheet(sheet: 'brochure');
                                           },
                                           child: Container(
                                             height: 120,
                                             decoration: BoxDecoration(
-                                                color:
-                                                    const Color(0xFFF2F2F2),
+                                                color: const Color(0xFFF2F2F2),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10)),
+                                                    BorderRadius.circular(10)),
                                             child: const Center(
                                               child: Column(
                                                 mainAxisAlignment:
@@ -2670,9 +2616,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2696,9 +2640,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2722,9 +2664,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2748,9 +2688,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2774,9 +2712,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -2800,9 +2736,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  top: 20),
+                                                  left: 20, right: 20, top: 20),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment

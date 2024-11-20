@@ -148,7 +148,7 @@ class OthersProfilePreview extends ConsumerWidget {
                                 'assets/icons/dummy_person_large.png'),
                         const SizedBox(height: 10),
                         Text(
-                          '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                          '${user.abbreviation ?? ''} ${user.name ?? ''}',
                           style: const TextStyle(
                             color: Color(0xFF2C2829),
                             fontSize: 20,
@@ -677,11 +677,10 @@ class OthersProfilePreview extends ConsumerWidget {
                               label: 'SAY HI',
                               onPressed: () {
                                 final Participant receiver = Participant(
-                                    id: user.id,
-                                    profilePicture: user.profilePicture ?? '',
-                                    firstName: user.name?.firstName ?? '',
-                                    middleName: user.name?.middleName ?? '',
-                                    lastName: user.name?.lastName ?? '');
+                                  id: user.id,
+                                  profilePicture: user.profilePicture ?? '',
+                                  name: user.name ?? '',
+                                );
                                 final Participant sender = Participant(id: id);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => IndividualPage(
@@ -706,10 +705,9 @@ class OthersProfilePreview extends ConsumerWidget {
                               onPressed: () {
                                 if (user.phoneNumbers?.personal != null) {
                                   saveContact(
-                                      firstName:
-                                          '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''}',
+                                      name:
+                                          '${user.abbreviation ?? ''} ${user.name ?? ''}',
                                       number: user.phoneNumbers?.personal ?? '',
-                                      lastName: '${user.name?.lastName ?? ''}',
                                       email: user.email ?? '',
                                       context: context);
                                 }

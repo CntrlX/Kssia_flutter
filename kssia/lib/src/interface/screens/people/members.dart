@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/notifiers/people_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
@@ -116,9 +117,8 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                           participants: [
                             Participant(
                               id: user.id,
-                              firstName: user.name?.firstName ?? '',
-                              lastName: user.name?.lastName ?? '',
-                              profilePicture: user.profilePicture,
+                              name: user.name ?? '',
+                              profilePicture: user.profilePicture ?? '',
                             ),
                             Participant(id: id),
                           ],
@@ -129,8 +129,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                         (p) => p.id != id,
                         orElse: () => Participant(
                           id: user.id,
-                          firstName: user.name?.firstName ?? '',
-                          lastName: user.name?.lastName ?? '',
+                          name: user.name ?? '',
                           profilePicture: user.profilePicture,
                         ),
                       );
@@ -164,19 +163,17 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                                       ),
                                     );
                                   },
-                                  user.profilePicture ?? 'error',
+                                  user.profilePicture ?? '',
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      'assets/icons/dummy_person_small.png',
-                                      scale: .9,
-                                    );
+                                    return SvgPicture.asset(
+                                        'assets/icons/dummy_person_small.svg');
                                   },
                                 ),
                               ),
                             ),
                             title: Text(
-                              '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                              '${user.abbreviation ?? ''} ${user.name ?? ''}',
                             ),
                             subtitle: user.designation != null
                                 ? Text(user.designation!)
@@ -211,7 +208,9 @@ class _MembersPageState extends ConsumerState<MembersPage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => OthersProfilePreview(user: user, ),
+                          builder: (context) => OthersProfilePreview(
+                            user: user,
+                          ),
                         ),
                       );
                     },

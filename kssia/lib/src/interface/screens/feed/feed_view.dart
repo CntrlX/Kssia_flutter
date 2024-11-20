@@ -213,9 +213,8 @@ class _FeedViewState extends ConsumerState<FeedView> {
         return asyncRequirementOwner.when(
           data: (requirementOwner) {
             final receiver = Participant(
-                firstName: requirementOwner.name?.firstName ?? '',
-                middleName: requirementOwner.name?.middleName ?? '',
-                lastName: requirementOwner.name?.lastName ?? '',
+                name: requirementOwner.name ?? '',
+     
                 id: requirementOwner.id,
                 profilePicture: requirementOwner.profilePicture);
 

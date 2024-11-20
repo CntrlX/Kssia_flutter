@@ -104,7 +104,7 @@ class Product {
 
 class SellerId {
   final String? id;
-  final SellerName? name;
+  final String? name;
   final String? membershipId;
 
   SellerId({this.id, this.name, this.membershipId});
@@ -117,7 +117,7 @@ class SellerId {
     } else if (json is Map<String, dynamic>) {
       return SellerId(
         id: json['_id'],
-        name: json['name'] != null ? SellerName.fromJson(json['name']) : null,
+        name: json['name']??'',
         membershipId: json['membership_id'],
       );
     }
@@ -128,7 +128,7 @@ class SellerId {
     if (name != null) {
       return {
         '_id': id,
-        'name': name?.toJson(),
+        'name': name,
         'membership_id': membershipId,
       };
     } else {
@@ -138,7 +138,7 @@ class SellerId {
 
   SellerId copyWith({
     String? id,
-    SellerName? name,
+    String? name,
     String? membershipId,
   }) {
     return SellerId(
@@ -149,44 +149,44 @@ class SellerId {
   }
 }
 
-class SellerName {
-  final String? firstName;
-  final String? middleName;
-  final String? lastName;
+// class SellerName {
+//   final String? firstName;
+//   final String? middleName;
+//   final String? lastName;
 
-  SellerName({
-    this.firstName,
-    this.middleName,
-    this.lastName,
-  });
+//   SellerName({
+//     this.firstName,
+//     this.middleName,
+//     this.lastName,
+//   });
 
-  factory SellerName.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return SellerName();
+//   factory SellerName.fromJson(Map<String, dynamic>? json) {
+//     if (json == null) return SellerName();
 
-    return SellerName(
-      firstName: json['first_name'],
-      middleName: json['middle_name'],
-      lastName: json['last_name'],
-    );
-  }
+//     return SellerName(
+//       firstName: json['first_name'],
+//       middleName: json['middle_name'],
+//       lastName: json['last_name'],
+//     );
+//   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'first_name': firstName,
-      'middle_name': middleName,
-      'last_name': lastName,
-    };
-  }
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'first_name': firstName,
+//       'middle_name': middleName,
+//       'last_name': lastName,
+//     };
+//   }
 
-  SellerName copyWith({
-    String? firstName,
-    String? middleName,
-    String? lastName,
-  }) {
-    return SellerName(
-      firstName: firstName ?? this.firstName,
-      middleName: middleName ?? this.middleName,
-      lastName: lastName ?? this.lastName,
-    );
-  }
-}
+//   SellerName copyWith({
+//     String? firstName,
+//     String? middleName,
+//     String? lastName,
+//   }) {
+//     return SellerName(
+//       firstName: firstName ?? this.firstName,
+//       middleName: middleName ?? this.middleName,
+//       lastName: lastName ?? this.lastName,
+//     );
+//   }
+// }

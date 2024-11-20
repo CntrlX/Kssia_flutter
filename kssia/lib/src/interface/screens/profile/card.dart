@@ -176,7 +176,7 @@ class ProfileCard extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${user.name?.firstName ?? ''} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}',
+                                                  '${user.abbreviation ?? ''} ${user.name ?? ''}',
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,

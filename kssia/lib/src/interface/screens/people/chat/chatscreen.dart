@@ -170,9 +170,8 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                               widget.receiver.profilePicture ?? '',
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                    scale: .8,
-                                    'assets/icons/dummy_person_small.png');
+                                return SvgPicture.asset(
+                                    'assets/icons/dummy_person_small.svg');
                               },
                             ),
                           ),
@@ -185,7 +184,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                           width: 10,
                         ),
                         Text(
-                          '${widget.receiver.firstName ?? ''}  ${widget.receiver.middleName ?? ''} ${widget.receiver.lastName ?? ''}',
+                          ' ${widget.receiver.name ?? ''}',
                           style: const TextStyle(fontSize: 18),
                         ),
                       ],

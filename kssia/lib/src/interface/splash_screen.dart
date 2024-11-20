@@ -42,32 +42,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       // Save or send the new token to your server
     });
 
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        if (Platform.isAndroid) {
+          const AndroidNotificationDetails androidPlatformChannelSpecifics =
+              AndroidNotificationDetails(
+            'your_channel_id',
+            'your_channel_name',
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: true,
+          );
+          const NotificationDetails platformChannelSpecifics =
+              NotificationDetails(android: androidPlatformChannelSpecifics);
 
-FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  if (message.notification != null) {
-    if (Platform.isAndroid) {
-      const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        'your_channel_id',
-        'your_channel_name',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true,
-      );
-      const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-
-      flutterLocalNotificationsPlugin.show(
-        0, // Notification ID
-        message.notification?.title,
-        message.notification?.body,
-        platformChannelSpecifics,
-      );
-    }
-    // No need for local notifications on iOS in foreground
-  }
-});
-
+          flutterLocalNotificationsPlugin.show(
+            0, // Notification ID
+            message.notification?.title,
+            message.notification?.body,
+            platformChannelSpecifics,
+          );
+        }
+        // No need for local notifications on iOS in foreground
+      }
+    });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('Notification opened: ${message.data}');

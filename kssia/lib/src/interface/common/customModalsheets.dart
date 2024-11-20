@@ -1163,6 +1163,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(65.0),
           child: Container(
@@ -1383,18 +1384,55 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       height: 10,
                     ),
                     MultiSelectChipDisplay(
-                      items: _selectedItems
-                          .map((e) => MultiSelectItem(e, e))
-                          .toList(),
+                      items: _selectedItems.length <= 6
+                          ? _selectedItems
+                              .map((e) => MultiSelectItem(e, e))
+                              .toList()
+                          : [
+                              ..._selectedItems
+                                  .take(6)
+                                  .map((e) => MultiSelectItem(e, e)),
+                              // MultiSelectItem(
+                              //   '+${_selectedItems.length - 6} more',
+                              //   '+${_selectedItems.length - 6} more',
+                              // ),
+                            ],
                       onTap: (value) {
-                        setState(() {
-                          _selectedItems.remove(value);
-                        });
+                        if (!value.startsWith('+')) {
+                          setState(() {
+                            _selectedItems.remove(value);
+                          });
+                        } else {
+                          // Optional: Handle tap on "+N more" if needed
+                          debugPrint(
+                              'Show remaining items or any desired action.');
+                        }
                       },
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       chipColor: const Color.fromARGB(255, 224, 224, 224),
-                      textStyle: TextStyle(color: Colors.black),
+                      textStyle: const TextStyle(color: Colors.black),
                     ),
+                    if (_selectedItems.length > 6)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .start, // Ensure it doesn't stretch
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 226, 222, 222),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                  child: Text(
+                                      '+${_selectedItems.length - 6} more')),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 10),
                     ModalSheetTextFormField(
                       textController: productMoqController,
@@ -2183,7 +2221,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                                 Text(
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    '${user.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
+                                    '${user.abbreviation ?? ''} ${user.name ?? ''}'),
                                 Text('${user.companyName ?? ''}'),
                               ],
                             ),
@@ -2433,8 +2471,7 @@ class RequirementModalSheet extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  '${user!.name!.firstName} ${user.name?.middleName ?? ''} ${user.name?.lastName ?? ''}'),
+                              Text('${user?.name ?? ''}'),
                               Text('${user.companyName}'),
                             ],
                           ),

@@ -1,45 +1,45 @@
 import 'package:flutter/foundation.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 
-class Name {
-  final String? firstName;
-  final String? middleName;
-  final String? lastName;
+// class Name {
+//   final String? firstName;
+//   final String? middleName;
+//   final String? lastName;
 
-  Name({
-    this.firstName,
-    this.middleName,
-    this.lastName,
-  });
+//   Name({
+//     this.firstName,
+//     this.middleName,
+//     this.lastName,
+//   });
 
-  factory Name.fromJson(Map<String, dynamic> json) {
-    return Name(
-      firstName: json['first_name'] as String?,
-      middleName: json['middle_name'] as String?,
-      lastName: json['last_name'] as String?,
-    );
-  }
+//   factory Name.fromJson(Map<String, dynamic> json) {
+//     return Name(
+//       firstName: json['first_name'] as String?,
+//       middleName: json['middle_name'] as String?,
+//       lastName: json['last_name'] as String?,
+//     );
+//   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'first_name': firstName,
-      'middle_name': middleName,
-      'last_name': lastName,
-    };
-  }
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'first_name': firstName,
+//       'middle_name': middleName,
+//       'last_name': lastName,
+//     };
+//   }
 
-  Name copyWith({
-    String? firstName,
-    String? middleName,
-    String? lastName,
-  }) {
-    return Name(
-      firstName: firstName ?? this.firstName,
-      middleName: middleName ?? this.middleName,
-      lastName: lastName ?? this.lastName,
-    );
-  }
-}
+//   Name copyWith({
+//     String? firstName,
+//     String? middleName,
+//     String? lastName,
+//   }) {
+//     return Name(
+//       firstName: firstName ?? this.firstName,
+//       middleName: middleName ?? this.middleName,
+//       lastName: lastName ?? this.lastName,
+//     );
+//   }
+// }
 
 class PhoneNumbers {
   final String? personal;
@@ -300,8 +300,9 @@ class Brochure {
 
 class UserModel {
   final String? id;
+  final String? abbreviation;
   final String? membershipId;
-  final Name? name;
+  final String? name;
   final PhoneNumbers? phoneNumbers;
   final String? bloodGroup;
   final String? email;
@@ -333,6 +334,7 @@ class UserModel {
 
   UserModel(
       {this.id,
+      this.abbreviation,
       this.membershipId,
       this.name,
       this.phoneNumbers,
@@ -368,7 +370,8 @@ class UserModel {
     return UserModel(
       id: json['_id'] as String?,
       membershipId: json['membership_id'] as String?,
-      name: json['name'] != null ? Name.fromJson(json['name']) : null,
+      abbreviation: json['abbreviation']as String?,
+      name: json['name'] as String?,
       phoneNumbers: json['phone_numbers'] != null
           ? PhoneNumbers.fromJson(json['phone_numbers'])
           : null,
@@ -426,7 +429,8 @@ class UserModel {
     return {
       '_id': id,
       'membership_id': membershipId,
-      'name': name?.toJson(),
+      'abbreviation': abbreviation,
+      'name': name,
       'phone_numbers': phoneNumbers?.toJson(),
       'blood_group': bloodGroup,
       'email': email,
@@ -461,7 +465,8 @@ class UserModel {
   UserModel copyWith({
     String? id,
     String? membershipId,
-    Name? name,
+    String? abbreviation,
+    String? name,
     PhoneNumbers? phoneNumbers,
     String? bloodGroup,
     String? email,
@@ -494,6 +499,7 @@ class UserModel {
     return UserModel(
         id: id ?? this.id,
         membershipId: membershipId ?? this.membershipId,
+        abbreviation: abbreviation?? this.abbreviation,
         name: name ?? this.name,
         phoneNumbers: phoneNumbers ?? this.phoneNumbers,
         bloodGroup: bloodGroup ?? this.bloodGroup,
@@ -603,7 +609,6 @@ class Review {
     };
   }
 }
-
 
 class BlockedUser {
   final String userId;

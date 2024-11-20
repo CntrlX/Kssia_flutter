@@ -113,7 +113,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     _activeIcons = [
       'assets/icons/home_active.svg',
       'assets/icons/feed_active.svg',
-      user.profilePicture ?? 'assets/icons/person-svgrepo-com.svg',
+      user.profilePicture ?? 'assets/icons/dummy_person_small.svg',
       'assets/icons/active_news.svg',
       'assets/icons/people_active.svg',
     ];
