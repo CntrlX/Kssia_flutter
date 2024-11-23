@@ -30,7 +30,7 @@ import 'package:image/image.dart' as img;
 part 'user_api.g.dart';
 
 class ApiRoutes {
-  final String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+
   Future<Map<String, String>> submitPhoneNumber(
       String countryCode, BuildContext context, String phone) async {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -281,7 +281,7 @@ class ApiRoutes {
 
   // Future<void> markNotificationAsRead(String notificationId) async {
   //   final url = Uri.parse(
-  //       'https://api.kssiathrissur.com/api/v1/notification/in-app/$notificationId/read/$id');
+  //       'http://192.168.1.4:3000/api/v1/notification/in-app/$notificationId/read/$id');
 
   //   final response = await http.put(
   //     url,
@@ -362,7 +362,7 @@ class ApiRoutes {
     required String reportedItemId,
     required String reportType,
   }) async {
-    const String url = 'https://api.kssiathrissur.com/api/v1/report';
+     String url = '$baseUrl/report';
     try {
       final Map<String, dynamic> body = {
         'content': content != null && content != '' ? content : ' ',
@@ -399,7 +399,7 @@ class ApiRoutes {
 
   Future<String?> uploadRequirement(String token, String author, String content,
       String status, String? image, BuildContext context) async {
-    const String url = 'https://api.kssiathrissur.com/api/v1/requirements';
+     String url = '$baseUrl/requirements';
 
     // Prepare the request headers
     final headers = {
@@ -443,7 +443,7 @@ class ApiRoutes {
     String remarks,
     File file,
   ) async {
-    const String url = 'https://api.kssiathrissur.com/api/v1/payments/user';
+     String url = '$baseUrl/payments/user';
 
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -495,7 +495,7 @@ class ApiRoutes {
   Future<void> postReview(
       String userId, String content, int rating, context) async {
     final url =
-        Uri.parse('https://api.kssiathrissur.com/api/v1/user/$userId/reviews');
+        Uri.parse('$baseUrl/user/$userId/reviews');
     final headers = {
       'accept': 'application/json',
       'Authorization': 'Bearer $token',
@@ -585,8 +585,7 @@ class ApiRoutes {
   }
 
   Future<void> unBlockUser(String userId, context, WidgetRef ref) async {
-    final String url =
-        'https://api.kssiathrissur.com/api/v1/user/unblock/$userId';
+    final String url = '$baseUrl/user/unblock/$userId';
 
     try {
       final response = await http.post(
@@ -617,7 +616,7 @@ class ApiRoutes {
 
   Future<void> markEventAsRSVP(String eventId, context) async {
     final String url =
-        'https://api.kssiathrissur.com/api/v1/events/rsvp/$eventId/mark';
+        '$baseUrl/events/rsvp/$eventId/mark';
 
     try {
       final response = await http.put(
@@ -644,7 +643,7 @@ class ApiRoutes {
   }
 }
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+
 
 @riverpod
 Future<UserModel> fetchUserDetails(
@@ -739,8 +738,7 @@ Future<List<UserRequirementModel>> fetchUserRequirements(
 Future<List<Event>> fetchUserRsvpdEvents(
   FetchUserRsvpdEventsRef ref,
 ) async {
-  final url =
-      Uri.parse('https://api.kssiathrissur.com/api/v1/events/user/rsvpd');
+  final url = Uri.parse('$baseUrl/events/user/rsvpd');
   print(token);
   final headers = {
     'accept': 'application/json',

@@ -6,7 +6,6 @@ import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'requirement_api.g.dart';
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<Requirement>> fetchRequirements(FetchRequirementsRef ref,

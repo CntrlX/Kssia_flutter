@@ -13,7 +13,7 @@ import 'package:share_plus/share_plus.dart';
 Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
   // Create a GlobalKey to hold the widget's RepaintBoundary
   final boundaryKey = GlobalKey();
-
+  String userId = '';
   // Define the widget to capture
   final widgetToCapture = RepaintBoundary(
     key: boundaryKey,
@@ -25,6 +25,7 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
             final asyncUser = ref.watch(userProvider);
             return asyncUser.when(
               data: (user) {
+                userId = user.id ?? '';
                 return Container(
                   color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -168,6 +169,7 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
   // Share the screenshot
   Share.shareXFiles(
     [XFile(file.path)],
-    text: 'Check out my profile on KSSIA!',
+    text:
+        'Check out my profile on KSSIA!:\n https://admin.kssiathrissur.com/user/${userId}',
   );
 }

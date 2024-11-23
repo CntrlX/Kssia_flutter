@@ -5,7 +5,7 @@ import 'package:kssia/src/data/models/promotions_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'promotions_api.g.dart';
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+
 
 @riverpod
 Future<List<Promotion>> fetchPromotions(FetchPromotionsRef ref,

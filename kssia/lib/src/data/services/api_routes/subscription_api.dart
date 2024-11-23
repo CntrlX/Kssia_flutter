@@ -6,8 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'subscription_api.g.dart';
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
-
 @riverpod
 Future<void> fetchStatus(FetchStatusRef ref) async {
   final url = Uri.parse('$baseUrl/user/get/subscription');

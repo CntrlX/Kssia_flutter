@@ -82,8 +82,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> checkAppVersion(context) async {
     log('Checking app version...');
-    final response = await http.get(
-        Uri.parse('https://api.kssiathrissur.com/api/v1/user/app-version'));
+    final response = await http
+        .get(Uri.parse('$baseUrl/user/app-version'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
