@@ -8,7 +8,6 @@ import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'products_api.g.dart';
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<Product>> fetchProducts(FetchProductsRef ref,

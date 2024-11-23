@@ -5,7 +5,6 @@ import 'package:kssia/src/data/models/events_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'events_api.g.dart';
 
-const String baseUrl = 'https://api.kssiathrissur.com/api/v1';
 
 @riverpod
 Future<List<Event>> fetchEvents(FetchEventsRef ref,

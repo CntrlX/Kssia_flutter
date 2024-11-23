@@ -96,12 +96,12 @@ class SocketIoClient {
 }
 
 Future<void> deleteChat(String chatId) async {
-  const String baseUrl = "https://api.kssiathrissur.com/api/v1/chats/delete";
+
 
   try {
     log('deleted message id:$chatId');
     final response = await http.delete(
-      Uri.parse("$baseUrl/$chatId"),
+      Uri.parse("$baseUrl/chats/delete/$chatId"),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': '*/*',
@@ -124,8 +124,7 @@ Future<String> sendChatMessage(
     String? content,
     String? productId,
     String? requirementId}) async {
-  final url =
-      Uri.parse('https://api.kssiathrissur.com/api/v1/chats/send/$userId');
+  final url = Uri.parse('$baseUrl/chats/send/$userId');
   final headers = {
     'accept': '*/*',
     'Authorization': 'Bearer $token',
@@ -165,8 +164,7 @@ Future<String> sendChatMessage(
 
 Future<List<MessageModel>> getMessages(
     {required String senderId, required String recieverId}) async {
-  final String url =
-      'https://api.kssiathrissur.com/api/v1/chats/messages/$senderId/$recieverId';
+  final String url = '$baseUrl/chats/messages/$senderId/$recieverId';
   final response = await http.get(
     Uri.parse(url),
     headers: {
@@ -195,7 +193,7 @@ Future<List<MessageModel>> getMessages(
 @riverpod
 Future<List<ChatModel>> fetchChatThread(
     FetchChatThreadRef ref, String token) async {
-  final url = Uri.parse('https://api.kssiathrissur.com/api/v1/chats/threads');
+  final url = Uri.parse('$baseUrl/chats/threads');
   print('Requesting URL: $url');
 
   final response = await http.get(
