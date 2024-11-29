@@ -49,11 +49,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
+                        height: 240,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              topRight: Radius.circular(5)),
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Color.fromARGB(255, 182, 181, 181)
@@ -64,176 +66,84 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ),
                           ],
                         ),
-                        child: Column(
+                        child: Stack(
                           children: [
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 40, horizontal: 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                            // Image that can overflow
+                            Positioned.fill(
+                              child: Image.asset(
+                                color: Colors.black.withOpacity(0.7),
+                                'assets/triangles.png',
+                                fit: BoxFit
+                                    .cover, // Ensures image covers the area
+                                height: 240, // Keep the container height
+                                width: double
+                                    .infinity, // Ensure it fills the container width
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 40, horizontal: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 20),
+                                  Row(
                                     children: [
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        children: [
-                                          widget.user.profilePicture != null &&
-                                                  widget.user.profilePicture !=
-                                                      ''
-                                              ? CircleAvatar(
-                                                  radius: 40,
-                                                  backgroundImage: NetworkImage(
-                                                      widget.user
-                                                              .profilePicture ??
-                                                          ''),
-                                                )
-                                              : Image.asset(
-                                                  scale: 1.3,
-                                                  'assets/icons/dummy_person_large.png',
-                                                ),
-                                          const SizedBox(width: 20),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${widget.user.abbreviation ?? ''} ${widget.user.name ?? ''}',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis, // Prevents text overflow
-                                                  maxLines:
-                                                      3, // Limits to a single line
-                                                ),
-                                                if (widget.user.designation !=
-                                                    null)
-                                                  Text(
-                                                    widget.user.designation ??
-                                                        '',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 16,
-                                                      color: Color.fromARGB(
-                                                          255, 42, 41, 41),
-                                                    ),
-                                                    overflow: TextOverflow
-                                                        .ellipsis, // Prevents text overflow
-                                                    maxLines:
-                                                        2, // Limits to a single line
-                                                  ),
-                                                Text(
-                                                  widget.user.companyName ?? '',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ],
+                                      widget.user.profilePicture != null &&
+                                              widget.user.profilePicture != ''
+                                          ? CircleAvatar(
+                                              radius: 40,
+                                              backgroundImage: NetworkImage(
+                                                  widget.user.profilePicture ??
+                                                      ''),
+                                            )
+                                          : Image.asset(
+                                              scale: 1.3,
+                                              'assets/icons/dummy_person_large.png',
                                             ),
-                                          ),
-                                        ],
+                                      const SizedBox(width: 20),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${widget.user.abbreviation ?? ''} ${widget.user.name ?? ''}',
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                            ),
+                                            if (widget.user.designation != null)
+                                              Text(
+                                                widget.user.designation ?? '',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                  color: Color.fromARGB(
+                                                      255, 42, 41, 41),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                            Text(
+                                              widget.user.companyName ?? '',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      const SizedBox(height: 20),
-                                      // Row(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.start,
-                                      //   children: [
-                                      //     SizedBox(
-                                      //       width: 10,
-                                      //     ),
-                                      //     if (widget.user.companyName != null &&
-                                      //         widget.user.companyName != '')
-                                      //       Column(
-                                      //         children: [
-                                      //           ClipRRect(
-                                      //               borderRadius:
-                                      //                   BorderRadius.circular(
-                                      //                       9),
-                                      //               child: widget.user
-                                      //                               .companyLogo !=
-                                      //                           null &&
-                                      //                       widget.user
-                                      //                               .companyLogo !=
-                                      //                           ''
-                                      //                   ? Image.network(
-                                      //                       errorBuilder:
-                                      //                           (context, error,
-                                      //                               stackTrace) {
-                                      //                         return Image.asset(
-                                      //                             'assets/icons/dummy_company.png');
-                                      //                       },
-                                      //                       widget.user
-                                      //                           .companyLogo!,
-                                      //                       height: 33,
-                                      //                       width: 40,
-                                      //                       fit: BoxFit.cover,
-                                      //                     )
-                                      //                   : Image.asset(
-                                      //                       'assets/icons/dummy_company.png'))
-                                      //         ],
-                                      //       ),
-                                      //     const SizedBox(width: 10),
-                                      //     Expanded(
-                                      //       child: Column(
-                                      //         crossAxisAlignment:
-                                      //             CrossAxisAlignment.start,
-                                      //         children: [
-                                      //           if (widget.user.companyName !=
-                                      //               null)
-                                      //             Text(
-                                      //               widget.user.companyName ??
-                                      //                   '',
-                                      //               style: const TextStyle(
-                                      //                 fontSize: 14,
-                                      //                 color: Colors.grey,
-                                      //               ),
-                                      //               maxLines: 2,
-                                      //               overflow:
-                                      //                   TextOverflow.ellipsis,
-                                      //             ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                     ],
                                   ),
-                                ),
-                                Positioned(
-                                  top: 40,
-                                  right: 40,
-                                  child: SvgPicture.asset(
-                                    'assets/Vector.svg',
-                                    color: Colors.grey.withOpacity(0.1),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 25,
-                                  right: 5,
-                                  child: SvgPicture.asset(
-                                    'assets/Vector2.svg',
-                                    color: Colors.grey.withOpacity(0.1),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 95,
-                                  right: 10,
-                                  child: SvgPicture.asset(
-                                    'assets/Vector3.svg',
-                                    color: Colors.grey.withOpacity(0.3),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),

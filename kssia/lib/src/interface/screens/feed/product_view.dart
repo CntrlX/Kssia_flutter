@@ -14,9 +14,7 @@ import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:searchfield/searchfield.dart';
+
 import 'dart:async';
 
 class ProductView extends ConsumerStatefulWidget {

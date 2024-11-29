@@ -60,6 +60,9 @@ class OthersProfilePreview extends ConsumerWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
+          Image.asset(
+            'assets/triangles.png',
+          ),
           SingleChildScrollView(
             child: Column(
               children: [

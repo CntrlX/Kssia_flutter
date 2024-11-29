@@ -26,9 +26,8 @@ Future<void> shareQr(
       // Share the image using share_plus
       await Share.shareXFiles([XFile(imagePath)],
           text: 'Check out My profile on KSSIA!');
-      CustomSnackbar.showSnackbar(context, 'Shared!');
     }
   } catch (e) {
-      CustomSnackbar.showSnackbar(context, 'Error Sharing profile!');
+    CustomSnackbar.showSnackbar(context, 'Error Sharing profile!');
   }
 }

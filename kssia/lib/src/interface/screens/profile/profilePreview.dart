@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -64,6 +65,9 @@ class ProfilePreview extends ConsumerWidget {
           backgroundColor: Colors.white,
           body: Stack(
             children: [
+              Image.asset(
+                'assets/triangles.png',
+              ),
               SingleChildScrollView(
                 child: Column(
                   children: [
