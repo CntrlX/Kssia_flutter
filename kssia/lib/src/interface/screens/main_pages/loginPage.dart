@@ -732,7 +732,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   File? _productImageFIle;
   File? _certificateImageFIle;
   File? _brochurePdfFile;
-
+  List<Product> productsToBeRemoved = [];
   final _formKey = GlobalKey<FormState>();
   ApiRoutes api = ApiRoutes();
 
@@ -815,14 +815,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   }
 
   void _removeProduct(int index) async {
-    // await api
-    //     .deleteFile(
-    //         token, ref.read(userProvider).value!.products![index].image!)
-    // filesToBeDeleted.add(ref.read(userProvider).value!.products![index].image!);
+    productsToBeRemoved.add(ref.read(userProvider).value!.products![index]);
+    log('products to be removed:$productsToBeRemoved');
     ref
         .read(userProvider.notifier)
         .removeProduct(ref.read(userProvider).value!.products![index]);
   }
+
   // void _addAwardCard() async {
   // await api.createFileUrl(file: _awardImageFIle!).then((url) {
   //   awardUrl = url;
@@ -1028,7 +1027,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             "offer_price": i.offerPrice,
             "description": i.description,
             "moq": i.moq ?? 0,
-            "units": i.units ?? 0,
+            "units": i.units ?? '',
             "status": i.status,
             "tags": ["string"]
           }
@@ -1036,6 +1035,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     };
     log(profileData.toString());
     String response = await api.editUser(profileData);
+
     return response;
   }
   // Future<void> _selectImageFile(ImageSource source, String imageType) async {
@@ -1271,6 +1271,13 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                     actions: [
                                       TextButton(
                                           onPressed: () {
+                                            if (user.products != null) {
+                                              for (var i
+                                                  in productsToBeRemoved) {
+                                                api.deleteProduct(i.id ?? '');
+                                              }
+                                            }
+
                                             ref
                                                 .read(userProvider.notifier)
                                                 .refreshUser();

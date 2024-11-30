@@ -71,13 +71,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             // Image that can overflow
                             Positioned.fill(
                               child: Image.asset(
-                                color: Colors.black.withOpacity(0.7),
+                                color: Colors.black.withOpacity(0.6),
                                 'assets/triangles.png',
-                                fit: BoxFit
-                                    .cover, // Ensures image covers the area
-                                height: 240, // Keep the container height
-                                width: double
-                                    .infinity, // Ensure it fills the container width
+                                fit: BoxFit.cover,
+                                height: 240,
+                                width: double.infinity,
                               ),
                             ),
                             Padding(

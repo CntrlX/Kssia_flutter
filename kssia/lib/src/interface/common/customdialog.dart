@@ -74,7 +74,7 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (asyncUser.isLoading)
-                    CircularProgressIndicator()
+                    LoadingAnimation()
                   else
                     Column(
                       children: [

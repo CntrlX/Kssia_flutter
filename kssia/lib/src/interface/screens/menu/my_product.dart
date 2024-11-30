@@ -98,12 +98,11 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
   }
 
   void _removeProduct(int index) async {
-    await api
-        .deleteFile(
-            token, ref.read(userProvider).value!.products![index].image!)
-        .then((value) => ref
-            .read(userProvider.notifier)
-            .removeProduct(ref.read(userProvider).value!.products![index]));
+    api.deleteProduct(
+        ref.read(userProvider).value!.products![index].id ?? '');
+    ref
+        .read(userProvider.notifier)
+        .removeProduct(ref.read(userProvider).value!.products![index]);
   }
 
   void _openModalSheet({required String sheet}) {

@@ -1132,6 +1132,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
         offerPrice: int.parse(productOfferPriceController.text),
         price: int.parse(productActualPriceController.text),
         sellerId: SellerId(id: id),
+        units: productPriceType.text,
         status: 'pending',
       );
       ref.read(userProvider.notifier).updateProduct(
@@ -1257,7 +1258,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                                   barrierDismissible: false,
                                   builder: (BuildContext context) {
                                     return const Center(
-                                      child: CircularProgressIndicator(),
+                                      child: LoadingAnimation(),
                                     );
                                   },
                                 );
@@ -1531,8 +1532,8 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) => const Center(
-                                child: CircularProgressIndicator()),
+                            builder: (context) =>
+                                const Center(child: LoadingAnimation()),
                           );
 
                           try {

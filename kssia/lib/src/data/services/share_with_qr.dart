@@ -118,7 +118,7 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: LoadingAnimation()),
               error: (error, stackTrace) =>
                   const Center(child: Text('Error loading user')),
             );

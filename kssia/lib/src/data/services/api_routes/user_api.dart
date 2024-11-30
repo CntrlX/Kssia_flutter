@@ -30,7 +30,6 @@ import 'package:image/image.dart' as img;
 part 'user_api.g.dart';
 
 class ApiRoutes {
-
   Future<Map<String, String>> submitPhoneNumber(
       String countryCode, BuildContext context, String phone) async {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -279,6 +278,27 @@ class ApiRoutes {
     }
   }
 
+  Future<void> deleteProduct(String productId) async {
+    final url = Uri.parse('$baseUrl/products/$productId');
+    print('requesting url:$url');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('product removed successfully');
+    } else {
+      final jsonResponse = json.decode(response.body);
+
+      print(jsonResponse['message']);
+      print('Failed to delete image: ${response.statusCode}');
+    }
+  }
+
   // Future<void> markNotificationAsRead(String notificationId) async {
   //   final url = Uri.parse(
   //       'http://192.168.1.4:3000/api/v1/notification/in-app/$notificationId/read/$id');
@@ -325,7 +345,7 @@ class ApiRoutes {
       'units': productPriceType,
       'image': productImage,
     };
-
+    log(body.toString());
     try {
       final response = await http.post(
         url,
@@ -362,7 +382,7 @@ class ApiRoutes {
     required String reportedItemId,
     required String reportType,
   }) async {
-     String url = '$baseUrl/report';
+    String url = '$baseUrl/report';
     try {
       final Map<String, dynamic> body = {
         'content': content != null && content != '' ? content : ' ',
@@ -399,7 +419,7 @@ class ApiRoutes {
 
   Future<String?> uploadRequirement(String token, String author, String content,
       String status, String? image, BuildContext context) async {
-     String url = '$baseUrl/requirements';
+    String url = '$baseUrl/requirements';
 
     // Prepare the request headers
     final headers = {
@@ -443,7 +463,7 @@ class ApiRoutes {
     String remarks,
     File file,
   ) async {
-     String url = '$baseUrl/payments/user';
+    String url = '$baseUrl/payments/user';
 
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -494,8 +514,7 @@ class ApiRoutes {
 
   Future<void> postReview(
       String userId, String content, int rating, context) async {
-    final url =
-        Uri.parse('$baseUrl/user/$userId/reviews');
+    final url = Uri.parse('$baseUrl/user/$userId/reviews');
     final headers = {
       'accept': 'application/json',
       'Authorization': 'Bearer $token',
@@ -615,8 +634,7 @@ class ApiRoutes {
   }
 
   Future<void> markEventAsRSVP(String eventId, context) async {
-    final String url =
-        '$baseUrl/events/rsvp/$eventId/mark';
+    final String url = '$baseUrl/events/rsvp/$eventId/mark';
 
     try {
       final response = await http.put(
@@ -642,8 +660,6 @@ class ApiRoutes {
     }
   }
 }
-
-
 
 @riverpod
 Future<UserModel> fetchUserDetails(
