@@ -98,7 +98,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                 ),
                               ),
                               title: Text(
-                                '${receiver?.name ?? ''} ${receiver?.name ?? ''}',
+                                '${receiver?.name ?? ''}',
                               ),
                               subtitle: Text(
                                 chats[index].lastMessage?[0].content != null
