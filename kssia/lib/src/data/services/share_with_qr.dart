@@ -26,96 +26,112 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
             return asyncUser.when(
               data: (user) {
                 userId = user.id ?? '';
-                return Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 100),
-                      Row(
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(
+                        color: Colors.black.withOpacity(.7),
+                        'assets/triangles.png',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
                         children: [
-                          if (user.profilePicture == null ||
-                              user.profilePicture == '')
-                            Image.asset(
-                              scale: 1.3,
-                              'assets/icons/dummy_person_large.png',
-                            )
-                          else
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage:
-                                  NetworkImage(user.profilePicture!),
-                            ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${user.abbreviation ?? ''} ${user.name ?? ''}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          const SizedBox(height: 100),
+                          Row(
+                            children: [
+                              if (user.profilePicture == null ||
+                                  user.profilePicture == '')
+                                Image.asset(
+                                  scale: 1.3,
+                                  'assets/icons/dummy_person_large.png',
+                                )
+                              else
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage:
+                                      NetworkImage(user.profilePicture!),
                                 ),
-                                if (user.designation != null)
-                                  Text(
-                                    user.designation!,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                if (user.companyName != null)
-                                  Text(
-                                    user.companyName!,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${user.abbreviation ?? ''} ${user.name ?? ''}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (user.designation != null)
+                                      Text(
+                                        user.designation!,
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    if (user.companyName != null)
+                                      Text(
+                                        user.companyName!,
+                                        style:
+                                            const TextStyle(color: Colors.grey),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          QrImageView(
+                            size: 250,
+                            data:
+                                'https://admin.kssiathrissur.com/user/${user.id}',
+                          ),
+                          const SizedBox(height: 20),
+                          if (user.phoneNumbers != null &&
+                              user.phoneNumbers != '')
+                            Row(
+                              children: [
+                                const Icon(Icons.phone,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Text(user.phoneNumbers?.personal ?? ''),
                               ],
                             ),
-                          ),
+                          const SizedBox(height: 10),
+                          if (user.email != null && user.email != '')
+                            Row(
+                              children: [
+                                const Icon(Icons.email,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Text(user.email!),
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          if (user.address != null && user.address != '')
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.location_on,
+                                    color: Color(0xFF004797)),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    user.address!,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          const SizedBox(height: 30),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      QrImageView(
-                        size: 250,
-                        data: 'https://admin.kssiathrissur.com/user/${user.id}',
-                      ),
-                      const SizedBox(height: 20),
-                      if (user.phoneNumbers != null && user.phoneNumbers != '')
-                        Row(
-                          children: [
-                            const Icon(Icons.phone, color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            Text(user.phoneNumbers?.personal ?? ''),
-                          ],
-                        ),
-                      const SizedBox(height: 10),
-                      if (user.email != null && user.email != '')
-                        Row(
-                          children: [
-                            const Icon(Icons.email, color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            Text(user.email!),
-                          ],
-                        ),
-                      const SizedBox(height: 10),
-                      if (user.address != null && user.address != '')
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.location_on,
-                                color: Color(0xFF004797)),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                user.address!,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
               loading: () => const Center(child: LoadingAnimation()),
