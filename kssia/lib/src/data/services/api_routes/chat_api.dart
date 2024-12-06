@@ -21,14 +21,17 @@ final messageStreamProvider = StreamProvider.autoDispose<MessageModel>((ref) {
   final socketIoClient = ref.read(socketIoClientProvider);
   return socketIoClient.messageStream;
 });
-
 class SocketIoClient {
   late IO.Socket _socket;
-  final _controller = StreamController<MessageModel>.broadcast();
+  StreamController<MessageModel>? _controller;
 
   SocketIoClient();
 
-  Stream<MessageModel> get messageStream => _controller.stream;
+  Stream<MessageModel> get messageStream {
+    // Ensure the stream controller is initialized before providing the stream
+    _controller ??= StreamController<MessageModel>.broadcast();
+    return _controller!.stream;
+  }
 
   void connect(String senderId, WidgetRef ref) {
     final uri = 'wss://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
@@ -47,52 +50,59 @@ class SocketIoClient {
     // Listen for connection events
     _socket.onConnect((_) {
       log('Connected to: $uri');
+      // Reinitialize the StreamController if closed
+      if (_controller == null || _controller!.isClosed) {
+        _controller = StreamController<MessageModel>.broadcast();
+      }
     });
 
     // Listen to messages from the server
     _socket.on('message', (data) {
       log(data.toString());
-      print("im inside event listener");
+      print("I'm inside event listener");
       print('Received message: $data');
-      log(' Received message${data.toString()}');
+      log('Received message: ${data.toString()}');
       final messageModel = MessageModel.fromJson(data);
 
       // Invalidate the fetchChatThreadProvider when a new message is received
       ref.invalidate(fetchChatThreadProvider);
 
-      if (!_controller.isClosed) {
-        _controller.add(messageModel);
+      if (_controller != null && !_controller!.isClosed) {
+        _controller!.add(messageModel);
       }
     });
 
     // Handle connection errors
     _socket.on('connect_error', (error) {
       print('Connection Error: $error');
-      if (!_controller.isClosed) {
-        _controller.addError(error);
+      if (_controller != null && !_controller!.isClosed) {
+        _controller!.addError(error);
       }
     });
 
     // Handle disconnection
-    // _socket.onDisconnect((_) {
-    //   print('Disconnected from server');
-    //   if (!_controller.isClosed) {
-    //     _controller.close();
-    //   }
-    // });
+    _socket.onDisconnect((_) {
+      print('Disconnected from server');
+      _disposeController();
+    });
 
     // Connect manually
     _socket.connect();
   }
 
-  // void disconnect() {
-  //   log('im inside disconnect');
-  //   _socket.disconnect();
-  //   _socket.dispose(); // To prevent memory leaks
-  //   if (!_controller.isClosed) {
-  //     _controller.close();
-  //   }
-  // }
+  void disconnect() {
+    log('I\'m inside disconnect');
+    _socket.disconnect();
+    _socket.dispose(); // To prevent memory leaks
+    _disposeController();
+  }
+
+  void _disposeController() {
+    if (_controller != null && !_controller!.isClosed) {
+      _controller!.close();
+    }
+    _controller = null; // Reset the controller for future use
+  }
 }
 
 Future<void> deleteChat(String chatId) async {
