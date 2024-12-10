@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/models/product_category_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -19,6 +20,7 @@ import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/selection_drop_down.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/validate_urls.dart';
@@ -592,6 +594,114 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   }
 }
 
+class ShowProductFilter extends StatefulWidget {
+  ShowProductFilter({
+    super.key,
+  });
+
+  @override
+  State<ShowProductFilter> createState() => _ShowProductFilterState();
+}
+
+class _ShowProductFilterState extends State<ShowProductFilter> {
+  final _formKey = GlobalKey<FormState>();
+
+  String? selectedCategory;
+  String? selectedSubCategory;
+  @override
+  Widget build(BuildContext context) {
+    List<String> subCategories = productCategories
+        .where((category) => category.name == selectedCategory)
+        .map((category) => category.subcategories)
+        .expand((sub) => sub) // Flatten the list of lists
+        .toList();
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {},
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Filter',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              SelectionDropDown(
+                hintText: ' Category',
+                value: selectedCategory,
+                items: productCategories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category.name,
+                    child: Text(category.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              if (subCategories.isNotEmpty)
+                SelectionDropDown(
+                  hintText: 'Sub Category',
+                  value: selectedSubCategory,
+                  items: subCategories.map((subCategory) {
+                    return DropdownMenuItem<String>(
+                      value: subCategory,
+                      child: Text(subCategory),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSubCategory = value;
+                    });
+                  },
+                ),
+              const SizedBox(height: 10),
+              customButton(
+                label: 'SAVE',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    final mapData = {
+                      'selectedCategory': selectedCategory ?? '',
+                      'selectedSubCategory': selectedSubCategory ?? '',
+                    };
+
+                    Navigator.pop(context, mapData);
+                  }
+                },
+                fontSize: 16,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ShowAddCertificateSheet extends StatefulWidget {
   final TextEditingController textController;
   final String imageType;
@@ -991,92 +1101,16 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   File? _productImageFIle;
 
   String productUrl = '';
-  final List<String> _allItems = [
-    "Pipes and Fillings",
-    "Water Tanks",
-    "Water Taps",
-    "Septic Tanks",
-    "Carbuoys",
-    "Garden Hoses",
-    "Chairs",
-    "Printing Machinery",
-    "Printing Work",
-    "Multiwood",
-    "Films",
-    "Adhesive Tapes",
-    "Packing Materials",
-    "Packing Containers",
-    "Moulds",
-    "Bucket and Cups",
-    "Household Items",
-    "Rainguard Materials",
-    "Pots",
-    "Safety Products",
-    "Tread Rubber",
-    "Balloons",
-    "Gloves",
-    "Rubber Moulds",
-    "Dies",
-    "CNC Works",
-    "Cleaning Chemicals",
-    "Water Treatment Chemicals",
-    "Soaps and Detergents",
-    "Paints",
-    "Varnishes",
-    "Solvents",
-    "Process Oil",
-    "Machine Oil",
-    "Hydraulic Oil",
-    "Carton Box",
-    "Plywood Packing",
-    "Boilers",
-    "Industrial Gas",
-    "Rolling Shutters",
-    "Industrial Adhesive",
-    "Door & Window Frames",
-    "Structural Building",
-    "Writing Pen",
-    "Dresses",
-    "Packing Machines",
-    "Designer Tiles and Paver Blocks",
-    "Crusher Machinery",
-    "Industrial Heaters",
-    "Industrial Ovens",
-    "Food Processing Machinery",
-    "Electrical Machinery",
-    "Electroplating",
-    "Rubber Reclaim",
-    "Food Products",
-    "Packaged Snacks",
-    "Lathe Work",
-    "Cosmetic Products",
-    "Ayurvedic Products",
-    "Healthcare Products",
-    "Rubber Machinery",
-    "Clay Tile",
-    "Clay Tile Machinery",
-    "Irrigation Pipes",
-    "Pet Cages",
-    "Rubber Products",
-    "Plastic Containers",
-    "Welding Materials",
-    "Wiring Cables",
-    "Milk and Milk Products",
-    "Plastic Moulded Items",
-    "Manure",
-    "Nails",
-    "Aluminium Products"
-  ];
 
   // Selected items will be stored here
   List<String> _selectedItems = [];
 
-  void _showMultiSelect(BuildContext context) async {
+  void _showMultiSelect(List items, BuildContext context) async {
     await showDialog(
       context: context,
       builder: (ctx) {
         return MultiSelectDialog(
-          items: _allItems.map((e) => MultiSelectItem(e, e)).toList(),
+          items: items.map((e) => MultiSelectItem(e, e)).toList(),
           initialValue: _selectedItems,
           onConfirm: (values) {
             setState(() {
@@ -1106,7 +1140,9 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
 
   ApiRoutes api = ApiRoutes();
 
-  Future<void> _addNewProduct({required List<String> selectedTags}) async {
+  Future<void> _addNewProduct(
+      {required List<String> selectedSubCategories,
+      required String selectedCategory}) async {
     productUrl =
         await api.createFileUrl(file: _productImageFIle!, token: token);
     final createdProduct = await api.uploadProduct(
@@ -1118,7 +1154,8 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
         productMoqController.text,
         productUrl,
         productPriceType.text,
-        selectedTags,
+        selectedSubCategories,
+        selectedCategory,
         context);
     if (createdProduct == null) {
       print('couldnt create new product');
@@ -1157,8 +1194,14 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
     return null;
   }
 
+  String? selectedCategory;
   @override
   Widget build(BuildContext context) {
+    List<String> subCategories = productCategories
+        .where((category) => category.name == selectedCategory)
+        .map((category) => category.subcategories)
+        .expand((sub) => sub) // Flatten the list of lists
+        .toList();
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -1354,36 +1397,53 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        _showMultiSelect(context);
+                    SelectionDropDown(
+                      hintText: 'Add Category',
+                      value: selectedCategory,
+                      items: productCategories.map((state) {
+                        return DropdownMenuItem<String>(
+                          value: state.name,
+                          child: Text(state.name),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategory = value;
+                        });
                       },
-                      child: Container(
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Add Tag",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.black,
-                            ),
-                          ],
+                    ),
+                    if (selectedCategory != null && subCategories.isNotEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          _showMultiSelect(subCategories, context);
+                        },
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Add Tag",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    if (subCategories.isNotEmpty)
+                      SizedBox(
+                        height: 10,
+                      ),
                     MultiSelectChipDisplay(
                       items: _selectedItems.length <= 6
                           ? _selectedItems
@@ -1537,7 +1597,9 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                           );
 
                           try {
-                            await _addNewProduct(selectedTags: _selectedItems);
+                            await _addNewProduct(
+                                selectedSubCategories: _selectedItems,
+                                selectedCategory: selectedCategory ?? '');
                             productActualPriceController.clear();
                             productDescriptionController.clear();
                             productMoqController.clear();
@@ -2246,12 +2308,10 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                       ),
                     );
                   },
-                  loading: () => const Center(
-                      child: Text('Something Went Wrong, Please try again')),
+                  loading: () => const Center(child: LoadingAnimation()),
                   error: (error, stackTrace) {
                     return const Center(
-                      child: LoadingAnimation(),
-                    );
+                        child: Text('Something Went Wrong, Please try again'));
                   },
                 ),
                 const SizedBox(height: 16),

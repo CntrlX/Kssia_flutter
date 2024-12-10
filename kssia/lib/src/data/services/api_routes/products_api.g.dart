@@ -6,7 +6,7 @@ part of 'products_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchProductsHash() => r'ffe32fa9148d89fe7cb0e36d9751c9cdffb479c0';
+String _$fetchProductsHash() => r'9d7296a3bdef3866fea060494b61eebacafb0c65';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,11 +43,15 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
     int pageNo = 1,
     int limit = 10,
     String? search,
+    String? category,
+    String? subcategory,
   }) {
     return FetchProductsProvider(
       pageNo: pageNo,
       limit: limit,
       search: search,
+      category: category,
+      subcategory: subcategory,
     );
   }
 
@@ -59,6 +63,8 @@ class FetchProductsFamily extends Family<AsyncValue<List<Product>>> {
       pageNo: provider.pageNo,
       limit: provider.limit,
       search: provider.search,
+      category: provider.category,
+      subcategory: provider.subcategory,
     );
   }
 
@@ -84,12 +90,16 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     int pageNo = 1,
     int limit = 10,
     String? search,
+    String? category,
+    String? subcategory,
   }) : this._internal(
           (ref) => fetchProducts(
             ref as FetchProductsRef,
             pageNo: pageNo,
             limit: limit,
             search: search,
+            category: category,
+            subcategory: subcategory,
           ),
           from: fetchProductsProvider,
           name: r'fetchProductsProvider',
@@ -103,6 +113,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
           pageNo: pageNo,
           limit: limit,
           search: search,
+          category: category,
+          subcategory: subcategory,
         );
 
   FetchProductsProvider._internal(
@@ -115,11 +127,15 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     required this.pageNo,
     required this.limit,
     required this.search,
+    required this.category,
+    required this.subcategory,
   }) : super.internal();
 
   final int pageNo;
   final int limit;
   final String? search;
+  final String? category;
+  final String? subcategory;
 
   @override
   Override overrideWith(
@@ -137,6 +153,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
         pageNo: pageNo,
         limit: limit,
         search: search,
+        category: category,
+        subcategory: subcategory,
       ),
     );
   }
@@ -151,7 +169,9 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     return other is FetchProductsProvider &&
         other.pageNo == pageNo &&
         other.limit == limit &&
-        other.search == search;
+        other.search == search &&
+        other.category == category &&
+        other.subcategory == subcategory;
   }
 
   @override
@@ -160,6 +180,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
     hash = _SystemHash.combine(hash, pageNo.hashCode);
     hash = _SystemHash.combine(hash, limit.hashCode);
     hash = _SystemHash.combine(hash, search.hashCode);
+    hash = _SystemHash.combine(hash, category.hashCode);
+    hash = _SystemHash.combine(hash, subcategory.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -174,6 +196,12 @@ mixin FetchProductsRef on AutoDisposeFutureProviderRef<List<Product>> {
 
   /// The parameter `search` of this provider.
   String? get search;
+
+  /// The parameter `category` of this provider.
+  String? get category;
+
+  /// The parameter `subcategory` of this provider.
+  String? get subcategory;
 }
 
 class _FetchProductsProviderElement
@@ -187,6 +215,10 @@ class _FetchProductsProviderElement
   int get limit => (origin as FetchProductsProvider).limit;
   @override
   String? get search => (origin as FetchProductsProvider).search;
+  @override
+  String? get category => (origin as FetchProductsProvider).category;
+  @override
+  String? get subcategory => (origin as FetchProductsProvider).subcategory;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -63,39 +63,39 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     return null;
   }
 
-  Future<void> _addNewProduct({required List<String> selectedTags}) async {
-    productUrl =
-        await api.createFileUrl(file: _productImageFIle!, token: token);
-    log('product price type:${productPriceType.text}');
-    final createdProduct = await api.uploadProduct(
-        token,
-        productNameController.text,
-        productActualPriceController.text,
-        productOfferPriceController.text,
-        productDescriptionController.text,
-        productMoqController.text,
-        productUrl,
-        productPriceType.text,
-        selectedTags,
-        context);
-    if (createdProduct == null) {
-      print('couldnt create new product');
-    } else {
-      final newProduct = Product(
-        id: createdProduct.id,
-        name: productNameController.text,
-        image: productUrl,
-        description: productDescriptionController.text,
-        moq: int.parse(productMoqController.text),
-        offerPrice: int.parse(productOfferPriceController.text),
-        price: int.parse(productActualPriceController.text),
-        sellerId: SellerId(id: id),
-        status: 'pending',
-      );
-      ref.read(userProvider.notifier).updateProduct(
-          [...?ref.read(userProvider).value?.products, newProduct]);
-    }
-  }
+  // Future<void> _addNewProduct({required List<String> selectedTags}) async {
+  //   productUrl =
+  //       await api.createFileUrl(file: _productImageFIle!, token: token);
+  //   log('product price type:${productPriceType.text}');
+  //   final createdProduct = await api.uploadProduct(
+  //       token,
+  //       productNameController.text,
+  //       productActualPriceController.text,
+  //       productOfferPriceController.text,
+  //       productDescriptionController.text,
+  //       productMoqController.text,
+  //       productUrl,
+  //       productPriceType.text,
+  //       selectedTags,
+  //       context);
+  //   if (createdProduct == null) {
+  //     print('couldnt create new product');
+  //   } else {
+  //     final newProduct = Product(
+  //       id: createdProduct.id,
+  //       name: productNameController.text,
+  //       image: productUrl,
+  //       description: productDescriptionController.text,
+  //       moq: int.parse(productMoqController.text),
+  //       offerPrice: int.parse(productOfferPriceController.text),
+  //       price: int.parse(productActualPriceController.text),
+  //       sellerId: SellerId(id: id),
+  //       status: 'pending',
+  //     );
+  //     ref.read(userProvider.notifier).updateProduct(
+  //         [...?ref.read(userProvider).value?.products, newProduct]);
+  //   }
+  // }
 
   void _removeProduct(int index) async {
     api.deleteProduct(

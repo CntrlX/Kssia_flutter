@@ -87,7 +87,7 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
                           QrImageView(
                             size: 250,
                             data:
-                                'https://admin.kssiathrissur.com/user/${user.id}',
+                                'https://myprofile.kssiathrissur.com/user/${user.id}',
                           ),
                           const SizedBox(height: 20),
                           if (user.phoneNumbers != null &&
@@ -186,6 +186,6 @@ Future<void> captureAndShareWidgetScreenshot(BuildContext context) async {
   Share.shareXFiles(
     [XFile(file.path)],
     text:
-        'Check out my profile on KSSIA!:\n https://admin.kssiathrissur.com/user/${userId}',
+        'Check out my profile on KSSIA!:\n https://myprofile.kssiathrissur.com/user/${userId}',
   );
 }

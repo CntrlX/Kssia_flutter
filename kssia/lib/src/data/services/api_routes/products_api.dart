@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -10,17 +11,29 @@ part 'products_api.g.dart';
 
 @riverpod
 Future<List<Product>> fetchProducts(FetchProductsRef ref,
-    {int pageNo = 1, int limit = 10, String? search}) async {
-  Uri url = Uri.parse('$baseUrl/products?pageNo=$pageNo&limit=$limit');
+    {int pageNo = 1,
+    int limit = 10,
+    String? search,
+    String? category,
+    String? subcategory}) async {
+  // Construct query parameters manually
+  String queryString = 'pageNo=$pageNo&limit=$limit';
 
-  if (search != null && search != '') {
-    url = Uri.parse(
-        '$baseUrl/products?pageNo=$pageNo&limit=$limit&search=$search');
+  if (search != null && search.isNotEmpty) {
+    queryString += '&search=$search';
+  }
+  if (category != null && category.isNotEmpty) {
+    queryString += '&category=$category';
+    log('Requesting category $category');
+  }
+  if (subcategory != null && subcategory.isNotEmpty) {
+    queryString += '&subcategory=$subcategory';
   }
 
+  String url = '$baseUrl/products?$queryString';
   print('Requesting URL: $url');
   final response = await http.get(
-    url,
+    Uri.parse(url),
     headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token"

@@ -471,7 +471,7 @@ class _FetchUserRequirementsProviderElement
 }
 
 String _$fetchUserRsvpdEventsHash() =>
-    r'c91662b4f4ddf1078b38ac20423258640a576294';
+    r'3406c036ae07dbca4365fd7ac22e2f7089285c5e';
 
 /// See also [fetchUserRsvpdEvents].
 @ProviderFor(fetchUserRsvpdEvents)
@@ -487,12 +487,12 @@ final fetchUserRsvpdEventsProvider =
 );
 
 typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getSubscriptionHash() => r'c140ae214a28e66e0319491ca413286da391df48';
+String _$getSubscriptionHash() => r'e6a785e1a50a5fcfaae69ff06c160f3c32cc5ebb';
 
 /// See also [getSubscription].
 @ProviderFor(getSubscription)
 final getSubscriptionProvider =
-    AutoDisposeFutureProvider<Subscription>.internal(
+    AutoDisposeFutureProvider<List<Subscription>>.internal(
   getSubscription,
   name: r'getSubscriptionProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -502,6 +502,6 @@ final getSubscriptionProvider =
   allTransitiveDependencies: null,
 );
 
-typedef GetSubscriptionRef = AutoDisposeFutureProviderRef<Subscription>;
+typedef GetSubscriptionRef = AutoDisposeFutureProviderRef<List<Subscription>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

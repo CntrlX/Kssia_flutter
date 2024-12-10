@@ -2826,7 +2826,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           ),
                         ),
                         Positioned(
-                            bottom: 20,
+                            bottom: 40,
                             left: 20,
                             right: 20,
                             child: SizedBox(
@@ -2839,7 +2839,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         log('Updating social media: ${user.socialMedia.toString()}');
                                         String response =
                                             await _submitData(user: user);
-                                        ApiRoutes api = ApiRoutes();
+                               
                                         // for (var files in filesToBeDeleted) {
                                         //   api.deleteFile(token, files);
                                         // }

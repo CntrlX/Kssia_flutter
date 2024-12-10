@@ -14,7 +14,6 @@ import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-
 import 'dart:async';
 
 class ProductView extends ConsumerStatefulWidget {
@@ -65,6 +64,14 @@ class _ProductViewState extends ConsumerState<ProductView> {
     ref.read(productsNotifierProvider.notifier).searchProducts(query);
   }
 
+  void _onFilterSaved(String query) {
+    // Perform search when search is submitted
+    ref.read(productsNotifierProvider.notifier).searchProducts(query,
+        category: selectedCategory, subcategory: selectedSubCategory);
+  }
+
+  String? selectedCategory;
+  String? selectedSubCategory;
   void _showProductDetails(
       {required BuildContext context,
       required product,
@@ -102,38 +109,64 @@ class _ProductViewState extends ConsumerState<ProductView> {
             children: [
               Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    controller: _searchController,
-                    focusNode: _searchFocus,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          focusNode: _searchFocus,
 
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      prefixIcon: const Icon(Icons.search),
-                      hintText: 'Search your Products',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: const Icon(Icons.search),
+                            hintText: 'Search your Products',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 216, 211, 211),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 216, 211, 211),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 216, 211, 211),
+                              ),
+                            ),
+                          ),
+                          onChanged: (query) =>
+                              _onSearchChanged(query), // Trigger dynamic search
+                          onSubmitted: (query) => _onSearchSubmitted(
+                              query), // Trigger search on submit
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 216, 211, 211),
-                        ),
-                      ),
-                    ),
-                    onChanged: (query) =>
-                        _onSearchChanged(query), // Trigger dynamic search
-                    onSubmitted: (query) =>
-                        _onSearchSubmitted(query), // Trigger search on submit
+                      IconButton(
+                          onPressed: () async {
+                            Map<String, String>? filter =
+                                await showModalBottomSheet<
+                                        Map<String, String>?>(
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (context) {
+                                      return ShowProductFilter();
+                                    });
+                            if (filter != null) {
+                              selectedCategory = filter['selectedCategory'];
+                              log('selected Category:$selectedCategory');
+                              log('selected Sub Category:$selectedSubCategory');
+                              selectedSubCategory =
+                                  filter['selectedSubCategory'];
+                              _onFilterSaved('');
+                            }
+                          },
+                          icon: Icon(Icons.filter_alt_outlined))
+                    ],
                   )),
               const SizedBox(height: 16),
               if (products.isNotEmpty)
@@ -157,7 +190,6 @@ class _ProductViewState extends ConsumerState<ProductView> {
                           data: (productOwner) {
                             final receiver = Participant(
                                 name: productOwner.name ?? '',
-                           
                                 id: productOwner.id,
                                 profilePicture: productOwner.profilePicture);
                             return GestureDetector(

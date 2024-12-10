@@ -328,7 +328,8 @@ class ApiRoutes {
     String moq,
     String productImage,
     String productPriceType,
-    List<String> selectedTags,
+    List<String> selectedSubCategories,
+    String selectedCategory,
     context,
   ) async {
     final url = Uri.parse('$baseUrl/products');
@@ -340,7 +341,8 @@ class ApiRoutes {
       'description': description,
       'seller_id': id,
       'moq': moq,
-      'tags': selectedTags,
+      'category': selectedCategory,
+      'subcategory': selectedSubCategories,
       'status': 'pending',
       'units': productPriceType,
       'image': productImage,
@@ -786,8 +788,9 @@ Future<List<Event>> fetchUserRsvpdEvents(
 }
 
 @riverpod
-Future<Subscription> getSubscription(GetSubscriptionRef ref) async {
-  final String url = '$baseUrl/payments/user/$id/subscriptions/app';
+Future<List<Subscription>> getSubscription(GetSubscriptionRef ref) async {
+  final String url = '$baseUrl/payments/user/$id';
+  log('requesting url:$url');
   try {
     final response = await http.get(
       Uri.parse(url),
@@ -798,19 +801,22 @@ Future<Subscription> getSubscription(GetSubscriptionRef ref) async {
     );
 
     if (response.statusCode == 200) {
-      final dynamic data = json.decode(response.body)['data'];
-      print('Response Data: $data');
+      final List<dynamic> data = json.decode(response.body)['data'];
+      print(response.body);
+      List<Subscription> subscriptions = [];
 
-      Subscription subscription = Subscription.fromJson(data);
+      for (var item in data) {
+        subscriptions.add(Subscription.fromJson(item));
+      }
+      print('subscriptions::::::$subscriptions');
 
-      log('sub details:$subscription');
-      return subscription;
+      return subscriptions;
     } else {
       print('Failed to load data. Status code: ${response.statusCode}');
-      return Subscription();
+      return [];
     }
   } catch (e) {
     print('Error in loading subscription details: $e');
-    return Subscription();
+    return [];
   }
 }

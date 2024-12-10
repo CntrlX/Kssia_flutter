@@ -17,6 +17,9 @@ class ProductsNotifier extends _$ProductsNotifier {
   final int limit = 20;
   bool hasMore = true;
 
+  String? currentSearchQuery;
+  String? currentCategory;
+  String? currentSubcategory;
   @override
   List<Product> build() {
     return [];
@@ -47,20 +50,31 @@ class ProductsNotifier extends _$ProductsNotifier {
     }
   }
 
-  Future<void> searchProducts(String query) async {
+ Future<void> searchProducts(String query, {String? category, String? subcategory}) async {
     isLoading = true;
     pageNo = 1;
-    products = []; // Reset the product list when searching
+    products = [];
+    currentSearchQuery = query;
+    currentCategory = category;
+    currentSubcategory = subcategory;
 
     try {
-      final newProducts = await ref
-          .read(fetchProductsProvider(pageNo: pageNo, limit: limit, search: query).future);
+      final newProducts = await ref.read(
+        fetchProductsProvider(
+          pageNo: pageNo,
+          limit: limit,
+          search: query,
+          category: category,
+          subcategory: subcategory,
+        ).future,
+      );
+
       products = [...newProducts];
       hasMore = newProducts.length == limit;
-      state = products;
+      state = [...products];
     } catch (e, stackTrace) {
-      log(e.toString());
-      log(stackTrace.toString());
+      log('Error searching products: $e');
+      log('Stack trace: $stackTrace');
     } finally {
       isLoading = false;
     }
