@@ -1166,8 +1166,8 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
         image: productUrl,
         description: productDescriptionController.text,
         moq: int.parse(productMoqController.text),
-        offerPrice: int.parse(productOfferPriceController.text),
-        price: int.parse(productActualPriceController.text),
+        offerPrice: double.parse(productOfferPriceController.text),
+        price: double.parse(productActualPriceController.text),
         sellerId: SellerId(id: id),
         units: productPriceType.text,
         status: 'pending',
@@ -1529,14 +1529,16 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter the offer price';
                               }
-                              if (int.parse(productOfferPriceController.text) >
-                                  int.parse(
+                              if (double.parse(
+                                      productOfferPriceController.text) >
+                                  double.parse(
                                       productActualPriceController.text)) {
                                 return 'Make actual price higher';
                               }
-                              if (int.parse(
+                              if (double.parse(
                                       productActualPriceController.text) ==
-                                  int.parse(productOfferPriceController.text)) {
+                                  double.parse(
+                                      productOfferPriceController.text)) {
                                 return 'Prices should be different';
                               }
                               return null;

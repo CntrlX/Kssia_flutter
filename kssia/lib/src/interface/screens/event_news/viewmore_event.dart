@@ -31,8 +31,10 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    String time = DateFormat('hh:mm a').format(widget.event.startTime!);
-    String date = DateFormat('yyyy-MM-dd').format(widget.event.startDate!);
+    DateTime dateTime =
+        DateTime.parse(widget.event.startTime.toString()).toLocal();
+    String time = DateFormat('hh:mm a').format(dateTime);
+    String date = DateFormat('yyyy-MM-dd').format(dateTime);
     log('rsvp : ${widget.event.rsvp}');
     log('my id : ${id}');
     bool registered = widget.event.rsvp?.contains(id) ?? false;

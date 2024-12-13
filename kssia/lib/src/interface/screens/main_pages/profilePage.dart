@@ -91,13 +91,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                               widget.user.profilePicture != ''
                                           ? Container(
                                               width:
-                                                  95, // Diameter + border width
+                                                  95, 
                                               height: 95,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
                                                   color: Color(0xFF004797),
-                                                  width: 2.0, // Border width
+                                                  width: 2.0, 
                                                 ),
                                               ),
                                               child: ClipOval(
@@ -105,7 +105,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                   widget.user.profilePicture ??
                                                       '',
                                                   width:
-                                                      74, // Diameter of the circle (excluding border)
+                                                      74, 
                                                   height: 74,
                                                   fit: BoxFit.contain,
                                                 ),

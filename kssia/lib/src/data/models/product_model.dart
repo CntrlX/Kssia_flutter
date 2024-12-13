@@ -3,8 +3,8 @@ class Product {
   final SellerId? sellerId;
   final String? name;
   final String? image;
-  final int? price;
-  final int? offerPrice;
+  final double? price;
+  final double? offerPrice;
   final String? description;
   final int? moq;
   final String? units;
@@ -29,27 +29,32 @@ class Product {
     this.updatedAt,
   });
 
-  factory Product.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return Product();
+factory Product.fromJson(Map<String, dynamic>? json) {
+  if (json == null) return Product();
 
-    return Product(
-      id: json['_id'],
-      sellerId: SellerId.fromJson(json['seller_id']),
-      name: json['name'],
-      image: json['image'],
-      price: json['price'] as int,
-      offerPrice: json['offer_price'] != null ? json['offer_price'] as int : 0,
-      description: json['description'],
-      moq: json['moq'],
-      units: json['units'],
-      status: json['status'],
-      tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-      createdAt:
-          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-    );
+  double? _toDouble(dynamic value) {
+    if (value is int) return value.toDouble();
+    if (value is double) return value;
+    return null;
   }
+
+  return Product(
+    id: json['_id'],
+    sellerId: SellerId.fromJson(json['seller_id']),
+    name: json['name'],
+    image: json['image'],
+    price: _toDouble(json['price']),
+    offerPrice: _toDouble(json['offer_price']),
+    description: json['description'],
+    moq: json['moq'],
+    units: json['units'],
+    status: json['status'],
+    tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
+    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+    updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+  );
+}
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -74,8 +79,8 @@ class Product {
     SellerId? sellerId,
     String? name,
     String? image,
-    int? price,
-    int? offerPrice,
+    double? price,
+    double? offerPrice,
     String? description,
     int? moq,
     String? units,
@@ -117,7 +122,7 @@ class SellerId {
     } else if (json is Map<String, dynamic>) {
       return SellerId(
         id: json['_id'],
-        name: json['name']??'',
+        name: json['name'] ?? '',
         membershipId: json['membership_id'],
       );
     }
