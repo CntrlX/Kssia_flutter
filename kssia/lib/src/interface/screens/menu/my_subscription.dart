@@ -126,6 +126,18 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                   return SingleChildScrollView(
                     child: Column(
                       children: [
+                        const Padding(
+                          padding:
+                              EdgeInsets.only(left: 25, right: 25, top: 20),
+                          child: Row(
+                            children: [
+                              Text(
+                                'MEMBERSHIP SUBSCRIPTION',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -166,7 +178,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         style: TextStyle(
                                             fontSize: 26,
                                             fontWeight: FontWeight.w600),
-                                        '₹1000  ',
+                                        '₹1050  ',
                                       ),
                                       Text(
                                         style: TextStyle(
@@ -219,7 +231,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                     membershipSubscription
                                                             ?.status ??
                                                         '',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.green,
                                                       fontWeight:
@@ -334,6 +346,18 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                             ),
                           ),
                         ),
+                        const Padding(
+                          padding:
+                              EdgeInsets.only(left: 25, right: 25, top: 20),
+                          child: Row(
+                            children: [
+                              Text(
+                                'UPGRADE APP SUBSCRIPTION',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 25, right: 25, top: 20),
@@ -366,7 +390,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 17),
-                                    'PREMIUM PLAN',
+                                    'App’s Premium Fee',
                                   ),
                                   const SizedBox(height: 5),
 
@@ -406,7 +430,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               const Text(
-                                                'Membership status:',
+                                                'App Subscription status:',
                                                 style: TextStyle(fontSize: 14),
                                               ),
                                               const Spacer(),
@@ -425,16 +449,32 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                         BorderRadius.circular(
                                                             16),
                                                   ),
-                                                  child: Text(
-                                                    appSubscription?.status ??
-                                                        '',
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.green,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
+                                                  child: appSubscription
+                                                              ?.status ==
+                                                          null
+                                                      ? Text(
+                                                          appSubscription
+                                                                      ?.status ==
+                                                                  'active'
+                                                              ? 'Premium'
+                                                              : 'Free',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.green,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        )
+                                                      : const Text(
+                                                          'Free',
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.green,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
                                                 ),
                                             ],
                                           ),
@@ -491,7 +531,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   // Features List

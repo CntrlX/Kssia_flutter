@@ -89,11 +89,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     children: [
                                       widget.user.profilePicture != null &&
                                               widget.user.profilePicture != ''
-                                          ? CircleAvatar(
-                                              radius: 40,
-                                              backgroundImage: NetworkImage(
+                                          ? Container(
+                                              width:
+                                                  95, // Diameter + border width
+                                              height: 95,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Color(0xFF004797),
+                                                  width: 2.0, // Border width
+                                                ),
+                                              ),
+                                              child: ClipOval(
+                                                child: Image.network(
                                                   widget.user.profilePicture ??
-                                                      ''),
+                                                      '',
+                                                  width:
+                                                      74, // Diameter of the circle (excluding border)
+                                                  height: 74,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
                                             )
                                           : Image.asset(
                                               scale: 1.3,
