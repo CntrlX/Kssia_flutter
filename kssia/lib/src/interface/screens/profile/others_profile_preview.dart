@@ -141,11 +141,26 @@ class OthersProfilePreview extends ConsumerWidget {
                                     ),
                                   );
                                 },
-                                child: CircleAvatar(
-                                  radius: 45,
-                                  backgroundImage:
-                                      NetworkImage(user.profilePicture ?? ''),
-                                ),
+                                child:  Container(
+                                      width: 100, // Diameter + border width
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Color(0xFF004797),
+                                          width: 2.0, // Border width
+                                        ),
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          user.profilePicture ?? '',
+                                          width:
+                                              74, // Diameter of the circle (excluding border)
+                                          height: 74,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    )
                               )
                             : Image.asset(
                                 'assets/icons/dummy_person_large.png'),
