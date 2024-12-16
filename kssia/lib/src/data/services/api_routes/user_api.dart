@@ -222,9 +222,9 @@ class ApiRoutes {
 
     // Upload the image to Minio
     final imageName = basename(file.path);
-    await Minio.shared.fPutObject('kssia-s3-bucket', imageName, file.path);
+    await Minio.shared.fPutObject('bucket-kssia', imageName, file.path);
     final imageUrl =
-        "https://kssia-s3-bucket.s3.ap-south-1.amazonaws.com/$imageName";
+        "https://bucket-kssia.s3.ap-south-1.amazonaws.com/$imageName";
     return imageUrl;
   }
 
