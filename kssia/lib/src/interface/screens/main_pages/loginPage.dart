@@ -1029,7 +1029,8 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
             "moq": i.moq ?? 0,
             "units": i.units ?? '',
             "status": i.status,
-            "tags": ["string"]
+            "category": i.category,
+            "subcategory": i.subcategory,
           }
       ]
     };
@@ -2839,7 +2840,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         log('Updating social media: ${user.socialMedia.toString()}');
                                         String response =
                                             await _submitData(user: user);
-                               
+
                                         // for (var files in filesToBeDeleted) {
                                         //   api.deleteFile(token, files);
                                         // }

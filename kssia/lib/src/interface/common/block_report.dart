@@ -133,7 +133,7 @@ class CustomDropDown extends ConsumerWidget {
       log('product id in block report widget: ${product?.id ?? ''}');
       showBlockPersonDialog(
         context: context,
-        userId: product?.sellerId?.id ?? '',
+        userId: product?.sellerId ?? '',
         onBlockStatusChanged: () {
           if (context.mounted) {
             ref.invalidate(productsNotifierProvider);

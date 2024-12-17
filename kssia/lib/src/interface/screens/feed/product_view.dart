@@ -185,7 +185,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
                       builder: (context, ref, child) {
                         final asyncProductOwner = ref.watch(
                             fetchUserDetailsProvider(
-                                token, products[index].sellerId?.id ?? ''));
+                                token, products[index].sellerId ?? ''));
                         return asyncProductOwner.when(
                           data: (productOwner) {
                             final receiver = Participant(

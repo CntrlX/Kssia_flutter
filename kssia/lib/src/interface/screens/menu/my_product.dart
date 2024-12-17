@@ -98,8 +98,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
   // }
 
   void _removeProduct(int index) async {
-    api.deleteProduct(
-        ref.read(userProvider).value!.products![index].id ?? '');
+    api.deleteProduct(ref.read(userProvider).value!.products![index].id ?? '');
     ref
         .read(userProvider.notifier)
         .removeProduct(ref.read(userProvider).value!.products![index]);

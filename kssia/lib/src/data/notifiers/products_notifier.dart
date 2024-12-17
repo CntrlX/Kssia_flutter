@@ -26,7 +26,7 @@ class ProductsNotifier extends _$ProductsNotifier {
   }
  void removeProductsBySeller(String sellerId) {
     products = products
-        .where((product) => product.sellerId?.id != sellerId)
+        .where((product) => product.sellerId != sellerId)
         .toList();
     state = products;
   }

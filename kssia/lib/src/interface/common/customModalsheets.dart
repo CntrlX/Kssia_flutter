@@ -1118,7 +1118,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
             });
           },
           title: const Text(
-            "Select tags",
+            "Select Subcategory",
             style: TextStyle(
                 color: Color(0xFF004797), fontWeight: FontWeight.bold),
           ),
@@ -1168,7 +1168,9 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
         moq: int.parse(productMoqController.text),
         offerPrice: double.parse(productOfferPriceController.text),
         price: double.parse(productActualPriceController.text),
-        sellerId: SellerId(id: id),
+        sellerId: id,
+        category: selectedCategory,
+        subcategory: selectedSubCategories,
         units: productPriceType.text,
         status: 'pending',
       );
@@ -1429,7 +1431,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Add Tag",
+                                "Add Subcategory",
                                 style: TextStyle(color: Colors.black),
                               ),
                               Icon(
@@ -1496,6 +1498,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       ),
                     const SizedBox(height: 10),
                     ModalSheetTextFormField(
+                      textInputType: TextInputType.numberWithOptions(),
                       textController: productMoqController,
                       label: 'Add MOQ',
                       validator: (value) {
@@ -1510,6 +1513,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       children: [
                         Flexible(
                           child: ModalSheetTextFormField(
+                            textInputType: TextInputType.numberWithOptions(),
                             textController: productActualPriceController,
                             label: 'Actual price',
                             validator: (value) {
@@ -1523,6 +1527,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                         const SizedBox(width: 10),
                         Flexible(
                           child: ModalSheetTextFormField(
+                            textInputType: TextInputType.numberWithOptions(),
                             textController: productOfferPriceController,
                             label: 'Offer price',
                             validator: (value) {
@@ -2134,8 +2139,8 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final asyncUser = ref.watch(
-            fetchUserDetailsProvider(token, widget.product.sellerId!.id!));
+        final asyncUser = ref
+            .watch(fetchUserDetailsProvider(token, widget.product.sellerId!));
 
         return Padding(
           padding:
@@ -2428,7 +2433,7 @@ class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
                         if (subscription != 'free') {
                           await sendChatMessage(
                               productId: widget.product.id,
-                              userId: widget.product.sellerId!.id!,
+                              userId: widget.product.sellerId!,
                               content:
                                   '''I need ${_quantityController.text}\nLet\'s Connect!''');
 

@@ -11,6 +11,7 @@ class ModalSheetTextFormField extends StatelessWidget {
   final int maxLines;
   final int? maxLength;
   final String? Function(String?)? validator;
+  final TextInputType textInputType;
 
   const ModalSheetTextFormField({
     required this.textController,
@@ -19,11 +20,13 @@ class ModalSheetTextFormField extends StatelessWidget {
     this.maxLength,
     this.validator,
     super.key,
+    this.textInputType = TextInputType.text,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: textInputType,
       maxLength: maxLength ?? null,
       controller: textController,
       maxLines: maxLines,
@@ -89,18 +92,16 @@ class CustomTextFormField extends StatelessWidget {
             switch (labelText) {
               case 'Enter your Full name':
                 ref.read(userProvider.notifier).updateName(
-                    name: textController!.text,
-);
+                      name: textController!.text,
+                    );
                 break;
-             
-           
+
               case 'Enter Your abbreviation':
                 ref.read(userProvider.notifier).updateAbbreviation(
-                    abbreviation: textController!.text,
-);
+                      abbreviation: textController!.text,
+                    );
                 break;
-             
-           
+
               case 'Designation':
                 ref
                     .read(userProvider.notifier)
