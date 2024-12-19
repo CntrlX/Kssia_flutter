@@ -214,7 +214,6 @@ class _FeedViewState extends ConsumerState<FeedView> {
           data: (requirementOwner) {
             final receiver = Participant(
                 name: requirementOwner.name ?? '',
-     
                 id: requirementOwner.id,
                 profilePicture: requirementOwner.profilePicture);
 
@@ -277,7 +276,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${requirement.author?.name?.firstName ?? ''} ${requirement.author?.name?.middleName ?? ''} ${requirement.author?.name?.lastName ?? ''}',
+                                        '${requirement.author?.name ?? ''}',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         style: const TextStyle(

@@ -398,17 +398,19 @@ void showWlinkorVlinkSheet(
 class ShowEnterAwardSheet extends StatefulWidget {
   final TextEditingController textController1;
   final TextEditingController textController2;
-  final Future<void> Function() addAwardCard;
+  final Future<void> Function()? addAwardCard;
+  final Future<void> Function()? editAwardCard;
   final String imageType;
   final Future<File?> Function({required String imageType}) pickImage;
 
   ShowEnterAwardSheet({
     required this.textController1,
     required this.textController2,
-    required this.addAwardCard,
+    this.addAwardCard,
     required this.pickImage,
     required this.imageType,
     super.key,
+    this.editAwardCard,
   });
 
   @override
@@ -567,8 +569,12 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                     );
 
                     try {
-                      // Pass awardImage to addAwardCard
-                      await widget.addAwardCard();
+                      if (widget.addAwardCard != null) {
+                        await widget.addAwardCard!();
+                      }
+                      else{
+                                 await widget.editAwardCard!();
+                      }
                       widget.textController1.clear();
                       widget.textController2.clear();
 

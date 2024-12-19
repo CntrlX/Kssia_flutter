@@ -239,6 +239,17 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
     });
   }
 
+  void editAward(Award oldAward, Award updatedAward) {
+  state = state.whenData((user) {
+    final updatedAwards = user.awards!.map((award) {
+      return award == oldAward ? updatedAward : award;
+    }).toList();
+
+    return user.copyWith(awards: updatedAwards);
+  });
+}
+
+
   void removeBrochure(Brochure brochureToRemove) {
     state = state.whenData((user) {
       final updatedBrochures = user.brochure!

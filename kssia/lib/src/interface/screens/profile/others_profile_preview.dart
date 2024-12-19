@@ -141,27 +141,26 @@ class OthersProfilePreview extends ConsumerWidget {
                                     ),
                                   );
                                 },
-                                child:  Container(
-                                      width: 100, // Diameter + border width
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Color(0xFF004797),
-                                          width: 2.0, // Border width
-                                        ),
-                                      ),
-                                      child: ClipOval(
-                                        child: Image.network(
-                                          user.profilePicture ?? '',
-                                          width:
-                                              74, // Diameter of the circle (excluding border)
-                                          height: 74,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    )
-                              )
+                                child: Container(
+                                  width: 100, // Diameter + border width
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Color(0xFF004797),
+                                      width: 2.0, // Border width
+                                    ),
+                                  ),
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      user.profilePicture ?? '',
+                                      width:
+                                          74, // Diameter of the circle (excluding border)
+                                      height: 74,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ))
                             : Image.asset(
                                 'assets/icons/dummy_person_large.png'),
                         const SizedBox(height: 10),
@@ -576,7 +575,7 @@ class OthersProfilePreview extends ConsumerWidget {
                         ),
                         itemCount: user.products!.length,
                         itemBuilder: (context, index) {
-                          return ProductCard(
+                          return ProductCard(onEdit: null,
                             product: user.products![index],
                             onRemove: null,
                           );
@@ -641,6 +640,7 @@ class OthersProfilePreview extends ConsumerWidget {
                       itemCount: user.awards!.length,
                       itemBuilder: (context, index) {
                         return AwardCard(
+                          onEdit: null,
                           award: user.awards![index],
                           onRemove: null,
                         );

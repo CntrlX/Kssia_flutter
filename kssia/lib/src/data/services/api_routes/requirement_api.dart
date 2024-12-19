@@ -6,7 +6,6 @@ import 'package:kssia/src/data/models/requirement_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'requirement_api.g.dart';
 
-
 @riverpod
 Future<List<Requirement>> fetchRequirements(FetchRequirementsRef ref,
     {int pageNo = 1, int limit = 10}) async {
@@ -24,13 +23,14 @@ Future<List<Requirement>> fetchRequirements(FetchRequirementsRef ref,
   if (response.statusCode == 200) {
     final List<dynamic> data = json.decode(response.body)['data'];
     print(response.body);
-    List<Requirement> events = [];
+    print(data);
+    List<Requirement> requirements = [];
 
     for (var item in data) {
-      events.add(Requirement.fromJson(item));
+      requirements.add(Requirement.fromJson(item));
     }
-    print(events);
-    return events;
+    print(requirements);
+    return requirements;
   } else {
     print(json.decode(response.body)['message']);
 

@@ -176,7 +176,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {
-                              return ProductCard(
+                              return ProductCard(onEdit: null,
                                   product: user.products![index],
                                   onRemove: () => _removeProduct(index));
                             },
@@ -260,116 +260,6 @@ class _InfoCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final VoidCallback onPressed;
-  final VoidCallback onMorePressed;
-
-  const _ProductCard({
-    required this.onPressed,
-    required this.onMorePressed,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(8)),
-                  color: Colors.grey[300], // Placeholder for image
-                ),
-              ),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Container(
-                  padding: const EdgeInsets.all(1),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            Color.fromARGB(255, 0, 0, 0).withOpacity(0.00003),
-                        spreadRadius: 0.002,
-                        blurRadius: 0.002,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      // More options action
-                    },
-                    iconSize: 14,
-                    padding: EdgeInsets.zero, // Remove default padding
-                    constraints: const BoxConstraints(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                SizedBox(height: 4),
-                Text(
-                  'Plastic Cartons',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '₹2000 ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '₹1224',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'MOQ: 100',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ],
             ),
           ),
         ],

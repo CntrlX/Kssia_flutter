@@ -846,9 +846,62 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     _awardImageFIle == null;
   }
 
+  Future<void> _editAward({required Award oldAward}) async {
+    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+      final String awardUrl = url;
+      final newAward = Award(
+        name: awardNameController.text,
+        url: awardUrl,
+        authorityName: awardAuthorityController.text,
+      );
+
+      ref.read(userProvider.notifier).editAward(oldAward, newAward);
+    });
+    _awardImageFIle == null;
+  }
+  Future<void> _editProduct({required Award oldAward}) async {
+    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+      final String awardUrl = url;
+      final newAward = Award(
+        name: awardNameController.text,
+        url: awardUrl,
+        authorityName: awardAuthorityController.text,
+      );
+
+      ref.read(userProvider.notifier).editAward(oldAward, newAward);
+    });
+    _awardImageFIle == null;
+  }
+
   void _removeAward(int index) async {
     // await api
     //     .deleteFile(token, ref.read(userProvider).value!.awards![index].url!)
+    filesToBeDeleted.add(ref.read(userProvider).value!.awards![index].url!);
+    ref
+        .read(userProvider.notifier)
+        .removeAward(ref.read(userProvider).value!.awards![index]);
+  }
+
+  void _onAwardEdit(int index) async {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        awardNameController.text =
+            ref.read(userProvider).value?.awards?[index].name ?? '';
+        awardAuthorityController.text =
+            ref.read(userProvider).value?.awards?[index].name ?? '';
+        Award oldAward = (ref.read(userProvider).value!.awards![index]);
+        return ShowEnterAwardSheet(
+          pickImage: _pickFile,
+          editAwardCard: () => _editAward(oldAward: oldAward),
+          imageType: 'award',
+          textController1: awardNameController,
+          textController2: awardAuthorityController,
+        );
+      },
+    );
+
     filesToBeDeleted.add(ref.read(userProvider).value!.awards![index].url!);
     ref
         .read(userProvider.notifier)
@@ -2234,6 +2287,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           itemCount: user.awards!.length,
                                           itemBuilder: (context, index) {
                                             return AwardCard(
+                                              onEdit: () => _onAwardEdit(index),
                                               award: user.awards![index],
                                               onRemove: () =>
                                                   _removeAward(index),
@@ -2341,6 +2395,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           itemCount: user.products!.length,
                                           itemBuilder: (context, index) {
                                             return ProductCard(
+                                                onEdit: null,
                                                 product: user.products![index],
                                                 onRemove: () =>
                                                     _removeProduct(index));

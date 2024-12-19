@@ -70,7 +70,7 @@ class Requirement {
 
 class Author {
   final String? id;
-  final Name? name;
+  final String? name;
   final String? email;
 
   Author({
@@ -81,7 +81,7 @@ class Author {
 
   Author copyWith({
     String? id,
-    Name? name,
+    String? name,
     String? email,
   }) {
     return Author(
@@ -94,9 +94,7 @@ class Author {
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
       id: json['_id'] as String?,
-      name: json['name'] != null
-          ? Name.fromJson(json['name'] as Map<String, dynamic>)
-          : null,
+      name: json['name'] as String?,
       email: json['email'] as String?,
     );
   }
@@ -104,7 +102,7 @@ class Author {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'name': name?.toJson(),
+      'name': name,
       'email': email,
     };
   }
