@@ -324,8 +324,7 @@ class UserModel {
   final List<Certificate>? certificates;
   final List<Brochure>? brochure;
   final List<Review>? reviews; // Added reviews field
-  final String? createdAt;
-  final String? updatedAt;
+
   final String? companyAddress;
   final String? companyLogo;
   final String? profilePicture;
@@ -358,8 +357,6 @@ class UserModel {
       this.certificates,
       this.brochure,
       this.reviews, // Initialize reviews
-      this.createdAt,
-      this.updatedAt,
       this.companyAddress,
       this.companyLogo,
       this.profilePicture,
@@ -370,7 +367,7 @@ class UserModel {
     return UserModel(
       id: json['_id'] as String?,
       membershipId: json['membership_id'] as String?,
-      abbreviation: json['abbreviation']as String?,
+      abbreviation: json['abbreviation'] as String?,
       name: json['name'] as String?,
       phoneNumbers: json['phone_numbers'] != null
           ? PhoneNumbers.fromJson(json['phone_numbers'])
@@ -409,8 +406,7 @@ class UserModel {
       reviews: (json['reviews'] as List<dynamic>?)
           ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
           .toList(), // Parse reviews
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+
       companyAddress: json['company_address'] as String?,
       companyLogo: json['company_logo'] as String?,
       profilePicture: json['profile_picture'] as String?,
@@ -452,8 +448,7 @@ class UserModel {
       'certificates': certificates?.map((e) => e.toJson()).toList(),
       'brochure': brochure?.map((e) => e.toJson()).toList(),
       'reviews': reviews?.map((e) => e.toJson()).toList(), // Serialize reviews
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+
       'company_address': companyAddress,
       'company_logo': companyLogo,
       'profile_picture': profilePicture,
@@ -487,7 +482,7 @@ class UserModel {
     List<Award>? awards,
     List<Certificate>? certificates,
     List<Brochure>? brochure,
-    List<Review>? reviews, // Add reviews parameter
+    List<Review>? reviews,
     String? createdAt,
     String? updatedAt,
     String? companyAddress,
@@ -499,7 +494,7 @@ class UserModel {
     return UserModel(
         id: id ?? this.id,
         membershipId: membershipId ?? this.membershipId,
-        abbreviation: abbreviation?? this.abbreviation,
+        abbreviation: abbreviation ?? this.abbreviation,
         name: name ?? this.name,
         phoneNumbers: phoneNumbers ?? this.phoneNumbers,
         bloodGroup: bloodGroup ?? this.bloodGroup,
@@ -522,8 +517,7 @@ class UserModel {
         certificates: certificates ?? this.certificates,
         brochure: brochure ?? this.brochure,
         reviews: reviews ?? this.reviews, // Assign reviews
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+
         companyAddress: companyAddress ?? this.companyAddress,
         companyLogo: companyLogo ?? this.companyLogo,
         profilePicture: profilePicture ?? this.profilePicture,
@@ -532,80 +526,71 @@ class UserModel {
   }
 }
 
-class Reviewer {
-  final String? firstName;
-  final String? middleName;
-  final String? lastName;
-  final String? id;
-  final String? profilePicture;
-
-  Reviewer({
-    this.firstName,
-    this.middleName,
-    this.lastName,
-    this.id,
-    this.profilePicture,
-  });
-
-  factory Reviewer.fromJson(Map<String, dynamic> json) {
-    return Reviewer(
-      firstName: json['name']?['first_name'] as String?,
-      middleName: json['name']?['middle_name'] as String?,
-      lastName: json['name']?['last_name'] as String?,
-      id: json['_id'] as String?,
-      profilePicture: json['profile_picture'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': {
-        'first_name': firstName,
-        'middle_name': middleName,
-        'last_name': lastName,
-      },
-      '_id': id,
-      'profile_picture': profilePicture,
-    };
-  }
-}
-
 class Review {
+  final String? id;
   final Reviewer? reviewer;
   final String? content;
   final int? rating;
-  final String? id;
-  final DateTime? createdAt;
 
   Review({
+    this.id,
     this.reviewer,
     this.content,
     this.rating,
-    this.id,
-    this.createdAt,
   });
-
+//arawvr
+//arawvr
+//arawvr
+//arawvr
+  // Factory method to create a Review instance from JSON
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
+      id: json['_id'] as String?,
       reviewer: json['reviewer'] != null
           ? Reviewer.fromJson(json['reviewer'] as Map<String, dynamic>)
           : null,
       content: json['content'] as String?,
       rating: json['rating'] as int?,
-      id: json['_id'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : null,
     );
   }
 
+  // Method to convert a Review instance to JSON
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
       'reviewer': reviewer?.toJson(),
       'content': content,
-      'rating': rating,
+      'rating': rating
+    };
+  }
+}
+
+class Reviewer {
+  final String? id;
+  final String? name;
+  final String? profilePicture;
+
+  Reviewer({
+    this.id,
+    this.name,
+    this.profilePicture,
+  });
+
+  // Factory method to create a Reviewer instance from JSON
+  factory Reviewer.fromJson(Map<String, dynamic> json) {
+    return Reviewer(
+      id: json['_id'] as String?,
+      name: json['name'] as String?,
+      profilePicture: json['profile_picture'] as String?,
+    );
+  }
+
+  // Method to convert a Reviewer instance to JSON
+  Map<String, dynamic> toJson() {
+    return {
       '_id': id,
-      'created_at': createdAt?.toIso8601String(),
+      'name': name,
+      'profile_picture': profilePicture,
     };
   }
 }
