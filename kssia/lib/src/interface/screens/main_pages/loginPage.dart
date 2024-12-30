@@ -2395,7 +2395,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                           itemCount: user.products!.length,
                                           itemBuilder: (context, index) {
                                             return ProductCard(
-                                                onEdit: null,
+                                              
                                                 product: user.products![index],
                                                 onRemove: () =>
                                                     _removeProduct(index));

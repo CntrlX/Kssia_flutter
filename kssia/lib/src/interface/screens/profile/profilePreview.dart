@@ -554,7 +554,7 @@ class ProfilePreview extends ConsumerWidget {
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {
-                              return ProductCard(onEdit: null,
+                              return ProductCard(
                                 product: user.products![index],
                                 onRemove: null,
                               );

@@ -58,7 +58,9 @@ class AwardCard extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
-                          child: DropDownMenu(onRemove: onRemove!,onEdit: onEdit!,),
+                          child: DropDownMenu(onRemove: onRemove!,
+                          // onEdit: onEdit!,
+                          ),
                         )),
                   ),
               ],
@@ -109,13 +111,13 @@ class AwardCard extends StatelessWidget {
 
 class ProductCard extends StatelessWidget {
   
-    final VoidCallback? onEdit;
+    // final VoidCallback? onEdit;
     final VoidCallback? onRemove;
   final Product product;
   final bool? isOthersProduct;
 
   const ProductCard(
-      {this.onRemove, required this.product, super.key, this.isOthersProduct, this.onEdit});
+      {this.onRemove, required this.product, super.key, this.isOthersProduct});
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +227,9 @@ class ProductCard extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: DropDownMenu(onRemove: onRemove!,onEdit:onEdit!),
+                    child: DropDownMenu(onRemove: onRemove!,
+                    // onEdit:onEdit!
+                    ),
                   ),
                 ),
               ),
@@ -396,9 +400,9 @@ class BrochureCard extends StatelessWidget {
 
 class DropDownMenu extends StatelessWidget {
   final VoidCallback onRemove;
-  final VoidCallback onEdit;
+  // final VoidCallback onEdit;
 
-  const DropDownMenu({super.key, required this.onRemove, required this.onEdit});
+  const DropDownMenu({super.key, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -420,22 +424,22 @@ class DropDownMenu extends StatelessWidget {
               ),
             ),
           ),
-          const DropdownMenuItem<String>(
-            value: 'edit',
-            child: Text(
-              'Edit',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.red,
-              ),
-            ),
-          ),
+          // const DropdownMenuItem<String>(
+          //   value: 'edit',
+          //   child: Text(
+          //     'Edit',
+          //     style: TextStyle(
+          //       fontSize: 14,
+          //       color: Colors.red,
+          //     ),
+          //   ),
+          // ),
         ],
         onChanged: (value) {
           if (value == 'remove') {
             onRemove();
           } else {
-            onEdit();
+            // onEdit();
           }
         },
         dropdownStyleData: DropdownStyleData(
