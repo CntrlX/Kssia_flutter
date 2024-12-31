@@ -14,7 +14,11 @@ class AwardCard extends StatelessWidget {
 
   final Award award;
 
-  const AwardCard({required this.onRemove, required this.award, super.key,required  this.onEdit});
+  const AwardCard(
+      {required this.onRemove,
+      required this.award,
+      super.key,
+      required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +62,9 @@ class AwardCard extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
-                          child: DropDownMenu(onRemove: onRemove!,
-                          // onEdit: onEdit!,
+                          child: DropDownMenu(
+                            onRemove: onRemove!,
+                            // onEdit: onEdit!,
                           ),
                         )),
                   ),
@@ -110,9 +115,8 @@ class AwardCard extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  
-    // final VoidCallback? onEdit;
-    final VoidCallback? onRemove;
+  // final VoidCallback? onEdit;
+  final VoidCallback? onRemove;
   final Product product;
   final bool? isOthersProduct;
 
@@ -164,7 +168,7 @@ class ProductCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          product.name!,
+                          product.name ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -175,28 +179,36 @@ class ProductCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
                             children: [
-                              Text(
-                                '₹ ${product.price}',
-                                style: TextStyle(
-                                  decoration: product.offerPrice != null
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                  fontSize: 15.0,
-                                  color:
-                                      const Color.fromARGB(255, 112, 112, 112),
-                                  fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Text(
+                                  '₹ ${product.price}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    decoration: product.offerPrice != null
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                    fontSize: 15.0,
+                                    color: const Color.fromARGB(
+                                        255, 112, 112, 112),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               const SizedBox(
                                 width: 8,
                               ),
                               if (product.offerPrice != null)
-                                Text(
-                                  '₹ ${product.offerPrice}',
-                                  style: const TextStyle(
-                                    color: Color(0xFF004797),
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w600,
+                                Flexible(
+                                  child: Text(
+                                    '₹ ${product.offerPrice}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF004797),
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -227,8 +239,9 @@ class ProductCard extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: DropDownMenu(onRemove: onRemove!,
-                    // onEdit:onEdit!
+                    child: DropDownMenu(
+                      onRemove: onRemove!,
+                      // onEdit:onEdit!
                     ),
                   ),
                 ),
