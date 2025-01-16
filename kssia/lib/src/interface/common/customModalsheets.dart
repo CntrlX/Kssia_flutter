@@ -571,9 +571,8 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                     try {
                       if (widget.addAwardCard != null) {
                         await widget.addAwardCard!();
-                      }
-                      else{
-                                 await widget.editAwardCard!();
+                      } else {
+                        await widget.editAwardCard!();
                       }
                       widget.textController1.clear();
                       widget.textController2.clear();
@@ -2006,87 +2005,97 @@ class _ShowWriteReviewSheetState extends State<ShowWriteReviewSheet> {
         top: 16,
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Flexible(
-                child: Text(
-                  'How is your Experience with this Member?',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Flexible(
+                  child: Text(
+                    'How is your Experience with this Member?',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(5, (index) {
-              return IconButton(
-                icon: Icon(
-                  Icons.star,
-                  color: index < selectedRating ? Colors.amber : Colors.grey,
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                onPressed: () {
-                  setState(() {
-                    selectedRating = index + 1;
-                  });
-                },
-              );
-            }),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: feedbackController,
-            decoration: const InputDecoration(
-              hintText: 'Leave Your Feedback here',
-              border: OutlineInputBorder(),
+              ],
             ),
-            maxLines: 4,
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                  child: customButton(
-                      labelColor: Colors.black,
-                      sideColor: const Color.fromARGB(255, 234, 229, 229),
-                      buttonColor: const Color.fromARGB(255, 234, 229, 229),
-                      label: 'Cancel',
-                      onPressed: () {})),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    return customButton(
-                        label: 'Submit',
-                        onPressed: () async {
-                          ApiRoutes userApi = ApiRoutes();
-                          await userApi
-                              .postReview(
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.star,
+                    color: index < selectedRating ? Colors.amber : Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      selectedRating = index + 1;
+                    });
+                  },
+                );
+              }),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: feedbackController,
+              decoration: const InputDecoration(
+                hintText: 'Leave Your Feedback here',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 4,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Feedback cannot be empty';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                    child: customButton(
+                        labelColor: Colors.black,
+                        sideColor: const Color.fromARGB(255, 234, 229, 229),
+                        buttonColor: const Color.fromARGB(255, 234, 229, 229),
+                        label: 'Cancel',
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      return customButton(
+                          label: 'Submit',
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              ApiRoutes userApi = ApiRoutes();
+                              await userApi.postReview(
                                   widget.userId,
                                   feedbackController.text,
                                   selectedRating,
-                                  context)
-                              .then(
-                            (value) {
-                              ref.invalidate(peopleNotifierProvider);
-                            },
-                          );
-                          Navigator.of(context).pop();
-                        });
-                  },
+                                  context);
+
+                              Navigator.of(context).pop();
+
+                              ref.invalidate(fetchUserDetailsProvider);
+                            }
+                          });
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

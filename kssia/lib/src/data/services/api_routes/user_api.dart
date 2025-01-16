@@ -535,7 +535,7 @@ class ApiRoutes {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Review posted successfully');
         CustomSnackbar.showSnackbar(
-            context, 'Your Review will be Posted after some time');
+            context, 'Review Posted');
       } else {
         print('Failed to post review: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -802,7 +802,7 @@ Future<List<Subscription>> getSubscription(GetSubscriptionRef ref) async {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['data'];
-      print(response.body);
+      log(response.body);
       List<Subscription> subscriptions = [];
 
       for (var item in data) {

@@ -80,4 +80,28 @@ class PeopleNotifier extends _$PeopleNotifier {
       isLoading = false;
     }
   }
+
+  Future<void> refresh() async {
+    isLoading = true;
+    pageNo = 1;
+    hasMore = true;
+    users = []; // Clear the current user list
+    state = [...users]; // Update the state to reflect the cleared list
+
+    try {
+      final newUsers = await ref.read(
+          fetchUsersProvider(pageNo: pageNo, limit: limit, query: searchQuery)
+              .future);
+
+      users = [...newUsers];
+      hasMore = newUsers.length == limit;
+
+      state = [...users]; // Update the state with refreshed data
+    } catch (e, stackTrace) {
+      log(e.toString());
+      log(stackTrace.toString());
+    } finally {
+      isLoading = false;
+    }
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/services/save_qr.dart';
 import 'package:kssia/src/data/services/share_qr.dart';
+import 'package:kssia/src/data/services/share_with_qr.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
@@ -293,10 +294,7 @@ class ProfileCard extends StatelessWidget {
                               fontSize: 16,
                               label: 'SHARE',
                               onPressed: () async {
-                                shareQr(
-                                  context: context,
-                                  screenshotController: screenshotController,
-                                );
+                                captureAndShareWidgetScreenshot(context);
                               },
                             ),
                           ),

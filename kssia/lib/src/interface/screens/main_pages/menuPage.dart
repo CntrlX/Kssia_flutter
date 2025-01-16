@@ -347,23 +347,22 @@ class MenuPage extends StatelessWidget {
                       //     );
                       //   },
                       // ),
-                      if (user.phoneNumbers?.personal != '+919645398555')
-                        Divider(),
-                      if (user.phoneNumbers?.personal != '+919645398555')
-                        _buildListTile(
-                          context,
-                          Icons.subscriptions,
-                          'My subscriptions',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MySubscriptionPage()),
-                            );
-                          },
-                        ),
-                      if (user.phoneNumbers?.personal != '+919645398555')
-                        Divider(),
+
+                      // if (user.phoneNumbers?.personal != '+919645398555')
+                      _buildListTile(
+                        context,
+                        Icons.subscriptions,
+                        'My subscriptions',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MySubscriptionPage()),
+                          );
+                        },
+                      ),
+                      // if (user.phoneNumbers?.personal != '+919645398555')
+                      Divider(),
                       _buildListTile(
                         context,
                         Icons.shopping_bag,

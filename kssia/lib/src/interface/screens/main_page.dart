@@ -12,6 +12,7 @@ import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
+import 'package:kssia/src/interface/screens/feed/product_view.dart';
 import 'package:kssia/src/interface/screens/main_pages/event_news_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/feed_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
@@ -98,7 +99,7 @@ class _MainPageState extends ConsumerState<MainPage> {
       HomePage(
         user: user,
       ),
-      FeedPage(),
+      ProductView(),
       ProfilePage(user: user),
       NewsPage(),
       PeoplePage(),
@@ -195,7 +196,7 @@ class _MainPageState extends ConsumerState<MainPage> {
                                   ),
                             label: [
                               'Home',
-                              'Feed',
+                              'Products',
                               'Profile',
                               'News',
                               'People'

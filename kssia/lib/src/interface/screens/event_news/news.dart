@@ -115,8 +115,7 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                         ),
                       );
                     })),
-            // Navigation Buttons Section
-
+           
             Padding(
               padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
               child: AnimatedOpacity(
@@ -313,6 +312,8 @@ class NewsContent extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
+
+                    Container(child: Text(''),)
                   ],
                 ),
               ),

@@ -24,20 +24,20 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
 
   ApiRoutes api = ApiRoutes();
 
-  void _openModalSheet({required String sheet, required subscriptionType}) {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return ShowPaymentUploadSheet(
-            subscriptionType: subscriptionType,
-            pickImage: _pickFile,
-            textController: remarksController,
-            imageType: 'payment',
-            paymentImage: _paymentImage,
-          );
-        });
-  }
+  // void _openModalSheet({required String sheet, required subscriptionType}) {
+  //   showModalBottomSheet(
+  //       isScrollControlled: true,
+  //       context: context,
+  //       builder: (context) {
+  //         return ShowPaymentUploadSheet(
+  //           subscriptionType: subscriptionType,
+  //           pickImage: _pickFile,
+  //           textController: remarksController,
+  //           imageType: 'payment',
+  //           paymentImage: _paymentImage,
+  //         );
+  //       });
+  // }
 
   Future<File?> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -317,30 +317,41 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                   const SizedBox(height: 15),
 
                                   // Action Button
-                                  // SizedBox(
-                                  //     width: double.infinity,
-                                  //     child: customButton(
-                                  //         sideColor:
-                                  //             subscription.membership?.status ==
-                                  //                     'accepted'
-                                  //                 ? Colors.green
-                                  //                 : Colors.red,
-                                  //         buttonColor:
-                                  //             subscription.membership?.status ==
-                                  //                     'accepted'
-                                  //                 ? Colors.green
-                                  //                 : Colors.red,
-                                  //         label: subscription.membership?.status
-                                  //                 ?.toUpperCase() ??
-                                  //             'SUBSCRIBE',
-                                  //         onPressed: () {
-                                  //           if (subscription.membership?.status !=
-                                  //               'accepted') {
-                                  //             _openModalSheet(
-                                  //                 sheet: 'payment',
-                                  //                 subscriptionType: 'membership');
-                                  //           }
-                                  //         })),
+                                  SizedBox(
+                                      width: double.infinity,
+                                      child: customButton(
+                                          sideColor:
+                                              membershipSubscription?.status ==
+                                                      'accepted'
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                          buttonColor:
+                                              membershipSubscription?.status ==
+                                                      'accepted'
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                          label: membershipSubscription?.status
+                                                  ?.toUpperCase() ??
+                                              'SUBSCRIBE',
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const PremiumPlanPage(
+                                                    subcriptionType:
+                                                        'membership',
+                                                  ),
+                                                ));
+                                            // if (membershipSubscription
+                                            //         ?.status !=
+                                            //     'accepted') {
+                                            //   // _openModalSheet(
+                                            //   //     sheet: 'payment',
+                                            //   //     subscriptionType:
+                                            //   //         'membership');
+                                            // }
+                                          })),
                                 ],
                               ),
                             ),
@@ -439,7 +450,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 12,
-                                                      vertical: 4),
+                                                      vertical: 9),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     border: Border.all(
@@ -450,7 +461,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                             16),
                                                   ),
                                                   child: appSubscription
-                                                              ?.status ==
+                                                              ?.status !=
                                                           null
                                                       ? Text(
                                                           appSubscription
@@ -561,29 +572,31 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 15),
-                                  // SizedBox(
-                                  //     width: double.infinity,
-                                  //     child: customButton(
-                                  //         buttonHeight: 40,
-                                  //         sideColor: const Color(0xFFF76412),
-                                  //         buttonColor: const Color(0xFFF76412),
-                                  //         label: subscription == 'free'
-                                  //             ? 'SUBSCRIBE'
-                                  //             : 'SUBSCRIBED',
-                                  //         onPressed: () {
-                                  //           // Navigator.push(
-                                  //           //     context,
-                                  //           //     MaterialPageRoute(
-                                  //           //       builder: (context) =>
-                                  //           //           PremiumPlanPage(),
-                                  //           //     ));
-                                  //           if (appSubscription?.status !=
-                                  //               'active') {
-                                  //             _openModalSheet(
-                                  //                 sheet: 'payment',
-                                  //                 subscriptionType: 'app');
-                                  //           }
-                                  //         })),
+                                  SizedBox(
+                                      width: double.infinity,
+                                      child: customButton(
+                                          buttonHeight: 40,
+                                          sideColor: const Color(0xFFF76412),
+                                          buttonColor: const Color(0xFFF76412),
+                                          label: subscription == 'free'
+                                              ? 'SUBSCRIBE'
+                                              : 'SUBSCRIBED',
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const PremiumPlanPage(
+                                                    subcriptionType: 'app',
+                                                  ),
+                                                ));
+                                            // if (appSubscription?.status !=
+                                            //     'active') {
+                                            //   _openModalSheet(
+                                            //       sheet: 'payment',
+                                            //       subscriptionType: 'app');
+                                            // }
+                                          })),
                                 ],
                               ),
                             ),

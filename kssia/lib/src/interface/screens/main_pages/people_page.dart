@@ -4,6 +4,7 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
+import 'package:kssia/src/interface/screens/feed/feed_view.dart';
 
 import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
@@ -27,8 +28,8 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2, // Number of tabs
-    
+        length: 3, // Number of tabs
+
         child: Scaffold(
             backgroundColor: Colors.white,
             appBar: const CustomAppBar(
@@ -58,6 +59,7 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: [
+                          Tab(text: "FEED"),
                           Tab(text: "CHAT"),
                           Tab(text: "MEMBERS"),
                         ],
@@ -66,10 +68,11 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
                   ),
                 ),
                 // Wrap TabBar with a Container to adjust margin
-    
+
                 Expanded(
                   child: TabBarView(
                     children: [
+                      FeedView(),
                       ChatPage(),
                       MembersPage(),
                     ],

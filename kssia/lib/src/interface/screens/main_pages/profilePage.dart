@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kssia/src/data/globals.dart';
+
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
 import 'package:kssia/src/data/services/share_with_qr.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
-import 'package:kssia/src/interface/common/upgrade_dialog.dart';
-import 'package:kssia/src/interface/screens/main_pages/menuPage.dart';
-import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
+
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
-import 'package:open_share_plus/open.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
+
 
 class ProfilePage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -78,85 +73,68 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 width: double.infinity,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 40, horizontal: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      widget.user.profilePicture != null &&
-                                              widget.user.profilePicture != ''
-                                          ? Container(
-                                              width:
-                                                  95, 
-                                              height: 95,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: Color(0xFF004797),
-                                                  width: 2.0, 
-                                                ),
-                                              ),
-                                              child: ClipOval(
-                                                child: Image.network(
-                                                  widget.user.profilePicture ??
-                                                      '',
-                                                  width:
-                                                      74, 
-                                                  height: 74,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            )
-                                          : Image.asset(
-                                              scale: 1.3,
-                                              'assets/icons/dummy_person_large.png',
-                                            ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${widget.user.abbreviation ?? ''} ${widget.user.name ?? ''}',
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 3,
-                                            ),
-                                            if (widget.user.designation != null)
-                                              Text(
-                                                widget.user.designation ?? '',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16,
-                                                  color: Color.fromARGB(
-                                                      255, 42, 41, 41),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
-                                            Text(
-                                              widget.user.companyName ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 30),
+                                child: Column(
+                                  children: [
+                                    widget.user.profilePicture == null ||
+                                            widget.user.profilePicture == ''
+                                        ? Image.asset(
+                                            scale: 1.3,
+                                            'assets/icons/dummy_person_large.png',
+                                          )
+                                        : CircleAvatar(
+                                            onBackgroundImageError: (_, __) =>
+                                                Image.asset(
+                                                    'assets/dummy_person_large.png'),
+                                            radius: 40,
+                                            backgroundImage: NetworkImage(
+                                                widget.user.profilePicture ??
+                                                    ''),
+                                          ),
+                                    const SizedBox(height: 15),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${widget.user.abbreviation ?? ''} ${widget.user.name ?? ''}',
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        const SizedBox(height: 5),
+                                        if (widget.user.designation != null)
+                                          Text(
+                                            widget.user.designation!,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: Color.fromARGB(
+                                                  255, 42, 41, 41),
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        if (widget.user.companyName != null)
+                                          Text(
+                                            maxLines: 2,
+                                            widget.user.companyName!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ],
