@@ -457,7 +457,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 12,
-                                                      vertical: 9),
+                                                      vertical: 5),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     border: Border.all(
