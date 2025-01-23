@@ -208,7 +208,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'Membership status:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               if (membershipSubscription
@@ -246,7 +246,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'Last renewed on:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               Text(
@@ -258,7 +258,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                       .underline, // Adds underline
                                                   fontStyle: FontStyle
                                                       .italic, // Makes text italic
-                                                  fontSize: 14,
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: Color(0xFF004797),
                                                 ),
@@ -272,7 +272,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'Next renewal on:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               Text(
@@ -284,7 +284,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                       .underline, // Adds underline
                                                   fontStyle: FontStyle
                                                       .italic, // Makes text italic
-                                                  fontSize: 14,
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: Color(0xFF004797),
                                                 ),
@@ -500,7 +500,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'Last renewed on:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               Text(
@@ -512,7 +512,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                       .underline, // Adds underline
                                                   fontStyle: FontStyle
                                                       .italic, // Makes text italic
-                                                  fontSize: 14,
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: Color(0xFF004797),
                                                 ),
@@ -526,7 +526,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'Next renewal on:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               Text(
@@ -538,7 +538,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                       .underline, // Adds underline
                                                   fontStyle: FontStyle
                                                       .italic, // Makes text italic
-                                                  fontSize: 14,
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: Color(0xFF004797),
                                                 ),
