@@ -6,6 +6,25 @@ part of 'user_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$getPaymentYearsHash() => r'3792f0dd03e469281aaeb5db5620312b93704de6';
+
+/// See also [getPaymentYears].
+@ProviderFor(getPaymentYears)
+final getPaymentYearsProvider =
+    AutoDisposeFutureProvider<List<PaymentYearModel>>.internal(
+  getPaymentYears,
+  name: r'getPaymentYearsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getPaymentYearsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GetPaymentYearsRef
+    = AutoDisposeFutureProviderRef<List<PaymentYearModel>>;
 String _$fetchUserDetailsHash() => r'8546032eb9a76ed770b4149f5926fc1a34e91649';
 
 /// Copied from Dart SDK
@@ -154,6 +173,8 @@ class FetchUserDetailsProvider extends AutoDisposeFutureProvider<UserModel> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchUserDetailsRef on AutoDisposeFutureProviderRef<UserModel> {
   /// The parameter `token` of this provider.
   String get token;
@@ -311,6 +332,8 @@ class FetchUsersProvider extends AutoDisposeFutureProvider<List<UserModel>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchUsersRef on AutoDisposeFutureProviderRef<List<UserModel>> {
   /// The parameter `pageNo` of this provider.
   int get pageNo;
@@ -455,6 +478,8 @@ class FetchUserRequirementsProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchUserRequirementsRef
     on AutoDisposeFutureProviderRef<List<UserRequirementModel>> {
   /// The parameter `token` of this provider.
@@ -486,8 +511,10 @@ final fetchUserRsvpdEventsProvider =
   allTransitiveDependencies: null,
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef FetchUserRsvpdEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getSubscriptionHash() => r'e6a785e1a50a5fcfaae69ff06c160f3c32cc5ebb';
+String _$getSubscriptionHash() => r'a6bd58493a8e870104bef8a8ea305f6cdce87ea2';
 
 /// See also [getSubscription].
 @ProviderFor(getSubscription)
@@ -502,6 +529,8 @@ final getSubscriptionProvider =
   allTransitiveDependencies: null,
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef GetSubscriptionRef = AutoDisposeFutureProviderRef<List<Subscription>>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

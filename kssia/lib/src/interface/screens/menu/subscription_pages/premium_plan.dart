@@ -21,7 +21,6 @@ class PremiumPlanPage extends StatefulWidget {
 
 class _PremiumPlanPageState extends State<PremiumPlanPage> {
   ScreenshotController screenshotController = ScreenshotController();
-  TextEditingController remarksController = TextEditingController();
   File? _paymentImage;
 
   void _openModalSheet({required subscriptionType}) {
@@ -32,7 +31,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
           return ShowPaymentUploadSheet(
             subscriptionType: subscriptionType,
             pickImage: _pickFile,
-            textController: remarksController,
+        
             imageType: 'payment',
             paymentImage: _paymentImage,
           );
@@ -138,6 +137,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                         Text(
                           'BANK DETAILS',
                           style: TextStyle(
+                            fontSize: 13,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -150,6 +150,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                         const Text(
                           'Bank details: Canara Bank Main Branch',
                           style: TextStyle(
+                            fontSize: 13,
                             color: Colors.white,
                           ),
                         ),
@@ -174,6 +175,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                         const Text(
                           'A/c no.: 0720101071990',
                           style: TextStyle(
+                            fontSize: 13,
                             color: Colors.white,
                           ),
                         ),
@@ -198,6 +200,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                         const Text(
                           'A/c name: KSSIA',
                           style: TextStyle(
+                            fontSize: 13,
                             color: Colors.white,
                           ),
                         ),
@@ -222,6 +225,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                         const Text(
                           'IFS code: CNRB0000720',
                           style: TextStyle(
+                            fontSize: 13,
                             color: Colors.white,
                           ),
                         ),
@@ -304,7 +308,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                     child: customButton(
                         label: 'Upload Reciept',
                         onPressed: () {
-                          _openModalSheet(subscriptionType: 'ap');
+                          _openModalSheet(subscriptionType: widget.subcriptionType);
                         }),
                   )),
               const SizedBox(height: 16.0),

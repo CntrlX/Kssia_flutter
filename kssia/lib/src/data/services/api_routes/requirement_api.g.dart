@@ -6,7 +6,7 @@ part of 'requirement_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchRequirementsHash() => r'cd157fb82f182e5db5b62b48997f7473e5355f24';
+String _$fetchRequirementsHash() => r'e896fdf3926891a3a84a3efd81562082595bbfca';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -155,6 +155,8 @@ class FetchRequirementsProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchRequirementsRef on AutoDisposeFutureProviderRef<List<Requirement>> {
   /// The parameter `pageNo` of this provider.
   int get pageNo;
@@ -174,4 +176,4 @@ class _FetchRequirementsProviderElement
   int get limit => (origin as FetchRequirementsProvider).limit;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

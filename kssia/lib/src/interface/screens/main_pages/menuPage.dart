@@ -378,7 +378,7 @@ class MenuPage extends StatelessWidget {
                       Divider(),
                       _buildListTile(
                         context,
-                        Icons.subscriptions,
+                        Icons.star,
                         'My Reviews',
                         onTap: () {
                           Navigator.push(
@@ -391,7 +391,7 @@ class MenuPage extends StatelessWidget {
                       Divider(),
                       _buildListTile(
                         context,
-                        Icons.subscriptions,
+                        Icons.calendar_view_month_rounded,
                         'My Events',
                         onTap: () {
                           Navigator.push(
@@ -575,7 +575,7 @@ class MenuPage extends StatelessWidget {
         backgroundColor: Colors.white,
         child: Icon(icon, color: const Color.fromARGB(255, 121, 116, 116)),
       ),
-      title: Text(title, style: TextStyle(color: textColor)),
+      title: Text(title, style: TextStyle(color: textColor, fontSize: 16)),
       trailing: SvgPicture.asset(
         'assets/icons/polygon.svg',
         height: 16,

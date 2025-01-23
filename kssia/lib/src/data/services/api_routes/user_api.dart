@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/data/models/payment_year_model.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/models/subscription_model.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -459,58 +460,48 @@ class ApiRoutes {
   }
 
   Future<String?> uploadPayment(
-    context,
-    String token,
-    String category,
-    String remarks,
-    File file,
-  ) async {
-    String url = '$baseUrl/payments/user';
+      {required String amount,
+      required String image,
+      required String catergory,
+      required String parentSub,
+      required BuildContext context}) async {
+    final url = Uri.parse('$baseUrl/payments/user');
 
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', Uri.parse(url));
+    final body = {
+      'category': catergory,
+      'receipt': image,
+      'amount': amount,
+      'parentSub': parentSub,
+    };
+    log(body.toString());
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
 
-    // Add headers
-    request.headers.addAll({
-      'accept': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'multipart/form-data',
-    });
-
-    // Add fields
-    request.fields['category'] = category;
-    request.fields['remarks'] = remarks;
-
-    // Add the file
-    var stream = http.ByteStream(file.openRead());
-    stream.cast();
-    var length = await file.length();
-    var multipartFile = http.MultipartFile(
-      'file',
-      stream,
-      length,
-      filename: basename(file.path),
-      contentType: MediaType('image', 'png'),
-    );
-
-    request.files.add(multipartFile);
-
-    // Send the request
-    var response = await request.send();
-
-    if (response.statusCode == 201) {
-      print('Payment submitted successfully');
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
-      return jsonResponse['message'];
-    } else {
-      final responseData = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseData);
-      CustomSnackbar.showSnackbar(context, jsonResponse['message']);
-      print(jsonResponse['message']);
-      print('Failed to submit Payment: ${response.statusCode}');
-      return 'Failed';
+      if (response.statusCode == 201) {
+        print('Product uploaded successfully');
+        final jsonResponse = json.decode(response.body);
+   CustomSnackbar.showSnackbar(
+          context,jsonResponse['message']);
+        return jsonResponse['message'];
+      } else {
+        final jsonResponse = json.decode(response.body);
+        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
+        print('Failed to upload Payment: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      CustomSnackbar.showSnackbar(
+          context, 'Something went wrong. Please try again.');
+      return null;
     }
   }
 
@@ -534,8 +525,7 @@ class ApiRoutes {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Review posted successfully');
-        CustomSnackbar.showSnackbar(
-            context, 'Review Posted');
+        CustomSnackbar.showSnackbar(context, 'Review Posted');
       } else {
         print('Failed to post review: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -660,6 +650,36 @@ class ApiRoutes {
       // Handle exceptions
       print('An error occurred: $e');
     }
+  }
+}
+
+@riverpod
+Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
+  final url = Uri.parse('$baseUrl/payments/parent-subscription');
+  print('Requesting URL: $url');
+  final response = await http.get(
+    url,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    },
+  );
+
+  print(json.decode(response.body)['status']);
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body)['data'];
+    print(response.body);
+    List<PaymentYearModel> paymentYears = [];
+
+    for (var item in data) {
+      paymentYears.add(PaymentYearModel.fromJson(item));
+    }
+    print(paymentYears);
+    return paymentYears;
+  } else {
+    print(json.decode(response.body)['message']);
+
+    throw Exception(json.decode(response.body)['message']);
   }
 }
 

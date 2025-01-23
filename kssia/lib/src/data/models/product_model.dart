@@ -96,3 +96,41 @@ class Product {
     );
   }
 }
+
+
+class ProductCategoryModel {
+  final int count;
+  final String name;
+
+  ProductCategoryModel({
+    required this.count,
+    required this.name,
+  });
+
+  /// Factory constructor to create an instance from JSON.
+  factory ProductCategoryModel.fromJson(Map<String, dynamic> json) {
+    return ProductCategoryModel(
+      count: json['count'] ?? 0, // Default to 0 if null
+      name: json['name'] ?? '', // Default to an empty string if null
+    );
+  }
+
+  /// Converts the instance to JSON.
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'name': name,
+    };
+  }
+
+  /// Creates a copy of the instance with updated values.
+  ProductCategoryModel copyWith({
+    int? count,
+    String? name,
+  }) {
+    return ProductCategoryModel(
+      count: count ?? this.count,
+      name: name ?? this.name,
+    );
+  }
+}

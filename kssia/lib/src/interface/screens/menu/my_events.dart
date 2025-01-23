@@ -87,39 +87,22 @@ class MyEventsPage extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.network(
-                errorBuilder: (context, error, stackTrace) {
-                  return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                  );
-                },
-                event.image ?? '',
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-              const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
-              Positioned(
-                top: 10,
-                left: 10,
+          Image.network(
+            errorBuilder: (context, error, stackTrace) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
                 child: Container(
-                  color: const Color(0xFFA9F3C7),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  child: Text(event.status!,
-                      style: TextStyle(color: Color(0xFF0F7036), fontSize: 14)),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                  ),
                 ),
-              ),
-            ],
+              );
+            },
+            event.image ?? '',
+            width: double.infinity,
+            height: 200,
+            fit: BoxFit.cover,
           ),
           const SizedBox(height: 10),
           Padding(

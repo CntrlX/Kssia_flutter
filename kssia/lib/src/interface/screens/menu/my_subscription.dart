@@ -211,7 +211,8 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                 style: TextStyle(fontSize: 14),
                                               ),
                                               const Spacer(),
-                                              if (membershipSubscription !=
+                                              if (membershipSubscription
+                                                      ?.status !=
                                                   null)
                                                 Container(
                                                   padding: const EdgeInsets
@@ -334,15 +335,21 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                   ?.toUpperCase() ??
                                               'SUBSCRIBE',
                                           onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const PremiumPlanPage(
-                                                    subcriptionType:
-                                                        'membership',
-                                                  ),
-                                                ));
+                                            if (membershipSubscription
+                                                        ?.status !=
+                                                    'accepted' ||
+                                                membershipSubscription
+                                                        ?.status ==
+                                                    null)
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const PremiumPlanPage(
+                                                      subcriptionType:
+                                                          'membership',
+                                                    ),
+                                                  ));
                                             // if (membershipSubscription
                                             //         ?.status !=
                                             //     'accepted') {
@@ -442,7 +449,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                             children: [
                                               const Text(
                                                 'App Subscription status:',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                               const Spacer(),
                                               if (appSubscription != null)
@@ -578,18 +585,19 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                           buttonHeight: 40,
                                           sideColor: const Color(0xFFF76412),
                                           buttonColor: const Color(0xFFF76412),
-                                          label: subscription == 'free'
-                                              ? 'SUBSCRIBE'
-                                              : 'SUBSCRIBED',
+                                          label: appSubscription?.status ?? '',
                                           onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const PremiumPlanPage(
-                                                    subcriptionType: 'app',
-                                                  ),
-                                                ));
+                                            if (appSubscription?.status ==
+                                                    'free' ||
+                                                appSubscription?.status == null)
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const PremiumPlanPage(
+                                                      subcriptionType: 'app',
+                                                    ),
+                                                  ));
                                             // if (appSubscription?.status !=
                                             //     'active') {
                                             //   _openModalSheet(

@@ -11,12 +11,12 @@ import 'package:kssia/src/data/models/msg_model.dart';
 
 part 'chat_api.g.dart';
 
-// Define a Socket.IO client providerr
+
 final socketIoClientProvider = Provider<SocketIoClient>((ref) {
   return SocketIoClient();
 });
 
-// Define a message stream provider
+
 final messageStreamProvider = StreamProvider.autoDispose<MessageModel>((ref) {
   final socketIoClient = ref.read(socketIoClientProvider);
   return socketIoClient.messageStream;
@@ -28,7 +28,6 @@ class SocketIoClient {
   SocketIoClient();
 
   Stream<MessageModel> get messageStream {
-    // Ensure the stream controller is initialized before providing the stream
     _controller ??= StreamController<MessageModel>.broadcast();
     return _controller!.stream;
   }
@@ -36,27 +35,24 @@ class SocketIoClient {
   void connect(String senderId, WidgetRef ref) {
     final uri = 'wss://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
 
-    // Initialize socket.io client
     _socket = IO.io(
       uri,
       IO.OptionBuilder()
-          .setTransports(['websocket']) // Use WebSocket transport
-          .disableAutoConnect() // Disable auto-connect
+          .setTransports(['websocket']) 
+          .disableAutoConnect() 
           .build(),
     );
 
     log('Connecting to: $uri');
 
-    // Listen for connection events
     _socket.onConnect((_) {
       log('Connected to: $uri');
-      // Reinitialize the StreamController if closed
       if (_controller == null || _controller!.isClosed) {
         _controller = StreamController<MessageModel>.broadcast();
       }
     });
 
-    // Listen to messages from the server
+
     _socket.on('message', (data) {
       log(data.toString());
       print("I'm inside event listener");
@@ -64,7 +60,6 @@ class SocketIoClient {
       log('Received message: ${data.toString()}');
       final messageModel = MessageModel.fromJson(data);
 
-      // Invalidate the fetchChatThreadProvider when a new message is received
       ref.invalidate(fetchChatThreadProvider);
 
       if (_controller != null && !_controller!.isClosed) {
@@ -72,7 +67,6 @@ class SocketIoClient {
       }
     });
 
-    // Handle connection errors
     _socket.on('connect_error', (error) {
       print('Connection Error: $error');
       if (_controller != null && !_controller!.isClosed) {
@@ -80,7 +74,6 @@ class SocketIoClient {
       }
     });
 
-    // Handle disconnection
     _socket.onDisconnect((_) {
       print('Disconnected from server');
       _disposeController();
@@ -101,7 +94,7 @@ class SocketIoClient {
     if (_controller != null && !_controller!.isClosed) {
       _controller!.close();
     }
-    _controller = null; // Reset the controller for future use
+    _controller = null; 
   }
 }
 

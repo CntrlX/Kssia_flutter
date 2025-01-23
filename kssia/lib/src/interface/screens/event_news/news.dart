@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/news_model.dart';
 import 'package:kssia/src/data/services/api_routes/news_api.dart';
+
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:ui';
-import 'package:kssia/src/interface/common/custom_button.dart';
-import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 // Riverpod Provider for current index tracking
 final currentNewsIndexProvider = StateProvider<int>((ref) => 0);
@@ -29,11 +29,11 @@ class NewsPage extends ConsumerWidget {
       },
       child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: CustomAppBar(),
+          appBar: const CustomAppBar(),
           body: asyncNews.when(
             data: (news) {
               if (news.isEmpty) {
-                return Center(
+                return const Center(
                   child: Text('No News'),
                 );
               } else {
@@ -115,7 +115,7 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                         ),
                       );
                     })),
-           
+
             Padding(
               padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
               child: AnimatedOpacity(
@@ -154,7 +154,7 @@ class _NewsPageViewState extends ConsumerState<NewsPageView> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     OutlinedButton(
@@ -312,8 +312,76 @@ class NewsContent extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
+                    if (newsItem.pdf != null)
+                      const SizedBox(
+                        height: 30,
+                      ),
+                    if (newsItem.pdf != null)
+                      Center(
+                        child: GestureDetector(
+                          onTap: () async {
+                            final pdfUrl = newsItem.pdf;
+                            if (pdfUrl == null || pdfUrl.isEmpty) {
+                              // Handle the case where the URL is invalid
+                              print('PDF URL is null or empty');
+                              return;
+                            }
 
-                    Container(child: Text(''),)
+                            try {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                          appBar: AppBar(
+                                            title: const Text(
+                                              "Back",
+                                              style: TextStyle(fontSize: 15),
+                                            ),
+                                            backgroundColor: Colors.white,
+                                            scrolledUnderElevation: 0,
+                                            leading: IconButton(
+                                              icon:
+                                                  const Icon(Icons.arrow_back),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                          body: SfPdfViewer.network(
+                                              newsItem.pdf ?? ''),
+                                        )),
+                              );
+                            } catch (e) {
+                              // Handle errors when loading the PDF
+                              print('Error loading PDF: $e');
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border:
+                                    Border.all(color: const Color(0xFF004797))),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 4),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'View PDF',
+                                    style: TextStyle(color: Color(0xFF004797)),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(Icons.remove_red_eye_outlined,
+                                      color: Color(0xFF004797))
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ),

@@ -147,6 +147,8 @@ class FetchUnreadNotificationsProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchUnreadNotificationsRef
     on AutoDisposeFutureProviderRef<List<NotificationModel>> {
   /// The parameter `token` of this provider.
@@ -282,6 +284,8 @@ class FetchreadNotificationsProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchreadNotificationsRef
     on AutoDisposeFutureProviderRef<List<NotificationModel>> {
   /// The parameter `token` of this provider.
@@ -297,4 +301,4 @@ class _FetchreadNotificationsProviderElement
   String get token => (origin as FetchreadNotificationsProvider).token;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

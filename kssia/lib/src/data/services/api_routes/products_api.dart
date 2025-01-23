@@ -57,3 +57,35 @@ Future<List<Product>> fetchProducts(FetchProductsRef ref,
     throw Exception(json.decode(response.body)['message']);
   }
 }
+
+@riverpod
+Future<List<ProductCategoryModel>> fetchProductCategories(FetchProductCategoriesRef ref,
+    ) async {
+
+  String url = '$baseUrl/products/categories';
+  print('Requesting URL: $url');
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token"
+    },
+  );
+  print('hello');
+  print(json.decode(response.body)['status']);
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body)['data'];
+    print(response.body);
+    List<ProductCategoryModel> products = [];
+
+    for (var item in data) {
+      products.add(ProductCategoryModel.fromJson(item));
+    }
+    print(products);
+    return products;
+  } else {
+    print(json.decode(response.body)['message']);
+
+    throw Exception(json.decode(response.body)['message']);
+  }
+}

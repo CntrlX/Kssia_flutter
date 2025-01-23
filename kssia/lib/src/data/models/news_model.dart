@@ -4,6 +4,7 @@ class News {
   final String? title;
   final String? image;
   final String? content;
+  final String? pdf;
   final bool? published;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -14,6 +15,7 @@ class News {
     this.title,
     this.image,
     this.content,
+    this.pdf,    
     this.published,
     this.createdAt,
     this.updatedAt,
@@ -27,6 +29,7 @@ class News {
       title: json['title'] as String?,
       image: json['image'] as String?,
       content: json['content'] as String?,
+      pdf: json['pdf'] as String?,   
       published: json['published'] as bool?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
@@ -45,6 +48,7 @@ class News {
       'title': title,
       'image': image,
       'content': content,
+      'pdf': pdf,    
       'published': published,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),

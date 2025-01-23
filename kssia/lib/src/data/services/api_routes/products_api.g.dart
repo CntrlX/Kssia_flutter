@@ -6,7 +6,7 @@ part of 'products_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchProductsHash() => r'9d7296a3bdef3866fea060494b61eebacafb0c65';
+String _$fetchProductsHash() => r'5048b0f1c81f7e29e77c68d2d663e562962445d6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -187,6 +187,8 @@ class FetchProductsProvider extends AutoDisposeFutureProvider<List<Product>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchProductsRef on AutoDisposeFutureProviderRef<List<Product>> {
   /// The parameter `pageNo` of this provider.
   int get pageNo;
@@ -220,5 +222,26 @@ class _FetchProductsProviderElement
   @override
   String? get subcategory => (origin as FetchProductsProvider).subcategory;
 }
+
+String _$fetchProductCategoriesHash() =>
+    r'43b39494ba5917c48332c81bb8289eb22c2cfb28';
+
+/// See also [fetchProductCategories].
+@ProviderFor(fetchProductCategories)
+final fetchProductCategoriesProvider =
+    AutoDisposeFutureProvider<List<ProductCategoryModel>>.internal(
+  fetchProductCategories,
+  name: r'fetchProductCategoriesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fetchProductCategoriesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FetchProductCategoriesRef
+    = AutoDisposeFutureProviderRef<List<ProductCategoryModel>>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

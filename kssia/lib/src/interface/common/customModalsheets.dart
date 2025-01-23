@@ -13,6 +13,7 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/notifiers/people_notifier.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
+import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/getRatings.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
@@ -651,19 +652,53 @@ class _ShowProductFilterState extends State<ShowProductFilter> {
                   ),
                 ],
               ),
-              SelectionDropDown(
-                hintText: ' Category',
-                value: selectedCategory,
-                items: productCategories.map((category) {
-                  return DropdownMenuItem<String>(
-                    value: category.name,
-                    child: Text(category.name),
+              Consumer(
+                builder: (context, ref, child) {
+                  final asyncCategories =
+                      ref.watch(fetchProductCategoriesProvider);
+                  return asyncCategories.when(
+                    data: (categoryCountList) {
+                      // Ensure the categoryCountList is of type List<ProductCategoryModel>
+                      return SelectionDropDown(
+                        hintText: 'Select Category',
+                        value: selectedCategory,
+                        items: productCategories
+                            .map<DropdownMenuItem<String>>((category) {
+                          // Find matching count from categoryCountList
+                          final matchingCategory = categoryCountList.firstWhere(
+                            (categoryModel) =>
+                                categoryModel.name == category.name,
+                            orElse: () => ProductCategoryModel(
+                                count: 0, name: category.name),
+                          );
+
+                          return DropdownMenuItem<String>(
+                            value: category.name,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(category.name), // Category name
+                                Text(
+                                    style: TextStyle(color: Colors.blue),
+                                    '(${matchingCategory.count})'), // Category count
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value;
+                          });
+                        },
+                      );
+                    },
+                    loading: () => Center(child: LoadingAnimation()),
+                    error: (error, stackTrace) {
+                      return Center(
+                        child: Text('Couldn\'t fetch categories'),
+                      );
+                    },
                   );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value;
-                  });
                 },
               ),
               const SizedBox(height: 10),
@@ -685,7 +720,7 @@ class _ShowProductFilterState extends State<ShowProductFilter> {
                 ),
               const SizedBox(height: 10),
               customButton(
-                label: 'SAVE',
+                label: 'SEARCH PRODUCTS',
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     final mapData = {
@@ -1127,7 +1162,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
             style: TextStyle(
                 color: Color(0xFF004797), fontWeight: FontWeight.bold),
           ),
-          selectedColor: Color(0xFF004797),
+          selectedColor: const Color(0xFF004797),
           checkColor: Colors.white,
           searchable: true,
           confirmText: const Text("CONFIRM",
@@ -1448,7 +1483,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                         ),
                       ),
                     if (subCategories.isNotEmpty)
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                     MultiSelectChipDisplay(
@@ -1488,7 +1523,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                               .start, // Ensure it doesn't stretch
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 8),
                               decoration: BoxDecoration(
                                   color:
@@ -1503,7 +1538,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       ),
                     const SizedBox(height: 10),
                     ModalSheetTextFormField(
-                      textInputType: TextInputType.numberWithOptions(),
+                      textInputType: const TextInputType.numberWithOptions(),
                       textController: productMoqController,
                       label: 'Add MOQ',
                       validator: (value) {
@@ -1518,7 +1553,8 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       children: [
                         Flexible(
                           child: ModalSheetTextFormField(
-                            textInputType: TextInputType.numberWithOptions(),
+                            textInputType:
+                                const TextInputType.numberWithOptions(),
                             textController: productActualPriceController,
                             label: 'Actual price',
                             validator: (value) {
@@ -1532,7 +1568,8 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                         const SizedBox(width: 10),
                         Flexible(
                           child: ModalSheetTextFormField(
-                            textInputType: TextInputType.numberWithOptions(),
+                            textInputType:
+                                const TextInputType.numberWithOptions(),
                             textController: productOfferPriceController,
                             label: 'Offer price',
                             validator: (value) {
@@ -1854,18 +1891,18 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
 
 class ShowPaymentUploadSheet extends StatefulWidget {
   final Future<File?> Function({required String imageType}) pickImage;
-  final TextEditingController textController;
+
   final String imageType;
   File? paymentImage;
   final String subscriptionType;
 
-  ShowPaymentUploadSheet(
-      {super.key,
-      required this.pickImage,
-      required this.textController,
-      required this.imageType,
-      this.paymentImage,
-      required this.subscriptionType});
+  ShowPaymentUploadSheet({
+    super.key,
+    required this.pickImage,
+    required this.imageType,
+    this.paymentImage,
+    required this.subscriptionType,
+  });
 
   @override
   State<ShowPaymentUploadSheet> createState() => _ShowPaymentUploadSheetState();
@@ -1873,6 +1910,8 @@ class ShowPaymentUploadSheet extends StatefulWidget {
 
 class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
   ApiRoutes api = ApiRoutes();
+  String? selectedYearId; // Variable to store the selected academic year ID
+  TextEditingController amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -1945,11 +1984,49 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
             ),
           ),
           const SizedBox(height: 20),
+          Consumer(
+            builder: (context, ref, child) {
+              final asyncPaymentYears = ref.watch(getPaymentYearsProvider);
+              return asyncPaymentYears.when(
+                data: (paymentYears) {
+                  return DropdownButtonFormField<String>(
+                    value: selectedYearId,
+                    hint: const Text('Select Year'),
+                    items: paymentYears
+                        .map(
+                          (year) => DropdownMenuItem<String>(
+                            value: year.id,
+                            child: Text(year.academicYear ?? 'Unknown Year'),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedYearId = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const Center(child: LoadingAnimation()),
+                error: (error, stackTrace) {
+                  return const Center(
+                    child: LoadingAnimation(),
+                  );
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 10),
           TextField(
-            controller: widget.textController,
+            controller: amountController,
             maxLines: 1,
             decoration: InputDecoration(
-              hintText: 'Remarks',
+              hintText: 'Amount',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -1959,18 +2036,58 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
           customButton(
             label: 'SAVE',
             onPressed: () async {
-              // Make sure to handle the API call and show the snackbar conditionally
+              log(selectedYearId.toString());
+              log(amountController.text.toString());
+
+              if (selectedYearId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please select an academic year'),
+                  ),
+                );
+                return;
+              }
+
+              // Check if an image is uploaded
+              if (widget.paymentImage == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please upload an image'),
+                  ),
+                );
+                return;
+              }
+
+              // Check if the amount is provided and valid
+              if (amountController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter the amount'),
+                  ),
+                );
+                return;
+              }
+              final String paymentImageUrl = await api.createFileUrl(
+                  file: widget.paymentImage!, token: token);
+              // Attempt to upload the payment details
               String? success = await api.uploadPayment(
-                context,
-                token,
-                widget.subscriptionType,
-                widget.textController.text,
-                widget.paymentImage!,
-              );
+                  context: context,
+                  parentSub: selectedYearId ?? '',
+                  catergory: widget.subscriptionType,
+                  amount: amountController.text,
+                  image: paymentImageUrl);
 
-              // Check if the widget is still mounted
-
-              Navigator.pop(context);
+              if (success != null) {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              } else {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Failed to upload payment details'),
+                  ),
+                );
+              }
             },
             fontSize: 16,
           ),
@@ -2573,7 +2690,7 @@ class RequirementModalSheet extends StatelessWidget {
                   loading: () => const Center(child: LoadingAnimation()),
                   error: (error, stackTrace) {
                     return const Center(
-                      child: Text('User not found'),
+                      child: Text('Couldn\'t fetch categories'),
                     );
                   },
                 ),
