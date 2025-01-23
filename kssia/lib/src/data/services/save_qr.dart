@@ -21,7 +21,7 @@ Future<void> saveQr({
         final result = await ImageGallerySaverPlus.saveImage(
           Uint8List.fromList(image),
           quality: 100,
-          name: "HEF${DateTime.now().millisecondsSinceEpoch}",
+          name: "KSSIA${DateTime.now().millisecondsSinceEpoch}",
         );
         print(result); // You can check the result if needed
   CustomSnackbar.showSnackbar(context, 'Downloaded to gallery!');
