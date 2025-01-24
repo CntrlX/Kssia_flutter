@@ -400,8 +400,8 @@ class MenuPage extends StatelessWidget {
                                 builder: (context) => const MyEventsPage()),
                           );
                         },
-                      ),
-                      Divider(),
+                      ),      if (user.phoneNumbers?.personal != '+919645398555')
+                      Divider(),      if (user.phoneNumbers?.personal != '+919645398555')
                       _buildListTile(
                         context,
                         Icons.monetization_on,
