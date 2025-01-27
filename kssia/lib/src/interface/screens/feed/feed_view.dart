@@ -363,15 +363,9 @@ class _FeedViewState extends ConsumerState<FeedView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Text(
-                                      requirement.content ?? '',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
+                                Text(
+                                  requirement.content ?? '',
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                                 const SizedBox(height: 16),
                               ],
