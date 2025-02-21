@@ -760,7 +760,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       if (imageType == 'profile') {
         setState(() {
           _profileImageFile = File(result.files.single.path!);
-          api.createFileUrl(file: _profileImageFile!, token: token).then((url) {
+          api.createFileUrl( _profileImageFile!.path,).then((url) {
             String profileUrl = url;
             ref.read(userProvider.notifier).updateProfilePicture(profileUrl);
             print((profileUrl));
@@ -779,7 +779,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       } else if (imageType == 'company') {
         setState(() {
           _companyImageFile = File(result.files.single.path!);
-          api.createFileUrl(file: _companyImageFile!, token: token).then((url) {
+          api.createFileUrl( _companyImageFile!.path,  ).then((url) {
             String companyUrl = url;
             ref.read(userProvider.notifier).updateCompanyLogo(companyUrl);
             print(companyUrl);
@@ -831,7 +831,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   // }
 
   Future<void> _addNewAward() async {
-    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+    await api.createFileUrl( _awardImageFIle!.path,  ).then((url) {
       final String awardUrl = url;
       final newAward = Award(
         name: awardNameController.text,
@@ -847,7 +847,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   }
 
   Future<void> _editAward({required Award oldAward}) async {
-    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+    await api.createFileUrl( _awardImageFIle!.path,  ).then((url) {
       final String awardUrl = url;
       final newAward = Award(
         name: awardNameController.text,
@@ -860,7 +860,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     _awardImageFIle == null;
   }
   Future<void> _editProduct({required Award oldAward}) async {
-    await api.createFileUrl(file: _awardImageFIle!, token: token).then((url) {
+    await api.createFileUrl( _awardImageFIle!.path,  ).then((url) {
       final String awardUrl = url;
       final newAward = Award(
         name: awardNameController.text,
@@ -910,7 +910,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
 
   Future<void> _addNewCertificate() async {
     await api
-        .createFileUrl(file: _certificateImageFIle!, token: token)
+        .createFileUrl( _certificateImageFIle!.path,  )
         .then((url) {
       final String certificateUrl = url;
       final newCertificate = Certificate(
@@ -934,7 +934,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   Future<void> _addNewBrochure() async {
     log("picked pdf while add:$_brochurePdfFile");
     final String brochureUrl =
-        await api.createFileUrl(file: _brochurePdfFile!, token: token);
+        await api.createFileUrl( _brochurePdfFile!.path, );
 
     final newBrochure =
         Brochure(name: brochureNameController.text, url: brochureUrl);
@@ -1376,7 +1376,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                                                 Icons.person);
                                                           },
                                                           user.profilePicture ??
-                                                              'https://placehold.co/600x400',
+                                                              '',
                                                           fit: BoxFit.cover,
                                                         )
                                                       : Image.asset(
