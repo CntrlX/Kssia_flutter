@@ -3,6 +3,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'dart:convert';
+import 'dart:developer';
+
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
+
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -176,57 +184,47 @@ class ApiRoutes {
     }
   }
 
-  Future<dynamic> createFileUrl({
-    required File file,
-    required String token,
-  }) async {
-    // Initialize Minio client
-    Minio.init(
-      endPoint: 's3.amazonaws.com',
-      accessKey: dotenv.env['AWS_ACCESS_KEY_ID']!,
-      secretKey: dotenv.env['AWS_SECRET_ACCESS_KEY']!,
-      region: 'ap-south-1',
-    );
-
-    // Load the file as bytes
-    Uint8List imageBytes = await file.readAsBytes();
+  Future<String> createFileUrl(String imagePath) async {
+    File imageFile = File(imagePath);
+    Uint8List imageBytes = await imageFile.readAsBytes();
     print("Original image size: ${imageBytes.lengthInBytes / 1024} KB");
 
-    // Define initial quality and resize factor
-    int quality = 80;
-    double resizeFactor = 0.9;
-
-    // Compress until the image is less than 1 MB
-    while (imageBytes.lengthInBytes > 1024 * 1024) {
+    // Check if the image is larger than 1 MB
+    if (imageBytes.lengthInBytes > 1024 * 1024) {
       img.Image? image = img.decodeImage(imageBytes);
-      if (image == null) break; // Exit if the image can't be decoded
+      if (image != null) {
+        img.Image resizedImage =
+            img.copyResize(image, width: (image.width * 0.5).toInt());
+        imageBytes =
+            Uint8List.fromList(img.encodeJpg(resizedImage, quality: 80));
+        print("Compressed image size: ${imageBytes.lengthInBytes / 1024} KB");
 
-      // Resize and re-encode the image
-      img.Image resizedImage = img.copyResize(
-        image,
-        width: (image.width * resizeFactor).toInt(),
-        height: (image.height * resizeFactor).toInt(),
-      );
-      imageBytes = Uint8List.fromList(
-        img.encodeJpg(resizedImage, quality: quality),
-      );
-
-      // Decrease quality and resize factor for the next iteration
-      quality = (quality * 0.9).toInt(); // Reduce quality by 10%
-      resizeFactor -= 0.1; // Reduce size by an additional 10% in each loop
-
-      print("Compressed image size: ${imageBytes.lengthInBytes / 1024} KB");
+        // Save compressed image
+        imageFile = await File(imagePath).writeAsBytes(imageBytes);
+      }
     }
 
-    // Save the compressed image temporarily for upload
-    await file.writeAsBytes(imageBytes);
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/upload'),
+    );
+    request.files
+        .add(await http.MultipartFile.fromPath('image', imageFile.path));
 
-    // Upload the image to Minio
-    final imageName = basename(file.path);
-    await Minio.shared.fPutObject('bucket-kssia', imageName, file.path);
-    final imageUrl =
-        "https://bucket-kssia.s3.ap-south-1.amazonaws.com/$imageName";
-    return imageUrl;
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      var responseBody = await response.stream.bytesToString();
+      return extractImageUrl(responseBody);
+    } else {
+      throw Exception('Failed to upload image');
+    }
+  }
+
+  String extractImageUrl(String responseBody) {
+    final responseJson = jsonDecode(responseBody);
+    log(name: "image upload response", responseJson.toString());
+    return responseJson['data'];
   }
 
   String removeBaseUrl(String url) {
@@ -488,8 +486,7 @@ class ApiRoutes {
       if (response.statusCode == 201) {
         print('Product uploaded successfully');
         final jsonResponse = json.decode(response.body);
-   CustomSnackbar.showSnackbar(
-          context,jsonResponse['message']);
+        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
         return jsonResponse['message'];
       } else {
         final jsonResponse = json.decode(response.body);

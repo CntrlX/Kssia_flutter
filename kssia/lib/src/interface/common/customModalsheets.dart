@@ -1184,7 +1184,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
       {required List<String> selectedSubCategories,
       required String selectedCategory}) async {
     productUrl =
-        await api.createFileUrl(file: _productImageFIle!, token: token);
+        await api.createFileUrl( _productImageFIle!.path,  );
     final createdProduct = await api.uploadProduct(
         token,
         productNameController.text,
@@ -1852,7 +1852,7 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                     String? image;
                     if (requirementImage != null) {
                       image = await userApi.createFileUrl(
-                          file: requirementImage!, token: token);
+                           requirementImage!.path,  );
                     }
                     await api.uploadRequirement(
                       token,
@@ -2068,7 +2068,7 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
                 return;
               }
               final String paymentImageUrl = await api.createFileUrl(
-                  file: widget.paymentImage!, token: token);
+                   widget.paymentImage!.path,);
               // Attempt to upload the payment details
               String? success = await api.uploadPayment(
                   context: context,
