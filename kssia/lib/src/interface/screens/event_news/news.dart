@@ -256,23 +256,96 @@ class NewsContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Category Section
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: const Color.fromARGB(255, 192, 252, 194),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 10),
-                        child: Text(
-                          newsItem.category ?? '',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: const Color.fromARGB(255, 192, 252, 194),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 10),
+                            child: Text(
+                              newsItem.category ?? '',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        if (newsItem.pdf != null)
+                          Center(
+                            child: GestureDetector(
+                              onTap: () async {
+                                final pdfUrl = newsItem.pdf;
+                                if (pdfUrl == null || pdfUrl.isEmpty) {
+                                  // Handle the case where the URL is invalid
+                                  print('PDF URL is null or empty');
+                                  return;
+                                }
+
+                                try {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Scaffold(
+                                              appBar: AppBar(
+                                                title: const Text(
+                                                  "Back",
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                                backgroundColor: Colors.white,
+                                                scrolledUnderElevation: 0,
+                                                leading: IconButton(
+                                                  icon: const Icon(
+                                                      Icons.arrow_back),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ),
+                                              body: SfPdfViewer.network(
+                                                  newsItem.pdf ?? ''),
+                                            )),
+                                  );
+                                } catch (e) {
+                                  // Handle errors when loading the PDF
+                                  print('Error loading PDF: $e');
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: const Color(0xFF004797))),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 4),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'View PDF',
+                                        style:
+                                            TextStyle(color: Color(0xFF004797)),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Icon(Icons.remove_red_eye_outlined,
+                                          color: Color(0xFF004797))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                      ],
                     ),
                     const SizedBox(height: 8),
                     // Title Section
@@ -312,76 +385,6 @@ class NewsContent extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
-                    if (newsItem.pdf != null)
-                      const SizedBox(
-                        height: 30,
-                      ),
-                    if (newsItem.pdf != null)
-                      Center(
-                        child: GestureDetector(
-                          onTap: () async {
-                            final pdfUrl = newsItem.pdf;
-                            if (pdfUrl == null || pdfUrl.isEmpty) {
-                              // Handle the case where the URL is invalid
-                              print('PDF URL is null or empty');
-                              return;
-                            }
-
-                            try {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Scaffold(
-                                          appBar: AppBar(
-                                            title: const Text(
-                                              "Back",
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                            backgroundColor: Colors.white,
-                                            scrolledUnderElevation: 0,
-                                            leading: IconButton(
-                                              icon:
-                                                  const Icon(Icons.arrow_back),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ),
-                                          body: SfPdfViewer.network(
-                                              newsItem.pdf ?? ''),
-                                        )),
-                              );
-                            } catch (e) {
-                              // Handle errors when loading the PDF
-                              print('Error loading PDF: $e');
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: const Color(0xFF004797))),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'View PDF',
-                                    style: TextStyle(color: Color(0xFF004797)),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Icon(Icons.remove_red_eye_outlined,
-                                      color: Color(0xFF004797))
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
                   ],
                 ),
               ),

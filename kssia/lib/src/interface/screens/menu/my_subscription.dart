@@ -585,7 +585,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                           buttonHeight: 40,
                                           sideColor: const Color(0xFFF76412),
                                           buttonColor: const Color(0xFFF76412),
-                                          label: appSubscription?.status ?? '',
+                                          label: appSubscription?.status.toString() ?? '',
                                           onPressed: () {
                                             if (appSubscription?.status ==
                                                     'free' ||

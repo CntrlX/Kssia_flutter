@@ -275,16 +275,21 @@ class ProfilePreview extends ConsumerWidget {
                                   color: const Color.fromARGB(
                                       255, 234, 226, 226))),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                                user.phoneNumbers?.personal != '+917592888111'
+                                    ? MainAxisAlignment.spaceBetween
+                                    : MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: 80,
-                                height: 40,
-                                child: Image.asset(
-                                  'assets/icons/kssiaLogo.png',
-                                  fit: BoxFit.contain,
+                              if (user.phoneNumbers?.personal !=
+                                  '+917592888111')
+                                SizedBox(
+                                  width: 80,
+                                  height: 40,
+                                  child: Image.asset(
+                                    'assets/icons/kssiaLogo.png',
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
                               Text(
                                 'Member ID: ${user.membershipId}',
                                 style: const TextStyle(
@@ -618,7 +623,8 @@ class ProfilePreview extends ConsumerWidget {
                           ),
                           itemCount: user.awards!.length,
                           itemBuilder: (context, index) {
-                            return AwardCard(onEdit: null,
+                            return AwardCard(
+                              onEdit: null,
                               award: user.awards![index],
                               onRemove: null,
                             );
