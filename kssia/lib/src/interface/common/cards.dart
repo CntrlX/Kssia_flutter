@@ -64,7 +64,7 @@ class AwardCard extends StatelessWidget {
                           padding: const EdgeInsets.all(4.0),
                           child: DropDownMenu(
                             onRemove: onRemove!,
-                            // onEdit: onEdit!,
+                            onEdit: onEdit!,
                           ),
                         )),
                   ),
@@ -115,8 +115,8 @@ class AwardCard extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  // final VoidCallback? onEdit;
   final VoidCallback? onRemove;
+  final VoidCallback? onEdit;
   final Product product;
   final bool? isOthersProduct;
   final bool? statusNeeded;
@@ -125,7 +125,8 @@ class ProductCard extends StatelessWidget {
       required this.product,
       super.key,
       this.isOthersProduct,
-      this.statusNeeded = false});
+      this.statusNeeded = false,
+      required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +254,7 @@ class ProductCard extends StatelessWidget {
                   padding: const EdgeInsets.all(4.0),
                   child: DropDownMenu(
                     onRemove: onRemove!,
-                    // onEdit:onEdit!
+                    onEdit: onEdit!,
                   ),
                 ),
               ),
@@ -283,11 +284,15 @@ class ProductCard extends StatelessWidget {
 
 class CertificateCard extends StatelessWidget {
   final VoidCallback? onRemove;
-
+  final VoidCallback? onEdit;
   final Certificate certificate;
 
-  const CertificateCard(
-      {required this.onRemove, super.key, required this.certificate});
+  const CertificateCard({
+    required this.onRemove,
+    required this.certificate,
+    required this.onEdit,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -299,22 +304,20 @@ class CertificateCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: const Color.fromARGB(255, 201, 198, 198)),
         ),
-        height: 220.0, // Set the desired fixed height for the card
-        width: double.infinity, // Ensure the card width fits the screen
+        height: 220.0,
+        width: double.infinity,
         child: Column(
-          mainAxisSize:
-              MainAxisSize.max, // Make the column take the full height
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 150.0, // Adjusted height to fit within the 150px card
+              height: 150.0,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                 image: DecorationImage(
-                  image: NetworkImage(
-                      certificate.url!), // Replace with your image path
+                  image: NetworkImage(certificate.url!),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -327,36 +330,34 @@ class CertificateCard extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: onRemove != null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                certificate.name ?? '',
-                                style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () => onRemove!(),
-                                icon: Icon(Icons.close))
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                certificate.name ?? '',
-                                style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          certificate.name ?? '',
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
+                      ),
+                      if (onRemove != null)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: DropDownMenu(
+                              onRemove: onRemove!,
+                              onEdit: onEdit!,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -370,8 +371,14 @@ class CertificateCard extends StatelessWidget {
 class BrochureCard extends StatelessWidget {
   final Brochure brochure;
   final VoidCallback? onRemove;
+  final VoidCallback? onEdit;
 
-  const BrochureCard({super.key, required this.brochure, this.onRemove});
+  const BrochureCard({
+    super.key,
+    required this.brochure,
+    this.onRemove,
+    this.onEdit,
+  });
 
   Future<void> _launchUrl({required String url}) async {
     if (!await launchUrl(Uri.parse(url))) {
@@ -424,9 +431,13 @@ class BrochureCard extends StatelessWidget {
 
 class DropDownMenu extends StatelessWidget {
   final VoidCallback onRemove;
-  // final VoidCallback onEdit;
+  final VoidCallback onEdit;
 
-  const DropDownMenu({super.key, required this.onRemove});
+  const DropDownMenu({
+    super.key,
+    required this.onRemove,
+    required this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -448,22 +459,22 @@ class DropDownMenu extends StatelessWidget {
               ),
             ),
           ),
-          // const DropdownMenuItem<String>(
-          //   value: 'edit',
-          //   child: Text(
-          //     'Edit',
-          //     style: TextStyle(
-          //       fontSize: 14,
-          //       color: Colors.red,
-          //     ),
-          //   ),
-          // ),
+          const DropdownMenuItem<String>(
+            value: 'edit',
+            child: Text(
+              'Edit',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.blue,
+              ),
+            ),
+          ),
         ],
         onChanged: (value) {
           if (value == 'remove') {
             onRemove();
-          } else {
-            // onEdit();
+          } else if (value == 'edit') {
+            onEdit();
           }
         },
         dropdownStyleData: DropdownStyleData(

@@ -16,6 +16,7 @@ import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
+import 'package:kssia/src/interface/screens/profile/user_details.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -575,7 +576,7 @@ class OthersProfilePreview extends ConsumerWidget {
                         ),
                         itemCount: user.products!.length,
                         itemBuilder: (context, index) {
-                          return ProductCard(
+                          return ProductCard(onEdit: null,
                             product: user.products![index],
                             onRemove: null,
                           );
@@ -607,7 +608,7 @@ class OthersProfilePreview extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 4.0), // Space between items
-                          child: CertificateCard(
+                          child: CertificateCard(onEdit: null,
                             certificate: user.certificates![index],
                             onRemove: null,
                           ),

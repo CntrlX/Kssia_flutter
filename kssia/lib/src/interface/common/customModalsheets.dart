@@ -144,7 +144,6 @@ void showWebsiteSheet({
     },
   );
 }
-
 void showVideoLinkSheet({
   required VoidCallback addVideo,
   required String title,
@@ -165,15 +164,15 @@ void showVideoLinkSheet({
       return Form(
         key: _formKey,
         child: Stack(
-          clipBehavior:
-              Clip.none, // Allow content to overflow outside the stack
+          clipBehavior: Clip.none,
           children: [
             Padding(
               padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 20,
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+                left: 16,
+                right: 16,
+                top: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -187,32 +186,20 @@ void showVideoLinkSheet({
                   ),
                   const SizedBox(height: 20),
                   ModalSheetTextFormField(
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'This is a required field';
-                    //   }
-                    //   return null;
-                    // },
                     label: 'Add name',
                     textController: textController1,
                   ),
                   const SizedBox(height: 10),
-                  fieldName == 'Add Youtube Link'
-                      ? ModalSheetTextFormField(
-                          validator: (value) => validateYouTubeUrl(value),
-                          label: fieldName,
-                          textController: textController2,
-                        )
-                      : ModalSheetTextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'This is a required field';
-                            }
-                            return null;
-                          },
-                          label: fieldName,
-                          textController: textController2,
-                        ),
+                  ModalSheetTextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This is a required field';
+                      }
+                      return null;
+                    },
+                    label: fieldName,
+                    textController: textController2,
+                  ),
                   const SizedBox(height: 10),
                   Consumer(
                     builder: (context, ref, child) {
@@ -239,7 +226,6 @@ void showVideoLinkSheet({
               right: 5,
               top: -50,
               child: Container(
-                padding: const EdgeInsets.all(0),
                 width: 40,
                 height: 40,
                 decoration: const BoxDecoration(
@@ -266,135 +252,6 @@ void showVideoLinkSheet({
   );
 }
 
-void showWlinkorVlinkSheet(
-    {required String title,
-    required String fieldName,
-    required BuildContext context,
-    required TextEditingController textController1,
-    required TextEditingController textController2}) {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-    ),
-    builder: (context) {
-      return Form(
-        key: _formKey,
-        child: Stack(
-          clipBehavior:
-              Clip.none, // Allow content to overflow outside the stack
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 20,
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ModalSheetTextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This is a required field';
-                        }
-                        return null;
-                      },
-                      label: 'Add name',
-                      textController: textController1),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ModalSheetTextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is a required field';
-                      }
-                      return null;
-                    },
-                    label: fieldName,
-                    textController: textController2,
-                  ),
-                  const SizedBox(height: 10),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      return customButton(
-                          label: 'SAVE',
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              if (title == 'Add Video Link') {
-                                List<Video> newVideo = [];
-                                newVideo.add(Video(
-                                    name: textController1.text,
-                                    url: textController2.text));
-                                ref
-                                    .read(userProvider.notifier)
-                                    .updateVideo(newVideo);
-                              } else {
-                                List<Website> newWebsite = [];
-                                newWebsite.add(Website(
-                                    name: textController1.text,
-                                    url: textController2.text));
-                                ref
-                                    .read(userProvider.notifier)
-                                    .updateWebsite(newWebsite);
-                              }
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Saved')),
-                            );
-                            Navigator.pop(context);
-                          },
-                          fontSize: 16);
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              right: 5,
-              top: -50,
-              child: Container(
-                padding: const EdgeInsets.all(0),
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      offset: Offset(0, 2),
-                      blurRadius: 4.0,
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
 
 class ShowEnterAwardSheet extends StatefulWidget {
   final TextEditingController textController1;
@@ -1116,8 +973,15 @@ class _ShowAddBrochureSheetState extends State<ShowAddBrochureSheet> {
 }
 
 class EnterProductsPage extends ConsumerStatefulWidget {
-  EnterProductsPage({
+  final bool isEditing;
+  final Product? product;
+  final Function(Product)? onEdit;
+
+  const EnterProductsPage({
     super.key,
+    this.isEditing = false,
+    this.product,
+    this.onEdit,
   });
 
   @override
@@ -1126,23 +990,46 @@ class EnterProductsPage extends ConsumerStatefulWidget {
 
 class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   File? productImage;
-
   final _formKey = GlobalKey<FormState>();
-  TextEditingController productPriceType =
-      TextEditingController(text: "Price per unit");
-  final TextEditingController productNameController = TextEditingController();
-  final TextEditingController productDescriptionController =
-      TextEditingController();
-  final TextEditingController productMoqController = TextEditingController();
-  final TextEditingController productActualPriceController =
-      TextEditingController();
-  final TextEditingController productOfferPriceController =
-      TextEditingController();
-  File? _productImageFIle;
+  
+  // Initialize controllers
+  late TextEditingController productPriceType;
+  late TextEditingController productNameController;
+  late TextEditingController productDescriptionController;
+  late TextEditingController productMoqController;
+  late TextEditingController productActualPriceController;
+  late TextEditingController productOfferPriceController;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers with existing data if editing
+    productPriceType = TextEditingController(text: widget.isEditing ? widget.product?.units : "Price per unit");
+    productNameController = TextEditingController(text: widget.isEditing ? widget.product?.name : '');
+    productDescriptionController = TextEditingController(text: widget.isEditing ? widget.product?.description : '');
+    productMoqController = TextEditingController(text: widget.isEditing ? widget.product?.moq?.toString() : '');
+    productActualPriceController = TextEditingController(text: widget.isEditing ? widget.product?.price?.toString() : '');
+    productOfferPriceController = TextEditingController(text: widget.isEditing ? widget.product?.offerPrice?.toString() : '');
 
-  String productUrl = '';
+    // Pre-select category and subcategories if editing
+    if (widget.isEditing && widget.product != null) {
+      selectedCategory = widget.product?.category;
+      _selectedItems = widget.product?.subcategory ?? [];
+    }
+  }
 
-  // Selected items will be stored here
+  @override 
+  void dispose() {
+    productPriceType.dispose();
+    productNameController.dispose();
+    productDescriptionController.dispose();
+    productMoqController.dispose();
+    productActualPriceController.dispose();
+    productOfferPriceController.dispose();
+    super.dispose();
+  }
+
+  String? selectedCategory;
   List<String> _selectedItems = [];
 
   void _showMultiSelect(List items, BuildContext context) async {
@@ -1183,16 +1070,14 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   Future<void> _addNewProduct(
       {required List<String> selectedSubCategories,
       required String selectedCategory}) async {
-    productUrl =
-        await api.createFileUrl( _productImageFIle!.path,  );
-    final createdProduct = await api.uploadProduct(
+    final createdProduct = await uploadProduct(
         token,
         productNameController.text,
         productActualPriceController.text,
         productOfferPriceController.text,
         productDescriptionController.text,
         productMoqController.text,
-        productUrl,
+        await api.createFileUrl(productImage!.path),
         productPriceType.text,
         selectedSubCategories,
         selectedCategory,
@@ -1203,7 +1088,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
       final newProduct = Product(
         id: createdProduct.id,
         name: productNameController.text,
-        image: productUrl,
+        image: await api.createFileUrl(productImage!.path),
         description: productDescriptionController.text,
         moq: int.parse(productMoqController.text),
         offerPrice: double.parse(productOfferPriceController.text),
@@ -1218,7 +1103,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
           [...?ref.read(userProvider).value?.products, newProduct]);
     }
   }
-
+  File? _productImageFIle;
   Future<File?> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -1235,8 +1120,6 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
     }
     return null;
   }
-
-  String? selectedCategory;
   @override
   Widget build(BuildContext context) {
     List<String> subCategories = productCategories
@@ -1635,7 +1518,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                     ),
                     const SizedBox(height: 10),
                     customButton(
-                      label: 'SAVE',
+                      label: widget.isEditing ? 'UPDATE' : 'SAVE',
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           showDialog(
@@ -1646,21 +1529,41 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                           );
 
                           try {
-                            await _addNewProduct(
+                            if (widget.isEditing && widget.onEdit != null) {
+                              // Create updated product
+                              final updatedProduct = Product(
+                                id: widget.product!.id,
+                                name: productNameController.text,
+                                description: productDescriptionController.text,
+                                moq: int.parse(productMoqController.text),
+                                price: double.parse(productActualPriceController.text),
+                                offerPrice: double.parse(productOfferPriceController.text),
+                                units: productPriceType.text,
+                                category: selectedCategory,
+                                subcategory: _selectedItems,
+                                image: productImage != null ? await api.createFileUrl(productImage!.path) : widget.product?.image,
+                                sellerId: widget.product?.sellerId,
+                                status: widget.product?.status,
+                              );
+                              
+                              await widget.onEdit!(updatedProduct);
+                            } else {
+                              await _addNewProduct(
                                 selectedSubCategories: _selectedItems,
-                                selectedCategory: selectedCategory ?? '');
-                            productActualPriceController.clear();
+                                selectedCategory: selectedCategory ?? '',
+                              );
+                            }
+
+                            // Clear form
+                            productNameController.clear();
                             productDescriptionController.clear();
                             productMoqController.clear();
+                            productActualPriceController.clear();
                             productOfferPriceController.clear();
-                            productNameController.clear();
                             productPriceType.clear();
-
-                            if (productImage != null) {
-                              setState(() {
-                                productImage = null;
-                              });
-                            }
+                            setState(() {
+                              productImage = null;
+                            });
                           } finally {
                             Navigator.of(context).pop(); // Close loader
                             Navigator.pop(context); // Go back
@@ -2754,7 +2657,6 @@ class RequirementModalSheet extends StatelessWidget {
     );
   }
 }
-
 void showRequirementModalSheet({
   required BuildContext context,
   required VoidCallback onButtonPressed,

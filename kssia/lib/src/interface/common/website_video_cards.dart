@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/interface/common/cards.dart';
 
-Padding customWebsiteCard({Website? website, VoidCallback? onRemove}) {
+Padding customWebsiteCard({
+  required VoidCallback onRemove,
+  required VoidCallback onEdit,
+  required Website? website,
+}) {
   return Padding(
     padding: const EdgeInsets.only(
       bottom: 20,
@@ -37,41 +42,40 @@ Padding customWebsiteCard({Website? website, VoidCallback? onRemove}) {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: Text(
-                '${website?.name != '' && website?.name != null && website?.name != 'null'? website?.name : website?.url ?? ''}',
+                '${website?.name != '' && website?.name != null && website?.name != 'null' ? website?.name : website?.url ?? ''}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 16, // Adjust font size as needed
+                  fontSize: 16,
                 ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: onRemove,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
             child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                ),
-                width: 42,
-                height: 42,
-                child: Icon(
-                  Icons.remove,
-                  color: Color(0xFF004797),
-                ),
+              padding: const EdgeInsets.all(4.0),
+              child: DropDownMenu(
+                onRemove: onRemove,
+                onEdit: onEdit,
               ),
             ),
           ),
+          const SizedBox(width: 10),
         ],
       ),
     ),
   );
 }
 
-Padding customVideoCard({Video? video, VoidCallback? onRemove}) {
+Padding customVideoCard({
+  required VoidCallback onRemove,
+  required VoidCallback onEdit,
+  required Video? video,
+}) {
   return Padding(
     padding: const EdgeInsets.only(
       bottom: 20,
@@ -110,7 +114,9 @@ Padding customVideoCard({Video? video, VoidCallback? onRemove}) {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: Text(
-                video?.name != '' && video?.name != null &&video?.name!='null'
+                video?.name != '' &&
+                        video?.name != null &&
+                        video?.name != 'null'
                     ? video?.name ?? ''
                     : video?.url ?? '',
                 overflow: TextOverflow.ellipsis,
@@ -118,24 +124,20 @@ Padding customVideoCard({Video? video, VoidCallback? onRemove}) {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: onRemove,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(5),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                ),
-                width: 42,
-                height: 42,
-                child: Icon(
-                  Icons.remove,
-                  color: Color(0xFF004797),
-                ),
+              padding: const EdgeInsets.all(4.0),
+              child: DropDownMenu(
+                onRemove: onRemove,
+                onEdit: onEdit,
               ),
             ),
           ),
+          const SizedBox(width: 10),
         ],
       ),
     ),

@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
@@ -98,7 +99,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
   // }
 
   void _removeProduct(int index) async {
-    api.deleteProduct(ref.read(userProvider).value!.products![index].id ?? '');
+    deleteProduct(ref.read(userProvider).value!.products![index].id ?? '');
     ref
         .read(userProvider.notifier)
         .removeProduct(ref.read(userProvider).value!.products![index]);
@@ -176,7 +177,7 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {
-                              return ProductCard(
+                              return ProductCard(onEdit: null,
                                   statusNeeded: true,
                                   product: user.products![index],
                                   onRemove: () => _removeProduct(index));

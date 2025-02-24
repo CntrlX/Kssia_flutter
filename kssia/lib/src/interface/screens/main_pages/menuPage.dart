@@ -10,6 +10,7 @@ import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
 import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
+import 'package:kssia/src/interface/screens/profile/user_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../menu/requestNFC.dart';
 import '../menu/myrequirementsPage.dart';
@@ -29,12 +30,12 @@ void showDeleteAccountDialog(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
-        titlePadding: EdgeInsets.all(0),
-        contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
-        actionsPadding: EdgeInsets.symmetric(horizontal: 10.0),
+        titlePadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 10.0),
         title: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
+          padding: const EdgeInsets.all(20.0),
+          child: const Column(
             children: [
               Icon(
                 Icons.help,
@@ -75,7 +76,7 @@ void showDeleteAccountDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('No',
+                      child: const Text('No',
                           style: TextStyle(fontSize: 16, color: Colors.black)),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -83,7 +84,7 @@ void showDeleteAccountDialog(BuildContext context) {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Container(
                     height: 50,
@@ -94,7 +95,7 @@ void showDeleteAccountDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('Yes, Delete',
+                      child: const Text('Yes, Delete',
                           style: TextStyle(fontSize: 16, color: Colors.red)),
                       onPressed: () {
                         // Add your delete account logic here
@@ -120,12 +121,12 @@ void showLogoutDialog(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
-        titlePadding: EdgeInsets.all(0),
-        contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
-        actionsPadding: EdgeInsets.symmetric(horizontal: 10.0),
+        titlePadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 10.0),
         title: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
+          padding: const EdgeInsets.all(20.0),
+          child: const Column(
             children: [
               Icon(
                 Icons.help,
@@ -167,7 +168,7 @@ void showLogoutDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      child: Text('No',
+                      child: const Text('No',
                           style: TextStyle(fontSize: 16, color: Colors.black)),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -175,7 +176,7 @@ void showLogoutDialog(BuildContext context) {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Container(
                     height: 50,
@@ -188,7 +189,7 @@ void showLogoutDialog(BuildContext context) {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          child: Text('Yes',
+                          child: const Text('Yes',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.red)),
                           onPressed: () async {
@@ -229,17 +230,17 @@ class MenuPage extends StatelessWidget {
               backgroundColor: Colors.white,
               scrolledUnderElevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
             ),
             body: asyncUser.when(
-              loading: () => MenuPageShimmer(),
+              loading: () => const MenuPageShimmer(),
               error: (error, stackTrace) {
                 // Handle error state
-                return Center(
+                return const Center(
                   child: LoadingAnimation(),
                 );
               },
@@ -268,7 +269,7 @@ class MenuPage extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            SizedBox(width: 16),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,12 +297,12 @@ class MenuPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      settings: RouteSettings(name: 'menu'),
+                                      settings: const RouteSettings(name: 'menu'),
                                       builder: (context) =>
                                           DetailsPage()), // Navigate to MenuPage
                                 );
                               },
-                              child: Text(
+                              child: const Text(
                                 'Edit',
                                 style: TextStyle(color: Colors.red),
                               ),
@@ -312,13 +313,13 @@ class MenuPage extends StatelessWidget {
 
                       // Account Section Label
 
-                      SizedBox(height: 13),
+                      const SizedBox(height: 13),
                       Container(
                         height: 50,
                         width: double.infinity,
-                        color: Color(0xFFF2F2F2),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
+                        color: const Color(0xFFF2F2F2),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 16.0),
                           child: Row(
                             children: [
                               Text(
@@ -362,7 +363,7 @@ class MenuPage extends StatelessWidget {
                         },
                       ),
                       if (user.phoneNumbers?.personal != '+919645398555')
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.shopping_bag,
@@ -375,7 +376,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.star,
@@ -388,7 +389,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.calendar_view_month_rounded,
@@ -401,7 +402,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),      if (user.phoneNumbers?.personal != '+919645398555')
-                      Divider(),      if (user.phoneNumbers?.personal != '+919645398555')
+                      const Divider(),      if (user.phoneNumbers?.personal != '+919645398555')
                       _buildListTile(
                         context,
                         Icons.monetization_on,
@@ -410,11 +411,11 @@ class MenuPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyTransactionsPage()),
+                                builder: (context) => const MyTransactionsPage()),
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.notifications,
@@ -427,7 +428,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.info,
@@ -440,7 +441,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.privacy_tip,
@@ -453,7 +454,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       _buildListTile(
                         context,
                         Icons.rule,
@@ -468,7 +469,7 @@ class MenuPage extends StatelessWidget {
                       ),
 
                       // Spacing before Logout and Delete
-                      Container(color: Color(0xFFF2F2F2), height: 15),
+                      Container(color: const Color(0xFFF2F2F2), height: 15),
 
                       // Logout and Delete Account
                       _buildListTile(
@@ -478,7 +479,7 @@ class MenuPage extends StatelessWidget {
                         textColor: Colors.black,
                         onTap: () => showLogoutDialog(context),
                       ),
-                      Container(color: Color(0xFFF2F2F2), height: 15),
+                      Container(color: const Color(0xFFF2F2F2), height: 15),
 
                       // Column(
                       //   children: [
@@ -514,7 +515,7 @@ class MenuPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             FadeInUp(
@@ -534,7 +535,7 @@ class MenuPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             FadeInUp(
@@ -557,7 +558,7 @@ class MenuPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(color: Color(0xFFF2F2F2), height: 20),
+                      Container(color: const Color(0xFFF2F2F2), height: 20),
                     ],
                   ),
                 );
@@ -580,7 +581,7 @@ class MenuPage extends StatelessWidget {
         'assets/icons/polygon.svg',
         height: 16,
         width: 16,
-        color: Color(0xFFC4C4C4),
+        color: const Color(0xFFC4C4C4),
       ),
       onTap: onTap ??
           () {

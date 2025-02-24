@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'products_api.g.dart';
@@ -87,5 +88,105 @@ Future<List<ProductCategoryModel>> fetchProductCategories(FetchProductCategories
     print(json.decode(response.body)['message']);
 
     throw Exception(json.decode(response.body)['message']);
+  }
+}
+
+  Future<void> deleteProduct(String productId) async {
+    final url = Uri.parse('$baseUrl/products/$productId');
+    print('requesting url:$url');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('product removed successfully');
+    } else {
+      final jsonResponse = json.decode(response.body);
+
+      print(jsonResponse['message']);
+      print('Failed to delete image: ${response.statusCode}');
+    }
+  }
+
+
+  Future<Product?> uploadProduct(
+    String token,
+    String name,
+    String price,
+    String offerPrice,
+    String description,
+    String moq,
+    String productImage,
+    String productPriceType,
+    List<String> selectedSubCategories,
+    String selectedCategory,
+    context,
+  ) async {
+    final url = Uri.parse('$baseUrl/products');
+
+    final body = {
+      'name': name,
+      'price': price,
+      'offer_price': offerPrice,
+      'description': description,
+      'seller_id': id,
+      'moq': moq,
+      'category': selectedCategory,
+      'subcategory': selectedSubCategories,
+      'status': 'pending',
+      'units': productPriceType,
+      'image': productImage,
+    };
+    log(body.toString());
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        print('Product uploaded successfully');
+        final jsonResponse = json.decode(response.body);
+        final Product product = Product.fromJson(jsonResponse['data']);
+        return product;
+      } else {
+        final jsonResponse = json.decode(response.body);
+        CustomSnackbar.showSnackbar(context, jsonResponse['message']);
+        print('Failed to upload product: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      CustomSnackbar.showSnackbar(
+          context, 'Something went wrong. Please try again.');
+      return null;
+    }
+  }
+
+Future<void> updateProduct(Product product) async {
+  try {
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/${product.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(product.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update product');
+    }
+  } catch (e) {
+    throw Exception('Failed to update product: $e');
   }
 }

@@ -276,6 +276,38 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel>> {
       return user.copyWith(products: updatedProducts);
     });
   }
+
+  void editWebsite(Website oldWebsite, Website newWebsite) {
+    state = AsyncValue.data(state.value!.copyWith(
+      websites: state.value!.websites!.map((w) => 
+        w == oldWebsite ? newWebsite : w
+      ).toList()
+    ));
+  }
+
+  void editVideo(Video oldVideo, Video newVideo) {
+    state = AsyncValue.data(state.value!.copyWith(
+      video: state.value!.video!.map((v) =>
+        v == oldVideo ? newVideo : v  
+      ).toList()
+    ));
+  }
+
+  void editProduct(Product oldProduct, Product newProduct) {
+    state = AsyncValue.data(state.value!.copyWith(
+      products: state.value!.products!.map((p) =>
+        p == oldProduct ? newProduct : p
+      ).toList()
+    ));
+  }
+
+  void editCertificate(Certificate oldCertificate, Certificate newCertificate) {
+    state = AsyncValue.data(state.value!.copyWith(
+      certificates: state.value!.certificates!.map((c) => 
+        c == oldCertificate ? newCertificate : c
+      ).toList()
+    ));
+  }
 }
 
 final userProvider =
