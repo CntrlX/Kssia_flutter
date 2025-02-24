@@ -249,6 +249,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         context,
         MaterialPageRoute(
             builder: (context) => EnterProductsPage(
+                  imageUrl: oldProduct.image,
                   isEditing: true,
                   product: oldProduct,
                   onEdit: (Product updatedProduct) async {
@@ -292,6 +293,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       context: context,
       builder: (context) {
         return ShowEnterAwardSheet(
+          imageUrl: oldAward.url,
           pickImage: _pickFile,
           editAwardCard: () => _editAward(oldAward: oldAward),
           imageType: 'award',
@@ -2381,6 +2383,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
       isScrollControlled: true,
       context: context,
       builder: (context) => ShowAddCertificateSheet(
+        imageUrl: oldCertificate.url,
         textController: certificateNameController,
         pickImage: _pickFile,
         imageType: 'certificate',

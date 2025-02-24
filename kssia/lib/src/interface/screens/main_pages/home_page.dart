@@ -402,45 +402,62 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
-
-  Widget customPoster(
-      {required BuildContext context, required Promotion poster}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: AspectRatio(
-        aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
-        child: Image.network(
-          poster.posterImageUrl,
-          fit: BoxFit.fill,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) {
-              return child; // Image loaded successfully
-            } else {
+Widget customPoster({
+  required BuildContext context,
+  required Promotion poster,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          poster.posterTitle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8), // Spacing between title and image
+        AspectRatio(
+          aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
+          child: Image.network(
+            poster.posterImageUrl,
+            fit: BoxFit.fill,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) {
+                return child; // Image loaded successfully
+              } else {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
+                );
+              }
+            },
+            errorBuilder: (context, error, stackTrace) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
                 child: Container(
-                  width: double.infinity,
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                  ),
                 ),
               );
-            }
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                ),
-              ),
-            );
-          },
+            },
+          ),
         ),
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
+
 
   Widget customNotice(
       {required BuildContext context, required Promotion notice}) {

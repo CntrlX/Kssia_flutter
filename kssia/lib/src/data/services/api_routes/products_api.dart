@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:kssia/src/data/globals.dart';
@@ -60,7 +61,7 @@ Future<List<Product>> fetchProducts(FetchProductsRef ref,
 }
 
 @riverpod
-Future<List<ProductCategoryModel>> fetchProductCategories(FetchProductCategoriesRef ref,
+Future<List<ProductCategoryModel>> fetchProductCategories(Ref ref,
     ) async {
 
   String url = '$baseUrl/products/categories';
@@ -72,7 +73,7 @@ Future<List<ProductCategoryModel>> fetchProductCategories(FetchProductCategories
       "Authorization": "Bearer $token"
     },
   );
-  print('hello');
+
   print(json.decode(response.body)['status']);
   if (response.statusCode == 200) {
     final List<dynamic> data = json.decode(response.body)['data'];

@@ -144,6 +144,7 @@ void showWebsiteSheet({
     },
   );
 }
+
 void showVideoLinkSheet({
   required VoidCallback addVideo,
   required String title,
@@ -252,7 +253,6 @@ void showVideoLinkSheet({
   );
 }
 
-
 class ShowEnterAwardSheet extends StatefulWidget {
   final TextEditingController textController1;
   final TextEditingController textController2;
@@ -260,8 +260,8 @@ class ShowEnterAwardSheet extends StatefulWidget {
   final Future<void> Function()? editAwardCard;
   final String imageType;
   final Future<File?> Function({required String imageType}) pickImage;
-
-  ShowEnterAwardSheet({
+  final String? imageUrl;
+  const ShowEnterAwardSheet({
     required this.textController1,
     required this.textController2,
     this.addAwardCard,
@@ -269,6 +269,7 @@ class ShowEnterAwardSheet extends StatefulWidget {
     required this.imageType,
     super.key,
     this.editAwardCard,
+    this.imageUrl,
   });
 
   @override
@@ -350,22 +351,29 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                                 : null,
                           ),
                           child: awardImage == null
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.add,
-                                          size: 27, color: Color(0xFF004797)),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        'Upload Image',
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 102, 101, 101)),
+                              ? widget.imageUrl != null
+                                  ? Center(
+                                      child:
+                                          Image.network(widget.imageUrl ?? ''),
+                                    )
+                                  : const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add,
+                                              size: 27,
+                                              color: Color(0xFF004797)),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Upload Image',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 102, 101, 101)),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
+                                    )
                               : Center(
                                   child: Image.file(
                                   awardImage!,
@@ -457,152 +465,12 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   }
 }
 
-class ShowProductFilter extends StatefulWidget {
-  ShowProductFilter({
-    super.key,
-  });
 
-  @override
-  State<ShowProductFilter> createState() => _ShowProductFilterState();
-}
-
-class _ShowProductFilterState extends State<ShowProductFilter> {
-  final _formKey = GlobalKey<FormState>();
-
-  String? selectedCategory;
-  String? selectedSubCategory;
-  @override
-  Widget build(BuildContext context) {
-    List<String> subCategories = productCategories
-        .where((category) => category.name == selectedCategory)
-        .map((category) => category.subcategories)
-        .expand((sub) => sub) // Flatten the list of lists
-        .toList();
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {},
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Filter',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              Consumer(
-                builder: (context, ref, child) {
-                  final asyncCategories =
-                      ref.watch(fetchProductCategoriesProvider);
-                  return asyncCategories.when(
-                    data: (categoryCountList) {
-                      // Ensure the categoryCountList is of type List<ProductCategoryModel>
-                      return SelectionDropDown(
-                        hintText: 'Select Category',
-                        value: selectedCategory,
-                        items: productCategories
-                            .map<DropdownMenuItem<String>>((category) {
-                          // Find matching count from categoryCountList
-                          final matchingCategory = categoryCountList.firstWhere(
-                            (categoryModel) =>
-                                categoryModel.name == category.name,
-                            orElse: () => ProductCategoryModel(
-                                count: 0, name: category.name),
-                          );
-
-                          return DropdownMenuItem<String>(
-                            value: category.name,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(category.name), // Category name
-                                Text(
-                                    style: TextStyle(color: Colors.blue),
-                                    '(${matchingCategory.count})'), // Category count
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value;
-                          });
-                        },
-                      );
-                    },
-                    loading: () => Center(child: LoadingAnimation()),
-                    error: (error, stackTrace) {
-                      return Center(
-                        child: Text('Couldn\'t fetch categories'),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              if (subCategories.isNotEmpty)
-                SelectionDropDown(
-                  hintText: 'Sub Category',
-                  value: selectedSubCategory,
-                  items: subCategories.map((subCategory) {
-                    return DropdownMenuItem<String>(
-                      value: subCategory,
-                      child: Text(subCategory),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSubCategory = value;
-                    });
-                  },
-                ),
-              const SizedBox(height: 10),
-              customButton(
-                label: 'SEARCH PRODUCTS',
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final mapData = {
-                      'selectedCategory': selectedCategory ?? '',
-                      'selectedSubCategory': selectedSubCategory ?? '',
-                    };
-
-                    Navigator.pop(context, mapData);
-                  }
-                },
-                fontSize: 16,
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class ShowAddCertificateSheet extends StatefulWidget {
   final TextEditingController textController;
   final String imageType;
-
+  final String? imageUrl;
   final Future<File?> Function({required String imageType}) pickImage;
   final Future<void> Function() addCertificateCard;
 
@@ -612,6 +480,7 @@ class ShowAddCertificateSheet extends StatefulWidget {
     required this.imageType,
     required this.pickImage,
     required this.addCertificateCard,
+    this.imageUrl,
   });
 
   @override
@@ -693,22 +562,29 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                                 : null,
                           ),
                           child: certificateImage == null
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.add,
-                                          size: 27, color: Color(0xFF004797)),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        'Upload Image',
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 102, 101, 101)),
+                              ? widget.imageUrl != null
+                                  ? Center(
+                                      child:
+                                          Image.network(widget.imageUrl ?? ''),
+                                    )
+                                  : const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add,
+                                              size: 27,
+                                              color: Color(0xFF004797)),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Upload Image',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 102, 101, 101)),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
+                                    )
                               : Center(
                                   child: Image.file(
                                     certificateImage!,
@@ -976,8 +852,8 @@ class EnterProductsPage extends ConsumerStatefulWidget {
   final bool isEditing;
   final Product? product;
   final Function(Product)? onEdit;
-
-  const EnterProductsPage({
+  final String? imageUrl;
+  const EnterProductsPage( {this.imageUrl,
     super.key,
     this.isEditing = false,
     this.product,
@@ -991,7 +867,7 @@ class EnterProductsPage extends ConsumerStatefulWidget {
 class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   File? productImage;
   final _formKey = GlobalKey<FormState>();
-  
+
   // Initialize controllers
   late TextEditingController productPriceType;
   late TextEditingController productNameController;
@@ -999,17 +875,23 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
   late TextEditingController productMoqController;
   late TextEditingController productActualPriceController;
   late TextEditingController productOfferPriceController;
-  
+
   @override
   void initState() {
     super.initState();
     // Initialize controllers with existing data if editing
-    productPriceType = TextEditingController(text: widget.isEditing ? widget.product?.units : "Price per unit");
-    productNameController = TextEditingController(text: widget.isEditing ? widget.product?.name : '');
-    productDescriptionController = TextEditingController(text: widget.isEditing ? widget.product?.description : '');
-    productMoqController = TextEditingController(text: widget.isEditing ? widget.product?.moq?.toString() : '');
-    productActualPriceController = TextEditingController(text: widget.isEditing ? widget.product?.price?.toString() : '');
-    productOfferPriceController = TextEditingController(text: widget.isEditing ? widget.product?.offerPrice?.toString() : '');
+    productPriceType = TextEditingController(
+        text: widget.isEditing ? widget.product?.units : "Price per unit");
+    productNameController = TextEditingController(
+        text: widget.isEditing ? widget.product?.name : '');
+    productDescriptionController = TextEditingController(
+        text: widget.isEditing ? widget.product?.description : '');
+    productMoqController = TextEditingController(
+        text: widget.isEditing ? widget.product?.moq?.toString() : '');
+    productActualPriceController = TextEditingController(
+        text: widget.isEditing ? widget.product?.price?.toString() : '');
+    productOfferPriceController = TextEditingController(
+        text: widget.isEditing ? widget.product?.offerPrice?.toString() : '');
 
     // Pre-select category and subcategories if editing
     if (widget.isEditing && widget.product != null) {
@@ -1018,7 +900,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
     }
   }
 
-  @override 
+  @override
   void dispose() {
     productPriceType.dispose();
     productNameController.dispose();
@@ -1103,6 +985,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
           [...?ref.read(userProvider).value?.products, newProduct]);
     }
   }
+
   File? _productImageFIle;
   Future<File?> _pickFile({required String imageType}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -1120,6 +1003,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
     }
     return null;
   }
+
   @override
   Widget build(BuildContext context) {
     List<String> subCategories = productCategories
@@ -1255,7 +1139,12 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                                       : null,
                                 ),
                                 child: productImage == null
-                                    ? const Center(
+                                    ? widget.imageUrl != null
+                                  ? Center(
+                                      child:
+                                          Image.network(widget.imageUrl ?? ''),
+                                    )
+                                  :  const Center(
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -1536,16 +1425,21 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                                 name: productNameController.text,
                                 description: productDescriptionController.text,
                                 moq: int.parse(productMoqController.text),
-                                price: double.parse(productActualPriceController.text),
-                                offerPrice: double.parse(productOfferPriceController.text),
+                                price: double.parse(
+                                    productActualPriceController.text),
+                                offerPrice: double.parse(
+                                    productOfferPriceController.text),
                                 units: productPriceType.text,
                                 category: selectedCategory,
                                 subcategory: _selectedItems,
-                                image: productImage != null ? await api.createFileUrl(productImage!.path) : widget.product?.image,
+                                image: productImage != null
+                                    ? await api
+                                        .createFileUrl(productImage!.path)
+                                    : widget.product?.image,
                                 sellerId: widget.product?.sellerId,
                                 status: widget.product?.status,
                               );
-                              
+
                               await widget.onEdit!(updatedProduct);
                             } else {
                               await _addNewProduct(
@@ -1755,7 +1649,8 @@ class _ShowAddRequirementSheetState extends State<ShowAddRequirementSheet> {
                     String? image;
                     if (requirementImage != null) {
                       image = await userApi.createFileUrl(
-                           requirementImage!.path,  );
+                        requirementImage!.path,
+                      );
                     }
                     await api.uploadRequirement(
                       token,
@@ -1971,7 +1866,8 @@ class _ShowPaymentUploadSheetState extends State<ShowPaymentUploadSheet> {
                 return;
               }
               final String paymentImageUrl = await api.createFileUrl(
-                   widget.paymentImage!.path,);
+                widget.paymentImage!.path,
+              );
               // Attempt to upload the payment details
               String? success = await api.uploadPayment(
                   context: context,
@@ -2657,6 +2553,7 @@ class RequirementModalSheet extends StatelessWidget {
     );
   }
 }
+
 void showRequirementModalSheet({
   required BuildContext context,
   required VoidCallback onButtonPressed,

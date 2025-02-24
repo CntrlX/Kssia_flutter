@@ -101,36 +101,48 @@ class Product {
 class ProductCategoryModel {
   final int count;
   final String name;
+  final List<SubcategoryModel> subcategories;
 
   ProductCategoryModel({
     required this.count,
     required this.name,
+    required this.subcategories,
   });
 
-  /// Factory constructor to create an instance from JSON.
   factory ProductCategoryModel.fromJson(Map<String, dynamic> json) {
     return ProductCategoryModel(
-      count: json['count'] ?? 0, // Default to 0 if null
-      name: json['name'] ?? '', // Default to an empty string if null
+      count: json['count'] ?? 0,
+      name: json['name'] ?? '',
+      subcategories: (json['subcategories'] as List<dynamic>?)
+              ?.map((e) => SubcategoryModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
-  /// Converts the instance to JSON.
   Map<String, dynamic> toJson() {
     return {
       'count': count,
       'name': name,
+      'subcategories': subcategories.map((e) => e.toJson()).toList(),
     };
   }
+}
 
-  /// Creates a copy of the instance with updated values.
-  ProductCategoryModel copyWith({
-    int? count,
-    String? name,
-  }) {
-    return ProductCategoryModel(
-      count: count ?? this.count,
-      name: name ?? this.name,
+class SubcategoryModel {
+  final int count;
+
+  SubcategoryModel({required this.count});
+
+  factory SubcategoryModel.fromJson(Map<String, dynamic> json) {
+    return SubcategoryModel(
+      count: json['count'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+    };
   }
 }

@@ -13,6 +13,7 @@ import 'package:kssia/src/interface/common/Shimmer/product_card._shimmer.dart';
 import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
+import 'package:kssia/src/interface/common/filters/product_filter.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 import 'dart:async';
@@ -202,7 +203,8 @@ class _ProductViewState extends ConsumerState<ProductView> {
                                       sender: Participant(id: id),
                                       context: context,
                                       product: products[index]),
-                                  child: ProductCard(onEdit: null,
+                                  child: ProductCard(
+                                    onEdit: null,
                                     isOthersProduct: true,
                                     product: products[index],
                                     onRemove: null,

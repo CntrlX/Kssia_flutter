@@ -14,6 +14,7 @@ class Promotion {
   final String noticeTitle;
   final String noticeDescription;
   final String noticeLink;
+  final String posterTitle;
 
   Promotion(
       {required this.id,
@@ -30,7 +31,8 @@ class Promotion {
       required this.ytLink,
       this.noticeTitle = '',
       this.noticeDescription = '',
-      this.noticeLink = ''});
+      this.noticeLink = '',
+      this.posterTitle = ''});
 
   Promotion copyWith(
       {String? id,
@@ -47,7 +49,8 @@ class Promotion {
       String? ytLink,
       String? noticeTitle,
       String? noticeDescription,
-      String? noticeLink}) {
+      String? noticeLink,
+      String? posterTitle}) {
     return Promotion(
         id: id ?? this.id,
         type: type ?? this.type,
@@ -63,7 +66,8 @@ class Promotion {
         ytLink: ytLink ?? this.ytLink,
         noticeTitle: noticeTitle ?? this.noticeTitle,
         noticeDescription: noticeDescription ?? this.noticeDescription,
-        noticeLink: noticeLink ?? this.noticeLink);
+        noticeLink: noticeLink ?? this.noticeLink,
+        posterTitle: posterTitle ?? this.posterTitle);
   }
 
   factory Promotion.fromJson(Map<String, dynamic> json) {
@@ -82,7 +86,8 @@ class Promotion {
         ytLink: json["yt_link"] ?? '',
         noticeTitle: json["notice_title"] ?? '',
         noticeDescription: json["notice_description"] ?? '',
-        noticeLink: json["notice_link"] ?? '');
+        noticeLink: json["notice_link"] ?? '',
+        posterTitle: json["poster_title"] ?? '');
   }
 
   Map<String, dynamic> toJson() {
@@ -101,7 +106,8 @@ class Promotion {
       "yt_link": ytLink,
       "notice_title": noticeTitle,
       "notice_description": noticeDescription,
-      "notice_link": noticeLink
+      "notice_link": noticeLink,
+      "poster_title": posterTitle
     };
   }
 
@@ -124,7 +130,8 @@ class Promotion {
           ytLink == other.ytLink &&
           noticeTitle == other.noticeTitle &&
           noticeDescription == other.noticeDescription &&
-          noticeLink == other.noticeLink;
+          noticeLink == other.noticeLink &&
+          posterTitle == other.posterTitle;
 
   @override
   int get hashCode =>
@@ -142,5 +149,6 @@ class Promotion {
       ytLink.hashCode ^
       noticeTitle.hashCode ^
       noticeDescription.hashCode ^
-      noticeLink.hashCode;
+      noticeLink.hashCode ^
+      posterTitle.hashCode;
 }
