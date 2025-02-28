@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
+import 'package:kssia/main.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -97,33 +98,31 @@ class NotificationService {
       debugPrint('Foreground message handling error: $e');
     }
   }
-
-  void _handleMessageOpenedApp(RemoteMessage message) {
-    try {
-      if (message.data.containsKey('screen')) {
-        final id = message.data['id'];
-        final deepLink = _deepLinkService.getDeepLinkPath(
-          message.data['screen'],
-          id: id,
-        );
-        if (deepLink != null) {
-          _deepLinkService.handleDeepLink(Uri.parse(deepLink));
-        }
-      }
-    } catch (e) {
-      debugPrint('Message opened app handling error: $e');
+void _handleMessageOpenedApp(RemoteMessage message) {
+  try {
+    String? deepLink;
+    if (message.data.containsKey('screen')) {
+      final id = message.data['id'];
+      deepLink = _deepLinkService.getDeepLinkPath(message.data['screen'], id: id);
     }
-  }
 
-  void _handleNotificationTap(NotificationResponse response) {
-    try {
-      if (response.payload != null) {
-        _deepLinkService.handleDeepLink(Uri.parse(response.payload!));
-      }
-    } catch (e) {
-      debugPrint('Notification tap handling error: $e');
+    if (deepLink != null) {
+      _deepLinkService.handleDeepLink(Uri.parse(deepLink));
     }
+  } catch (e) {
+    debugPrint('Message opened app handling error: $e');
   }
+}
+void _handleNotificationTap(NotificationResponse response) {
+  try {
+    if (response.payload != null) {
+      _deepLinkService.handleDeepLink(Uri.parse(response.payload!));
+    }
+  } catch (e) {
+    debugPrint('Notification tap handling error: $e');
+  }
+}
+
 
   Future<void> _handleInitialMessage() async {
     try {

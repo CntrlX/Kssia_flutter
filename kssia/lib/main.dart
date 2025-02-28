@@ -79,6 +79,7 @@ class MainApp extends StatelessWidget {
           },
           '/login_screen': (context) => PhoneNumberScreen(),
           '/mainpage': (context) => MainPage(),
+          '/splash': (context) => SplashScreen(),
           '/profile_completion': (context) => ProfileCompletionScreen(),
           '/chat': (context) => PeoplePage(initialTabIndex: 1,),
           // '/membership': (context) => MembershipSubscription(),

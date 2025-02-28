@@ -17,6 +17,7 @@ import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:kssia/src/data/services/deep_link_service.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   @override
@@ -25,6 +26,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool isAppUpdateRequired = false;
+  final DeepLinkService _deepLinkService = DeepLinkService();
 
   @override
   void initState() {
@@ -91,7 +93,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!isAppUpdateRequired) {
         print('Logged in : $LoggedIn');
         if (LoggedIn) {
-          Navigator.pushReplacementNamed(context, '/mainpage');
+          // Check for pending deep link
+          final pendingDeepLink = _deepLinkService.pendingDeepLink;
+          if (pendingDeepLink != null) {
+            Navigator.pushReplacementNamed(context, '/mainpage').then((_) {
+              // Handle the deep link after main page is loaded
+              _deepLinkService.handleDeepLink(pendingDeepLink);
+              _deepLinkService.clearPendingDeepLink();
+            });
+          } else {
+            Navigator.pushReplacementNamed(context, '/mainpage');
+          }
         } else {
           Navigator.pushReplacementNamed(context, '/login_screen');
         }
