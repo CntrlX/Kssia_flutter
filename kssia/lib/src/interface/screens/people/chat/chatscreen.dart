@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,13 +84,78 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
   }
 
   Future<void> sendMessage() async {
-    if (_controller.text.isNotEmpty && mounted) {
-      String messageId = await sendChatMessage(
+    if (_controller.text.isEmpty || !mounted) return;
+
+    final messageContent = _controller.text;
+    final tempMessageId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    // Clear input immediately
+    _controller.clear();
+
+    // Add message locally first with pending status
+    setMessage(
+      tempMessageId,
+      "pending", 
+      messageContent,
+      widget.sender.id!
+    );
+
+    try {
+      // Make API call in background
+      final String serverMessageId = await sendChatMessage(
         userId: widget.receiver.id!,
-        content: _controller.text,
+        content: messageContent,
       );
-      setMessage(messageId, "sent", _controller.text, widget.sender.id!);
-      _controller.clear();
+
+      // Update message status and ID after successful send
+      if (mounted) {
+        setState(() {
+          final msgIndex = messages.indexWhere((m) => m.id == tempMessageId);
+          if (msgIndex != -1) {
+            messages[msgIndex] = MessageModel(
+              id: serverMessageId,
+              from: widget.sender.id!,
+              status: "sent",
+              content: messageContent,
+              timestamp: messages[msgIndex].timestamp,
+            );
+          }
+        });
+      }
+    } catch (e) {
+      // Handle failed send
+      if (mounted) {
+        setState(() {
+          final msgIndex = messages.indexWhere((m) => m.id == tempMessageId);
+          if (msgIndex != -1) {
+            messages[msgIndex] = MessageModel(
+              id: tempMessageId,
+              from: widget.sender.id!,
+              status: "failed",
+              content: messageContent,
+              timestamp: messages[msgIndex].timestamp,
+            );
+          }
+        });
+
+        // Show error to user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message. Tap to retry.'),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                // Remove failed message and retry sending
+                setState(() {
+                  messages.removeWhere((m) => m.id == tempMessageId);
+                });
+                _controller.text = messageContent;
+                sendMessage();
+              },
+            ),
+          ),
+        );
+      }
     }
   }
 
