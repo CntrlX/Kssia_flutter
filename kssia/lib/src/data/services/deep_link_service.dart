@@ -43,17 +43,24 @@ Future<void> handleDeepLink(Uri uri) async {
     final pathSegments = uri.pathSegments;
     if (pathSegments.isEmpty) return;
 
-    navigatorKey.currentState?.pushNamedAndRemoveUntil(
-      '/splash',
-      (route) => false,
-    );
+    // Check if app is in the foreground
+    bool isAppForeground = navigatorKey.currentState?.overlay != null;
 
-    await Future.delayed(Duration(seconds: 2)); // Simulating splash screen processing
+    if (!isAppForeground) {
+      // App is in the background or terminated, go through splash & mainpage
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        '/splash',
+        (route) => false,
+      );
 
-    navigatorKey.currentState?.pushReplacementNamed('/mainpage');
+      await Future.delayed(Duration(seconds: 2)); // Simulating splash processing
 
-    await Future.delayed(Duration(milliseconds: 500)); // Ensure navigation stability
+      navigatorKey.currentState?.pushReplacementNamed('/mainpage');
 
+      await Future.delayed(Duration(milliseconds: 500)); // Ensure stability
+    }
+
+    // Now navigate to the deep link destination
     switch (pathSegments[0]) {
       case 'chat':
         if (pathSegments.length > 1) {
@@ -71,7 +78,7 @@ Future<void> handleDeepLink(Uri uri) async {
             });
           } catch (e) {
             debugPrint('Error fetching user: $e');
-            _showError('Unable to load profile $e');
+            _showError('Unable to load profile');
           }
         }
         break;
@@ -90,7 +97,6 @@ Future<void> handleDeepLink(Uri uri) async {
     _showError('Unable to process the link');
   }
 }
-
 
   void _showError(String message) {
     if (navigatorKey.currentContext != null) {
