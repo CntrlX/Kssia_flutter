@@ -33,7 +33,7 @@ class SocketIoClient {
   }
 
   void connect(String senderId, WidgetRef ref) {
-    final uri = 'wss://api.kssiathrissur.com/api/v1/chats?userId=$senderId';
+    final uri = 'ws://192.168.1.6:3000/api/v1/chats?userId=$senderId';
 
     _socket = IO.io(
       uri,

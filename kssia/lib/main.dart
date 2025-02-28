@@ -4,10 +4,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
 import 'package:kssia/src/data/services/notification_service.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
@@ -82,10 +84,13 @@ class MainApp extends StatelessWidget {
           // '/membership': (context) => MembershipSubscription(),
         },
         onGenerateRoute: (settings) {
-          if (settings.name == '/profile') {
-            final user = settings.arguments as UserModel;
+          if (settings.name == '/individual_page') {
+             final args = settings.arguments as Map<String, dynamic>?;
+      Participant sender = args?['sender'];
+      Participant receiver = args?['receiver'];
+
             return MaterialPageRoute(
-              builder: (context) => ProfilePage(user: user),
+              builder: (context) => IndividualPage(receiver: receiver,sender: sender,),
             );
           }
         

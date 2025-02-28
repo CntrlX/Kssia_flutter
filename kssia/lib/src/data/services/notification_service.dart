@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,22 +13,21 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   final DeepLinkService _deepLinkService = DeepLinkService();
-  
+
   Future<void> initialize() async {
     try {
       // Initialize local notifications
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
-      const DarwinInitializationSettings iosInitializationSetting = 
+      const DarwinInitializationSettings iosInitializationSetting =
           DarwinInitializationSettings(
-            requestAlertPermission: true,
-            requestBadgePermission: true,
-            requestSoundPermission: true,
-          );
-      const InitializationSettings initSettings = InitializationSettings(
-        android: initializationSettingsAndroid, 
-        iOS: iosInitializationSetting
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
       );
+      const InitializationSettings initSettings = InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: iosInitializationSetting);
 
       await flutterLocalNotificationsPlugin.initialize(
         initSettings,
@@ -62,14 +62,15 @@ class NotificationService {
   // }
 
   void _handleForegroundMessage(RemoteMessage message) {
+    log("Notification recieved: ${message.data}");
     try {
       if (message.notification != null && Platform.isAndroid) {
         String? deepLink;
         if (message.data.containsKey('screen')) {
-          final userId = message.data['userId'];
+          final id = message.data['id'];
           deepLink = _deepLinkService.getDeepLinkPath(
             message.data['screen'],
-            userId: userId,
+            id: id,
           );
         }
 
@@ -100,10 +101,10 @@ class NotificationService {
   void _handleMessageOpenedApp(RemoteMessage message) {
     try {
       if (message.data.containsKey('screen')) {
-        final userId = message.data['userId'];
+        final id = message.data['id'];
         final deepLink = _deepLinkService.getDeepLinkPath(
           message.data['screen'],
-          userId: userId,
+          id: id,
         );
         if (deepLink != null) {
           _deepLinkService.handleDeepLink(Uri.parse(deepLink));
@@ -126,7 +127,7 @@ class NotificationService {
 
   Future<void> _handleInitialMessage() async {
     try {
-      RemoteMessage? initialMessage = 
+      RemoteMessage? initialMessage =
           await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
         debugPrint('Handling initial message');
@@ -145,4 +146,4 @@ class NotificationService {
       return null;
     }
   }
-} 
+}

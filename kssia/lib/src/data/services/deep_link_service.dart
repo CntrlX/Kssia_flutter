@@ -1,8 +1,11 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
-import 'package:kssia/main.dart';  // Import for navigatorKey
+import 'package:kssia/main.dart'; // Make sure this import is present
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -32,32 +35,32 @@ class DeepLinkService {
   Future<void> handleDeepLink(Uri uri) async {
     try {
       final pathSegments = uri.pathSegments;
-      
+
       if (pathSegments.isEmpty) return;
 
       switch (pathSegments[0]) {
-        // case 'profile':
-        //   if (pathSegments.length > 1) {
-        //     final userId = pathSegments[1];
-        //     try {
-        //       // Fetch user data using the ID
-        //       final user = await fetchUserById(userId);
-        //       if (user != null) {
-        //         navigatorKey.currentState?.pushNamed(
-        //           '/profile',
-        //           arguments: user,
-        //         );
-        //       }
-        //     } catch (e) {
-        //       debugPrint('Error fetching user: $e');
-        //       _showError('Unable to load profile');
-        //     }
-        //   }
-        //   break;
+        case 'chat':
+          if (pathSegments.length > 1) {
+            final userId = pathSegments[1];
+            try {
+              ApiRoutes userApi = ApiRoutes();
+              final user = await userApi.fetchUserDetails(userId);
+              navigatorKey.currentState?.pushNamed('/individual_page', arguments: {
+                'sender': Participant(id: id),
+                'receiver': Participant(
+                    id: user.id,
+                    name: user.name,
+                    profilePicture: user.profilePicture)
+              });
+            } catch (e) {
+              debugPrint('Error fetching user: $e');
+              _showError('Unable to load profile $e');
+            }
+          }
+          break;
         case 'membership':
           navigatorKey.currentState?.pushNamed('/membership');
-        case 'chat':
-          navigatorKey.currentState?.pushNamed('/chat');
+   
           break;
         case 'mainpage':
           navigatorKey.currentState?.pushNamed('/mainpage');
@@ -80,19 +83,17 @@ class DeepLinkService {
     }
   }
 
-  String? getDeepLinkPath(String screen, {String? userId}) {
+  String? getDeepLinkPath(String screen, {String? id}) {
     switch (screen) {
-      case 'profile':
-        return userId != null 
-            ? 'kssia://app/profile/$userId'
-            : 'kssia://app/profile';
+      case 'chat':
+        return id != null ? 'kssia://app/chat/$id' : 'kssia://app/chat';
       case 'membership':
         return 'kssia://app/membership';
       case 'mainpage':
         return 'kssia://app/mainpage';
+
       default:
         return null;
     }
   }
 }
-
