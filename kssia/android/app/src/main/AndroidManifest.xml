@@ -24,6 +24,14 @@
                 <data android:scheme="http"/>
                 <data android:scheme="https"/> -->
             </intent-filter>
+            <!-- Add this new intent filter for deep linking -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Add your URI scheme -->
+                <data android:scheme="kssia" android:host="app" />
+            </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

@@ -32,6 +32,14 @@
 				<string>app-1-730513867054-ios-1e2a00a3a0ff6d68777abf</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kssia</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.skybertech.kssia</string>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +16,6 @@ import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -37,47 +35,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
     });
     getToken();
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      print("New FCM Token: $newToken");
-      // Save or send the new token to your server
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        if (Platform.isAndroid) {
-          const AndroidNotificationDetails androidPlatformChannelSpecifics =
-              AndroidNotificationDetails(
-            'your_channel_id',
-            'your_channel_name',
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: true,
-          );
-          const NotificationDetails platformChannelSpecifics =
-              NotificationDetails(android: androidPlatformChannelSpecifics);
-
-          flutterLocalNotificationsPlugin.show(
-            0, // Notification ID
-            message.notification?.title,
-            message.notification?.body,
-            platformChannelSpecifics,
-          );
-        }
-        // No need for local notifications on iOS in foreground
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification opened: ${message.data}');
-    });
-
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {
-        print('Notification clicked when app was terminated');
-      }
-    });
   }
 
   Future<void> checkAppVersion(context) async {

@@ -6,7 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
+import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
+import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
+import 'package:kssia/src/data/services/notification_service.dart';
+import 'package:kssia/src/data/services/deep_link_service.dart';
+import 'package:kssia/src/data/models/user_model.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
@@ -14,7 +21,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  initializeNotifications();
+  
+  await NotificationService().initialize();
   runApp(ProviderScope(child: MainApp()));
 }
 
@@ -59,26 +67,30 @@ class MainApp extends StatelessWidget {
           secondaryHeaderColor: Colors.blue,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
+        navigatorKey: navigatorKey,
         initialRoute: '/',
         routes: {
-          '/': (context) => SplashScreen(),
+          '/': (context) {
+            // Initialize deep linking
+            DeepLinkService().initialize(context);
+            return SplashScreen();
+          },
           '/login_screen': (context) => PhoneNumberScreen(),
           '/mainpage': (context) => MainPage(),
           '/profile_completion': (context) => ProfileCompletionScreen(),
+          '/chat': (context) => PeoplePage(initialTabIndex: 1,),
           // '/membership': (context) => MembershipSubscription(),
-        });
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/profile') {
+            final user = settings.arguments as UserModel;
+            return MaterialPageRoute(
+              builder: (context) => ProfilePage(user: user),
+            );
+          }
+        
+          return null;
+        },
+    );
   }
-}
-
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-// Initialize in your main function
-void initializeNotifications() {
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-const iosInitializationSetting = DarwinInitializationSettings();
-const initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: iosInitializationSetting);
-
-  flutterLocalNotificationsPlugin.initialize(initSettings);
 }
