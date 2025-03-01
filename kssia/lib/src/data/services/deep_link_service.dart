@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/main.dart'; // Make sure this import is present
@@ -38,65 +39,105 @@ class DeepLinkService {
       debugPrint('Deep link initialization error: $e');
     }
   }
-Future<void> handleDeepLink(Uri uri) async {
-  try {
-    final pathSegments = uri.pathSegments;
-    if (pathSegments.isEmpty) return;
 
-    // Check if app is in the foreground
-    bool isAppForeground = navigatorKey.currentState?.overlay != null;
+  Future<void> handleDeepLink(Uri uri) async {
+    try {
+      final pathSegments = uri.pathSegments;
+      if (pathSegments.isEmpty) return;
 
-    if (!isAppForeground) {
-      // App is in the background or terminated, go through splash & mainpage
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        '/splash',
-        (route) => false,
-      );
+      // Check if app is in the foreground
+      bool isAppForeground = navigatorKey.currentState?.overlay != null;
 
-      await Future.delayed(Duration(seconds: 2)); // Simulating splash processing
+      if (!isAppForeground) {
+        // App is in the background or terminated, go through splash & mainpage
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/splash',
+          (route) => false,
+        );
 
-      navigatorKey.currentState?.pushReplacementNamed('/mainpage');
+        await Future.delayed(
+            Duration(seconds: 2)); // Simulating splash processing
 
-      await Future.delayed(Duration(milliseconds: 500)); // Ensure stability
-    }
+        navigatorKey.currentState?.pushReplacementNamed('/mainpage');
 
-    // Now navigate to the deep link destination
-    switch (pathSegments[0]) {
-      case 'chat':
-        if (pathSegments.length > 1) {
-          final userId = pathSegments[1];
+        await Future.delayed(Duration(milliseconds: 500)); // Ensure stability
+      }
+
+      // Now navigate to the deep link destination
+      switch (pathSegments[0]) {
+        case 'chat':
+          if (pathSegments.length > 1) {
+            final userId = pathSegments[1];
+            try {
+              ApiRoutes userApi = ApiRoutes();
+              final user = await userApi.fetchUserDetails(userId);
+              navigatorKey.currentState
+                  ?.pushNamed('/individual_page', arguments: {
+                'sender': Participant(id: id),
+                'receiver': Participant(
+                  id: user.id,
+                  name: user.name,
+                  profilePicture: user.profilePicture,
+                ),
+              });
+            } catch (e) {
+              debugPrint('Error fetching user: $e');
+              _showError('Unable to load profile');
+            }
+          }
+          break;
+        case 'event':
+          if (pathSegments.length > 1) {
+            final eventId = pathSegments[1];
+            try {
+              final event = await fetchEventById(eventId);
+              navigatorKey.currentState
+                  ?.pushNamed('/event_details', arguments: event);
+            } catch (e) {
+              debugPrint('Error fetching event: $e');
+              _showError('Unable to load profile');
+            }
+          }
+          break;
+
+        case 'my_requirements':
           try {
-            ApiRoutes userApi = ApiRoutes();
-            final user = await userApi.fetchUserDetails(userId);
-            navigatorKey.currentState?.pushNamed('/individual_page', arguments: {
-              'sender': Participant(id: id),
-              'receiver': Participant(
-                id: user.id,
-                name: user.name,
-                profilePicture: user.profilePicture,
-              ),
-            });
+            navigatorKey.currentState?.pushNamed('/my_requirements');
           } catch (e) {
-            debugPrint('Error fetching user: $e');
+            debugPrint('Error fetching requirement: $e');
             _showError('Unable to load profile');
           }
-        }
-        break;
-      case 'membership':
-        navigatorKey.currentState?.pushNamed('/membership');
-        break;
-      case 'mainpage':
-        // Already at mainpage, do nothing
-        break;
-      default:
-        debugPrint('Unknown deep link route: ${pathSegments[0]}');
-        break;
+
+          break;
+        case 'my_products':
+          try {
+            navigatorKey.currentState?.pushNamed('/my_products');
+          } catch (e) {
+            debugPrint('Error fetching requirement: $e');
+            _showError('Unable to load profile');
+          }
+        case 'my_subscription':
+          try {
+            navigatorKey.currentState?.pushNamed('/my_subscription');
+          } catch (e) {
+            debugPrint('Error fetching requirement: $e');
+            _showError('Unable to load profile');
+          }
+
+          break;
+
+        case 'mainpage':
+          break;
+
+        default:
+          debugPrint('Unknown deep link route: ${pathSegments[0]}');
+          break;
+      }
+    } catch (e) {
+      debugPrint('Deep link handling error: $e');
+      _showError('Unable to process the notification');
     }
-  } catch (e) {
-    debugPrint('Deep link handling error: $e');
-    _showError('Unable to process the link');
   }
-}
 
   void _showError(String message) {
     if (navigatorKey.currentContext != null) {
