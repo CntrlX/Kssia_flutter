@@ -54,20 +54,31 @@ class Event {
       name: json['name'] as String?,
       image: json['image'] as String?,
       description: json['description'] as String?,
-      startDate: json['startDate'] != null ? DateTime.tryParse(json['startDate']) : null,
-      endDate: json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
-      startTime: json['startTime'] != null ? DateTime.tryParse(json['startTime']) : null,
-      endTime: json['endTime'] != null ? DateTime.tryParse(json['endTime']) : null,
+      startDate: json['startDate'] != null
+          ? DateTime.tryParse(json['startDate'])
+          : null,
+      endDate:
+          json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
+      startTime: json['startTime'] != null
+          ? DateTime.tryParse(json['startTime'])
+          : null,
+      endTime:
+          json['endTime'] != null ? DateTime.tryParse(json['endTime']) : null,
       venue: json['venue'] as String?,
       organiserName: json['organiser_name'] as String?,
       organiserCompanyName: json['organiser_company_name'] as String?,
       organiserRole: json['organiser_role'] as String?,
-      speakers: (json['speakers'] as List?)?.map((e) => Speaker.fromJson(e)).toList(),
+      speakers:
+          (json['speakers'] as List?)?.map((e) => Speaker.fromJson(e)).toList(),
       status: json['status'] as String?,
       rsvp: (json['rsvp'] as List?)?.map((e) => RSVP.fromJson(e)).toList(),
       activate: json['activate'] as bool?,
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
       version: json['__v'] as int?,
       meetingLink: json['meetingLink'] as String?,
     );
@@ -153,7 +164,9 @@ class RSVP {
     return RSVP(
       id: json['_id'] as String?,
       name: json['name'] as String?,
-      phoneNumbers: json['phone_numbers'] != null ? PhoneNumbers.fromJson(json['phone_numbers']) : null,
+      phoneNumbers: json['phone_numbers'] != null
+          ? PhoneNumbers.fromJson(json['phone_numbers'])
+          : null,
       companyName: json['company_name'] as String?,
     );
   }

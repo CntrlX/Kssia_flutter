@@ -37,8 +37,7 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
     String date = DateFormat('yyyy-MM-dd').format(dateTime);
     log('rsvp : ${widget.event.rsvp}');
     log('my id : ${id}');
-    bool registered =  widget.event.rsvp?.any((rsvp) => rsvp.id == id) ??
-                                  false;
+    bool registered = widget.event.rsvp?.any((rsvp) => rsvp.id == id) ?? false;
     log('event registered?:$registered');
     return Scaffold(
       backgroundColor: Colors.white,
