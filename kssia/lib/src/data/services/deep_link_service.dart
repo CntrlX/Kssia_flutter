@@ -151,8 +151,14 @@ class DeepLinkService {
     switch (screen) {
       case 'chat':
         return id != null ? 'kssia://app/chat/$id' : 'kssia://app/chat';
-      case 'membership':
-        return 'kssia://app/membership';
+      case 'event':
+        return id != null ? 'kssia://app/event/$id' : 'kssia://app/event';
+      case 'my_subscription':
+        return 'kssia://app/my_subscription';
+      case 'my_products':
+        return 'kssia://app/my_products';
+      case 'my_requirements':
+        return 'kssia://app/my_requirements';
       case 'mainpage':
         return 'kssia://app/mainpage';
 

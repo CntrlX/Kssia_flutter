@@ -37,7 +37,8 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
     String date = DateFormat('yyyy-MM-dd').format(dateTime);
     log('rsvp : ${widget.event.rsvp}');
     log('my id : ${id}');
-    bool registered = widget.event.rsvp?.contains(id) ?? false;
+    bool registered =  widget.event.rsvp?.any((rsvp) => rsvp.id == id) ??
+                                  false;
     log('event registered?:$registered');
     return Scaffold(
       backgroundColor: Colors.white,
@@ -295,40 +296,68 @@ class _ViewMoreEventPageState extends ConsumerState<ViewMoreEventPage> {
               ],
             ),
           ),
-          Consumer(
-            builder: (context, ref, child) {
-              return Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: customButton(
-                  sideColor:
-                      registered ? Colors.green : const Color(0xFF004797),
-                  buttonColor:
-                      registered ? Colors.green : const Color(0xFF004797),
-                  label: widget.event.status == 'cancelled'
-                      ? 'CANCELLED'
-                      : registered
-                          ? 'REGISTERED'
-                          : 'REGISTER EVENT',
-                  onPressed: () async {
-                    if (!registered && widget.event.status != 'cancelled') {
-                      ApiRoutes userApi = ApiRoutes();
-                      await userApi.markEventAsRSVP(widget.event.id!, context);
+          if (widget.event.status != 'live')
+            Consumer(
+              builder: (context, ref, child) {
+                return Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: customButton(
+                    sideColor:
+                        registered ? Colors.green : const Color(0xFF004797),
+                    buttonColor:
+                        registered ? Colors.green : const Color(0xFF004797),
+                    label: widget.event.status == 'cancelled'
+                        ? 'CANCELLED'
+                        : registered
+                            ? 'REGISTERED'
+                            : 'REGISTER EVENT',
+                    onPressed: () async {
+                      if (!registered && widget.event.status != 'cancelled') {
+                        ApiRoutes userApi = ApiRoutes();
+                        await userApi.markEventAsRSVP(
+                            widget.event.id!, context);
 
-                      setState(() {
-                        widget.event.rsvp?.add(id);
-                        registered = widget.event.rsvp?.contains(id) ?? false;
-                      });
+                        setState(() {
+                          bool exists =
+                              widget.event.rsvp?.any((rsvp) => rsvp.id == id) ??
+                                  false;
 
-                      ref.invalidate(fetchEventsProvider);
-                    }
-                  },
-                  fontSize: 16,
-                ),
-              );
-            },
-          ),
+                          registered = exists;
+                        });
+
+                        ref.invalidate(fetchEventsProvider);
+                      }
+                    },
+                    fontSize: 16,
+                  ),
+                );
+              },
+            ),
+          if (widget.event.status == 'live')
+            Consumer(
+              builder: (context, ref, child) {
+                return Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: customButton(
+                    sideColor:
+                        registered ? Colors.green : const Color(0xFF004797),
+                    buttonColor:
+                        registered ? Colors.green : const Color(0xFF004797),
+                    label: 'Join Now',
+                    onPressed: () async {
+                      if (!registered && widget.event.status != 'cancelled') {
+                        launchURL(widget.event.meetingLink ?? '');
+                      }
+                    },
+                    fontSize: 16,
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );

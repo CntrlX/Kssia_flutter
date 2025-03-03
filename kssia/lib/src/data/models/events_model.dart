@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Event {
   final String? id;
   final String? type;
@@ -8,17 +10,18 @@ class Event {
   final DateTime? endDate;
   final DateTime? startTime;
   final DateTime? endTime;
-  final String? platform;
-  final String? meetingLink;
+  final String? venue;
   final String? organiserName;
   final String? organiserCompanyName;
-  final String? guestImage;
   final String? organiserRole;
   final List<Speaker>? speakers;
   final String? status;
-  final List<String>? rsvp;
+  final List<RSVP>? rsvp;
   final bool? activate;
-  final String? venue;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? version;
+  final String? meetingLink;
 
   Event({
     this.id,
@@ -30,45 +33,43 @@ class Event {
     this.endDate,
     this.startTime,
     this.endTime,
-    this.platform,
-    this.meetingLink,
+    this.venue,
     this.organiserName,
     this.organiserCompanyName,
-    this.guestImage,
     this.organiserRole,
     this.speakers,
     this.status,
     this.rsvp,
     this.activate,
-    this.venue
+    this.createdAt,
+    this.updatedAt,
+    this.version,
+    this.meetingLink,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      id: json['_id'],
-      type: json['type'],
-      name: json['name'],
-      image: json['image'],
-      description: json['description'],
-      startDate:
-          json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
-      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-      startTime:
-          json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
-      endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
-      platform: json['platform'],
-      meetingLink: json['meeting_link'],
-      organiserName: json['organiser_name'],
-      organiserCompanyName: json['organiser_company_name'],
-      guestImage: json['guest_image'],
-      organiserRole: json['organiser_role'],
-      speakers: json['speakers'] != null
-          ? (json['speakers'] as List).map((i) => Speaker.fromJson(i)).toList()
-          : null,
-      status: json['status'],
-      rsvp: json['rsvp'] != null ? List<String>.from(json['rsvp']) : null,
-      activate: json['activate'],
-      venue: json['venue']
+      id: json['_id'] as String?,
+      type: json['type'] as String?,
+      name: json['name'] as String?,
+      image: json['image'] as String?,
+      description: json['description'] as String?,
+      startDate: json['startDate'] != null ? DateTime.tryParse(json['startDate']) : null,
+      endDate: json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
+      startTime: json['startTime'] != null ? DateTime.tryParse(json['startTime']) : null,
+      endTime: json['endTime'] != null ? DateTime.tryParse(json['endTime']) : null,
+      venue: json['venue'] as String?,
+      organiserName: json['organiser_name'] as String?,
+      organiserCompanyName: json['organiser_company_name'] as String?,
+      organiserRole: json['organiser_role'] as String?,
+      speakers: (json['speakers'] as List?)?.map((e) => Speaker.fromJson(e)).toList(),
+      status: json['status'] as String?,
+      rsvp: (json['rsvp'] as List?)?.map((e) => RSVP.fromJson(e)).toList(),
+      activate: json['activate'] as bool?,
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
+      version: json['__v'] as int?,
+      meetingLink: json['meetingLink'] as String?,
     );
   }
 
@@ -83,64 +84,19 @@ class Event {
       'endDate': endDate?.toIso8601String(),
       'startTime': startTime?.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
-      'platform': platform,
-      'meeting_link': meetingLink,
+      'venue': venue,
       'organiser_name': organiserName,
       'organiser_company_name': organiserCompanyName,
-      'guest_image': guestImage,
       'organiser_role': organiserRole,
-      'speakers': speakers?.map((i) => i.toJson()).toList(),
+      'speakers': speakers?.map((e) => e.toJson()).toList(),
       'status': status,
-      'rsvp': rsvp,
+      'rsvp': rsvp?.map((e) => e.toJson()).toList(),
       'activate': activate,
-      'venue': venue
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      '__v': version,
+      'meetingLink': meetingLink,
     };
-  }
-
-  Event copyWith({
-    String? id,
-    String? type,
-    String? name,
-    String? image,
-    String? description,
-    DateTime? startDate,
-    DateTime? endDate,
-    DateTime? startTime,
-    DateTime? endTime,
-    String? platform,
-    String? meetingLink,
-    String? organiserName,
-    String? organiserCompanyName,
-    String? guestImage,
-    String? organiserRole,
-    List<Speaker>? speakers,
-    String? status,
-    List<String>? rsvp,
-    bool? activate,
-    String? venue,
-  }) {
-    return Event(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      name: name ?? this.name,
-      image: image ?? this.image,
-      description: description ?? this.description,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
-      platform: platform ?? this.platform,
-      meetingLink: meetingLink ?? this.meetingLink,
-      organiserName: organiserName ?? this.organiserName,
-      organiserCompanyName: organiserCompanyName ?? this.organiserCompanyName,
-      guestImage: guestImage ?? this.guestImage,
-      organiserRole: organiserRole ?? this.organiserRole,
-      speakers: speakers ?? this.speakers,
-      status: status ?? this.status,
-      rsvp: rsvp ?? this.rsvp,
-      activate: activate ?? this.activate,
-      venue: venue?? this.venue
-    );
   }
 }
 
@@ -161,11 +117,11 @@ class Speaker {
 
   factory Speaker.fromJson(Map<String, dynamic> json) {
     return Speaker(
-      speakerName: json['speaker_name'],
-      speakerDesignation: json['speaker_designation'],
-      speakerImage: json['speaker_image'],
-      speakerRole: json['speaker_role'],
-      id: json['_id'],
+      speakerName: json['speaker_name'] as String?,
+      speakerDesignation: json['speaker_designation'] as String?,
+      speakerImage: json['speaker_image'] as String?,
+      speakerRole: json['speaker_role'] as String?,
+      id: json['_id'] as String?,
     );
   }
 
@@ -178,20 +134,72 @@ class Speaker {
       '_id': id,
     };
   }
+}
 
-  Speaker copyWith({
-    String? speakerName,
-    String? speakerDesignation,
-    String? speakerImage,
-    String? speakerRole,
-    String? id,
-  }) {
-    return Speaker(
-      speakerName: speakerName ?? this.speakerName,
-      speakerDesignation: speakerDesignation ?? this.speakerDesignation,
-      speakerImage: speakerImage ?? this.speakerImage,
-      speakerRole: speakerRole ?? this.speakerRole,
-      id: id ?? this.id,
+class RSVP {
+  final String? id;
+  final String? name;
+  final PhoneNumbers? phoneNumbers;
+  final String? companyName;
+
+  RSVP({
+    this.id,
+    this.name,
+    this.phoneNumbers,
+    this.companyName,
+  });
+
+  factory RSVP.fromJson(Map<String, dynamic> json) {
+    return RSVP(
+      id: json['_id'] as String?,
+      name: json['name'] as String?,
+      phoneNumbers: json['phone_numbers'] != null ? PhoneNumbers.fromJson(json['phone_numbers']) : null,
+      companyName: json['company_name'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'phone_numbers': phoneNumbers?.toJson(),
+      'company_name': companyName,
+    };
+  }
+}
+
+class PhoneNumbers {
+  final String? personal;
+  final String? landline;
+  final String? companyPhoneNumber;
+  final String? whatsappNumber;
+  final String? whatsappBusinessNumber;
+
+  PhoneNumbers({
+    this.personal,
+    this.landline,
+    this.companyPhoneNumber,
+    this.whatsappNumber,
+    this.whatsappBusinessNumber,
+  });
+
+  factory PhoneNumbers.fromJson(Map<String, dynamic> json) {
+    return PhoneNumbers(
+      personal: json['personal'] as String?,
+      landline: json['landline'] as String?,
+      companyPhoneNumber: json['company_phone_number'] as String?,
+      whatsappNumber: json['whatsapp_number'] as String?,
+      whatsappBusinessNumber: json['whatsapp_business_number'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'personal': personal,
+      'landline': landline,
+      'company_phone_number': companyPhoneNumber,
+      'whatsapp_number': whatsappNumber,
+      'whatsapp_business_number': whatsappBusinessNumber,
+    };
   }
 }
