@@ -9,6 +9,7 @@ import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
+import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
@@ -81,6 +82,7 @@ class MainApp extends StatelessWidget {
         '/profile_completion': (context) => ProfileCompletionScreen(),
         '/my_requirements': (context) => MyRequirementsPage(),
         '/my_products': (context) => MyProductPage(),
+        '/notification': (context) => NotificationPage(),
         '/my_subscription': (context) => MySubscriptionPage(),
         '/chat': (context) => PeoplePage(
               initialTabIndex: 1,

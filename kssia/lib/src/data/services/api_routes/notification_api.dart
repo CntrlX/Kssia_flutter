@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/events_model.dart';
@@ -11,7 +12,7 @@ part 'notification_api.g.dart';
 
 @riverpod
 Future<List<NotificationModel>> fetchUnreadNotifications(
-    FetchUnreadNotificationsRef ref, String token) async {
+    Ref ref, String token) async {
   final url = Uri.parse('$baseUrl/notification/in-app/unread/$id');
   print('Requesting URL: $url');
   final response = await http.get(

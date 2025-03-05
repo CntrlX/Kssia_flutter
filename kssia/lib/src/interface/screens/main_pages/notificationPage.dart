@@ -6,8 +6,19 @@ import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
-class NotificationPage extends StatelessWidget {
+class NotificationPage extends ConsumerStatefulWidget {
   const NotificationPage({super.key});
+
+  @override
+  ConsumerState<NotificationPage> createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends ConsumerState<NotificationPage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.invalidate(fetchUnreadNotificationsProvider);
+  }
 
   @override
   Widget build(BuildContext context) {

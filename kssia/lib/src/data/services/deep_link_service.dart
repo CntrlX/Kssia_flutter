@@ -130,7 +130,7 @@ class DeepLinkService {
           break;
 
         default:
-          debugPrint('Unknown deep link route: ${pathSegments[0]}');
+                navigatorKey.currentState?.pushNamed('/notification');
           break;
       }
     } catch (e) {
