@@ -41,15 +41,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> checkAppVersion(context) async {
     log('Checking app version...');
-    final response = await http
-        .get(Uri.parse('$baseUrl/user/app-version'));
+    final response = await http.get(Uri.parse('$baseUrl/user/app-version'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final appVersionResponse = AppVersionResponse.fromJson(jsonResponse);
       await checkForUpdate(appVersionResponse, context);
     } else {
-      log('Failed to fetch app version');
+      final jsonResponse = json.decode(response.body);
+      log('Failed to fetch app version${jsonResponse['message']}');
       throw Exception('Failed to load app version');
     }
   }
@@ -137,7 +137,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         width: 140,
       )
           // Image.asset(
-          //   'assets/icons/kssiaLogo.png',
+          //   'assets/icons/demo_companylogo.png',
           //   scale: 0.5,
           // ),
           ),

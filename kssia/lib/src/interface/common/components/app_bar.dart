@@ -70,7 +70,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 100,
             height: 100,
             child: Image.asset(
-              'assets/icons/kssiaLogo.png', // Hardcoded logo path
+              'assets/icons/demo_companylogo.png', // Hardcoded logo path
               fit: BoxFit.contain,
             ),
           ),

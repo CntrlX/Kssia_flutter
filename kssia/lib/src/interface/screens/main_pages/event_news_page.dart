@@ -49,7 +49,7 @@ class _Event_News_PageState extends State<Event_News_Page>
                   width: 100,
                   height: 100,
                   child: Image.asset(
-                    'assets/icons/kssiaLogo.png',
+                    'assets/icons/demo_companylogo.png',
                     fit: BoxFit.contain,
                   ),
                 ),

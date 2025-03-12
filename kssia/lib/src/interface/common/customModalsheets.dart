@@ -465,8 +465,6 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   }
 }
 
-
-
 class ShowAddCertificateSheet extends StatefulWidget {
   final TextEditingController textController;
   final String imageType;
@@ -853,7 +851,8 @@ class EnterProductsPage extends ConsumerStatefulWidget {
   final Product? product;
   final Function(Product)? onEdit;
   final String? imageUrl;
-  const EnterProductsPage( {this.imageUrl,
+  const EnterProductsPage({
+    this.imageUrl,
     super.key,
     this.isEditing = false,
     this.product,
@@ -1041,7 +1040,7 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                   width: 100,
                   height: 100,
                   child: Image.asset(
-                    'assets/icons/kssiaLogo.png',
+                    'assets/icons/demo_companylogo.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -1140,28 +1139,28 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                                 ),
                                 child: productImage == null
                                     ? widget.imageUrl != null
-                                  ? Center(
-                                      child:
-                                          Image.network(widget.imageUrl ?? ''),
-                                    )
-                                  :  const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.add,
-                                                size: 27,
-                                                color: Color(0xFF004797)),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              'Upload Image',
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 102, 101, 101)),
+                                        ? Center(
+                                            child: Image.network(
+                                                widget.imageUrl ?? ''),
+                                          )
+                                        : const Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.add,
+                                                    size: 27,
+                                                    color: Color(0xFF004797)),
+                                                SizedBox(height: 10),
+                                                Text(
+                                                  'Upload Image',
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 102, 101, 101)),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      )
+                                          )
                                     : Center(
                                         child: Image.file(
                                           productImage!,

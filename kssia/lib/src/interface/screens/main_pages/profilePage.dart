@@ -10,7 +10,6 @@ import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/screens/profile/card.dart';
 import 'package:kssia/src/interface/screens/profile/profilePreview.dart';
 
-
 class ProfilePage extends ConsumerStatefulWidget {
   final UserModel user;
   const ProfilePage({super.key, required this.user});
@@ -252,7 +251,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               width: 80,
                               height: 40,
                               child: Image.asset(
-                                'assets/icons/kssiaLogo.png',
+                                'assets/icons/demo_companylogo.png',
                                 fit: BoxFit.contain,
                               ),
                             ),

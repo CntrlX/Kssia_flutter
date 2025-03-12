@@ -272,7 +272,7 @@ class OthersProfilePreview extends ConsumerWidget {
                             width: 80,
                             height: 40,
                             child: Image.asset(
-                              'assets/icons/kssiaLogo.png',
+                              'assets/icons/demo_companylogo.png',
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -576,7 +576,8 @@ class OthersProfilePreview extends ConsumerWidget {
                         ),
                         itemCount: user.products!.length,
                         itemBuilder: (context, index) {
-                          return ProductCard(onEdit: null,
+                          return ProductCard(
+                            onEdit: null,
                             product: user.products![index],
                             onRemove: null,
                           );
@@ -608,7 +609,8 @@ class OthersProfilePreview extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 4.0), // Space between items
-                          child: CertificateCard(onEdit: null,
+                          child: CertificateCard(
+                            onEdit: null,
                             certificate: user.certificates![index],
                             onRemove: null,
                           ),

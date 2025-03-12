@@ -103,7 +103,7 @@ class PhoneNumberScreen extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 40),
                     Image.asset(
-                      'assets/icons/kssiaLogo.png',
+                      'assets/icons/demo_companylogo.png',
                       scale: 8,
                     ),
                     const SizedBox(height: 80),
@@ -322,7 +322,7 @@ class OTPScreen extends ConsumerStatefulWidget {
 class _OTPScreenState extends ConsumerState<OTPScreen> {
   Timer? _timer;
 
-  int _start =59;
+  int _start = 59;
 
   bool _isButtonDisabled = true;
 
@@ -391,7 +391,7 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
               children: [
                 const SizedBox(height: 40),
                 Image.asset(
-                  'assets/icons/kssiaLogo.png',
+                  'assets/icons/demo_companylogo.png',
                   scale: 8,
                 ),
                 const SizedBox(height: 80),

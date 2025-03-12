@@ -700,7 +700,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                                         width: 100,
                                         height: 100,
                                         child: Image.asset(
-                                          'assets/icons/kssiaLogo.png',
+                                          'assets/icons/demo_companylogo.png',
                                           fit: BoxFit.contain,
                                         ),
                                       ),
