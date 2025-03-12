@@ -11,7 +11,7 @@ import 'package:kssia/src/interface/screens/people/chat/chat.dart';
 import 'package:kssia/src/interface/screens/people/members.dart';
 
 class PeoplePage extends ConsumerStatefulWidget {
-  final int initialTabIndex;s
+  final int initialTabIndex;
   
   const PeoplePage({super.key, this.initialTabIndex = 0});
 

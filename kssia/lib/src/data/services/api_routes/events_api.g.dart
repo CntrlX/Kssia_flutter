@@ -6,7 +6,7 @@ part of 'events_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchEventsHash() => r'af0ab19d0d00ebfbede1afa70c3298842591da8d';
+String _$fetchEventsHash() => r'255c61f94a513e6dca8ad1f9ce9ca4f28501b5d2';
 
 /// Copied from Dart SDK
 class _SystemHash {

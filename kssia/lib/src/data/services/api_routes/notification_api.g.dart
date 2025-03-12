@@ -7,7 +7,7 @@ part of 'notification_api.dart';
 // **************************************************************************
 
 String _$fetchUnreadNotificationsHash() =>
-    r'5df6327b99b49ae369f12142b00ea8286b1905e0';
+    r'6a880fc92b40c00a9caaf2ca8573b10430467e56';
 
 /// Copied from Dart SDK
 class _SystemHash {

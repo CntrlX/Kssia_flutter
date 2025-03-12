@@ -596,6 +596,8 @@ Future<UserModel> fetchUserDetails(
 }
 }
 
+
+
 @riverpod
 Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
   final url = Uri.parse('$baseUrl/payments/parent-subscription');
@@ -629,7 +631,7 @@ Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
 
 @riverpod
 Future<UserModel> fetchUserDetails(
-    FetchUserDetailsRef ref, String token, String userId) async {
+    Ref ref, String token, String userId) async {
   final url = Uri.parse('$baseUrl/user/$userId');
   print('Requesting URL: $url');
   final response = await http.get(

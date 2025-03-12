@@ -300,6 +300,7 @@ class Brochure {
 
 class UserModel {
   final String? id;
+  final String? firebaseId;
   final String? abbreviation;
   final String? membershipId;
   final String? name;
@@ -333,6 +334,7 @@ class UserModel {
 
   UserModel(
       {this.id,
+      this.firebaseId,
       this.abbreviation,
       this.membershipId,
       this.name,
@@ -366,6 +368,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['_id'] as String?,
+     firebaseId : json['uid'] as String?,
       membershipId: json['membership_id'] as String?,
       abbreviation: json['abbreviation'] as String?,
       name: json['name'] as String?,
@@ -424,6 +427,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
+      'firebaseId': firebaseId,
       'membership_id': membershipId,
       'abbreviation': abbreviation,
       'name': name,
@@ -459,6 +463,7 @@ class UserModel {
 
   UserModel copyWith({
     String? id,
+    String? firebaseId,
     String? membershipId,
     String? abbreviation,
     String? name,
@@ -493,6 +498,7 @@ class UserModel {
   }) {
     return UserModel(
         id: id ?? this.id,
+        firebaseId: firebaseId ?? this.firebaseId,
         membershipId: membershipId ?? this.membershipId,
         abbreviation: abbreviation ?? this.abbreviation,
         name: name ?? this.name,

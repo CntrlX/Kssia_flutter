@@ -224,7 +224,7 @@ class _FetchProductsProviderElement
 }
 
 String _$fetchProductCategoriesHash() =>
-    r'43b39494ba5917c48332c81bb8289eb22c2cfb28';
+    r'91c749e1887f98e4dd7fa1d5f1f10a097b037051';
 
 /// See also [fetchProductCategories].
 @ProviderFor(fetchProductCategories)

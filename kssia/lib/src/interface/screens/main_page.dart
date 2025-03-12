@@ -68,6 +68,20 @@ class MainPage extends ConsumerStatefulWidget {
 class _MainPageState extends ConsumerState<MainPage> {
   late final webSocketClient;
 
+  Future<void> _handleLogout(BuildContext context) async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove('token');
+    await preferences.remove('id');
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PhoneNumberScreen(),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -139,7 +153,8 @@ class _MainPageState extends ConsumerState<MainPage> {
         data: (user) {
           print(user.profilePicture);
           _initialize(user: user);
-          return PopScope(
+          if(user.firebaseId!=null && user.firebaseId!='') {
+            return PopScope(
               canPop: _selectedIndex != 0 ? false : true,
               onPopInvokedWithResult: (didPop, result) {
                 if (_selectedIndex != 0) {
@@ -267,22 +282,20 @@ class _MainPageState extends ConsumerState<MainPage> {
                                       const Color.fromARGB(255, 239, 236, 236),
                                   label: 'Logout',
                                   onPressed: () async {
-                                    final SharedPreferences preferences =
-                                        await SharedPreferences.getInstance();
-                                    preferences.remove('token');
-                                    preferences.remove('id');
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              PhoneNumberScreen(),
-                                        ));
+                                    await _handleLogout(context);
                                   })
                             ],
                           ),
                         ),
                       ),
                     ));
+          }
+          else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _handleLogout(context);
+            });
+            return  PhoneNumberScreen();
+          }
         },
       );
     });
