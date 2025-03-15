@@ -131,11 +131,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-          child: SvgPicture.asset(
-        'assets/kssia_logo.svg',
-        height: 140,
-        width: 140,
-      )
+          child:                  Image.asset(
+                    'assets/icons/demo_companylogo.png',
+                    scale: 1,
+                  ),
           // Image.asset(
           //   'assets/icons/demo_companylogo.png',
           //   scale: 0.5,

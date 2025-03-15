@@ -102,9 +102,11 @@ class PhoneNumberScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 40),
-                    Image.asset(
-                      'assets/icons/demo_companylogo.png',
-                      scale: 8,
+                    Center(
+                      child: Image.asset(
+                        'assets/icons/demo_companylogo.png',
+                        scale: 8,
+                      ),
                     ),
                     const SizedBox(height: 80),
                     Expanded(
@@ -390,9 +392,11 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 40),
-                Image.asset(
-                  'assets/icons/demo_companylogo.png',
-                  scale: 8,
+                Center(
+                  child: Image.asset(
+                    'assets/icons/demo_companylogo.png',
+                    scale: 8,
+                  ),
                 ),
                 const SizedBox(height: 80),
                 const Text(
