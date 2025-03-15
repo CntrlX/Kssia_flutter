@@ -94,4 +94,4 @@ flutter_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path:  "assets/demo_companylogo.png"
+  image_path:  "assets/icons/demo_companylogo.png"
