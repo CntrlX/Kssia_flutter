@@ -120,6 +120,7 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final bool? isOthersProduct;
   final bool? statusNeeded;
+
   const ProductCard(
       {this.onRemove,
       required this.product,
