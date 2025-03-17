@@ -205,6 +205,7 @@ class PhoneNumberScreen extends ConsumerWidget {
                                     onPressed: isLoading
                                         ? () {}
                                         : () {
+                                            FocusScope.of(context).unfocus();
                                             _handleOtpGeneration(context, ref);
                                           },
                                     fontSize: 16,
