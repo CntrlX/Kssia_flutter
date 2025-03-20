@@ -178,7 +178,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         style: TextStyle(
                                             fontSize: 26,
                                             fontWeight: FontWeight.w600),
-                                        '₹1050  ',
+                                        '₹1000  ',
                                       ),
                                       Text(
                                         style: TextStyle(
