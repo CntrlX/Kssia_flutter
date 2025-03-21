@@ -112,6 +112,28 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
     }
   }
 
+  Future<void> _editProduct(int index) async {
+    final Product oldProduct = ref.read(userProvider).value!.products![index];
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EnterProductsPage(
+                  imageUrl: oldProduct.image,
+                  isEditing: true,
+                  product: oldProduct,
+                  onEdit: (Product updatedProduct) async {
+                    // Call API to update product
+                    await updateProduct(updatedProduct);
+
+                    // Update local state
+                    ref
+                        .read(userProvider.notifier)
+                        .editProduct(oldProduct, updatedProduct);
+                  },
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(
@@ -177,7 +199,8 @@ class _MyProductPageState extends ConsumerState<MyProductPage> {
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {
-                              return ProductCard(onEdit: null,
+                              return ProductCard(
+                                  onEdit: () => _editProduct(index),
                                   statusNeeded: true,
                                   product: user.products![index],
                                   onRemove: () => _removeProduct(index));
