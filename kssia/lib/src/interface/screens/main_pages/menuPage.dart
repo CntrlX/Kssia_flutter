@@ -297,7 +297,8 @@ class MenuPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      settings: const RouteSettings(name: 'menu'),
+                                      settings:
+                                          const RouteSettings(name: 'menu'),
                                       builder: (context) =>
                                           DetailsPage()), // Navigate to MenuPage
                                 );
@@ -363,7 +364,7 @@ class MenuPage extends StatelessWidget {
                         },
                       ),
                       if (user.phoneNumbers?.personal != '+919645398555')
-                      const Divider(),
+                        const Divider(),
                       _buildListTile(
                         context,
                         Icons.shopping_bag,
@@ -401,20 +402,23 @@ class MenuPage extends StatelessWidget {
                                 builder: (context) => const MyEventsPage()),
                           );
                         },
-                      ),      if (user.phoneNumbers?.personal != '+919645398555')
-                      const Divider(),      if (user.phoneNumbers?.personal != '+919645398555')
-                      _buildListTile(
-                        context,
-                        Icons.monetization_on,
-                        'My Transactions',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MyTransactionsPage()),
-                          );
-                        },
                       ),
+                      if (user.phoneNumbers?.personal != '+919645398555')
+                        const Divider(),
+                      if (user.phoneNumbers?.personal != '+919645398555')
+                        _buildListTile(
+                          context,
+                          Icons.monetization_on,
+                          'My Transactions',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyTransactionsPage()),
+                            );
+                          },
+                        ),
                       const Divider(),
                       _buildListTile(
                         context,

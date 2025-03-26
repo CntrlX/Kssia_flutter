@@ -279,6 +279,7 @@ class ShowEnterAwardSheet extends StatefulWidget {
 class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
   final _formKey = GlobalKey<FormState>();
   File? awardImage; // Moved awardImage to State
+  bool get isEditMode => widget.editAwardCard != null;
 
   @override
   Widget build(BuildContext context) {
@@ -318,9 +319,14 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
               ),
               const SizedBox(height: 10),
               FormField<File>(
-                initialValue: awardImage, // Updated to use awardImage in State
+                initialValue: awardImage,
                 validator: (value) {
-                  if (value == null) {
+                  // Skip validation if in edit mode and no new image is selected
+                  if (isEditMode && awardImage == null) {
+                    return null;
+                  }
+                  // Only validate if in add mode or if new image is selected
+                  if (!isEditMode && value == null && widget.imageUrl == null) {
                     return 'Please upload an image';
                   }
                   return null;
@@ -333,7 +339,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                           final pickedFile = await widget.pickImage(
                               imageType: widget.imageType);
                           if (pickedFile == null) {
-                            Navigator.pop(context);
+                            return; // Don't pop if no image selected
                           }
                           setState(() {
                             awardImage = pickedFile;
@@ -361,9 +367,11 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.add,
-                                              size: 27,
-                                              color: Color(0xFF004797)),
+                                          Icon(
+                                            Icons.add,
+                                            size: 27,
+                                            color: Color(0xFF004797),
+                                          ),
                                           SizedBox(height: 10),
                                           Text(
                                             'Upload Image',
@@ -400,7 +408,6 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
               ),
               const SizedBox(height: 20),
               ModalSheetTextFormField(
-                maxLength: 15,
                 label: 'Add name',
                 textController: widget.textController1,
                 validator: (value) {
@@ -412,7 +419,6 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
               ),
               const SizedBox(height: 10),
               ModalSheetTextFormField(
-                maxLength: 15,
                 label: 'Add Authority name',
                 textController: widget.textController2,
                 validator: (value) {
@@ -424,7 +430,7 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
               ),
               const SizedBox(height: 10),
               customButton(
-                label: 'SAVE',
+                label: isEditMode ? 'UPDATE' : 'SAVE',
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     showDialog(
@@ -435,11 +441,14 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                     );
 
                     try {
-                      if (widget.addAwardCard != null) {
-                        await widget.addAwardCard!();
-                      } else {
+                      if (isEditMode) {
+                        // Edit mode - handle both text-only and image updates
                         await widget.editAwardCard!();
+                      } else {
+                        // Add mode - always needs image
+                        await widget.addAwardCard!();
                       }
+
                       widget.textController1.clear();
                       widget.textController2.clear();
 
@@ -448,9 +457,14 @@ class _ShowEnterAwardSheetState extends State<ShowEnterAwardSheet> {
                           awardImage = null; // Clear the image after saving
                         });
                       }
+                    } catch (e) {
+                      print('Error updating award: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to update award: $e')),
+                      );
                     } finally {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
+                      Navigator.of(context).pop(); // Close loading dialog
+                      Navigator.pop(context); // Close modal sheet
                     }
                   }
                 },
@@ -489,6 +503,7 @@ class ShowAddCertificateSheet extends StatefulWidget {
 class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
   File? certificateImage;
   final _formKey = GlobalKey<FormState>();
+  bool get isEditMode => widget.imageUrl != null;
 
   @override
   Widget build(BuildContext context) {
@@ -529,7 +544,10 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
               FormField<File>(
                 initialValue: certificateImage,
                 validator: (value) {
-                  if (value == null) {
+                  if (isEditMode && certificateImage == null) {
+                    return null;
+                  }
+                  if (!isEditMode && value == null && widget.imageUrl == null) {
                     return 'Please upload an image';
                   }
                   return null;
@@ -542,7 +560,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                           final pickedFile = await widget.pickImage(
                               imageType: widget.imageType);
                           if (pickedFile == null) {
-                            Navigator.pop(context);
+                            return; // Don't pop if no image selected
                           }
                           setState(() {
                             certificateImage = pickedFile;
@@ -570,9 +588,11 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.add,
-                                              size: 27,
-                                              color: Color(0xFF004797)),
+                                          Icon(
+                                            Icons.add,
+                                            size: 27,
+                                            color: Color(0xFF004797),
+                                          ),
                                           SizedBox(height: 10),
                                           Text(
                                             'Upload Image',
@@ -610,7 +630,6 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
               ),
               const SizedBox(height: 20),
               ModalSheetTextFormField(
-                maxLength: 15,
                 label: 'Add Name',
                 textController: widget.textController,
                 validator: (value) {
@@ -622,7 +641,7 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
               ),
               const SizedBox(height: 10),
               customButton(
-                label: 'SAVE',
+                label: isEditMode ? 'UPDATE' : 'SAVE',
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     showDialog(
@@ -633,8 +652,14 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                     );
 
                     try {
-                      // Pass awardImage to addAwardCard
-                      await widget.addCertificateCard();
+                      if (isEditMode) {
+                        // Edit mode - handle both text-only and image updates
+                        await widget.addCertificateCard();
+                      } else {
+                        // Add mode - always needs image
+                        await widget.addCertificateCard();
+                      }
+
                       widget.textController.clear();
 
                       if (certificateImage != null) {
@@ -643,9 +668,15 @@ class _ShowAddCertificateSheetState extends State<ShowAddCertificateSheet> {
                               null; // Clear the image after saving
                         });
                       }
+                    } catch (e) {
+                      print('Error updating certificate: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Failed to update certificate: $e')),
+                      );
                     } finally {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
+                      Navigator.of(context).pop(); // Close loading dialog
+                      Navigator.pop(context); // Close modal sheet
                     }
                   }
                 },
@@ -1095,7 +1126,11 @@ class _EnterProductsPageState extends ConsumerState<EnterProductsPage> {
                       initialValue: productImage,
                       validator: (value) {
                         if (value == null) {
-                          return 'Please upload an image';
+                          if (!widget.isEditing) {
+                            return 'Please upload an image';
+                          } else {
+                            return null;
+                          }
                         }
                         return null;
                       },

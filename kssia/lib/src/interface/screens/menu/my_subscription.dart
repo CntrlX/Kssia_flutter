@@ -178,7 +178,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         style: TextStyle(
                                             fontSize: 26,
                                             fontWeight: FontWeight.w600),
-                                        '₹1050  ',
+                                        '₹1000  ',
                                       ),
                                       Text(
                                         style: TextStyle(
@@ -242,55 +242,63 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                 ),
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'Last renewed on:',
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                membershipFormattedRenewalDate,
-                                                style: const TextStyle(
-                                                  decorationColor:
-                                                      Color(0xFF004797),
-                                                  decoration: TextDecoration
-                                                      .underline, // Adds underline
-                                                  fontStyle: FontStyle
-                                                      .italic, // Makes text italic
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF004797),
+                                          if (membershipFormattedRenewalDate !=
+                                              '')
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Last renewed on:',
+                                                  style:
+                                                      TextStyle(fontSize: 13),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'Next renewal on:',
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                membershipFormatteNextRenewalDate,
-                                                style: const TextStyle(
-                                                  decorationColor:
-                                                      Color(0xFF004797),
-                                                  decoration: TextDecoration
-                                                      .underline, // Adds underline
-                                                  fontStyle: FontStyle
-                                                      .italic, // Makes text italic
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF004797),
+                                                const Spacer(),
+                                                Text(
+                                                  membershipFormattedRenewalDate,
+                                                  style: const TextStyle(
+                                                    decorationColor:
+                                                        Color(0xFF004797),
+                                                    decoration: TextDecoration
+                                                        .underline, // Adds underline
+                                                    fontStyle: FontStyle
+                                                        .italic, // Makes text italic
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF004797),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          )
+                                              ],
+                                            ),
+                                          if (membershipFormattedRenewalDate !=
+                                              '')
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          if (membershipFormatteNextRenewalDate !=
+                                              '')
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Next renewal on:',
+                                                  style:
+                                                      TextStyle(fontSize: 13),
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  membershipFormatteNextRenewalDate,
+                                                  style: const TextStyle(
+                                                    decorationColor:
+                                                        Color(0xFF004797),
+                                                    decoration: TextDecoration
+                                                        .underline, // Adds underline
+                                                    fontStyle: FontStyle
+                                                        .italic, // Makes text italic
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF004797),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                         ],
                                       ),
                                     ),
@@ -475,7 +483,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                                       ?.status ==
                                                                   'active'
                                                               ? 'Premium'
-                                                              : 'Free',
+                                                              : 'Inactive',
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 12,
@@ -496,55 +504,60 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                 ),
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'Last renewed on:',
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                appFormattedRenewalDate,
-                                                style: const TextStyle(
-                                                  decorationColor:
-                                                      Color(0xFF004797),
-                                                  decoration: TextDecoration
-                                                      .underline, // Adds underline
-                                                  fontStyle: FontStyle
-                                                      .italic, // Makes text italic
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF004797),
+                                          if (appFormattedRenewalDate != '')
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Last renewed on:',
+                                                  style:
+                                                      TextStyle(fontSize: 13),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'Next renewal on:',
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                appFormatteNextRenewalDate,
-                                                style: const TextStyle(
-                                                  decorationColor:
-                                                      Color(0xFF004797),
-                                                  decoration: TextDecoration
-                                                      .underline, // Adds underline
-                                                  fontStyle: FontStyle
-                                                      .italic, // Makes text italic
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF004797),
+                                                const Spacer(),
+                                                Text(
+                                                  appFormattedRenewalDate,
+                                                  style: const TextStyle(
+                                                    decorationColor:
+                                                        Color(0xFF004797),
+                                                    decoration: TextDecoration
+                                                        .underline, // Adds underline
+                                                    fontStyle: FontStyle
+                                                        .italic, // Makes text italic
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF004797),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          )
+                                              ],
+                                            ),
+                                          if (appFormattedRenewalDate != '')
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          if (appFormatteNextRenewalDate != '')
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Next renewal on:',
+                                                  style:
+                                                      TextStyle(fontSize: 13),
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  appFormatteNextRenewalDate,
+                                                  style: const TextStyle(
+                                                    decorationColor:
+                                                        Color(0xFF004797),
+                                                    decoration: TextDecoration
+                                                        .underline, // Adds underline
+                                                    fontStyle: FontStyle
+                                                        .italic, // Makes text italic
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF004797),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                         ],
                                       ),
                                     ),
@@ -585,7 +598,10 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                           buttonHeight: 40,
                                           sideColor: const Color(0xFFF76412),
                                           buttonColor: const Color(0xFFF76412),
-                                          label: appSubscription?.status.toString() ?? '',
+                                          label: appSubscription?.status
+                                                  .toString()
+                                                  .toUpperCase() ??
+                                              '',
                                           onPressed: () {
                                             if (appSubscription?.status ==
                                                     'free' ||

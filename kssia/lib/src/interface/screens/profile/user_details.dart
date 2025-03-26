@@ -225,21 +225,32 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
   }
 
   Future<void> _editAward({required Award oldAward}) async {
-    await api
-        .createFileUrl(
-      _awardImageFIle!.path,
-    )
-        .then((url) {
-      final String awardUrl = url;
+    if (_awardImageFIle != null) {
+      // If a new image is selected, upload it
+      try {
+        final String awardUrl = await api.createFileUrl(
+          _awardImageFIle!.path,
+        );
+        final newAward = Award(
+          name: awardNameController.text,
+          url: awardUrl,
+          authorityName: awardAuthorityController.text,
+        );
+
+        ref.read(userProvider.notifier).editAward(oldAward, newAward);
+      } catch (e) {
+        print('Error uploading award image: $e');
+      }
+    } else {
+      // Text-only update - keep the existing image URL
       final newAward = Award(
         name: awardNameController.text,
-        url: awardUrl,
+        url: oldAward.url, // Preserve existing image URL
         authorityName: awardAuthorityController.text,
       );
 
       ref.read(userProvider.notifier).editAward(oldAward, newAward);
-    });
-    _awardImageFIle == null;
+    }
   }
 
   Future<void> _editProduct(int index) async {
@@ -2374,6 +2385,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         context: context);
   }
 
+
   void _editCertificate(int index) async {
     final Certificate oldCertificate =
         ref.read(userProvider).value!.certificates![index];
@@ -2388,16 +2400,33 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         pickImage: _pickFile,
         imageType: 'certificate',
         addCertificateCard: () async {
-          await api.createFileUrl(_certificateImageFIle!.path).then((url) {
-            final String certificateUrl = url;
+          if (_certificateImageFIle != null) {
+            // If a new image is selected, upload it
+            try {
+              final String certificateUrl =
+                  await api. createFileUrl(_certificateImageFIle!.path);
+              final newCertificate = Certificate(
+                  name: certificateNameController.text, url: certificateUrl);
+              ref
+                  .read(userProvider.notifier)
+                  .editCertificate(oldCertificate, newCertificate);
+            } catch (e) {
+              print('Error uploading certificate image: $e');
+             
+            }
+          } else {
+            // Text-only update - keep the existing image URL
             final newCertificate = Certificate(
-                name: certificateNameController.text, url: certificateUrl);
+              name: certificateNameController.text,
+              url: oldCertificate.url, // Preserve existing image URL
+            );
             ref
                 .read(userProvider.notifier)
                 .editCertificate(oldCertificate, newCertificate);
-          });
+          }
         },
       ),
     );
   }
+
 }

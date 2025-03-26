@@ -31,7 +31,6 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
           return ShowPaymentUploadSheet(
             subscriptionType: subscriptionType,
             pickImage: _pickFile,
-        
             imageType: 'payment',
             paymentImage: _paymentImage,
           );
@@ -92,7 +91,6 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
               const SizedBox(height: 8.0),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     '₹1000',
@@ -308,7 +306,8 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                     child: customButton(
                         label: 'Upload Reciept',
                         onPressed: () {
-                          _openModalSheet(subscriptionType: widget.subcriptionType);
+                          _openModalSheet(
+                              subscriptionType: widget.subcriptionType);
                         }),
                   )),
               const SizedBox(height: 16.0),
