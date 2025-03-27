@@ -350,7 +350,7 @@ class MenuPage extends StatelessWidget {
                       //   },
                       // ),
 
-                      if (user.phoneNumbers?.personal != '+919645398555')
+                      // if (user.phoneNumbers?.personal != '+919645398555')
                       _buildListTile(
                         context,
                         Icons.subscriptions,

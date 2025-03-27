@@ -178,7 +178,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                         style: TextStyle(
                                             fontSize: 26,
                                             fontWeight: FontWeight.w600),
-                                        '₹1000  ',
+                                        '₹1050  ',
                                       ),
                                       Text(
                                         style: TextStyle(
@@ -480,10 +480,8 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                           null
                                                       ? Text(
                                                           appSubscription
-                                                                      ?.status ==
-                                                                  'active'
-                                                              ? 'Premium'
-                                                              : 'Inactive',
+                                                                  ?.status ??
+                                                              'Inactive',
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 12,
@@ -603,8 +601,8 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
                                                   .toUpperCase() ??
                                               '',
                                           onPressed: () {
-                                            if (appSubscription?.status ==
-                                                    'free' ||
+                                            if (appSubscription?.status !=
+                                                    'premium' ||
                                                 appSubscription?.status == null)
                                               Navigator.push(
                                                   context,
