@@ -89,11 +89,11 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                 ),
               ),
               const SizedBox(height: 8.0),
-              const Row(
+               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '₹1000',
+              widget.     subcriptionType=='membership'? '₹1050':"1000",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 40,
