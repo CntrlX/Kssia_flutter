@@ -1,151 +1,299 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:kssia/src/data/notifiers/events_notifier.dart';
+import 'package:kssia/src/data/services/api_routes/events_api.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
+import 'package:shimmer/shimmer.dart'; // Import the ViewMoreEventPage
 
-class Event_page extends StatelessWidget {
+class EventPage extends ConsumerStatefulWidget {
+  const EventPage({super.key});
+
+  @override
+  ConsumerState<EventPage> createState() => _EventPageState();
+}
+
+class _EventPageState extends ConsumerState<EventPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _fetchInitialEvents();
+  }
+
+  Future<void> _fetchInitialEvents() async {
+    await ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      ref.read(eventsNotifierProvider.notifier).fetchMoreEvents();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: TextField(
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: 'Search for Events ',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
+    return Consumer(
+      builder: (context, ref, child) {
+        final events = ref.watch(eventsNotifierProvider);
+        final isLoading = ref.read(eventsNotifierProvider.notifier).isLoading;
+        if (!isLoading) {
+          return ListView(
+            controller:
+                _scrollController, // Attach controller to outer ListView
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              // Commented out search field, but you can add it back if needed
+              // Container(
+              //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: TextField(
+              //     decoration: InputDecoration(
+              //       prefixIcon: Icon(Icons.search),
+              //       hintText: 'Search for Events',
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(8.0),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics:
+                    const NeverScrollableScrollPhysics(), // No scrolling inside
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  return _buildPost(
+                    withImage: true,
+                    context: context,
+                    event: events[index], // Passing event parameter
+                  );
+                },
               ),
-            ),
-          ),
-        ),
-        SizedBox(height: 16),
-        _buildPost(),
-        _buildPost(withImage: true),
-        _buildPost(withImage: true),
-      ],
+            ],
+          );
+        } else {
+          return LoadingAnimation();
+        }
+      },
     );
   }
 
-  Widget _buildPost({bool withImage = false}) {
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildPost(
+      {bool withImage = false,
+      required BuildContext context,
+      required Event event}) {
+    String time = DateFormat('hh:mm a').format(event.startTime!);
+    String date = DateFormat('yyyy-MM-dd').format(event.startDate!);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (withImage) ...[
-              SizedBox(height: 16),
-              Image(
-                  image: NetworkImage(
-                      'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg')) // Replace with your image path
-            ],
-            Text(
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. '
-              'Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              style: TextStyle(fontSize: 14),
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(
-                      'assets/icons/johnkappa_feed.png'), // Replace with your logo image path
-                  radius: 16,
-                ),
-                SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'John Kappa',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    Text(
-                      'Company name',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Text(
-                  '12:30 PM - Apr 21, 2021',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PostWidget extends StatelessWidget {
-  final String authorName;
-  final String companyName;
-  final String timestamp;
-  final String content;
-  final String imagePath;
-
-  PostWidget({
-    required this.authorName,
-    required this.companyName,
-    required this.timestamp,
-    required this.content,
-    required this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
+      elevation: 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            content,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 8),
-          Image(image: NetworkImage(imagePath)),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(
-                    'assets/images/avatar.png'), // Replace with your avatar image path
-              ),
-              SizedBox(width: 8),
-              Column(
+          if (withImage) ...[
+            Stack(
+              children: [
+                Container(
+                  height: 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    color: Colors.grey[300],
+                  ),
+                  child: Stack(
+                    children: [
+                      // Image goes here
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                          child: Image.network(
+                            errorBuilder: (context, error, stackTrace) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                              );
+                            },
+                            event.image!, // Replace with your image URL
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      // Icon placed above the image
+                      // Center(
+                      //   child: Icon(
+                      //     Icons.play_circle_fill,
+                      //     color: Colors.white,
+                      //     size: 50,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Color(
+                            0xFFA9F3C7), // Greenish background for LIVE label
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: event.status != null && event.status != ''
+                          ? Text(
+                              event.status!,
+                              style: TextStyle(
+                                color:
+                                    Color(0xFF0F7036), // Darker green for text
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : null),
+                ),
+              ],
+            ),
+            Container(color: Colors.white, height: 16),
+          ],
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    authorName,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        event.type!,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                  0xFFFF3F0A9), // Light red background color for date
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.calendar_today,
+                                    size: 18, color: Color(0xFF700F0F)),
+                                const SizedBox(width: 5),
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color.fromARGB(255, 109, 84, 84),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFAED0E9),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.access_time,
+                                    size: 18, color: Color(0xFF0E1877)),
+                                const SizedBox(width: 5),
+                                Text(
+                                  time,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF0E1877),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  Text(companyName),
+                  SizedBox(height: 8),
+                  Text(
+                    event.name!,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    event.description ?? '',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewMoreEventPage(
+                                      event: event,
+                                    )),
+                          );
+                          ref.invalidate(fetchEventsProvider);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF0E1877), // Blue color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'View more',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
-              Spacer(),
-              Text(timestamp),
-            ],
+            ),
           ),
         ],
       ),

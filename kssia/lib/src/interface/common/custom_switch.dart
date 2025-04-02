@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomSwitch extends StatefulWidget {
+class CustomSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
@@ -10,26 +10,8 @@ class CustomSwitch extends StatefulWidget {
     required this.onChanged,
   }) : super(key: key);
 
-  @override
-  _CustomSwitchState createState() => _CustomSwitchState();
-}
-
-class _CustomSwitchState extends State<CustomSwitch> {
-  bool isOn;
-
-  _CustomSwitchState() : isOn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isOn = widget.value;
-  }
-
   void _toggleSwitch() {
-    setState(() {
-      isOn = !isOn;
-    });
-    widget.onChanged(isOn);
+    onChanged(!value);
   }
 
   @override
@@ -47,7 +29,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
         height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(height / 2),
-          color: isOn ? Colors.blue : Colors.grey,
+          color: value ? Colors.blue : Colors.grey,
         ),
         child: Stack(
           children: [
@@ -55,7 +37,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn,
               top: 2.5,
-              left: isOn ? width - thumbSize - padding : padding,
+              left: value ? width - thumbSize - padding : padding,
               child: Container(
                 width: thumbSize,
                 height: thumbSize,

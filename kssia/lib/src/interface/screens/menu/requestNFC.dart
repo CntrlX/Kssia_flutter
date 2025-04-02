@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
 
 class RequestNFCPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Request NFC'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
           },
+        ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Color.fromRGBO(51, 51, 51, 0.2),
+            height: 1.0,
+          ),
         ),
       ),
       body: Padding(
@@ -19,49 +31,54 @@ class RequestNFCPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Connect     with Ease',
+              'Connect\nwith Ease',
               style: TextStyle(
-                fontSize: 60,
+                fontSize: 35,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 13, 73, 122),
+                color: Color(0xFF004797),
               ),
+            ),
+            Flexible(
+              child: Text(
+                  'Tired of carrying bulky business cards or typing out contact details? Upgrade to the future with our sleek NFC card! Just a simple tap, and your contact information, website, or social media instantly appears on any smartphone.'),
             ),
             SizedBox(height: 16),
-            Text(
-              'Lorem ipsum dolor sit amet consectetur. Justo facilisis mattis tincidunt vitae quam quis. Nec nisi duis amet aenean arcu tristique et et eleifend.',
-              style: TextStyle(fontSize: 16),
-            ),
             SizedBox(height: 24),
             Center(
-              child: Image.network(
-                'https://placehold.co/600x400/png', // Replace with your image URL
-                height: 200,
+              child: Image.asset(
+                scale: 2.5,
+                'assets/NFC.png', // Replace with your image URL
               ),
             ),
-            SizedBox(height: 69),
-            Center(
-                child: ElevatedButton(
-                onPressed: () {
-                  // Add your request NFC card logic here
+            customButton(
+                label: 'REQUEST NFC',
+                onPressed: () async {
+                  // Show the loading dialog
+                  showDialog(
+                    context: context,
+                    barrierDismissible:
+                        false, // Prevent dismissal by tapping outside
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Center(
+                          child: LoadingAnimation(),
+                        ),
+                      );
+                    },
+                  );
+
+                  try {
+                    // Make the NFC request
+                    ApiRoutes userApi = ApiRoutes();
+                    await userApi.requestNFC(context);
+                  } finally {
+                    // Remove the loading dialog once the request is completed
+                    Navigator.of(context).pop();
+                  }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF003399), // Dark blue color
-                  shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0), // Rectangle shape
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 100.0), // Increase the horizontal length here
-                  child: Text(
-                  'REQUEST NFC CARD',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white, // Set the color to white
-                  ),
-                  ),
-                ),
-                ),
-            ),
+                fontSize: 16),
+         
           ],
         ),
       ),

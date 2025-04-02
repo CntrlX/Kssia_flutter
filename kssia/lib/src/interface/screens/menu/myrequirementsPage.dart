@@ -1,55 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/interface/common/loading.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MyRequirementsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My requirements'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              // Handle WhatsApp button press
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildRequirementCard(
-              context,
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              '3 messages',
-              '12:30 PM · Apr 21, 2021',
+    return Consumer(
+      builder: (context, ref, child) {
+        final asyncUserRequirments =
+            ref.watch(fetchUserRequirementsProvider(token));
+        return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: Text(
+                "My Requirements",
+                style: TextStyle(fontSize: 17),
+              ),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
-            SizedBox(height: 16),
-            _buildRequirementCard(
-              context,
-              'Lorem ipsum dolor sit amet consectetur. Quis enim nisl ullamcorper tristique integer orci nunc in eget. Amet hac bibendum dignissim eget pretium turpis in non cum.',
-              '4 messages',
-              '12:30 PM · Apr 21, 2021',
-              imageUrl: 'https://placehold.co/600x400/png', // Replace with your image URL
-            ),
-          ],
-        ),
-      ),
+            body: asyncUserRequirments.when(
+              loading: () => Center(child: LoadingAnimation()),
+              error: (error, stackTrace) {
+                // Handle error state
+                return Center(
+                  child: Text('USER HASN\'T POSTED ANYTHING'),
+                );
+              },
+              data: (userRequirements) {
+                print(userRequirements);
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: userRequirements.length,
+                          itemBuilder: (context, index) {
+                            return _buildRequirementCard(
+                                context,
+                                userRequirements[index].content,
+                                userRequirements[index].status,
+                                userRequirements[index].createdAt,
+                                userRequirements[index].id,
+                                imageUrl: userRequirements[index].image);
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              },
+            ));
+      },
     );
   }
 
-  Widget _buildRequirementCard(BuildContext context, String description, String messages, String timestamp, {String? imageUrl}) {
+  Widget _buildRequirementCard(BuildContext context, String description,
+      String status, DateTime timestamp, String requirementId,
+      {String? imageUrl}) {
+    DateTime localDateTime = timestamp.toLocal();
+
+    String formattedDate =
+        DateFormat('h:mm a · MMM d, y').format(localDateTime);
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 3,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: Color.fromARGB(255, 226, 221, 221))),
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -58,7 +89,20 @@ class MyRequirementsPage extends StatelessWidget {
             if (imageUrl != null)
               Column(
                 children: [
-                  Image.network(imageUrl),
+                  Image.network(
+                    imageUrl ?? "",
+                    errorBuilder: (context, error, stackTrace) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 10),
                 ],
               ),
@@ -67,35 +111,38 @@ class MyRequirementsPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 10),
-            Text(
-              messages,
-              style: TextStyle(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              timestamp,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'STATUS: ${status}',
+                  style: TextStyle(
+                    color: status == 'approved' ? Colors.green : Colors.red,
+                  ),
+                ),
+                Text(
+                  formattedDate.toString(),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
             ),
             SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFEB5860),
+                backgroundColor: Color(0xFFEB5757),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
               onPressed: () {
-                _showDeleteDialog(context);
+                _showDeleteDialog(context, requirementId, imageUrl!);
               },
               child: const Text(
                 'DELETE',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
+                  fontSize: 10,
                 ),
               ),
             ),
@@ -105,18 +152,20 @@ class MyRequirementsPage extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context) {
+  void _showDeleteDialog(BuildContext context, requirementId, String imageUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.network(
-                'https://img.freepik.com/free-photo/question-mark-bubble-speech-sign-symbol-icon-3d-rendering_56104-1950.jpg?t=st=1722584569~exp=1722588169~hmac=4fd202dfa51c41238e3a253545f7aab4bf8f87f64027a5f42e82cd22cd3395f5&w=1380',
-                height: 100,
+              Icon(
+                Icons.help,
+                color: Colors.blue,
+                size: 60,
               ),
               SizedBox(height: 20),
               Text(
@@ -135,15 +184,27 @@ class MyRequirementsPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('No', style: TextStyle(color: Colors.blue)),
+                    child:
+                        Text('No', style: TextStyle(color: Color(0xFF0E1877))),
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(backgroundColor: Color(0xFFEB5860)),
-                    onPressed: () {
-                      // Handle the deletion logic
-                      Navigator.of(context).pop();
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFFEB5757)),
+                        onPressed: () async {
+                          ApiRoutes userApi = ApiRoutes();
+                          // userApi.deleteFile(token, imageUrl);
+                          await userApi.deleteRequirement(
+                              token, requirementId, context);
+                          ref.invalidate(fetchUserRequirementsProvider);
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Yes, Delete',
+                            style: TextStyle(color: Colors.white)),
+                      );
                     },
-                    child: Text('Yes, Delete', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

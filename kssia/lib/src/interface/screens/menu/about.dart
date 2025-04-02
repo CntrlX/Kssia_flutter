@@ -4,74 +4,67 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('About'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        title: const Text(
+          'About',
+          style: TextStyle(fontSize: 17),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        elevation: 0,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Image.network(
-                'https://placehold.co/600x400/png', // Replace with your image URL
-                height: 200,
-              ),
-            ),
+            Image.asset('assets/aboutus1.png'),
             SizedBox(height: 16),
+            SizedBox(height: 8),
             Text(
-              'ABOUT THE COMPANY',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Lorem ipsum dolor sit amet consectetur. Lorem non tortor diam lorem viverra at nisl purus. Nec nec velit id proin vitae tempus orci donec tortor. Vehicula morbi ultrices potenti a. Fermentum nec aliquet quam velit netus. Proin eget leo non laoreet risus viverra lorem pharetra enim. Platea massa ornare id tellus nulla id ullamcorper nisl est. Sem quam est at urna feugiat. Tristique porttitor elit ultricies.',
+              '''The Kerala State Small Industries Association was registered in 1961 under the Travancore Cochin Literary Scientific & Charitable Societies Registration Act 1955. This is the only representative Association of small-scale industries in Kerala State. The Association has district units in all the 14 revenue Districts of the State.''',
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
             Row(
               children: [
-                Icon(Icons.phone, color: Colors.blue),
+                Icon(Icons.phone, color: Color(0xFF004797)),
                 SizedBox(width: 10),
-                Text('9425726433'),
+                Text('8078955514', style: TextStyle(fontSize: 16)),
               ],
             ),
             SizedBox(height: 10),
             Row(
               children: [
-                Icon(Icons.email, color: Colors.blue),
+                Icon(Icons.email, color: Color(0xFF004797)),
                 SizedBox(width: 10),
-                Text('kssia@gmail.com'),
+                Text('kssiatrisur@gmail.com', style: TextStyle(fontSize: 16)),
               ],
             ),
             SizedBox(height: 10),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.location_on, color: Colors.blue),
+                Icon(Icons.location_on, color: Color(0xFF004797)),
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Lorem ipsum dolor sit amet consectetur. Diam orci pretium sed volutpat elit. Vulputate in amet ac pulvinar.',
+                    '''
+Kerala State Small Industries Association Thrissur,
+KSSIA Building, Patturaikkal, Shornur Road, Thiruvamapadi P. O, Thrissur - 680022
+Tel 0487-2321562''',
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Center(
-              child: Image.network(
-                'https://placehold.co/600x400/png', // Replace with your image URL
-                height: 200,
-              ),
-            ),
+            SizedBox(height: 16),
+            // Image.network('https://placehold.co/600x400/png'),
           ],
         ),
       ),

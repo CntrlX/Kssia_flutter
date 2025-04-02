@@ -1,200 +1,328 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:kssia/src/data/notifiers/loading_notifier.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/data/globals.dart';
+import 'package:kssia/src/data/models/product_model.dart';
+import 'package:kssia/src/data/models/user_model.dart';
+import 'package:kssia/src/interface/common/Shimmer/edit_user_shimmer.dart';
+import 'package:kssia/src/interface/common/cards.dart';
+import 'package:kssia/src/interface/common/components/snackbar.dart';
+import 'package:kssia/src/interface/common/customModalsheets.dart';
+import 'package:kssia/src/interface/common/customTextfields.dart';
 import 'package:kssia/src/interface/common/custom_switch.dart';
 import 'package:kssia/src/interface/common/components/svg_icon.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
+import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+import 'package:kssia/src/interface/common/website_video_cards.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
-import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
+import 'package:kssia/src/interface/screens/profile/user_details.dart';
+import 'package:kssia/src/validate_urls.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 TextEditingController _mobileController = TextEditingController();
 TextEditingController _otpController = TextEditingController();
 
-class LoginPage extends StatefulWidget {
+class TrianglePainter extends CustomPainter {
   @override
-  _LoginPageState createState() => _LoginPageState();
-}
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = const Color.fromARGB(255, 197, 217, 234);
 
-class _LoginPageState extends State<LoginPage> {
-  final PageController _pageController = PageController();
+    final path = Path();
+    // Start at the bottom left corner
+    path.moveTo(0, size.height);
+    // Draw to the top left corner
+    path.lineTo(0, size.height * 0.6);
+    // Draw to the bottom right corner
+    path.lineTo(size.width, size.height);
+    // Close the path back to the starting point
+    path.close();
 
-  void _nextPage() {
-    if (_pageController.hasClients) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    canvas.drawPath(path, paint);
   }
 
   @override
-  Widget build(BuildContext context) {
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+final countryCodeProvider = StateProvider<String?>((ref) => '91');
+
+class PhoneNumberScreen extends ConsumerWidget {
+  PhoneNumberScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(loadingProvider);
+    final countryCode = ref.watch(countryCodeProvider);
+
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // Disable swiping
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      body: Stack(
         children: [
-          PhoneNumberScreen(onNext: _nextPage),
-          OTPScreen(onNext: _nextPage),
-          ProfileCompletionScreen(onNext: _nextPage),
-          const DetailsPage(),
+          Positioned.fill(
+            child: CustomPaint(
+              painter: TrianglePainter(),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/loginPeople.png',
+              scale: 1.2,
+            ),
+          ),
+
+          Positioned.fill(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    Image.asset(
+                      'assets/icons/kssiaLogo.png',
+                      scale: 8,
+                    ),
+                    const SizedBox(height: 80),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: bottomInset),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Please enter your mobile number',
+                                style: TextStyle(
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              IntlPhoneField(
+                                validator: (phone) {
+                                  if (phone!.number.length > 9) {
+                                    if (phone.number.length > 10) {
+                                      return 'Phone number cannot exceed 10 digits';
+                                    }
+                                  }
+                                  return null;
+                                },
+                                style: const TextStyle(
+                                  letterSpacing: 8,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                controller: _mobileController,
+                                disableLengthCheck: true,
+                                showCountryFlag: true,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter your phone number',
+                                  hintStyle: const TextStyle(
+                                    letterSpacing: 2,
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(2.0),
+                                    borderSide: const BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 16.0,
+                                    horizontal: 10.0,
+                                  ),
+                                ),
+                                onCountryChanged: (value) {
+                                  ref.read(countryCodeProvider.notifier).state =
+                                      value.dialCode;
+                                },
+                                initialCountryCode: 'IN',
+                                onChanged: (PhoneNumber phone) {
+                                  print(phone.completeNumber);
+                                },
+                                flagsButtonPadding: const EdgeInsets.only(
+                                    left: 10, right: 10.0),
+                                showDropdownIcon: true,
+                                dropdownIconPosition: IconPosition.trailing,
+                                dropdownTextStyle: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'A 6 digit verification code will be sent',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400, fontSize: 14),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: SizedBox(
+                                  height: 47,
+                                  width: double.infinity,
+                                  child: customButton(
+                                    label: 'GENERATE OTP',
+                                    onPressed: isLoading
+                                        ? () {}
+                                        : () {
+                                            _handleOtpGeneration(context, ref);
+                                          },
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Loading overlay
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: LoadingAnimation(),
+              ),
+            ),
         ],
       ),
     );
   }
-}
 
-class PhoneNumberScreen extends StatelessWidget {
-  final VoidCallback onNext;
+  Future<void> _handleOtpGeneration(BuildContext context, WidgetRef ref) async {
+    final countryCode = ref.watch(countryCodeProvider);
+    ref.read(loadingProvider.notifier).startLoading();
 
-  PhoneNumberScreen({required this.onNext});
+    try {
+      if (countryCode == '971') {
+        if (_mobileController.text.length != 9) {
+          CustomSnackbar.showSnackbar(
+              context, 'Please Enter valid mobile number');
+        } else {
+          ApiRoutes userApi = ApiRoutes();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            Image.asset(
-              'assets/icons/kssiaLogo.png',
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Enter your Phone Number',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-            ),
-            const SizedBox(height: 20),
-            IntlPhoneField(
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 5.0,
+          final data = await userApi.submitPhoneNumber(
+              countryCode == '971'
+                  ? 9710.toString()
+                  : countryCode ?? 91.toString(),
+              context,
+              _mobileController.text);
+          final verificationId = data['verificationId'];
+          final resendToken = data['resendToken'];
+          if (verificationId != null && verificationId.isNotEmpty) {
+            log('Otp Sent successfully');
+
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                phone: _mobileController.text,
+                verificationId: verificationId,
+                resendToken: resendToken ?? '',
               ),
-              readOnly: true,
-              controller: _mobileController,
-              disableLengthCheck: true,
-              showCountryFlag: false,
-              decoration: const InputDecoration(
-                hintText: '0000000000',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                  letterSpacing: 5.0,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w400,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
+            ));
+          } else {
+            CustomSnackbar.showSnackbar(context, 'Failed');
+          }
+        }
+      } else if (countryCode != '971') {
+        if (_mobileController.text.length != 10) {
+          CustomSnackbar.showSnackbar(
+              context, 'Please Enter valid mobile number');
+        } else {
+          ApiRoutes userApi = ApiRoutes();
+
+          final data = await userApi.submitPhoneNumber(
+              countryCode == '971'
+                  ? 9710.toString()
+                  : countryCode ?? 971.toString(),
+              context,
+              _mobileController.text);
+          final verificationId = data['verificationId'];
+          final resendToken = data['resendToken'];
+          if (verificationId != null && verificationId.isNotEmpty) {
+            log('Otp Sent successfully');
+
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                phone: _mobileController.text,
+                verificationId: verificationId,
+                resendToken: resendToken ?? '',
               ),
-              initialCountryCode: 'IN',
-              onChanged: (PhoneNumber phone) {
-                print(phone.completeNumber);
-              },
-              flagsButtonPadding: EdgeInsets.zero,
-              showDropdownIcon: true,
-              dropdownIconPosition: IconPosition.trailing,
-              dropdownTextStyle: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'We will send you the 4 digit Verification code',
-              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-            ),
-            const Spacer(),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '1', model: 'mobile'),
-                    _buildbutton(label: '3', model: 'mobile'),
-                    _buildbutton(label: '3', model: 'mobile')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '4', model: 'mobile'),
-                    _buildbutton(label: '5', model: 'mobile'),
-                    _buildbutton(label: '6', model: 'mobile')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '7', model: 'mobile'),
-                    _buildbutton(label: '8', model: 'mobile'),
-                    _buildbutton(label: '9', model: 'mobile')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: 'ABC', model: ''),
-                    _buildbutton(label: '0', model: 'mobile'),
-                    _buildbutton(
-                        label: 'back',
-                        icondata: Icons.arrow_back_ios,
-                        model: 'mobile')
-                  ],
-                )
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SizedBox(
-                height: 47,
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: onNext,
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          side: const BorderSide(color: Color(0xFF004797)),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'GENERATE OTP',
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ));
+          } else {
+            CustomSnackbar.showSnackbar(context, 'Failed');
+          }
+        }
+      }
+    } catch (e) {
+      CustomSnackbar.showSnackbar(context, 'Failed');
+    } finally {
+      ref.read(loadingProvider.notifier).stopLoading();
+    }
   }
 }
 
-class OTPScreen extends StatefulWidget {
-  final VoidCallback onNext;
-  OTPScreen({required this.onNext});
+class OTPScreen extends ConsumerStatefulWidget {
+  final String verificationId;
+  final String resendToken;
+  final String phone;
+  const OTPScreen({
+    required this.phone,
+    required this.resendToken,
+    super.key,
+    required this.verificationId,
+  });
 
   @override
-  State<OTPScreen> createState() => _OTPScreenState();
+  ConsumerState<OTPScreen> createState() => _OTPScreenState();
 }
 
-class _OTPScreenState extends State<OTPScreen> {
+class _OTPScreenState extends ConsumerState<OTPScreen> {
   Timer? _timer;
 
-  int _start = 20;
+  int _start =59;
 
   bool _isButtonDisabled = true;
 
@@ -206,7 +334,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   void startTimer() {
     _isButtonDisabled = true;
-    _start = 20;
+    _start = 59;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_start == 0) {
         setState(() {
@@ -223,7 +351,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   void resendCode() {
     startTimer();
-    // Add your resend code logic here
+    ApiRoutes userApi = ApiRoutes();
+    userApi.resendOTP(widget.phone, widget.verificationId, widget.resendToken);
   }
 
   @override
@@ -234,174 +363,227 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(loadingProvider);
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            Image.asset(
-              'assets/icons/kssiaLogo.png',
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: TrianglePainter(),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Enter your OTP',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/loginPeople.png',
+              scale: 1.2,
             ),
-            const SizedBox(height: 20),
-            TextField(
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 5.0,
-              ),
-              readOnly: true,
-              controller: _otpController,
-              decoration: const InputDecoration(
-                hintText: '00000',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                  letterSpacing: 5.0,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w400,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: (value) {
-                print(value);
-              },
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: _isButtonDisabled
-                  ? null
-                  : () {
-                      resendCode();
-                    },
-              child: Text(
-                _isButtonDisabled ? 'Resend Code in $_start s' : 'Resend Code',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: _isButtonDisabled ? Colors.grey : Colors.black,
-                ),
-              ),
-            ),
-            const Spacer(),
-            Column(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '1', model: 'otp'),
-                    _buildbutton(label: '3', model: 'otp'),
-                    _buildbutton(label: '3', model: 'otp')
-                  ],
+                const SizedBox(height: 40),
+                Image.asset(
+                  'assets/icons/kssiaLogo.png',
+                  scale: 8,
+                ),
+                const SizedBox(height: 80),
+                const Text(
+                  'Enter your OTP',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: PinCodeTextField(
+                    appContext: context,
+                    length: 6, // Number of OTP digits
+                    obscureText: false,
+                    keyboardType: TextInputType.number, // Number-only keyboard
+                    animationType: AnimationType.fade,
+                    textStyle: const TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w300,
+                      letterSpacing: 5.0,
+                    ),
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(5),
+                      fieldHeight: 55,
+                      fieldWidth: 50, selectedColor: Colors.blue,
+                      activeColor: const Color.fromARGB(255, 232, 226, 226),
+                      inactiveColor: const Color.fromARGB(
+                          255, 232, 226, 226), // Box color when not focused
+                      activeFillColor: Colors.white, // Box color when focused
+                      selectedFillColor:
+                          Colors.white, // Box color when selected
+                      inactiveFillColor:
+                          Colors.white, // Box fill color when not selected
+                    ),
+                    animationDuration: const Duration(milliseconds: 300),
+                    backgroundColor: Colors.transparent,
+                    enableActiveFill: true,
+                    controller: _otpController,
+                    onChanged: (value) {
+                      // Handle input change
+                    },
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildbutton(label: '4', model: 'otp'),
-                    _buildbutton(label: '5', model: 'otp'),
-                    _buildbutton(label: '6', model: 'otp')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: '7', model: 'otp'),
-                    _buildbutton(label: '8', model: 'otp'),
-                    _buildbutton(label: '9', model: 'otp')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildbutton(label: 'ABC', model: ''),
-                    _buildbutton(label: '0', model: 'otp'),
-                    _buildbutton(
-                        label: 'back',
-                        icondata: Icons.arrow_back_ios,
-                        model: 'otp')
-                  ],
-                )
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SizedBox(
-                height: 47,
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: widget.onNext,
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFF004797)),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          side: const BorderSide(color: Color(0xFF004797)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: Text(
+                        _isButtonDisabled
+                            ? 'Resend OTP in $_start seconds'
+                            : 'Enter your OTP',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: _isButtonDisabled ? Colors.grey : Colors.black,
                         ),
                       ),
                     ),
-                    child: const Text(
-                      'NEXT',
-                      style: TextStyle(color: Colors.white),
-                    )),
+                    GestureDetector(
+                      onTap: _isButtonDisabled ? null : resendCode,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Text(
+                          _isButtonDisabled ? '' : 'Resend Code',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: _isButtonDisabled ? Colors.grey : Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: SizedBox(
+                    height: 47,
+                    width: double.infinity,
+                    child: customButton(
+                      label: 'CONTINUE',
+                      onPressed: isLoading
+                          ? () {}
+                          : () {
+                              _handleOtpVerification(context, ref);
+                            },
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Loading overlay
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: LoadingAnimation(),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
+
+  Future<void> _handleOtpVerification(
+      BuildContext context, WidgetRef ref) async {
+    ref.read(loadingProvider.notifier).startLoading();
+
+    try {
+      print(_otpController.text);
+
+      ApiRoutes userApi = ApiRoutes();
+      Map<String, dynamic> responseMap = await userApi.verifyOTP(
+          verificationId: widget.verificationId,
+          fcmToken: fcmToken,
+          smsCode: _otpController.text,
+          context: context);
+
+      String savedToken = responseMap['token'];
+      String savedId = responseMap['userId'];
+
+      if (savedToken.isNotEmpty && savedId.isNotEmpty) {
+        final SharedPreferences preferences =
+            await SharedPreferences.getInstance();
+        await preferences.setString('token', savedToken);
+        await preferences.setString('id', savedId);
+        token = savedToken;
+        id = savedId;
+        log('savedToken: $savedToken');
+        log('savedId: $savedId');
+        ref.invalidate(userProvider);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ProfileCompletionScreen()));
+      } else {
+        // CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+      }
+    } catch (e) {
+      // CustomSnackbar.showSnackbar(context, 'Wrong OTP');
+    } finally {
+      ref.read(loadingProvider.notifier).stopLoading();
+    }
+  }
 }
 
-InkWell _buildbutton({
-  required String label,
-  IconData? icondata,
-  required String model,
-}) {
+InkWell _buildbutton(
+    {required String label,
+    IconData? icondata,
+    required String model,
+    String? countryCode}) {
   return InkWell(
       onTap: () {
-        _onbuttonTap(label, model);
+        _onbuttonTap(label, model, countryCode ?? '971');
       },
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
           height: 40,
-          width: 100,
+          width: 80, // Adjusted width to fit better
           child: DecoratedBox(
-              decoration: const BoxDecoration(),
-              child: Center(
-                  child: icondata != null
-                      ? Icon(icondata,
-                          size: 19,
-                          color: const Color.fromARGB(255, 139, 138, 138))
-                      : Text(
-                          label,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 23,
-                              color: Color.fromARGB(255, 117, 116, 116)),
-                        ))),
+            decoration: const BoxDecoration(),
+            child: Center(
+              child: icondata != null
+                  ? Icon(icondata,
+                      size: 19, color: const Color.fromARGB(255, 139, 138, 138))
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 23,
+                          color: Color.fromARGB(255, 117, 116, 116)),
+                    ),
+            ),
+          ),
         ),
       ));
 }
 
-_onbuttonTap(var value, String model) {
+_onbuttonTap(var value, String model, String countryCode) {
   if (model == "mobile") {
     if (value == 'back') {
       if (_mobileController.text.isNotEmpty) {
         _mobileController.text = _mobileController.text
             .substring(0, _mobileController.text.length - 1);
       }
-    } else if (_mobileController.text.length < 10) {
+    } else if (countryCode == '971' && _mobileController.text.length < 9) {
+      log('Country code:$countryCode');
+      _mobileController.text += value;
+    } else if (countryCode != '971' && _mobileController.text.length < 10) {
+      log('Country code:$countryCode');
       _mobileController.text += value;
     } else {}
   } else if (model == "otp") {
@@ -411,7 +593,7 @@ _onbuttonTap(var value, String model) {
             _otpController.text.substring(0, _otpController.text.length - 1);
       }
     } else {
-      if (_otpController.text.length < 5) {
+      if (_otpController.text.length < 6) {
         _otpController.text += value;
         if (_otpController.text.length == 5) {}
       } else {}
@@ -420,13 +602,12 @@ _onbuttonTap(var value, String model) {
 }
 
 class ProfileCompletionScreen extends StatelessWidget {
-  final VoidCallback onNext;
-
-  ProfileCompletionScreen({required this.onNext});
+  ProfileCompletionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -449,713 +630,33 @@ class ProfileCompletionScreen extends StatelessWidget {
               child: SizedBox(
                   height: 50,
                   width: double.infinity,
-                  child: customButton(label: 'Next', onPressed: onNext)),
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      return customButton(
+                          label: 'Next',
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    settings: RouteSettings(
+                                        name: 'ProfileCompletion'),
+                                    builder: (context) => const DetailsPage()));
+                            ref.invalidate(userProvider);
+                          },
+                          fontSize: 16);
+                    },
+                  )),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => MainPage()));
+                        builder: (BuildContext context) => const MainPage()));
               },
               child: const Text('Skip',
                   style: TextStyle(color: Colors.black, fontSize: 15)),
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class DetailsPage extends ConsumerStatefulWidget {
-  const DetailsPage({super.key});
-
-  @override
-  ConsumerState<DetailsPage> createState() => _DetailsPageState();
-}
-
-class _DetailsPageState extends ConsumerState<DetailsPage> {
-  final isPhoneNumberVisibleProvider = StateProvider<bool>((ref) => false);
-  final isContactDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isSocialDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isWebsiteDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isVideoDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isAwardsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isProductsDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-  final isCertificateDetailsVisibleProvider =
-      StateProvider<bool>((ref) => false);
-  final isBrochureDetailsVisibleProvider = StateProvider<bool>((ref) => false);
-
-  @override
-  Widget build(BuildContext context) {
-    final isPhoneNumberVisible = ref.watch(isPhoneNumberVisibleProvider);
-    final isContactDetailsVisible = ref.watch(isContactDetailsVisibleProvider);
-    final isSocialDetailsVisible = ref.watch(isSocialDetailsVisibleProvider);
-    final isWebsiteDetailsVisible = ref.watch(isWebsiteDetailsVisibleProvider);
-    final isVideoDetailsVisible = ref.watch(isVideoDetailsVisibleProvider);
-    final isAwardsDetailsVisible = ref.watch(isAwardsDetailsVisibleProvider);
-    final isProductsDetailsVisible =
-        ref.watch(isProductsDetailsVisibleProvider);
-    final isCertificateDetailsVisible =
-        ref.watch(isCertificateDetailsVisibleProvider);
-    final isBrochureDetailsVisible =
-        ref.watch(isBrochureDetailsVisibleProvider);
-
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          offset: const Offset(0, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                    child: AppBar(
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-                      leadingWidth: 100,
-                      leading: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset(
-                            'assets/icons/kssiaLogo.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        MainPage()));
-                          },
-                          child: const Text(
-                            'Skip',
-                            style: TextStyle(color: Colors.black, fontSize: 16),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 35),
-                  Center(
-                    child: Stack(
-                      children: [
-                        DottedBorder(
-                          borderType: BorderType.Circle,
-                          dashPattern: [6, 3],
-                          color: Colors.grey,
-                          strokeWidth: 2,
-                          child: ClipOval(
-                            child: Container(
-                              width: 120,
-                              height: 120,
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                              child: const Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 4,
-                          right: 4,
-                          child: InkWell(
-                            onTap: () {
-                              // Add functionality to select image from files or gallery
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    offset: const Offset(2, 2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                                shape: BoxShape.circle,
-                              ),
-                              child: const CircleAvatar(
-                                radius: 17,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.edit,
-                                  color: Color(0xFF004797),
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
-                        child: Text(
-                          'Personal Details',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        left: 20, right: 20, top: 10, bottom: 10),
-                    child: Column(
-                      children: [
-                        CustomTextField(hintText: 'Enter your Full name'),
-                        SizedBox(height: 20.0),
-                        CustomTextField(hintText: 'Designation'),
-                        SizedBox(height: 20.0),
-                        CustomTextField(hintText: 'Bio', maxLines: 5),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Add more',
-                          style: TextStyle(
-                              color: Color(0xFF004797),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Color(0xFF004797),
-                          size: 18,
-                        )
-                      ],
-                    ),
-                  ),
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 60, left: 16, bottom: 10),
-                        child: Text(
-                          'Company Details',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Center(
-                    child: Stack(
-                      children: [
-                        DottedBorder(
-                          radius: const Radius.circular(10),
-                          borderType: BorderType.RRect,
-                          dashPattern: [6, 3],
-                          color: Colors.grey,
-                          strokeWidth: 2,
-                          child: ClipRRect(
-                            child: Container(
-                                width: 110,
-                                height: 100,
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                child: const Center(
-                                    child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Upload',
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Company',
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Logo',
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ))),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -4,
-                          right: -4,
-                          child: InkWell(
-                            onTap: () {
-                              // Add functionality to select image from files or gallery
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    offset: const Offset(-1, -1),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                                shape: BoxShape.circle,
-                              ),
-                              child: const CircleAvatar(
-                                radius: 17,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.edit,
-                                  color: Color(0xFF004797),
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        top: 20, left: 20, right: 20, bottom: 10),
-                    child: CustomTextField(hintText: 'Enter Company Name'),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: CustomTextField(
-                      hintText: 'Enter Company Address',
-                      maxLines: 3,
-                      prefixIcon: Icon(
-                        Icons.location_city,
-                        color: Color(0xFF004797),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Phone Number',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        CustomSwitch(
-                          value: ref.watch(isPhoneNumberVisibleProvider),
-                          onChanged: (bool value) {
-                            setState(() {
-                              ref
-                                  .read(isPhoneNumberVisibleProvider.notifier)
-                                  .state = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isPhoneNumberVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 0, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter phone number',
-                        prefixIcon: Icon(Icons.phone, color: Color(0xFF004797)),
-                      ),
-                    ),
-                  if (isPhoneNumberVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20, bottom: 50),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Add more',
-                            style: TextStyle(
-                                color: Color(0xFF004797),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15),
-                          ),
-                          Icon(
-                            Icons.add,
-                            color: Color(0xFF004797),
-                            size: 18,
-                          )
-                        ],
-                      ),
-                    ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Contact Details',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        CustomSwitch(
-                          value: ref.watch(isContactDetailsVisibleProvider),
-                          onChanged: (bool value) {
-                            setState(() {
-                              ref
-                                  .read(
-                                      isContactDetailsVisibleProvider.notifier)
-                                  .state = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isContactDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 0, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Email',
-                        prefixIcon: Icon(Icons.email, color: Color(0xFF004797)),
-                      ),
-                    ),
-                  if (isContactDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Business Whatsapp',
-                        prefixIcon: SvgIcon(
-                          assetName: 'assets/icons/whatsapp-business.svg',
-                          color: Color(0xFF004797),
-                          size: 10,
-                        ),
-                      ),
-                    ),
-                  if (isContactDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Whatsapp',
-                        prefixIcon: SvgIcon(
-                          assetName: 'assets/icons/whatsapp.svg',
-                          color: Color(0xFF004797),
-                          size: 13,
-                        ),
-                      ),
-                    ),
-                  if (isContactDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Address',
-                        maxLines: 3,
-                        prefixIcon:
-                            Icon(Icons.location_on, color: Color(0xFF004797)),
-                      ),
-                    ),
-                  if (isContactDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20, bottom: 50),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Add more',
-                            style: TextStyle(
-                                color: Color(0xFF004797),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15),
-                          ),
-                          Icon(
-                            Icons.add,
-                            color: Color(0xFF004797),
-                            size: 18,
-                          )
-                        ],
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Social Media',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        CustomSwitch(
-                          value: ref.watch(isSocialDetailsVisibleProvider),
-                          onChanged: (bool value) {
-                            setState(() {
-                              ref
-                                  .read(isSocialDetailsVisibleProvider.notifier)
-                                  .state = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isSocialDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Ig',
-                        prefixIcon: SvgIcon(
-                          assetName: 'assets/icons/instagram.svg',
-                          size: 10,
-                          color: Color(0xFF004797),
-                        ),
-                      ),
-                    ),
-                  if (isSocialDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Linkedin',
-                        prefixIcon: SvgIcon(
-                          assetName: 'assets/icons/linkedin.svg',
-                          color: Color(0xFF004797),
-                          size: 10,
-                        ),
-                      ),
-                    ),
-                  if (isSocialDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Twitter',
-                        prefixIcon: SvgIcon(
-                          assetName: 'assets/icons/twitter.svg',
-                          color: Color(0xFF004797),
-                          size: 13,
-                        ),
-                      ),
-                    ),
-                  if (isSocialDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 20, bottom: 10),
-                      child: CustomTextField(
-                        hintText: 'Enter Facebook',
-                        prefixIcon: Icon(
-                          Icons.facebook,
-                          color: Color(0xFF004797),
-                          size: 28,
-                        ),
-                      ),
-                    ),
-                  if (isSocialDetailsVisible)
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20, bottom: 50),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Add more',
-                            style: TextStyle(
-                                color: Color(0xFF004797),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15),
-                          ),
-                          Icon(
-                            Icons.add,
-                            color: Color(0xFF004797),
-                            size: 18,
-                          )
-                        ],
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Add Website',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        CustomSwitch(
-                          value: ref.watch(isWebsiteDetailsVisibleProvider),
-                          onChanged: (bool value) {
-                            setState(() {
-                              ref
-                                  .read(
-                                      isWebsiteDetailsVisibleProvider.notifier)
-                                  .state = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isWebsiteDetailsVisible)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      child: CustomTextField(
-                        hintText: 'Enter Website Link',
-                        suffixIcon: Icon(
-                          Icons.add,
-                          color: Color(0xFF004797),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 140),
-                ],
-              ),
-            ),
-            Positioned(
-                bottom: 20,
-                left: 20,
-                right: 20,
-                child: SizedBox(
-                    height: 50,
-                    child: customButton(
-                        label: 'Save & Proceed', onPressed: () {}))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String hintText;
-  final int maxLines;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-
-  const CustomTextField({
-    Key? key,
-    required this.hintText,
-    this.maxLines = 1,
-    this.prefixIcon,
-    this.suffixIcon,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey),
-        fillColor: const Color(0xFFF2F2F2),
-        filled: true,
-        prefixIcon: prefixIcon != null && maxLines > 1
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    bottom: 50, left: 10, right: 10, top: 5),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  widthFactor: 1.0,
-                  heightFactor: maxLines > 1 ? null : 1.0,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      width: 42,
-                      height: 42,
-                      child: prefixIcon),
-                ),
-              )
-            : prefixIcon != null
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      widthFactor: 1.0,
-                      heightFactor: maxLines > 1 ? null : 1.0,
-                      child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.white,
-                          ),
-                          width: 42,
-                          height: 42,
-                          child: prefixIcon),
-                    ),
-                  )
-                : null,
-        suffixIcon: suffixIcon != null
-            ? Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, top: 5, bottom: 5),
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
-                    ),
-                    width: 42,
-                    height: 42,
-                    child: suffixIcon),
-              )
-            : null,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 212, 209, 209)), // Unfocused border color
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(
-              color:
-                  Color.fromARGB(255, 223, 220, 220)), // Focused border color
         ),
       ),
     );

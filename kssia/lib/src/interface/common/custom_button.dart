@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
 
-Widget customButton({required String label, required VoidCallback onPressed}) {
-  return ElevatedButton(
-      onPressed: onPressed,
-      style: ButtonStyle(
-        foregroundColor: WidgetStateProperty.all<Color>(Color(0xFF004797)),
-        backgroundColor: WidgetStateProperty.all<Color>(Color(0xFF004797)),
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
-            side: BorderSide(color: Color(0xFF004797)),
+Widget customButton(
+    {required String label,
+    required VoidCallback onPressed,
+    Color sideColor = const Color(0xFF004797),
+    Color labelColor = Colors.white,
+    int fontSize = 16,
+    int buttonHeight = 45,
+    Color buttonColor = const Color(0xFF004797)}) {
+  return SizedBox(
+    height: buttonHeight.toDouble(),
+    width: double.infinity,
+    child: ElevatedButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          foregroundColor: WidgetStateProperty.all<Color>(buttonColor),
+          backgroundColor: WidgetStateProperty.all<Color>(buttonColor),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              side: BorderSide(color: sideColor),
+            ),
           ),
         ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(color: Colors.white, fontSize: 16),
-      ));
+        child: Text(
+          label,
+          style: TextStyle(
+              color: labelColor, fontSize: double.parse(fontSize.toString())),
+        )),
+  );
 }
