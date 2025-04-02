@@ -67,6 +67,6 @@ class DefaultFirebaseOptions {
     databaseURL:
         'https://kssia-fcde5-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'kssia-fcde5.appspot.com',
-    iosBundleId: 'com.skybertech.kssia',
+    iosBundleId: 'com.skybertech.community',
   );
 }
