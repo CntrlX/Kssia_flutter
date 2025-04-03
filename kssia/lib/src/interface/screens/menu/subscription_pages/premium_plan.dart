@@ -93,7 +93,7 @@ class _PremiumPlanPageState extends State<PremiumPlanPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-              widget.     subcriptionType=='membership'? '₹1050':"1000",
+         widget.     subcriptionType=='membership'? '₹1050':"1000",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 40,
