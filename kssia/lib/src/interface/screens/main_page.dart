@@ -19,6 +19,7 @@ import 'package:kssia/src/interface/screens/main_pages/home_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
+import 'package:kssia/src/interface/screens/menu/my_subscription.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IconResolver extends StatelessWidget {
@@ -134,6 +135,337 @@ class _MainPageState extends ConsumerState<MainPage> {
     ];
   }
 
+  Widget _buildStatusPage(String status, UserModel user) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Scaffold(
+          body: Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: List.generate(5, (index) {
+              return BottomNavigationBarItem(
+                backgroundColor: Colors.white,
+                icon: index == 2 // Assuming profile is the third item
+                    ? user.profilePicture != null && user.profilePicture != ''
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              user.profilePicture ?? '',
+                            ),
+                            radius: 15,
+                          )
+                        : Image.asset(
+                            'assets/icons/dummy_person_small.png',
+                          )
+                    : IconResolver(
+                        iconPath: _inactiveIcons[index],
+                        color: _selectedIndex == index
+                            ? Color(0xFF004797)
+                            : Colors.grey,
+                      ),
+                activeIcon: index == 2
+                    ? user.profilePicture != null && user.profilePicture != ''
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              user.profilePicture ?? '',
+                            ),
+                            radius: 15,
+                          )
+                        : Image.asset(
+                            'assets/icons/dummy_person_small.png',
+                       
+                          )
+                    : IconResolver(
+                        iconPath: _activeIcons[index],
+                        color: Color(0xFF004797)),
+                label: [
+                  'Home',
+                  'Business',
+                  'Profile',
+                  'News',
+                  'Members'
+                ][index],
+              );
+            }),
+            currentIndex: _selectedIndex,
+            selectedItemColor: Color(0xFF004797),
+            unselectedItemColor: Colors.grey,
+            onTap: (index) {
+              HapticFeedback.selectionClick();
+              _onItemTapped(index);
+            },
+            showUnselectedLabels: true,
+          ),
+        );
+
+      case 'inactive':
+        return Scaffold(
+          body: Center(
+            child: Container(
+              padding: EdgeInsets.all(20.0),
+              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                color: Colors.orange[50],
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  color: Colors.orange,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.orange,
+                    size: 48,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Your account is currently Inactive",
+                    style: TextStyle(
+                      color: Colors.orange[800],
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Please complete your profile setup",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  customButton(
+                    label: "Upload payment",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MySubscriptionPage()),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () async {
+                      final SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences.remove('token');
+                      preferences.remove('id');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhoneNumberScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.orange[800]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+      case 'suspended':
+        return Scaffold(
+          body: Center(
+            child: Container(
+              padding: EdgeInsets.all(20.0),
+              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  color: Colors.red,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.block,
+                    color: Colors.red,
+                    size: 48,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Your account is Suspended",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Please contact Admin for more information",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () async {
+                      final SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences.remove('token');
+                      preferences.remove('id');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhoneNumberScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+      case 'blocked':
+        return Scaffold(
+          body: Center(
+            child: Container(
+              padding: EdgeInsets.all(20.0),
+              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  color: Colors.red,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.gpp_bad,
+                    color: Colors.red,
+                    size: 48,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Your account has been Blocked",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Please contact Admin for assistance",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () async {
+                      final SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences.remove('token');
+                      preferences.remove('id');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhoneNumberScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+      case 'deleted':
+        // Immediately navigate to PhoneNumberScreen
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PhoneNumberScreen(),
+            ),
+          );
+        });
+        // Return a loading screen while navigation occurs
+        return Scaffold(
+          body: Center(
+            child: LoadingAnimation(),
+          ),
+        );
+
+      default:
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PhoneNumberScreen(),
+            ),
+          );
+        });
+        // Return a loading screen while navigation occurs
+        return Scaffold(
+          body: Center(
+            child: LoadingAnimation(),
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
@@ -153,7 +485,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         data: (user) {
           print(user.profilePicture);
           _initialize(user: user);
-          if(user.firebaseId!=null && user.firebaseId!='') {
+          if (user.firebaseId != null && user.firebaseId != '') {
             return PopScope(
               canPop: _selectedIndex != 0 ? false : true,
               onPopInvokedWithResult: (didPop, result) {
@@ -163,138 +495,13 @@ class _MainPageState extends ConsumerState<MainPage> {
                   });
                 }
               },
-              child: user.status == 'active'
-                  ? Scaffold(
-                      body: Center(
-                        child: _widgetOptions.elementAt(_selectedIndex),
-                      ),
-                      bottomNavigationBar: BottomNavigationBar(
-                        items: List.generate(5, (index) {
-                          return BottomNavigationBarItem(
-                            backgroundColor: Colors.white,
-                            icon:
-                                index == 2 // Assuming profile is the third item
-                                    ? user.profilePicture != null &&
-                                            user.profilePicture != ''
-                                        ? CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              user.profilePicture ?? '',
-                                            ),
-                                            radius: 15,
-                                          )
-                                        : Image.asset(
-                                            'assets/icons/dummy_person_small.png',
-                                            scale: 1.5,
-                                          )
-                                    : IconResolver(
-                                        iconPath: _inactiveIcons[index],
-                                        color: _selectedIndex == index
-                                            ? Colors.blue
-                                            : Colors.grey,
-                                      ),
-                            activeIcon: index == 2
-                                ? user.profilePicture != null &&
-                                        user.profilePicture != ''
-                                    ? CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          user.profilePicture ?? '',
-                                        ),
-                                        radius: 15,
-                                      )
-                                    : Image.asset(
-                                        'assets/icons/dummy_person_small.png',
-                                        scale: 1.5,
-                                      )
-                                : IconResolver(
-                                    iconPath: _activeIcons[index],
-                                    color: Color(0xFF004797),
-                                  ),
-                            label: [
-                              'Home',
-                              'Products',
-                              'Profile',
-                              'News',
-                              'People'
-                            ][index],
-                          );
-                        }),
-                        currentIndex: _selectedIndex,
-                        selectedItemColor: Color(0xFF004797),
-                        unselectedItemColor: Colors.grey,
-                        onTap: _onItemTapped,
-                        showUnselectedLabels: true,
-                      ),
-                    )
-                  : Scaffold(
-                      body: Center(
-                        child: Container(
-                          padding: EdgeInsets.all(20.0),
-                          margin: EdgeInsets.symmetric(horizontal: 20.0),
-                          decoration: BoxDecoration(
-                            color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(
-                              color: Colors.redAccent,
-                              width: 1.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.warning_amber_rounded,
-                                color: Colors.redAccent,
-                                size: 48,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                "Your account is Suspended",
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Please contact Admin to know more",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 20),
-                              customButton(
-                                  labelColor: Colors.redAccent,
-                                  sideColor:
-                                      const Color.fromARGB(255, 239, 236, 236),
-                                  buttonColor:
-                                      const Color.fromARGB(255, 239, 236, 236),
-                                  label: 'Logout',
-                                  onPressed: () async {
-                                    await _handleLogout(context);
-                                  })
-                            ],
-                          ),
-                        ),
-                      ),
-                    ));
-          }
-          else {
+              child: _buildStatusPage(user.status ?? 'unknown', user),
+            );
+          } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _handleLogout(context);
             });
-            return  PhoneNumberScreen();
+            return PhoneNumberScreen();
           }
         },
       );

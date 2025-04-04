@@ -89,7 +89,6 @@ flutter:
 
     - assets/
     - assets/icons/
-    - .env
 flutter_icons:
   android: true
   ios: true
