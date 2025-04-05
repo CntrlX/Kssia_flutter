@@ -350,7 +350,7 @@ class MenuPage extends StatelessWidget {
                       //   },
                       // ),
 
-                      // if (user.phoneNumbers?.personal != '+919645398555')
+                      if (user.phoneNumbers?.personal != '+919645398555' &&paymentEnabled)
                       _buildListTile(
                         context,
                         Icons.subscriptions,
@@ -363,7 +363,7 @@ class MenuPage extends StatelessWidget {
                           );
                         },
                       ),
-                      if (user.phoneNumbers?.personal != '+919645398555')
+                   if (user.phoneNumbers?.personal != '+919645398555' &&paymentEnabled)
                         const Divider(),
                       _buildListTile(
                         context,
