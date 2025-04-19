@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -39,7 +41,7 @@ class MyRequirementsPage extends StatelessWidget {
                 );
               },
               data: (userRequirements) {
-                print(userRequirements);
+                log(userRequirements.toString());
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -50,10 +52,10 @@ class MyRequirementsPage extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return _buildRequirementCard(
                                 context,
-                                userRequirements[index].content,
-                                userRequirements[index].status,
-                                userRequirements[index].createdAt,
-                                userRequirements[index].id,
+                                userRequirements[index].content ?? '',
+                                userRequirements[index].status ?? '',
+                                userRequirements[index].createdAt!,
+                                userRequirements[index].id ?? '',
                                 imageUrl: userRequirements[index].image);
                           },
                         ),

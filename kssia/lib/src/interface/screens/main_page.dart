@@ -134,8 +134,8 @@ class _MainPageState extends ConsumerState<MainPage> {
       'assets/icons/people_active.svg',
     ];
   }
-  Widget _buildStatusPage(String status, UserModel user) {
 
+  Widget _buildStatusPage(String status, UserModel user) {
     switch (status.toLowerCase()) {
       case 'active':
         return Scaffold(
@@ -146,7 +146,7 @@ class _MainPageState extends ConsumerState<MainPage> {
             items: List.generate(5, (index) {
               return BottomNavigationBarItem(
                 backgroundColor: Colors.white,
-                icon: index == 2 
+                icon: index == 2
                     ? user.profilePicture != null && user.profilePicture != ''
                         ? CircleAvatar(
                             backgroundImage: NetworkImage(
@@ -155,7 +155,7 @@ class _MainPageState extends ConsumerState<MainPage> {
                             radius: 15,
                           )
                         : Image.asset(
-                            'assets/pngs/dummy_person_small.png',
+                            'assets/icons/dummy_person_small.png',
                             scale: 1,
                           )
                     : IconResolver(
@@ -173,11 +173,12 @@ class _MainPageState extends ConsumerState<MainPage> {
                             radius: 15,
                           )
                         : Image.asset(
-                            'assets/pngs/dummy_person_small.png',
+                            'assets/icons/dummy_person_small.png',
                             scale: 1.5,
                           )
                     : IconResolver(
-                        iconPath: _activeIcons[index], color: Color(0xFF004797)),
+                        iconPath: _activeIcons[index],
+                        color: Color(0xFF004797)),
                 label: [
                   'Home',
                   'Business',
@@ -251,11 +252,11 @@ class _MainPageState extends ConsumerState<MainPage> {
                   customButton(
                     label: "Upload payment",
                     onPressed: () {
-                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MySubscriptionPage()),
-                          );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MySubscriptionPage()),
+                      );
                     },
                   ),
                   SizedBox(height: 10),
@@ -271,7 +272,6 @@ class _MainPageState extends ConsumerState<MainPage> {
                           builder: (context) => PhoneNumberScreen(),
                         ),
                       );
-        
                     },
                     child: Text(
                       'Logout',
@@ -368,7 +368,7 @@ class _MainPageState extends ConsumerState<MainPage> {
                 color: Colors.red[50],
                 borderRadius: BorderRadius.circular(15.0),
                 border: Border.all(
-                         color: Colors.red,
+                  color: Colors.red,
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -466,6 +466,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
@@ -485,7 +486,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         data: (user) {
           print(user.profilePicture);
           _initialize(user: user);
-          if(user.firebaseId!=null && user.firebaseId!='') {
+          if (user.firebaseId != null && user.firebaseId != '') {
             return PopScope(
               canPop: _selectedIndex != 0 ? false : true,
               onPopInvokedWithResult: (didPop, result) {
@@ -495,13 +496,13 @@ class _MainPageState extends ConsumerState<MainPage> {
                   });
                 }
               },
-              child: _buildStatusPage(user.status ?? 'unknown', user),);
-          }
-          else {
+              child: _buildStatusPage(user.status ?? 'unknown', user),
+            );
+          } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _handleLogout(context);
             });
-            return  PhoneNumberScreen();
+            return PhoneNumberScreen();
           }
         },
       );
