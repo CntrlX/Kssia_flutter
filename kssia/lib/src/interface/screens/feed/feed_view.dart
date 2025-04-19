@@ -120,7 +120,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     if (requirements.isNotEmpty)
-                      ListView.builder(
+                      ListView.builder(controller: _scrollController,
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: requirements.length + (isLoading ? 1 : 0),
