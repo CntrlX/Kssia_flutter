@@ -1,7 +1,7 @@
 name: kssia
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.2.15+682
+version: 1.2.17+684
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
@@ -61,6 +61,7 @@ dependencies:
   multi_select_flutter: ^4.1.3
   syncfusion_flutter_pdfviewer: ^28.1.39
   app_links: ^6.4.0
+  webview_flutter: ^4.11.0
 
 
 
