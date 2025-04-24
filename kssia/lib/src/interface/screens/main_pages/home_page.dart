@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/notifiers/events_notifier.dart';
+import 'package:kssia/src/data/notifiers/people_notifier.dart';
 import 'package:kssia/src/data/notifiers/promotions_notifier.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
@@ -88,6 +89,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final promotions = ref.watch(promotionsNotifierProvider);
+    final isFirstLoad =
+        ref.read(promotionsNotifierProvider.notifier).isFirstLoad;
     final events = ref.watch(eventsNotifierProvider);
     final filteredVideos = promotions
         .where((promo) => promo.type == 'video')
@@ -95,240 +98,248 @@ class _HomePageState extends ConsumerState<HomePage> {
         .toList();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: promotions.isNotEmpty
-          ? SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomAppBar(),
-                  const SizedBox(height: 20),
+      body: isFirstLoad
+          ? Center(
+              child: LoadingAnimation(),
+            )
+          : promotions.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomAppBar(),
+                      const SizedBox(height: 20),
 
-                  // Banner Carousel with Dot Indicator
-                  if (promotions.any((promo) => promo.type == 'banner'))
-                    Column(
-                      children: [
-                        CarouselSlider(
-                          items: promotions
-                              .where((promo) => promo.type == 'banner')
-                              .map((banner) {
-                            return _buildBanners(
-                                context: context, banner: banner);
-                          }).toList(),
-                          options: CarouselOptions(
-                            height: 175,
-                            scrollPhysics: promotions
-                                        .where(
-                                            (promo) => promo.type == 'banner')
-                                        .length >
-                                    1
-                                ? null
-                                : const NeverScrollableScrollPhysics(),
-                            autoPlay: promotions
-                                        .where(
-                                            (promo) => promo.type == 'banner')
-                                        .length >
-                                    1
-                                ? true
-                                : false,
-                            viewportFraction: 1,
-                            autoPlayInterval: const Duration(seconds: 3),
-                            onPageChanged: (index, reason) {
-                              _onPageChanged(index, promotions.length);
-                              setState(() {
-                                _currentBannerIndex = index;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  // Notices Carousel with Dot Indicator
-                  if (promotions.any((promo) => promo.type == 'notice'))
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30),
-                      child: Column(
-                        children: [
-                          CarouselSlider(
-                            items: promotions
-                                .where((promo) => promo.type == 'notice')
-                                .map((notice) {
-                              return customNotice(
-                                  context: context, notice: notice);
-                            }).toList(),
-                            options: CarouselOptions(
-                              height: _calculateDynamicHeight(promotions
-                                  .where((promo) => promo.type == 'notice')
-                                  .toList()),
-                              scrollPhysics: promotions
-                                          .where(
-                                              (promo) => promo.type == 'notice')
-                                          .length >
-                                      1
-                                  ? null
-                                  : const NeverScrollableScrollPhysics(),
-                              autoPlay: promotions
-                                          .where(
-                                              (promo) => promo.type == 'notice')
-                                          .length >
-                                      1
-                                  ? true
-                                  : false,
-                              viewportFraction: 1,
-                              autoPlayInterval: const Duration(seconds: 5),
-                              onPageChanged: (index, reason) {
-                                _onPageChanged(index, promotions.length);
-                                setState(() {
-                                  _currentNoticeIndex = index;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          _buildDotIndicator(
-                              _currentNoticeIndex,
-                              promotions
-                                  .where((promo) => promo.type == 'notice')
-                                  .length,
-                              const Color.fromARGB(255, 62, 61, 61)),
-                        ],
-                      ),
-                    ),
-                  if (promotions.any((promo) => promo.type == 'poster'))
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          CarouselSlider(
-                            items: promotions
-                                .where((promo) => promo.type == 'poster')
-                                .map((poster) {
-                              return customPoster(
-                                  context: context, poster: poster);
-                            }).toList(),
-                            options: CarouselOptions(
-                              height: 420,
-                              scrollPhysics: promotions
-                                          .where(
-                                              (promo) => promo.type == 'poster')
-                                          .length >
-                                      1
-                                  ? null
-                                  : const NeverScrollableScrollPhysics(),
-                              autoPlay: promotions
-                                          .where(
-                                              (promo) => promo.type == 'poster')
-                                          .length >
-                                      1
-                                  ? true
-                                  : false,
-                              viewportFraction: 1,
-                              autoPlayInterval: const Duration(seconds: 5),
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  _currentPosterIndex = index;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  // Events Carousel
-
-                  if (events.isNotEmpty)
-                    Column(
-                      children: [
-                        const Row(
+                      // Banner Carousel with Dot Indicator
+                      if (promotions.any((promo) => promo.type == 'banner'))
+                        Column(
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 25, top: 10),
-                              child: Text(
-                                'Events',
-                                style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.w600),
+                            CarouselSlider(
+                              items: promotions
+                                  .where((promo) => promo.type == 'banner')
+                                  .map((banner) {
+                                return _buildBanners(
+                                    context: context, banner: banner);
+                              }).toList(),
+                              options: CarouselOptions(
+                                height: 175,
+                                scrollPhysics: promotions
+                                            .where((promo) =>
+                                                promo.type == 'banner')
+                                            .length >
+                                        1
+                                    ? null
+                                    : const NeverScrollableScrollPhysics(),
+                                autoPlay: promotions
+                                            .where((promo) =>
+                                                promo.type == 'banner')
+                                            .length >
+                                        1
+                                    ? true
+                                    : false,
+                                viewportFraction: 1,
+                                autoPlayInterval: const Duration(seconds: 3),
+                                onPageChanged: (index, reason) {
+                                  _onPageChanged(index, promotions.length);
+                                  setState(() {
+                                    _currentBannerIndex = index;
+                                  });
+                                },
                               ),
                             ),
                           ],
                         ),
-                        CarouselSlider(
-                          items: events.map((event) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width * 0.95,
-                              child: eventWidget(
-                                withImage: true,
-                                context: context,
-                                event: event,
+
+                      // Notices Carousel with Dot Indicator
+                      if (promotions.any((promo) => promo.type == 'notice'))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Column(
+                            children: [
+                              CarouselSlider(
+                                items: promotions
+                                    .where((promo) => promo.type == 'notice')
+                                    .map((notice) {
+                                  return customNotice(
+                                      context: context, notice: notice);
+                                }).toList(),
+                                options: CarouselOptions(
+                                  height: _calculateDynamicHeight(promotions
+                                      .where((promo) => promo.type == 'notice')
+                                      .toList()),
+                                  scrollPhysics: promotions
+                                              .where((promo) =>
+                                                  promo.type == 'notice')
+                                              .length >
+                                          1
+                                      ? null
+                                      : const NeverScrollableScrollPhysics(),
+                                  autoPlay: promotions
+                                              .where((promo) =>
+                                                  promo.type == 'notice')
+                                              .length >
+                                          1
+                                      ? true
+                                      : false,
+                                  viewportFraction: 1,
+                                  autoPlayInterval: const Duration(seconds: 5),
+                                  onPageChanged: (index, reason) {
+                                    _onPageChanged(index, promotions.length);
+                                    setState(() {
+                                      _currentNoticeIndex = index;
+                                    });
+                                  },
+                                ),
                               ),
-                            );
-                          }).toList(),
-                          options: CarouselOptions(
-                            height: 395,
-                            scrollPhysics: events.length > 1
-                                ? null
-                                : const NeverScrollableScrollPhysics(),
-                            autoPlay: events.length > 1 ? true : false,
-                            viewportFraction: 1,
-                            autoPlayInterval: const Duration(seconds: 5),
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentEventIndex = index;
-                              });
-                            },
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              _buildDotIndicator(
+                                  _currentNoticeIndex,
+                                  promotions
+                                      .where((promo) => promo.type == 'notice')
+                                      .length,
+                                  const Color.fromARGB(255, 62, 61, 61)),
+                            ],
                           ),
                         ),
-                        _buildDotIndicator(_currentEventIndex, events.length,
-                            const Color(0xFF004797)),
-                      ],
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // Videos Carousel
-                  if (filteredVideos.isNotEmpty)
-                    Column(
-                      children: [
-                        CarouselSlider(
-                          items: filteredVideos.map((video) {
-                            return customVideo(context: context, video: video);
-                          }).toList(),
-                          options: CarouselOptions(
-                            height: 225,
-                            scrollPhysics: filteredVideos.length > 1
-                                ? null
-                                : const NeverScrollableScrollPhysics(),
-                            viewportFraction: 1,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentVideoIndex = index;
-                              });
-                            },
+                      if (promotions.any((promo) => promo.type == 'poster'))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Column(
+                            children: [
+                              CarouselSlider(
+                                items: promotions
+                                    .where((promo) => promo.type == 'poster')
+                                    .map((poster) {
+                                  return customPoster(
+                                      context: context, poster: poster);
+                                }).toList(),
+                                options: CarouselOptions(
+                                  height: 420,
+                                  scrollPhysics: promotions
+                                              .where((promo) =>
+                                                  promo.type == 'poster')
+                                              .length >
+                                          1
+                                      ? null
+                                      : const NeverScrollableScrollPhysics(),
+                                  autoPlay: promotions
+                                              .where((promo) =>
+                                                  promo.type == 'poster')
+                                              .length >
+                                          1
+                                      ? true
+                                      : false,
+                                  viewportFraction: 1,
+                                  autoPlayInterval: const Duration(seconds: 5),
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      _currentPosterIndex = index;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        _buildDotIndicator(_currentVideoIndex,
-                            filteredVideos.length, Colors.black),
-                      ],
+
+                      // Events Carousel
+
+                      if (events.isNotEmpty)
+                        Column(
+                          children: [
+                            const Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 25, top: 10),
+                                  child: Text(
+                                    'Events',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            CarouselSlider(
+                              items: events.map((event) {
+                                return Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.95,
+                                  child: eventWidget(
+                                    withImage: true,
+                                    context: context,
+                                    event: event,
+                                  ),
+                                );
+                              }).toList(),
+                              options: CarouselOptions(
+                                height: 395,
+                                scrollPhysics: events.length > 1
+                                    ? null
+                                    : const NeverScrollableScrollPhysics(),
+                                autoPlay: events.length > 1 ? true : false,
+                                viewportFraction: 1,
+                                autoPlayInterval: const Duration(seconds: 5),
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _currentEventIndex = index;
+                                  });
+                                },
+                              ),
+                            ),
+                            _buildDotIndicator(_currentEventIndex,
+                                events.length, const Color(0xFF004797)),
+                          ],
+                        ),
+
+                      const SizedBox(height: 16),
+
+                      // Videos Carousel
+                      if (filteredVideos.isNotEmpty)
+                        Column(
+                          children: [
+                            CarouselSlider(
+                              items: filteredVideos.map((video) {
+                                return customVideo(
+                                    context: context, video: video);
+                              }).toList(),
+                              options: CarouselOptions(
+                                height: 225,
+                                scrollPhysics: filteredVideos.length > 1
+                                    ? null
+                                    : const NeverScrollableScrollPhysics(),
+                                viewportFraction: 1,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _currentVideoIndex = index;
+                                  });
+                                },
+                              ),
+                            ),
+                            _buildDotIndicator(_currentVideoIndex,
+                                filteredVideos.length, Colors.black),
+                          ],
+                        ),
+                      // Repeat similar approach for Posters, Events, and Videos
+                    ],
+                  ),
+                )
+              : const Column(
+                  children: [
+                    CustomAppBar(),
+                    SizedBox(
+                      height: 50,
                     ),
-                  // Repeat similar approach for Posters, Events, and Videos
-                ],
-              ),
-            )
-          : const Column(
-              children: [
-                CustomAppBar(),
-                SizedBox(
-                  height: 50,
+                    Center(
+                        child: Text(
+                      'No Promotions',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                    )),
+                  ],
                 ),
-                Center(
-                    child: Text(
-                  'No Promotions',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                )),
-              ],
-            ),
     );
   }
 
@@ -402,62 +413,62 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
-Widget customPoster({
-  required BuildContext context,
-  required Promotion poster,
-}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          poster.posterTitle,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+
+  Widget customPoster({
+    required BuildContext context,
+    required Promotion poster,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            poster.posterTitle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 8), // Spacing between title and image
-        AspectRatio(
-          aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
-          child: Image.network(
-            poster.posterImageUrl,
-            fit: BoxFit.fill,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child; // Image loaded successfully
-              } else {
+          const SizedBox(height: 8), // Spacing between title and image
+          AspectRatio(
+            aspectRatio: 19 / 20, // Approximate aspect ratio as 19:20
+            child: Image.network(
+              poster.posterImageUrl,
+              fit: BoxFit.fill,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return child; // Image loaded successfully
+                } else {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: double.infinity,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+              },
+              errorBuilder: (context, error, stackTrace) {
                 return Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
                   highlightColor: Colors.grey[100]!,
                   child: Container(
-                    width: double.infinity,
-                    color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                    ),
                   ),
                 );
-              }
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                  ),
-                ),
-              );
-            },
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   Widget customNotice(
       {required BuildContext context, required Promotion notice}) {
