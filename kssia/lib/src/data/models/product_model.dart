@@ -5,7 +5,7 @@ class Product {
   final double? offerPrice;
   final String? description;
   final String? sellerId;
-  final int? moq; // Minimum Order Quantity
+  final int? moq; 
   final String? category;
   final List<String>? subcategory;
   final String? status;

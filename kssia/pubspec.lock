@@ -262,14 +262,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
-  contact_add:
-    dependency: "direct main"
-    description:
-      name: contact_add
-      sha256: "4040db328c9bdd875a04c926adb83437765d2c3e1797e091525e0a6ed691418a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
   convert:
     dependency: transitive
     description:
@@ -523,6 +515,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_contacts:
+    dependency: "direct main"
+    description:
+      name: flutter_contacts
+      sha256: "388d32cd33f16640ee169570128c933b45f3259bddbfae7a100bb49e5ffea9ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.9+2"
   flutter_dotenv:
     dependency: "direct main"
     description:

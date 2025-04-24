@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import app_links
-import contact_add
 import device_info_plus
 import file_selector_macos
 import firebase_auth
@@ -24,7 +23,6 @@ import webview_flutter_wkwebview
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AppLinksMacosPlugin.register(with: registry.registrar(forPlugin: "AppLinksMacosPlugin"))
-  ContactAddPlugin.register(with: registry.registrar(forPlugin: "ContactAddPlugin"))
   DeviceInfoPlusMacosPlugin.register(with: registry.registrar(forPlugin: "DeviceInfoPlusMacosPlugin"))
   FileSelectorPlugin.register(with: registry.registrar(forPlugin: "FileSelectorPlugin"))
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
