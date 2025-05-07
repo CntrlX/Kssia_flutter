@@ -7,3 +7,4 @@ String fcmToken = '';
 String subscription = '';
 bool paymentEnabled = true;
 String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+int selectedIndex = 0;

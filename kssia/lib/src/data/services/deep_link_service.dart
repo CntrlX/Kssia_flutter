@@ -6,15 +6,21 @@ import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
-import 'package:kssia/main.dart'; // Make sure this import is present
+import 'package:kssia/main.dart';
+import 'package:kssia/src/data/services/nav_router.dart';
+
+// Create a provider for DeepLinkService
+final deepLinkServiceProvider = Provider<DeepLinkService>((ref) {
+  return DeepLinkService(ref);
+});
 
 class DeepLinkService {
-  static final DeepLinkService _instance = DeepLinkService._internal();
-  factory DeepLinkService() => _instance;
-  DeepLinkService._internal();
-
+  final Ref _ref;
   final _appLinks = AppLinks();
   Uri? _pendingDeepLink;
+
+  // Accept ref in constructor
+  DeepLinkService(this._ref);
 
   Uri? get pendingDeepLink => _pendingDeepLink;
   void clearPendingDeepLink() {
@@ -107,8 +113,8 @@ class DeepLinkService {
             debugPrint('Error fetching requirement: $e');
             _showError('Unable to load profile');
           }
-
           break;
+          
         case 'my_products':
           try {
             navigatorKey.currentState?.pushNamed('/my_products');
@@ -116,6 +122,8 @@ class DeepLinkService {
             debugPrint('Error fetching requirement: $e');
             _showError('Unable to load profile');
           }
+          break;
+          
         case 'my_subscription':
           try {
             navigatorKey.currentState?.pushNamed('/my_subscription');
@@ -123,14 +131,23 @@ class DeepLinkService {
             debugPrint('Error fetching requirement: $e');
             _showError('Unable to load profile');
           }
-
+          break;
+          
+        case 'requirements':
+          try {
+            // Now we can safely use _ref which was injected in the constructor
+            _ref.read(selectedIndexProvider.notifier).updateIndex(0);
+          } catch (e) {
+            debugPrint('Error updating tab: $e');
+            _showError('Unable to navigate to requirements');
+          }
           break;
 
         case 'mainpage':
           break;
 
         default:
-                navigatorKey.currentState?.pushNamed('/notification');
+          navigatorKey.currentState?.pushNamed('/notification');
           break;
       }
     } catch (e) {
@@ -159,9 +176,12 @@ class DeepLinkService {
         return 'kssia://app/my_products';
       case 'my_requirements':
         return 'kssia://app/my_requirements';
+      case 'products':
+        return 'kssia://app/products';
+      case 'requirements':
+        return 'kssia://app/requirements';
       case 'mainpage':
         return 'kssia://app/mainpage';
-
       default:
         return null;
     }

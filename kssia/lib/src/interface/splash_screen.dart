@@ -27,7 +27,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool isAppUpdateRequired = false;
   bool isPermissionCheckComplete = false;
-  final DeepLinkService _deepLinkService = DeepLinkService();
+
   
   // Add a flag to track first launch
   bool isFirstLaunch = false;
@@ -277,19 +277,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
   }
 
-  Future<void> initialize() async {
+  Future<void> initialize() async {   final deepLinkService = ref.watch(deepLinkServiceProvider);
+
     await checktoken();
     // No timer here - navigation happens immediately when conditions are met
     if (!isAppUpdateRequired) {
       print('Logged in : $LoggedIn');
       if (LoggedIn) {
         // Check for pending deep link
-        final pendingDeepLink = _deepLinkService.pendingDeepLink;
+        final pendingDeepLink = deepLinkService.pendingDeepLink;
         if (pendingDeepLink != null) {
           Navigator.pushReplacementNamed(context, '/mainpage').then((_) {
             // Handle the deep link after main page is loaded
-            _deepLinkService.handleDeepLink(pendingDeepLink);
-            _deepLinkService.clearPendingDeepLink();
+            deepLinkService.handleDeepLink(pendingDeepLink);
+            deepLinkService.clearPendingDeepLink();
           });
         } else {
           Navigator.pushReplacementNamed(context, '/mainpage');

@@ -20,7 +20,6 @@ import 'package:kssia/src/interface/splash_screen.dart';
 import 'package:kssia/src/data/services/notification_service.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
 import 'package:kssia/src/data/models/user_model.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
@@ -30,15 +29,22 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationService().initialize();
   runApp(ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Access services through their providers
+    final notificationService = ref.watch(notificationServiceProvider);
+    
+    // Initialize notification service after the app is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationService.initialize();
+    });
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -72,8 +78,8 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) {
-          // Initialize deep linking
-          DeepLinkService().initialize(context);
+          final deepLinkService = ref.read(deepLinkServiceProvider);
+          deepLinkService.initialize(context);
           return SplashScreen();
         },
         '/login_screen': (context) => PhoneNumberScreen(),
