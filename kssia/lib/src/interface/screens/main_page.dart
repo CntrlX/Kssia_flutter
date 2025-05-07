@@ -9,6 +9,8 @@ import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/subscription_api.dart';
+import 'package:kssia/src/data/services/api_routes/user_api.dart';
+import 'package:kssia/src/data/services/nav_router.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/screens/event_news/news.dart';
@@ -82,10 +84,11 @@ class _MainPageState extends ConsumerState<MainPage> {
       );
     }
   }
-
+  ApiRoutes apiRoutes = ApiRoutes();
   @override
   void initState() {
     super.initState();
+
     webSocketClient = ref.read(socketIoClientProvider);
     webSocketClient.connect(id, ref);
   }
@@ -95,7 +98,6 @@ class _MainPageState extends ConsumerState<MainPage> {
     super.dispose();
   }
 
-  int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[];
 
@@ -103,7 +105,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     HapticFeedback.selectionClick();
     setState(() {
       ref.read(currentNewsIndexProvider.notifier).state = 0;
-      _selectedIndex = index;
+      ref.read(selectedIndexProvider.notifier).updateIndex(index);
     });
   }
 
@@ -135,8 +137,9 @@ class _MainPageState extends ConsumerState<MainPage> {
     ];
   }
 
-  Widget _buildStatusPage(String status, UserModel user) {
+  Widget _buildStatusPage(String status, UserModel user) {  final _selectedIndex = ref.watch(selectedIndexProvider);
     switch (status.toLowerCase()) {
+      
       case 'active':
         return Scaffold(
           body: Center(
@@ -469,7 +472,7 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
+    return Consumer(builder: (context, ref, child) {  final _selectedIndex = ref.watch(selectedIndexProvider);
       ref.watch(fetchStatusProvider);
       final asyncUser = ref.watch(userProvider);
       return asyncUser.when(
@@ -484,6 +487,10 @@ class _MainPageState extends ConsumerState<MainPage> {
           return PhoneNumberScreen();
         },
         data: (user) {
+          if(user.fcm!=null && user.fcm!=''){
+               
+      apiRoutes.editUser({"fcm": fcmToken});
+          }
           print(user.profilePicture);
           _initialize(user: user);
           if (user.firebaseId != null && user.firebaseId != '') {
@@ -491,9 +498,9 @@ class _MainPageState extends ConsumerState<MainPage> {
               canPop: _selectedIndex != 0 ? false : true,
               onPopInvokedWithResult: (didPop, result) {
                 if (_selectedIndex != 0) {
-                  setState(() {
-                    _selectedIndex = 0;
-                  });
+                 
+                    ref.read(selectedIndexProvider.notifier).updateIndex(0);
+                 
                 }
               },
               child: _buildStatusPage(user.status ?? 'unknown', user),
