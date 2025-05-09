@@ -19,7 +19,7 @@ class DeepLinkService {
   final _appLinks = AppLinks();
   Uri? _pendingDeepLink;
 
-  // Accept ref in constructor
+  // Constructor that takes a Ref
   DeepLinkService(this._ref);
 
   Uri? get pendingDeepLink => _pendingDeepLink;
@@ -101,7 +101,7 @@ class DeepLinkService {
                   ?.pushNamed('/event_details', arguments: event);
             } catch (e) {
               debugPrint('Error fetching event: $e');
-              _showError('Unable to load profile');
+              _showError('Unable to load event');
             }
           }
           break;
@@ -110,8 +110,8 @@ class DeepLinkService {
           try {
             navigatorKey.currentState?.pushNamed('/my_requirements');
           } catch (e) {
-            debugPrint('Error fetching requirement: $e');
-            _showError('Unable to load profile');
+            debugPrint('Error navigating to requirements: $e');
+            _showError('Unable to navigate to requirements');
           }
           break;
           
@@ -119,8 +119,8 @@ class DeepLinkService {
           try {
             navigatorKey.currentState?.pushNamed('/my_products');
           } catch (e) {
-            debugPrint('Error fetching requirement: $e');
-            _showError('Unable to load profile');
+            debugPrint('Error navigating to products: $e');
+            _showError('Unable to navigate to products');
           }
           break;
           
@@ -128,15 +128,23 @@ class DeepLinkService {
           try {
             navigatorKey.currentState?.pushNamed('/my_subscription');
           } catch (e) {
-            debugPrint('Error fetching requirement: $e');
-            _showError('Unable to load profile');
+            debugPrint('Error navigating to subscription: $e');
+            _showError('Unable to navigate to subscription');
           }
           break;
           
         case 'requirements':
           try {
-            // Now we can safely use _ref which was injected in the constructor
-            _ref.read(selectedIndexProvider.notifier).updateIndex(0);
+                _ref.read(selectedIndexProvider.notifier).updateIndex(4);
+          } catch (e) {
+            debugPrint('Error updating tab: $e');
+            _showError('Unable to navigate to requirements');
+          }
+          break;
+          
+        case 'products':
+          try {
+                _ref.read(selectedIndexProvider.notifier).updateIndex(1);
           } catch (e) {
             debugPrint('Error updating tab: $e');
             _showError('Unable to navigate to requirements');
@@ -144,6 +152,10 @@ class DeepLinkService {
           break;
 
         case 'mainpage':
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            '/mainpage',
+            (route) => false,
+          );
           break;
 
         default:

@@ -1,7 +1,7 @@
 name: kssia
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.2.21+688
+version: 1.2.22+689
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
