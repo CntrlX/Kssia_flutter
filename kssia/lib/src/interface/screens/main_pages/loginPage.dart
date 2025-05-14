@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kssia/src/public/kssia_assets.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -89,7 +90,7 @@ class PhoneNumberScreen extends ConsumerWidget {
             bottom: 0,
             right: 0,
             child: Image.asset(
-              'assets/loginPeople.png',
+              KssiaAssets.loginPeople,
               scale: 1.2,
             ),
           ),
@@ -103,7 +104,7 @@ class PhoneNumberScreen extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 40),
                     Image.asset(
-                      'assets/icons/kssiaLogo.png',
+                      KssiaAssets.kssiaLogo,
                       scale: 8,
                     ),
                     const SizedBox(height: 80),
@@ -379,7 +380,7 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
             bottom: 0,
             right: 0,
             child: Image.asset(
-              'assets/loginPeople.png',
+              KssiaAssets.loginPeople,
               scale: 1.2,
             ),
           ),
@@ -391,7 +392,7 @@ class _OTPScreenState extends ConsumerState<OTPScreen> {
               children: [
                 const SizedBox(height: 40),
                 Image.asset(
-                  'assets/icons/kssiaLogo.png',
+                  KssiaAssets.kssiaLogo,
                   scale: 8,
                 ),
                 const SizedBox(height: 80),

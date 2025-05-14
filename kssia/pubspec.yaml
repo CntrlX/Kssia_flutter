@@ -1,7 +1,7 @@
 name: kssia
-description: "A new Flutter project."
+description: "KSSIA Package for Flutter applications"
 publish_to: 'none'
-version: 1.2.22+689
+version: 1.2.23+690
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
@@ -64,10 +64,6 @@ dependencies:
   flutter_contacts: ^1.1.9+2
   app_settings: ^6.1.1
 
-
-
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,16 +76,42 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # Package assets that will be available to clients
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/fonts/
+    - assets/kssia_logo.svg
+    - assets/loginPeople.png
+    - assets/triangles.png
+    - assets/traingles.svg
+    - assets/question _mark.svg
+    - assets/searchproduct.png
+    - assets/premium.png
+    - assets/payment_qr.png
+    - assets/nochat.png
+    - assets/eventlocation.png
+    - assets/basic.png
+    - assets/appicon.png
+    - assets/aboutus1.png
+    - assets/Vector3.svg
+    - assets/Vector.svg
+    - assets/Vector2.svg
+    - assets/NFC.png
+    - assets/skybertechlogo.png
+    - assets/acutelogo.png
+    - assets/letsgetstarted.png
+    - assets/homegirl.png
+    - assets/upgrade.png
+
+  # Package fonts
   fonts:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter_Regular.ttf
         - asset: assets/fonts/Inter_Bold.ttf
           weight: 700
-  assets:
-
-    - assets/
-    - assets/icons/
 
 flutter_icons:
   android: true
