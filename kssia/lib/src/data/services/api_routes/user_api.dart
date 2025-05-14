@@ -217,6 +217,8 @@ class ApiRoutes {
       var responseBody = await response.stream.bytesToString();
       return extractImageUrl(responseBody);
     } else {
+      var responseBody = await response.stream.bytesToString();
+      log(responseBody);
       throw Exception('Failed to upload image');
     }
   }

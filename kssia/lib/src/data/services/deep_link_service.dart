@@ -114,7 +114,7 @@ class DeepLinkService {
             _showError('Unable to navigate to requirements');
           }
           break;
-          
+
         case 'my_products':
           try {
             navigatorKey.currentState?.pushNamed('/my_products');
@@ -123,7 +123,7 @@ class DeepLinkService {
             _showError('Unable to navigate to products');
           }
           break;
-          
+
         case 'my_subscription':
           try {
             navigatorKey.currentState?.pushNamed('/my_subscription');
@@ -132,19 +132,27 @@ class DeepLinkService {
             _showError('Unable to navigate to subscription');
           }
           break;
-          
+
         case 'requirements':
           try {
-                _ref.read(selectedIndexProvider.notifier).updateIndex(4);
+            _ref.read(selectedIndexProvider.notifier).updateIndex(4);
           } catch (e) {
             debugPrint('Error updating tab: $e');
             _showError('Unable to navigate to requirements');
           }
           break;
-          
+
         case 'products':
           try {
-                _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+            _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+          } catch (e) {
+            debugPrint('Error updating tab: $e');
+            _showError('Unable to navigate to requirements');
+          }
+          break;
+        case 'news':
+          try {
+            _ref.read(selectedIndexProvider.notifier).updateIndex(3);
           } catch (e) {
             debugPrint('Error updating tab: $e');
             _showError('Unable to navigate to requirements');
@@ -190,6 +198,8 @@ class DeepLinkService {
         return 'kssia://app/my_requirements';
       case 'products':
         return 'kssia://app/products';
+      case 'news':
+        return 'kssia://app/news';
       case 'requirements':
         return 'kssia://app/requirements';
       case 'mainpage':
