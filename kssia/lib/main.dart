@@ -1,3 +1,5 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,7 +21,7 @@ import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
 import 'package:kssia/src/data/services/notification_service.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
-import 'package:kssia/src/data/models/user_model.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
@@ -28,7 +30,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+await FirebaseAppCheck.instance.activate(
+androidProvider: AndroidProvider.debug,
+appleProvider: AppleProvider.appAttest,
+);
+  FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
   runApp(ProviderScope(child: MainApp()));
 }
 
