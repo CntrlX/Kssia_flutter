@@ -209,6 +209,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> setupFCM() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
+    
+    // Request notification permissions
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -220,12 +222,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      // Fetch the FCM token
-      String? token = await messaging.getToken();
-      fcmToken = token ?? '';
-      print("FCM Token: $token");
+      try {
+        // For iOS devices, ensure APNS token is available first
+        if (Platform.isIOS) {
+          String? apnsToken = await messaging.getAPNSToken();
+          if (apnsToken == null) {
+            print('APNS token not available yet');
+            // Wait a short time and try again
+            await Future.delayed(Duration(seconds: 1));
+            apnsToken = await messaging.getAPNSToken();
+          }
+        }
+        
+        // Now get the FCM token
+        String? token = await messaging.getToken();
+        fcmToken = token ?? '';
+        print("FCM Token: $token");
+      } catch (e) {
+        print('Error getting FCM token: $e');
+        // Set a default or empty token if we can't get one
+        fcmToken = '';
+      }
     } else {
       print('User declined or has not accepted permission');
+      fcmToken = '';
     }
   }
 
