@@ -9,6 +9,7 @@ import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/main.dart';
 import 'package:kssia/src/data/services/nav_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../interface/common/customModalsheets.dart';
 
@@ -51,23 +52,34 @@ class DeepLinkService {
 
   Future<void> handleDeepLink(Uri uri) async {
     try {
+      // First ensure token is loaded
+      if (token.isEmpty) {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        String? savedtoken = preferences.getString('token');
+        String? savedId = preferences.getString('id');
+        if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
+          token = savedtoken;
+          id = savedId;
+          LoggedIn = true;
+        }
+      }
+
       final pathSegments = uri.pathSegments;
       if (pathSegments.isEmpty) return;
+
+      debugPrint('Handling deep link: ${uri.toString()}');
+      debugPrint('Path segments: $pathSegments');
 
       // Check if app is in the foreground
       bool isAppForeground = navigatorKey.currentState?.overlay != null;
 
       if (!isAppForeground) {
+        debugPrint('App is not in foreground, navigating to mainpage first');
         // App is in the background or terminated, go through splash & mainpage
         navigatorKey.currentState?.pushNamedAndRemoveUntil(
-          '/splash',
+          '/mainpage',
           (route) => false,
         );
-
-        await Future.delayed(
-            Duration(seconds: 2)); // Simulating splash processing
-
-        navigatorKey.currentState?.pushReplacementNamed('/mainpage');
 
         await Future.delayed(Duration(milliseconds: 500)); // Ensure stability
       }
@@ -77,21 +89,26 @@ class DeepLinkService {
         case 'chat':
           if (pathSegments.length > 1) {
             final userId = pathSegments[1];
+            debugPrint('Navigating to chat with user: $userId');
             try {
               ApiRoutes userApi = ApiRoutes();
               final user = await userApi.fetchUserDetails(userId);
-              navigatorKey.currentState
-                  ?.pushNamed('/individual_page', arguments: {
-                'sender': Participant(id: id),
-                'receiver': Participant(
-                  id: user.id,
-                  name: user.name,
-                  profilePicture: user.profilePicture,
-                ),
-              });
+              if (navigatorKey.currentState != null) {
+                navigatorKey.currentState
+                    ?.pushNamed('/individual_page', arguments: {
+                  'sender': Participant(id: id),
+                  'receiver': Participant(
+                    id: user.id,
+                    name: user.name,
+                    profilePicture: user.profilePicture,
+                  ),
+                });
+              } else {
+                debugPrint('Navigator state is null, cannot navigate to chat');
+              }
             } catch (e) {
               debugPrint('Error fetching user: $e');
-              _showError('Unable to load profile');
+              _showError('Unable to load profile: $e');
             }
           }
           break;
@@ -150,18 +167,15 @@ class DeepLinkService {
             final productId = pathSegments[1];
             try {
               final product = await fetchProductById(productId);
-              final user = await ApiRoutes().fetchUserDetails(product.sellerId ?? '');
+              final user =
+                  await ApiRoutes().fetchUserDetails(product.sellerId ?? '');
               final receiver = Participant(
                 id: user.id,
                 name: user.name,
                 profilePicture: user.profilePicture,
               );
               final sender = Participant(id: id);
-              
-              // Navigate to products tab first
               _ref.read(selectedIndexProvider.notifier).updateIndex(1);
-              
-              // Show product details modal
               if (navigatorKey.currentContext != null) {
                 showModalBottomSheet(
                   isScrollControlled: true,

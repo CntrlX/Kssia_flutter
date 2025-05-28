@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
@@ -94,7 +95,7 @@ class MainApp extends ConsumerWidget {
         '/profile_completion': (context) => ProfileCompletionScreen(),
         '/my_requirements': (context) => MyRequirementsPage(),
         '/my_products': (context) => MyProductPage(),
-        '/notification': (context) => NotificationPage(),
+
         '/my_subscription': (context) => MySubscriptionPage(),
         '/chat': (context) => PeoplePage(
               initialTabIndex: 1,
@@ -113,13 +114,24 @@ class MainApp extends ConsumerWidget {
               sender: sender,
             ),
           );
-        } else if (settings.name == '/event_details') {
+        } 
+        else if (settings.name == '/event_details') {
       
           Event event = settings.arguments as Event;
 
           return MaterialPageRoute(
             builder: (context) => ViewMoreEventPage(
               event: event,
+            ),
+          );
+        }
+        else if (settings.name == '/notification') {
+      
+          List<NotificationModel> notifications = settings.arguments as List<NotificationModel>;
+
+          return MaterialPageRoute(
+            builder: (context) => NotificationPage(notifcations: 
+notifications
             ),
           );
         }

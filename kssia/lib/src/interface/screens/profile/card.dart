@@ -55,29 +55,29 @@ class ProfileCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.notifications_none_outlined),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NotificationPage()),
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MenuPage()),
-                            );
-                          },
-                        ),
-                      ],
+                      // actions: [
+                      //   IconButton(
+                      //     icon: const Icon(Icons.notifications_none_outlined),
+                      //     onPressed: () {
+                      //       Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const NotificationPage()),
+                      //       );
+                      //     },
+                      //   ),
+                      //   IconButton(
+                      //     icon: const Icon(Icons.menu),
+                      //     onPressed: () {
+                      //       Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => MenuPage()),
+                      //       );
+                      //     },
+                      //   ),
+                      // ],
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(20),
                         child: GestureDetector(

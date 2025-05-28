@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 class NotificationPage extends ConsumerStatefulWidget {
-  const NotificationPage({super.key});
+  final List<NotificationModel> notifcations;
+  const NotificationPage({required this.notifcations, super.key});
 
   @override
   ConsumerState<NotificationPage> createState() => _NotificationPageState();
@@ -30,9 +32,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       child: Consumer(
         builder: (context, ref, child) {
           final asyncUnreadNotification =
-              ref.watch(fetchUnreadNotificationsProvider(token));
+              ref.watch(fetchUnreadNotificationsProvider(token,id));
           final asyncreadNotification =
-              ref.watch(fetchreadNotificationsProvider(token));
+              ref.watch(fetchReadNotificationsProvider(token,id));
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(

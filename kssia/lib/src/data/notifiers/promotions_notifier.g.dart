@@ -7,7 +7,7 @@ part of 'promotions_notifier.dart';
 // **************************************************************************
 
 String _$promotionsNotifierHash() =>
-    r'ca4ed17c0c9b7358726f1d38acf5be56ce39d46b';
+    r'1eec8a48d32dc16067682582d88d8c9cd8622f28';
 
 /// See also [PromotionsNotifier].
 @ProviderFor(PromotionsNotifier)

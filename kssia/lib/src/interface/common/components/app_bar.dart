@@ -70,7 +70,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 100,
             height: 100,
             child: Image.asset(
-              'assets/icons/kssiaLogo.png', // Hardcoded logo path
+              'assets/icons/kssiaLogo.png', 
               fit: BoxFit.contain,
             ),
           ),
@@ -79,7 +79,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Consumer(
             builder: (context, ref, child) {
               final asyncNotifications =
-                  ref.watch(fetchUnreadNotificationsProvider(token));
+                  ref.watch(fetchUnreadNotificationsProvider(token,id));
               return asyncNotifications.when(
                 data: (notifications) {
                   bool userExists = notifications.isNotEmpty;
@@ -95,7 +95,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const NotificationPage()),
+                            builder: (context) =>  NotificationPage(notifcations: notifications,)),
                       );
                     },
                   );

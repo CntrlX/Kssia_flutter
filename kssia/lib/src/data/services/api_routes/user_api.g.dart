@@ -25,7 +25,7 @@ final getPaymentYearsProvider =
 // ignore: unused_element
 typedef GetPaymentYearsRef
     = AutoDisposeFutureProviderRef<List<PaymentYearModel>>;
-String _$fetchUserDetailsHash() => r'8546032eb9a76ed770b4149f5926fc1a34e91649';
+String _$fetchUserDetailsHash() => r'4a147ff5abcae5c72277de7333bc05aa32d90995';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -359,7 +359,7 @@ class _FetchUsersProviderElement
 }
 
 String _$fetchUserRequirementsHash() =>
-    r'70a98749b03496377a7b52cf7796680eed1ce6ea';
+    r'a59c3ecfb9412002eb9623aa68cdac7e92277bf3';
 
 /// See also [fetchUserRequirements].
 @ProviderFor(fetchUserRequirements)

@@ -9,65 +9,86 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notification_api.g.dart';
 
 
+class NotificationApiService {
+  final String token;
 
-@riverpod
-Future<List<NotificationModel>> fetchUnreadNotifications(
-    Ref ref, String token) async {
-  final url = Uri.parse('$baseUrl/notification/in-app/unread/$id');
-  print('Requesting URL: $url');
-  final response = await http.get(
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token"
-    },
-  );
-  print('hello');
-  print(json.decode(response.body)['status']);
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body)['data'];
-    print(response.body);
-    List<NotificationModel> unReadNotifications = [];
+  NotificationApiService({required this.token});
 
-    for (var item in data) {
-      unReadNotifications.add(NotificationModel.fromJson(item));
+  Future<List<NotificationModel>> fetchUnreadNotifications(String userId) async {
+    final url = Uri.parse('$baseUrl/notification/in-app/unread/$userId');
+    print('Requesting URL: $url');
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+
+    print('Status: ${json.decode(response.body)['status']}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      print(response.body);
+      return data.map((item) => NotificationModel.fromJson(item)).toList();
+    } else {
+      final errorMessage = json.decode(response.body)['message'];
+      print(errorMessage);
+      throw Exception(errorMessage);
     }
-    print(unReadNotifications);
-    return unReadNotifications;
-  } else {
-    print(json.decode(response.body)['message']);
+  }
 
-    throw Exception(json.decode(response.body)['message']);
+  Future<List<NotificationModel>> fetchReadNotifications(String userId) async {
+    final url = Uri.parse('$baseUrl/notification/in-app/read/$userId');
+    print('Requesting URL: $url');
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+
+    print('Status: ${json.decode(response.body)['status']}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      print(response.body);
+      return data.map((item) => NotificationModel.fromJson(item)).toList();
+    } else {
+      final errorMessage = json.decode(response.body)['message'];
+      print(errorMessage);
+      throw Exception(errorMessage);
+    }
   }
 }
 
+
 @riverpod
-Future<List<NotificationModel>> fetchreadNotifications(
-    FetchreadNotificationsRef ref, String token) async {
-  final url = Uri.parse('$baseUrl/notification/in-app/read/$id');
-  print('Requesting URL: $url');
-  final response = await http.get(
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token"
-    },
-  );
-  print('hello');
-  print(json.decode(response.body)['status']);
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body)['data'];
-    print(response.body);
-    List<NotificationModel> readNotifications = [];
+NotificationApiService notificationService(Ref ref, String token) {
+  return NotificationApiService(token:  token);
+}
 
-    for (var item in data) {
-      readNotifications.add(NotificationModel.fromJson(item));
-    }
-    print(readNotifications);
-    return readNotifications;
-  } else {
-    print(json.decode(response.body)['message']);
 
-    throw Exception(json.decode(response.body)['message']);
-  }
+@riverpod
+Future<List<NotificationModel>> fetchUnreadNotifications(
+  Ref ref,
+  String token,
+  String userId,
+) async {
+  final service = ref.watch(notificationServiceProvider(token));
+  return service.fetchUnreadNotifications(userId);
+}
+
+
+@riverpod
+Future<List<NotificationModel>> fetchReadNotifications(
+  Ref ref,
+  String token,
+  String userId,
+) async {
+  final service = ref.watch(notificationServiceProvider(token));
+  return service.fetchReadNotifications(userId);
 }

@@ -6,6 +6,8 @@ import 'package:kssia/src/data/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kssia/src/data/globals.dart';
 
 // Create a provider for NotificationService
 final notificationServiceProvider = Provider<NotificationService>((ref) {
@@ -110,26 +112,45 @@ class NotificationService {
     }
   }
   
-  void _handleNotificationTap(NotificationResponse response) {
-    try {
-      if (response.payload != null) {
-        _deepLinkService.handleDeepLink(Uri.parse(response.payload!));
-      }
-    } catch (e) {
-      debugPrint('Notification tap handling error: $e');
-    }
-  }
-
   Future<void> _handleInitialMessage() async {
     try {
-      RemoteMessage? initialMessage =
-          await FirebaseMessaging.instance.getInitialMessage();
+      RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
-        debugPrint('Handling initial message');
-        _handleMessageOpenedApp(initialMessage);
+        debugPrint('Handling initial message: ${initialMessage.data}');
+        // Ensure we're on the main page before handling the deep link
+        if (navigatorKey.currentState != null) {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            '/mainpage',
+            (route) => false,
+          );
+          // Add a small delay to ensure navigation is complete
+          await Future.delayed(Duration(milliseconds: 500));
+          _handleMessageOpenedApp(initialMessage);
+        }
       }
     } catch (e) {
       debugPrint('Initial message handling error: $e');
+    }
+  }
+
+  void _handleNotificationTap(NotificationResponse response) {
+    try {
+      if (response.payload != null) {
+        debugPrint('Handling notification tap with payload: ${response.payload}');
+        // Ensure we're on the main page before handling the deep link
+        if (navigatorKey.currentState != null) {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            '/mainpage',
+            (route) => false,
+          );
+          // Add a small delay to ensure navigation is complete
+          Future.delayed(Duration(milliseconds: 500)).then((_) {
+            _deepLinkService.handleDeepLink(Uri.parse(response.payload!));
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Notification tap handling error: $e');
     }
   }
 
