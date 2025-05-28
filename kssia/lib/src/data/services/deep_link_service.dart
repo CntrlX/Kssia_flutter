@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
+import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
@@ -217,7 +219,13 @@ class DeepLinkService {
           break;
 
         default:
-          navigatorKey.currentState?.pushNamed('/notification');
+          List<NotificationModel> notifications =
+              await NotificationApiService(token: token)
+                  .fetchUnreadNotifications(id);
+
+          navigatorKey.currentState
+              ?.pushNamed('/notification', arguments: notifications);
+
           break;
       }
     } catch (e) {
@@ -246,6 +254,8 @@ class DeepLinkService {
         return 'kssia://app/my_products';
       case 'my_requirements':
         return 'kssia://app/my_requirements';
+      case 'in-app':
+        return 'kssia://app/notification';
       case 'products':
         return id != null ? 'kssia://app/products/$id' : 'kssia://app/products';
       case 'news':
