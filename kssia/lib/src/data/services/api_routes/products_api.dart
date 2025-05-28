@@ -15,7 +15,7 @@ part 'products_api.g.dart';
 
 @riverpod
 Future<List<Product>> fetchProducts(
-  FetchProductsRef ref, {
+  Ref ref, {
   int pageNo = 1,
   int limit = 10,
   String? search,
@@ -205,7 +205,7 @@ Future<void> updateProduct(Product product) async {
 Future<Product> fetchProductById(String productId) async {
   try {
     final response = await http.get(
-      Uri.parse('$baseUrl/products/$productId'),
+      Uri.parse('$baseUrl/products/user/$productId'),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
@@ -213,11 +213,38 @@ Future<Product> fetchProductById(String productId) async {
     );
 
     if (response.statusCode == 200) {
-      return Product.fromJson(json.decode(response.body));
+      final jsonData = json.decode(response.body);
+      log('Raw API Response: $jsonData');
+      
+      // Extract the product data from the nested structure
+      if (jsonData is Map<String, dynamic> && jsonData.containsKey('data')) {
+        final productData = jsonData['data'];
+        log('Product Data: $productData');
+        
+        // Log each field's type before parsing
+        if (productData is Map<String, dynamic>) {
+          productData.forEach((key, value) {
+            log('Field: $key, Type: ${value.runtimeType}, Value: $value');
+          });
+        }
+
+        try {
+          return Product.fromJson(productData);
+        } catch (e, stack) {
+          log('Error parsing Product from JSON: $e');
+          log('Stack trace: $stack');
+          throw Exception('Failed to parse product data: $e');
+        }
+      } else {
+        throw Exception('Invalid response format: missing data field');
+      }
     } else {
-      throw Exception('Failed to fetch product');
+      log('API Error Response: ${response.body}');
+      throw Exception('Failed to fetch product: ${response.statusCode}');
     }
-  } catch (e) {
+  } catch (e, stack) {
+    log('Error in fetchProductById: $e');
+    log('Stack trace: $stack');
     throw Exception('Error fetching product: $e');
   }
 }

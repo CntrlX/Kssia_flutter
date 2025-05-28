@@ -19,22 +19,24 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ref.invalidate(fetchUnreadNotificationsProvider);
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
+    return PopScope(onPopInvokedWithResult: (didPop, result) {
+          ref.invalidate(fetchUnreadNotificationsProvider);
+    },
       canPop: true,
       // onWillPop: () async {
       //   return true;
       // },
       child: Consumer(
         builder: (context, ref, child) {
-          final asyncUnreadNotification =
-              ref.watch(fetchUnreadNotificationsProvider(token,id));
-          final asyncreadNotification =
-              ref.watch(fetchReadNotificationsProvider(token,id));
+          // final asyncUnreadNotification =
+          //     ref.watch(fetchUnreadNotificationsProvider(token,id));
+          // final asyncreadNotification =
+          //     ref.watch(fetchReadNotificationsProvider(token,id));
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -54,60 +56,62 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  asyncUnreadNotification.when(
-                    data: (unreadNotifications) {
-                      return ListView.builder(
+                  // asyncUnreadNotification.when(
+                  //   data: (unreadNotifications) {
+                  //     return 
+                      
+                      ListView.builder(
                         shrinkWrap: true, // Added this line
                         physics:
                             NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
-                        itemCount: unreadNotifications.length,
+                        itemCount: widget.notifcations .length,
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
-                            link: unreadNotifications[index].linkUrl ?? '',
+                            link: widget.notifcations[index].linkUrl ?? '',
                             readed: readed,
-                            subject: unreadNotifications[index].subject!,
-                            content: unreadNotifications[index].content!,
-                            dateTime: unreadNotifications[index].updatedAt!,
+                            subject: widget.notifcations[index].subject!,
+                            content: widget.notifcations[index].content!,
+                            dateTime: widget.notifcations[index].updatedAt!,
                           );
                         },
                         padding: EdgeInsets.all(0.0),
-                      );
-                    },
-                    loading: () => Center(child: LoadingAnimation()),
-                    error: (error, stackTrace) {
-                      return Center(
-                        child: LoadingAnimation(),
-                      );
-                    },
-                  ),
-                  asyncreadNotification.when(
-                    data: (readNotifications) {
-                      return ListView.builder(
-                        shrinkWrap: true, // Added this line
-                        physics:
-                            NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
-                        itemCount: readNotifications.length,
-                        itemBuilder: (context, index) {
-                          bool readed = true;
-                          return _buildNotificationCard(
-                            readed: readed,
-                            subject: readNotifications[index].subject ?? '',
-                            content: readNotifications[index].content ?? '',
-                            dateTime: readNotifications[index].updatedAt!,
-                            link: readNotifications[index].linkUrl ?? '',
-                          );
-                        },
-                        padding: EdgeInsets.all(0.0),
-                      );
-                    },
-                    loading: () => Center(child: LoadingAnimation()),
-                    error: (error, stackTrace) {
-                      return Center(
-                        child: LoadingAnimation(),
-                      );
-                    },
-                  ),
+                      )
+                  //   },
+                  //   loading: () => Center(child: LoadingAnimation()),
+                  //   error: (error, stackTrace) {
+                  //     return Center(
+                  //       child: LoadingAnimation(),
+                  //     );
+                  //   },
+                  // ),
+                  // asyncreadNotification.when(
+                  //   data: (readNotifications) {
+                  //     return ListView.builder(
+                  //       shrinkWrap: true, // Added this line
+                  //       physics:
+                  //           NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
+                  //       itemCount: readNotifications.length,
+                  //       itemBuilder: (context, index) {
+                  //         bool readed = true;
+                  //         return _buildNotificationCard(
+                  //           readed: readed,
+                  //           subject: readNotifications[index].subject ?? '',
+                  //           content: readNotifications[index].content ?? '',
+                  //           dateTime: readNotifications[index].updatedAt!,
+                  //           link: readNotifications[index].linkUrl ?? '',
+                  //         );
+                  //       },
+                  //       padding: EdgeInsets.all(0.0),
+                  //     );
+                  //   },
+                  //   loading: () => Center(child: LoadingAnimation()),
+                  //   error: (error, stackTrace) {
+                  //     return Center(
+                  //       child: LoadingAnimation(),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),

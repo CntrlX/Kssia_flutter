@@ -189,7 +189,7 @@ class DeepLinkService {
               }
             } catch (e) {
               debugPrint('Error fetching product: $e');
-              _showError('Unable to load product');
+              _showError('Unable to load product: $e');
             }
           } else {
             try {
