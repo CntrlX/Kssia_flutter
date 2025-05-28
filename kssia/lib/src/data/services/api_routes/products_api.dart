@@ -201,3 +201,23 @@ Future<void> updateProduct(Product product) async {
     throw Exception('Failed to update product: $e');
   }
 }
+
+Future<Product> fetchProductById(String productId) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Product.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to fetch product');
+    }
+  } catch (e) {
+    throw Exception('Error fetching product: $e');
+  }
+}

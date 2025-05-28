@@ -2068,12 +2068,11 @@ class ProductDetailsModal extends ConsumerStatefulWidget {
 
 class _ProductDetailsModalState extends ConsumerState<ProductDetailsModal> {
   TextEditingController _quantityController = TextEditingController();
-  late final webSocketClient;
 
   @override
   void initState() {
     super.initState();
-    _quantityController.text = widget.product.moq.toString() ?? '0';
+    _quantityController.text = widget.product.moq.toString();
   }
 
   @override

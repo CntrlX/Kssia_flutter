@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
+import 'package:kssia/src/data/models/product_model.dart';
 import 'package:kssia/src/data/notifiers/products_notifier.dart';
 
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
@@ -14,12 +15,13 @@ import 'package:kssia/src/interface/common/cards.dart';
 import 'package:kssia/src/interface/common/components/app_bar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/filters/product_filter.dart';
-import 'package:kssia/src/interface/common/loading.dart';
+
 
 import 'dart:async';
 
 class ProductView extends ConsumerStatefulWidget {
-  const ProductView({super.key});
+
+  const ProductView({super.key, });
 
   @override
   ConsumerState<ProductView> createState() => _ProductViewState();
@@ -35,6 +37,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(_onScroll);
     // _searchFocus.addListener(_onSearchFocusChange);
   }
@@ -76,7 +79,7 @@ class _ProductViewState extends ConsumerState<ProductView> {
   String? selectedSubCategory;
   void _showProductDetails(
       {required BuildContext context,
-      required product,
+      required Product product,
       required Participant sender,
       required Participant receiver}) {
     showModalBottomSheet(

@@ -4,10 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
+import 'package:kssia/src/data/services/api_routes/products_api.dart';
 import 'package:kssia/src/data/services/api_routes/user_api.dart';
 import 'package:kssia/src/data/models/user_model.dart';
 import 'package:kssia/main.dart';
 import 'package:kssia/src/data/services/nav_router.dart';
+
+import '../../interface/common/customModalsheets.dart';
 
 // Create a provider for DeepLinkService
 final deepLinkServiceProvider = Provider<DeepLinkService>((ref) {
@@ -143,11 +146,44 @@ class DeepLinkService {
           break;
 
         case 'products':
-          try {
-            _ref.read(selectedIndexProvider.notifier).updateIndex(1);
-          } catch (e) {
-            debugPrint('Error updating tab: $e');
-            _showError('Unable to navigate to requirements');
+          if (pathSegments.length > 1) {
+            final productId = pathSegments[1];
+            try {
+              final product = await fetchProductById(productId);
+              final user = await ApiRoutes().fetchUserDetails(product.sellerId ?? '');
+              final receiver = Participant(
+                id: user.id,
+                name: user.name,
+                profilePicture: user.profilePicture,
+              );
+              final sender = Participant(id: id);
+              
+              // Navigate to products tab first
+              _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+              
+              // Show product details modal
+              if (navigatorKey.currentContext != null) {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: navigatorKey.currentContext!,
+                  builder: (context) => ProductDetailsModal(
+                    receiver: receiver,
+                    sender: sender,
+                    product: product,
+                  ),
+                );
+              }
+            } catch (e) {
+              debugPrint('Error fetching product: $e');
+              _showError('Unable to load product');
+            }
+          } else {
+            try {
+              _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+            } catch (e) {
+              debugPrint('Error updating tab: $e');
+              _showError('Unable to navigate to products');
+            }
           }
           break;
         case 'news':
@@ -197,7 +233,7 @@ class DeepLinkService {
       case 'my_requirements':
         return 'kssia://app/my_requirements';
       case 'products':
-        return 'kssia://app/products';
+        return id != null ? 'kssia://app/products/$id' : 'kssia://app/products';
       case 'news':
         return 'kssia://app/news';
       case 'requirements':

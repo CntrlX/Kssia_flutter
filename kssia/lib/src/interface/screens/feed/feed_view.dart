@@ -114,32 +114,23 @@ class _FeedViewState extends ConsumerState<FeedView> {
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     if (requirements.isNotEmpty)
-                      ListView.builder(controller: _scrollController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: requirements.length + (isLoading ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == requirements.length && isLoading) {
-                            // Show loading spinner when fetching more requirements
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: LoadingAnimation(),
-                              ),
-                            );
-                          }
-
-                          final requirement = requirements[index];
-                          if (requirement.status == 'approved') {
-                            return _buildPost(
-                              withImage: requirement.image != null &&
-                                  requirement.image!.isNotEmpty,
-                              requirement: requirement,
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
+                      ...requirements.map((requirement) {
+                        if (requirement.status == 'approved') {
+                          return _buildPost(
+                            withImage: requirement.image != null &&
+                                requirement.image!.isNotEmpty,
+                            requirement: requirement,
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      }).toList(),
+                    if (isLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: LoadingAnimation(),
+                        ),
                       ),
                     if (requirements.isEmpty && !isLoading)
                       Column(
@@ -149,10 +140,6 @@ class _FeedViewState extends ConsumerState<FeedView> {
                             child: Text('No Requirements'),
                           ),
                         ],
-                      ),
-                    if (isLoading && requirements.isEmpty)
-                      const Center(
-                        child: LoadingAnimation(),
                       ),
                     const SizedBox(height: 40),
                   ],
@@ -361,37 +348,38 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                   requirement.content ?? '',
                                   style: const TextStyle(fontSize: 14),
                                 ),
-                                const SizedBox(height: 16),       if (id != requirement.author?.id)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        return customButton(
-                          label: "MESSAGE",
-                          onPressed: () async {
-                            if (subscription != 'free') {
-                              await sendChatMessage(
-                                  userId: requirement.author!.id!,
-                                  content: requirement.content!,
-                                  requirementId: requirement.id);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => IndividualPage(
-                                        receiver: receiver,
-                                        sender: Participant(id: id),
-                                      )));
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const UpgradeDialog(),
-                              );
-                            }
-                          },
-                          fontSize: 16,
-                        );
-                      },
-                    ),
-                  ),
-                const SizedBox(height: 10),
+                                const SizedBox(height: 16),
+                                if (id != requirement.author?.id)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: Consumer(
+                                      builder: (context, ref, child) {
+                                        return customButton(
+                                          label: "MESSAGE",
+                                          onPressed: () async {
+                                            if (subscription != 'free') {
+                                              await sendChatMessage(
+                                                  userId: requirement.author!.id!,
+                                                  content: requirement.content!,
+                                                  requirementId: requirement.id);
+                                              Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (context) => IndividualPage(
+                                                        receiver: receiver,
+                                                        sender: Participant(id: id),
+                                                      )));
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => const UpgradeDialog(),
+                                              );
+                                            }
+                                          },
+                                          fontSize: 16,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                const SizedBox(height: 10),
                               ],
                             ),
                           )
