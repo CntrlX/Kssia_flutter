@@ -43,8 +43,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> checkFirstLaunch() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isFirstLaunch = !(prefs.getBool('has_launched_before') ?? false);
-    
-    // If this is the first launch, mark it for future reference
     if (isFirstLaunch) {
       await prefs.setBool('has_launched_before', true);
     }

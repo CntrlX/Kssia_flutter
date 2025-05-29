@@ -487,7 +487,7 @@ class _MainPageState extends ConsumerState<MainPage> {
           return PhoneNumberScreen();
         },
         data: (user) {
-          if(user.fcm!=null && user.fcm!=''){
+          if(user.fcm==null || user.fcm==''){
                
       apiRoutes.editUser({"fcm": fcmToken});
           }
