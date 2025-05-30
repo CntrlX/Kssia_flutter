@@ -73,6 +73,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                             subject: widget.notifcations[index].subject!,
                             content: widget.notifcations[index].content!,
                             dateTime: widget.notifcations[index].updatedAt!,
+                            fileUrl: widget.notifcations[index].fileUrl,
                           );
                         },
                         padding: EdgeInsets.all(0.0),
@@ -126,7 +127,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       required String subject,
       required String content,
       required DateTime dateTime,
-      required String link}) {
+      required String link,
+      String? fileUrl}) {
     String time = timeAgo(dateTime);
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
@@ -159,6 +161,21 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   ],
                 ),
                 SizedBox(height: 8),
+                if (fileUrl != null && fileUrl.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        fileUrl,
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Icon(Icons.broken_image, size: 60, color: Colors.grey),
+                      ),
+                    ),
+                  ),
                 Text(
                   content,
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
