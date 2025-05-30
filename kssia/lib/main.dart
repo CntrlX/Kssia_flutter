@@ -31,10 +31,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-await FirebaseAppCheck.instance.activate(
-androidProvider: AndroidProvider.debug,
-appleProvider: AppleProvider.appAttest,
-);
+
   FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
   runApp(ProviderScope(child: MainApp()));
 }
