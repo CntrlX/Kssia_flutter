@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,10 +27,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool isAppUpdateRequired = false;
-  bool isPermissionCheckComplete = false;
-
-  
-  // Add a flag to track first launch
   bool isFirstLaunch = false;
 
   @override
@@ -41,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> checkFirstLaunch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     isFirstLaunch = !(prefs.getBool('has_launched_before') ?? false);
     if (isFirstLaunch) {
       await prefs.setBool('has_launched_before', true);
@@ -49,35 +46,111 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> handlePermissions() async {
-    if (isFirstLaunch) {
-      // For first launch, directly request permission using the system dialog
-      await setupFCM();
-      setState(() {
-        isPermissionCheckComplete = true;
-      });
-      proceedWithAppFlow();
+    if (Platform.isIOS) {
+      await handleIOSPermissions();
     } else {
-      // For subsequent launches, check status first
-      final status = await Permission.notification.status;
-      if (status.isGranted) {
+      await handleAndroidPermissions();
+    }
+  }
+
+  // ✅ iOS permission logic
+  Future<void> handleIOSPermissions() async {
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+
+    if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+      final newSettings = await FirebaseMessaging.instance.requestPermission();
+      if (newSettings.authorizationStatus == AuthorizationStatus.authorized) {
         await setupFCM();
-        setState(() {
-          isPermissionCheckComplete = true;
-        });
-        proceedWithAppFlow();
-      } else if (status.isPermanentlyDenied) {
-        // Show custom dialog if permission was permanently denied
-        if (mounted) {
-          await showPermissionDialog();
-        }
-      } else {
-        // For other cases (like first denial), try system dialog again
-        await setupFCM();
-        setState(() {
-          isPermissionCheckComplete = true;
-        });
-        proceedWithAppFlow();
       }
+    } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
+      await showiOSPermissionDialog();
+    } else if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      await setupFCM();
+    }
+
+    proceedWithAppFlow();
+  }
+
+  // ✅ Android permission logic
+  Future<void> handleAndroidPermissions() async {
+    final status = await Permission.notification.status;
+
+    if (status.isGranted) {
+      await setupFCM();
+      proceedWithAppFlow();
+    } else if (status.isPermanentlyDenied) {
+      await showAndroidPermissionDialog();
+    } else {
+      final result = await Permission.notification.request();
+      if (result.isGranted) {
+        await setupFCM();
+      }
+      proceedWithAppFlow();
+    }
+  }
+
+  Future<void> showiOSPermissionDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Enable Notifications'),
+        content: Text('You have previously denied notification permissions. Please enable them in Settings.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              proceedWithAppFlow();
+            },
+            child: Text('Skip'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await openAppSettings();
+            },
+            child: Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> showAndroidPermissionDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Enable Notifications'),
+        content: Text('Please enable notification permissions from app settings.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              proceedWithAppFlow();
+            },
+            child: Text('Skip'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await openAppSettings();
+            },
+            child: Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> setupFCM() async {
+    try {
+      await getToken(context);
+      print("FCM Token: $token");
+    } catch (e) {
+      print('Error getting FCM token: $e');
+      fcmToken = '';
     }
   }
 
@@ -89,165 +162,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     });
   }
 
-  Future<void> showPermissionDialog() async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon at the top
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.notifications_outlined,
-                  color: Colors.blue.shade700,
-                  size: 40,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Title
-              Text(
-                "Enable Notifications",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade800,
-                    ),
-              ),
-              const SizedBox(height: 12),
-
-              // Content
-              Text(
-                "Would you like to enable notifications to stay updated with important information?",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade700,
-                      height: 1.4,
-                    ),
-              ),
-              const SizedBox(height: 24),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-
-                        setState(() {
-                          isPermissionCheckComplete = true;
-                        });
-
-                        proceedWithAppFlow();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        side: BorderSide(color: Color(0xFF004797)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        "Skip",
-                        style: TextStyle(color: Color(0xFF004797)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        await openAppSettings();
-
-                        final newStatus = await Permission.notification.status;
-                        if (newStatus.isGranted) {
-                          await setupFCM();
-                        }
-
-                        setState(() {
-                          isPermissionCheckComplete = true;
-                        });
-
-                        proceedWithAppFlow();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Color(0xFF004797),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("Enable"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> setupFCM() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    
-    // Request notification permissions
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      try {
-        // For iOS devices, ensure APNS token is available first
-        if (Platform.isIOS) {
-          String? apnsToken = await messaging.getAPNSToken();
-          if (apnsToken == null) {
-            print('APNS token not available yet');
-            // Wait a short time and try again
-            await Future.delayed(Duration(seconds: 1));
-            apnsToken = await messaging.getAPNSToken();
-          }
-        }
-        
-        // Now get the FCM token
-        String? token = await messaging.getToken();
-        fcmToken = token ?? '';
-        print("FCM Token: $token");
-      } catch (e) {
-        print('Error getting FCM token: $e');
-        // Set a default or empty token if we can't get one
-        fcmToken = '';
-      }
-    } else {
-      print('User declined or has not accepted permission');
-      fcmToken = '';
-    }
-  }
-
-  Future<void> checkAppVersion(context) async {
+  Future<void> checkAppVersion(BuildContext context) async {
     log('Checking app version...');
     final response = await http.get(Uri.parse('$baseUrl/user/app-version'));
 
@@ -262,14 +177,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
   }
 
-  Future<void> checkForUpdate(AppVersionResponse response, context) async {
-    PackageInfo packageInfo = await PackageManager.getPackageInfo();
+  Future<void> checkForUpdate(AppVersionResponse response, BuildContext context) async {
+    final packageInfo = await PackageManager.getPackageInfo();
     final currentVersion = int.parse(packageInfo.version.split('.').join());
+
     log('Current version: $currentVersion');
     log('New version: ${response.version}');
 
     if (currentVersion < response.version && response.force) {
-      // Pause initialization and show update dialog
       isAppUpdateRequired = true;
       showUpdateDialog(response, context);
     }
@@ -278,16 +193,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void showUpdateDialog(AppVersionResponse response, BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, // Force update requirement
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Update Required'),
         content: Text(response.updateMessage),
         actions: [
           TextButton(
-            onPressed: () {
-              // Redirect to app store
-              launchURL(response.applink);
-            },
+            onPressed: () => launchURL(response.applink),
             child: Text('Update Now'),
           ),
         ],
@@ -295,18 +207,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
   }
 
-  Future<void> initialize() async {   final deepLinkService = ref.watch(deepLinkServiceProvider);
+  Future<void> initialize() async {
+    final deepLinkService = ref.watch(deepLinkServiceProvider);
+    await checkToken();
 
-    await checktoken();
-    // No timer here - navigation happens immediately when conditions are met
     if (!isAppUpdateRequired) {
-      print('Logged in : $LoggedIn');
       if (LoggedIn) {
-        // Check for pending deep link
         final pendingDeepLink = deepLinkService.pendingDeepLink;
         if (pendingDeepLink != null) {
           Navigator.pushReplacementNamed(context, '/mainpage').then((_) {
-            // Handle the deep link after main page is loaded
             deepLinkService.handleDeepLink(pendingDeepLink);
             deepLinkService.clearPendingDeepLink();
           });
@@ -319,17 +228,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
   }
 
-  Future<void> checktoken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? savedtoken = preferences.getString('token');
-    String? savedId = preferences.getString('id');
-    log('token:$savedtoken');
+  Future<void> checkToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString('token');
+    final savedId = prefs.getString('id');
+
+    log('token:$savedToken');
     log('userId:$savedId');
-    if (savedtoken != null && savedtoken.isNotEmpty && savedId != null) {
-     
+
+    if (savedToken != null && savedToken.isNotEmpty && savedId != null) {
       setState(() {
         LoggedIn = true;
-        token = savedtoken;
+        token = savedToken;
         id = savedId;
       });
     }
