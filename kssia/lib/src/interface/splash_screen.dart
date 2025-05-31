@@ -24,17 +24,33 @@ class SplashScreen extends ConsumerStatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
-
-class _SplashScreenState extends ConsumerState<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> with WidgetsBindingObserver {
   bool isAppUpdateRequired = false;
   bool isFirstLaunch = false;
+  bool openedAppSettings = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     checkFirstLaunch().then((_) {
       handlePermissions();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && openedAppSettings) {
+      openedAppSettings = false;
+ 
+      handlePermissions();
+    }
   }
 
   Future<void> checkFirstLaunch() async {
@@ -53,7 +69,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
   }
 
-  // ✅ iOS permission logic
   Future<void> handleIOSPermissions() async {
     final settings = await FirebaseMessaging.instance.getNotificationSettings();
 
@@ -72,7 +87,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     proceedWithAppFlow();
   }
 
-  // ✅ Android permission logic
   Future<void> handleAndroidPermissions() async {
     final status = await Permission.notification.status;
 
@@ -106,10 +120,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Text('Skip'),
           ),
           TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await openAppSettings();
-            },
+           onPressed: () async {
+  Navigator.of(context).pop();
+  openedAppSettings = true; 
+  await openAppSettings();
+},
             child: Text('Open Settings'),
           ),
         ],

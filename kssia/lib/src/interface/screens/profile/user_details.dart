@@ -520,30 +520,6 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
     _pickFile(imageType: imageType);
   }
 
-  void _showPermissionDeniedDialog(bool isPermanentlyDenied) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Permission Denied'),
-          content: Text(isPermanentlyDenied
-              ? 'Permission is permanently denied. Please enable it from the app settings.'
-              : 'Permission is denied. Please grant the permission to proceed.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                if (isPermanentlyDenied) {
-                  openAppSettings();
-                }
-              },
-              child: Text(isPermanentlyDenied ? 'Open Settings' : 'OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void _openModalSheet(
       {required String sheet, String brochureName = 'Sample'}) {
