@@ -216,7 +216,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                       context: context, poster: poster);
                                 }).toList(),
                                 options: CarouselOptions(
-                                  height: 420,
+                                  height: 450,
                                   scrollPhysics: promotions
                                               .where((promo) =>
                                                   promo.type == 'poster')
