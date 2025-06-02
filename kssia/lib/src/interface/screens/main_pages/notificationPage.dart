@@ -8,8 +8,7 @@ import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 
 class NotificationPage extends ConsumerStatefulWidget {
-  final List<NotificationModel> notifcations;
-  const NotificationPage({required this.notifcations, super.key});
+  const NotificationPage({super.key});
 
   @override
   ConsumerState<NotificationPage> createState() => _NotificationPageState();
@@ -19,24 +18,21 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(onPopInvokedWithResult: (didPop, result) {
-          ref.invalidate(fetchUnreadNotificationsProvider);
-    },
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        ref.invalidate(fetchUnreadNotificationsProvider);
+      },
       canPop: true,
-      // onWillPop: () async {
-      //   return true;
-      // },
       child: Consumer(
         builder: (context, ref, child) {
-          // final asyncUnreadNotification =
-          //     ref.watch(fetchUnreadNotificationsProvider(token,id));
-          // final asyncreadNotification =
-          //     ref.watch(fetchReadNotificationsProvider(token,id));
+          final asyncUnreadNotification =
+              ref.watch(fetchUnreadNotificationsProvider(token, id));
+          final asyncreadNotification =
+              ref.watch(fetchReadNotificationsProvider(token, id));
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -56,36 +52,34 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  // asyncUnreadNotification.when(
-                  //   data: (unreadNotifications) {
-                  //     return 
-                      
-                      ListView.builder(
+                  asyncUnreadNotification.when(
+                    data: (notifications) {
+                      return ListView.builder(
                         shrinkWrap: true, // Added this line
                         physics:
                             NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
-                        itemCount: widget.notifcations .length,
+                        itemCount: notifications.length,
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
-                            link: widget.notifcations[index].linkUrl ?? '',
+                            link: notifications[index].linkUrl ?? '',
                             readed: readed,
-                            subject: widget.notifcations[index].subject!,
-                            content: widget.notifcations[index].content!,
-                            dateTime: widget.notifcations[index].updatedAt!,
-                            fileUrl: widget.notifcations[index].fileUrl,
+                            subject: notifications[index].subject!,
+                            content: notifications[index].content!,
+                            dateTime: notifications[index].updatedAt!,
+                            fileUrl: notifications[index].fileUrl,
                           );
                         },
                         padding: EdgeInsets.all(0.0),
-                      )
-                  //   },
-                  //   loading: () => Center(child: LoadingAnimation()),
-                  //   error: (error, stackTrace) {
-                  //     return Center(
-                  //       child: LoadingAnimation(),
-                  //     );
-                  //   },
-                  // ),
+                      );
+                    },
+                    loading: () => Center(child: LoadingAnimation()),
+                    error: (error, stackTrace) {
+                      return Center(
+                        child: LoadingAnimation(),
+                      );
+                    },
+                  ),
                   // asyncreadNotification.when(
                   //   data: (readNotifications) {
                   //     return ListView.builder(
@@ -171,8 +165,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Icon(Icons.broken_image, size: 60, color: Colors.grey),
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.broken_image,
+                            size: 60,
+                            color: Colors.grey),
                       ),
                     ),
                   ),
@@ -181,19 +177,21 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
                 SizedBox(height: 8),
-                if(link!=null && link!='')
-                Row(
-                  children: [
-                    Text(
-                      "Link: ",
-                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                    ),
-                    Text(
-                      link,
-                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 143, 139, 255)),
-                    ),
-                  ],
-                ),
+                if (link != null && link != '')
+                  Row(
+                    children: [
+                      Text(
+                        "Link: ",
+                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      ),
+                      Text(
+                        link,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: const Color.fromARGB(255, 143, 139, 255)),
+                      ),
+                    ],
+                  ),
                 SizedBox(height: 8),
                 Text(
                   time,

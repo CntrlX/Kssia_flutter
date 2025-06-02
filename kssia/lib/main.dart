@@ -116,11 +116,8 @@ class MainApp extends ConsumerWidget {
             ),
           );
         } else if (settings.name == '/notification') {
-          List<NotificationModel> notifications =
-              settings.arguments as List<NotificationModel>;
-
           return MaterialPageRoute(
-            builder: (context) => NotificationPage(notifcations: notifications),
+            builder: (context) => NotificationPage(),
           );
         }
 
