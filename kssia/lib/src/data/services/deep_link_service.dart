@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/notification_model.dart';
+import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/data/services/api_routes/events_api.dart';
 import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/services/api_routes/products_api.dart';
@@ -139,6 +140,7 @@ class DeepLinkService {
 
         case 'my_products':
           try {
+            _ref.invalidate(userProvider);
             navigatorKey.currentState?.pushNamed('/my_products');
           } catch (e) {
             debugPrint('Error navigating to products: $e');
