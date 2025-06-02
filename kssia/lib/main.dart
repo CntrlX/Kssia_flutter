@@ -1,17 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/events_model.dart';
+import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
-import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
 import 'package:kssia/src/interface/screens/menu/my_subscription.dart';
 import 'package:kssia/src/interface/screens/menu/myrequirementsPage.dart';
@@ -19,7 +18,6 @@ import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:kssia/src/interface/splash_screen.dart';
 import 'package:kssia/src/data/services/notification_service.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
-import 'package:kssia/src/data/models/user_model.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -30,15 +28,23 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationService().initialize();
-  runApp(ProviderScope(child: MainApp()));
+  FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
+  runApp(const ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Access services through their providers
+    final notificationService = ref.watch(notificationServiceProvider);
+
+    // Initialize notification service after the app is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationService.initialize();
+    });
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -72,8 +78,8 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) {
-          // Initialize deep linking
-          DeepLinkService().initialize(context);
+          final deepLinkService = ref.read(deepLinkServiceProvider);
+          deepLinkService.initialize(context);
           return SplashScreen();
         },
         '/login_screen': (context) => PhoneNumberScreen(),
@@ -82,7 +88,7 @@ class MainApp extends StatelessWidget {
         '/profile_completion': (context) => ProfileCompletionScreen(),
         '/my_requirements': (context) => MyRequirementsPage(),
         '/my_products': (context) => MyProductPage(),
-        '/notification': (context) => NotificationPage(),
+
         '/my_subscription': (context) => MySubscriptionPage(),
         '/chat': (context) => PeoplePage(
               initialTabIndex: 1,
@@ -102,13 +108,16 @@ class MainApp extends StatelessWidget {
             ),
           );
         } else if (settings.name == '/event_details') {
-      
           Event event = settings.arguments as Event;
 
           return MaterialPageRoute(
             builder: (context) => ViewMoreEventPage(
               event: event,
             ),
+          );
+        } else if (settings.name == '/notification') {
+          return MaterialPageRoute(
+            builder: (context) => NotificationPage(),
           );
         }
 

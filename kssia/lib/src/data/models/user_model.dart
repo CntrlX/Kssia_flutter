@@ -316,6 +316,7 @@ class UserModel {
   final String? address;
   final List<Website>? websites;
   final String? status;
+  final String? fcm;
   final bool? isActive;
   final bool? isDeleted;
   final String? selectedTheme;
@@ -350,6 +351,7 @@ class UserModel {
       this.address,
       this.websites,
       this.status,
+      this.fcm,
       this.isActive,
       this.isDeleted,
       this.selectedTheme,
@@ -383,6 +385,7 @@ class UserModel {
       businessCategory: json['business_category'] as String?,
       subCategory: json['sub_category'] as String?,
       bio: json['bio'] as String?,
+      fcm: json['fcm'] as String?,
       address: json['address'] as String?,
       websites: (json['websites'] as List<dynamic>?)
           ?.map((e) => Website.fromJson(e as Map<String, dynamic>))

@@ -217,6 +217,8 @@ class ApiRoutes {
       var responseBody = await response.stream.bytesToString();
       return extractImageUrl(responseBody);
     } else {
+      var responseBody = await response.stream.bytesToString();
+      log(responseBody);
       throw Exception('Failed to upload image');
     }
   }
@@ -296,7 +298,6 @@ class ApiRoutes {
   //         'Failed to mark notification as read. Status code: ${response.statusCode}');
   //   }
   // }
-
 
   Future<void> createReport({
     required BuildContext context,
@@ -569,34 +570,31 @@ class ApiRoutes {
       print('An error occurred: $e');
     }
   }
-  
-Future<UserModel> fetchUserDetails(
-   String userId) async {
-  final url = Uri.parse('$baseUrl/user/$userId');
-  print('Requesting URL: $url');
-  final response = await http.get(
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token"
-    },
-  );
-  log('hello');
-  log(response.body);
-  if (response.statusCode == 200) {
-    final dynamic data = json.decode(response.body)['data'];
-    print(data['products']);
 
-    return UserModel.fromJson(data);
-  } else {
-    print(json.decode(response.body)['message']);
+  Future<UserModel> fetchUserDetails(String userId) async {
+    final url = Uri.parse('$baseUrl/user/$userId');
+    print('Requesting URL: $url');
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+    log('hello');
+    log(response.body);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body)['data'];
+      print(data['products']);
 
-    throw Exception(json.decode(response.body)['message']);
+      return UserModel.fromJson(data);
+    } else {
+      print(json.decode(response.body)['message']);
+
+      throw Exception(json.decode(response.body)['message']);
+    }
   }
 }
-}
-
-
 
 @riverpod
 Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
@@ -626,12 +624,10 @@ Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
 
     throw Exception(json.decode(response.body)['message']);
   }
-  
 }
 
 @riverpod
-Future<UserModel> fetchUserDetails(
-    Ref ref, String token, String userId) async {
+Future<UserModel> fetchUserDetails(Ref ref, String token, String userId) async {
   final url = Uri.parse('$baseUrl/user/$userId');
   print('Requesting URL: $url');
   final response = await http.get(
@@ -691,30 +687,41 @@ Future<List<UserModel>> fetchUsers(FetchUsersRef ref,
 Future<List<UserRequirementModel>> fetchUserRequirements(
     FetchUserRequirementsRef ref, String token) async {
   final url = Uri.parse('$baseUrl/requirements/$id');
-  print('Requesting URL: $url');
-  final response = await http.get(
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token"
-    },
-  );
-  print('hello');
-  print(json.decode(response.body)['status']);
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body)['data'];
-    print(response.body);
-    List<UserRequirementModel> userRequirements = [];
+  print('[FetchUserRequirements] Requesting URL: $url');
 
-    for (var item in data) {
-      userRequirements.add(UserRequirementModel.fromJson(item));
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+
+    log('[FetchUserRequirements] Status Code: ${response.statusCode}');
+    log('[FetchUserRequirements] Response Headers: ${response.headers}');
+    log('[FetchUserRequirements] Raw Body: ${response.body}');
+
+    final decodedBody = json.decode(response.body);
+    final status = decodedBody['status'];
+    final message = decodedBody['message'];
+
+    log('[FetchUserRequirements] Status: $status');
+    if (response.statusCode == 200) {
+      final List<dynamic> data = decodedBody['data'];
+      log('[FetchUserRequirements] Data Length: ${data.length}');
+
+      List<UserRequirementModel> userRequirements =
+          data.map((item) => UserRequirementModel.fromJson(item)).toList();
+
+      return userRequirements;
+    } else {
+      log('[FetchUserRequirements] Error Message: $message');
+      throw Exception('Failed to fetch requirements: $message');
     }
-    print(userRequirements);
-    return userRequirements;
-  } else {
-    print(json.decode(response.body)['message']);
-
-    throw Exception(json.decode(response.body)['message']);
+  } catch (e, stackTrace) {
+    log('[FetchUserRequirements] Exception: $e', stackTrace: stackTrace);
+    return [];
   }
 }
 

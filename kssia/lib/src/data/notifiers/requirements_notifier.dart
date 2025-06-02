@@ -13,7 +13,7 @@ class RequirementsNotifier extends _$RequirementsNotifier {
   List<Requirement> requirements = [];
   bool isLoading = false;
   int pageNo = 1;
-  final int limit = 2;
+  final int limit = 10;
   bool hasMore = true;
 
   @override

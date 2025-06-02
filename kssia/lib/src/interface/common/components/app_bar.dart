@@ -70,7 +70,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 100,
             height: 100,
             child: Image.asset(
-              'assets/icons/kssiaLogo.png', // Hardcoded logo path
+              'assets/icons/kssiaLogo.png',
               fit: BoxFit.contain,
             ),
           ),
@@ -79,35 +79,35 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Consumer(
             builder: (context, ref, child) {
               final asyncNotifications =
-                  ref.watch(fetchUnreadNotificationsProvider(token));
+                  ref.watch(fetchUnreadNotificationsProvider(token, id));
               return asyncNotifications.when(
                 data: (notifications) {
-                  bool userExists = notifications.isNotEmpty;
+                  final bool hasUnread = notifications.any(
+                    (notification) =>
+                        !(notification.readBy?.contains(id) ?? false),
+                  );
 
                   return IconButton(
-                    icon: userExists
-                        ? Icon(
-                            Icons.notification_add_outlined,
-                            color: Colors.red,
-                          )
-                        : Icon(Icons.notifications_none_outlined),
+                    icon: hasUnread
+                        ? const Icon(Icons.notification_add_outlined,
+                            color: Colors.red)
+                        : const Icon(Icons.notifications_none_outlined),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const NotificationPage()),
+                          builder: (context) => NotificationPage(),
+                        ),
                       );
                     },
                   );
                 },
-                loading: () => Center(
+                loading: () => const Center(
                   child: Icon(Icons.notifications_none_outlined),
                 ),
-                error: (error, stackTrace) {
-                  return Center(
-                    child: Text(''),
-                  );
-                },
+                error: (error, stackTrace) => const Center(
+                  child: Text(''),
+                ),
               );
             },
           ),

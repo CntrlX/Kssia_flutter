@@ -14,7 +14,7 @@ import 'package:kssia/src/interface/common/customModalsheets.dart';
 import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/review_card.dart';
-import 'package:kssia/src/interface/profilepreview/social_website_preview.dart';
+import 'package:kssia/src/interface/screens/profilepreview/social_website_preview.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/menu/my_reviews.dart';
 import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
@@ -560,7 +560,8 @@ class ProfilePreview extends ConsumerWidget {
                             ),
                             itemCount: user.products!.length,
                             itemBuilder: (context, index) {
-                              return ProductCard(onEdit: null,
+                              return ProductCard(
+                                onEdit: null,
                                 product: user.products![index],
                                 onRemove: null,
                               );
@@ -592,7 +593,8 @@ class ProfilePreview extends ConsumerWidget {
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 4.0), // Space between items
-                              child: CertificateCard(onEdit: null,
+                              child: CertificateCard(
+                                onEdit: null,
                                 certificate: user.certificates![index],
                                 onRemove: null,
                               ),
@@ -704,7 +706,7 @@ class ProfilePreview extends ConsumerWidget {
                                       const Color.fromARGB(255, 219, 217, 217),
                                   labelColor: Color(0xFF2C2829),
                                   buttonColor:
-                                      Color.fromARGB(255, 222, 218, 218),
+                                      const Color.fromARGB(255, 219, 217, 217),
                                   buttonHeight: 60,
                                   fontSize: 14,
                                   label: 'SAVE CONTACT',

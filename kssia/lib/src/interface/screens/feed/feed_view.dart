@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/notifiers/requirements_notifier.dart';
+import 'package:kssia/src/data/services/api_routes/chat_api.dart';
 import 'package:kssia/src/data/services/api_routes/requirement_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/models/requirement_model.dart';
@@ -17,8 +18,10 @@ import 'package:kssia/src/interface/common/Shimmer/requirement.dart';
 import 'package:kssia/src/interface/common/block_report.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:kssia/src/interface/common/customModalsheets.dart';
+import 'package:kssia/src/interface/common/custom_button.dart';
 import 'package:kssia/src/interface/common/loading.dart';
 import 'package:kssia/src/interface/common/upgrade_dialog.dart';
+import 'package:kssia/src/interface/screens/people/chat/chatscreen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FeedView extends ConsumerStatefulWidget {
@@ -68,16 +71,7 @@ class _FeedViewState extends ConsumerState<FeedView> {
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg'],
     );
-
     if (result != null) {
-      // Check if the file size is more than or equal to 1 MB (1 MB = 1024 * 1024 bytes)
-      // if (result.files.single.size >= 1024 * 1024) {
-      //        CustomSnackbar.showSnackbar(context, 'File size cannot exceed 1MB');
-
-      //   return null; // Exit the function if the file is too large
-      // }
-
-      // Set the selected file if it's within the size limit
       setState(() {
         _requirementImage = File(result.files.single.path!);
       });
@@ -120,32 +114,23 @@ class _FeedViewState extends ConsumerState<FeedView> {
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     if (requirements.isNotEmpty)
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: requirements.length + (isLoading ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == requirements.length && isLoading) {
-                            // Show loading spinner when fetching more requirements
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: LoadingAnimation(),
-                              ),
-                            );
-                          }
-
-                          final requirement = requirements[index];
-                          if (requirement.status == 'approved') {
-                            return _buildPost(
-                              withImage: requirement.image != null &&
-                                  requirement.image!.isNotEmpty,
-                              requirement: requirement,
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
+                      ...requirements.map((requirement) {
+                        if (requirement.status == 'approved') {
+                          return _buildPost(
+                            withImage: requirement.image != null &&
+                                requirement.image!.isNotEmpty,
+                            requirement: requirement,
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      }).toList(),
+                    if (isLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: LoadingAnimation(),
+                        ),
                       ),
                     if (requirements.isEmpty && !isLoading)
                       Column(
@@ -155,10 +140,6 @@ class _FeedViewState extends ConsumerState<FeedView> {
                             child: Text('No Requirements'),
                           ),
                         ],
-                      ),
-                    if (isLoading && requirements.isEmpty)
-                      const Center(
-                        child: LoadingAnimation(),
                       ),
                     const SizedBox(height: 40),
                   ],
@@ -368,6 +349,37 @@ class _FeedViewState extends ConsumerState<FeedView> {
                                   style: const TextStyle(fontSize: 14),
                                 ),
                                 const SizedBox(height: 16),
+                                if (id != requirement.author?.id)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: Consumer(
+                                      builder: (context, ref, child) {
+                                        return customButton(
+                                          label: "MESSAGE",
+                                          onPressed: () async {
+                                            if (subscription != 'free') {
+                                              await sendChatMessage(
+                                                  userId: requirement.author!.id!,
+                                                  content: requirement.content!,
+                                                  requirementId: requirement.id);
+                                              Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (context) => IndividualPage(
+                                                        receiver: receiver,
+                                                        sender: Participant(id: id),
+                                                      )));
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => const UpgradeDialog(),
+                                              );
+                                            }
+                                          },
+                                          fontSize: 16,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                const SizedBox(height: 10),
                               ],
                             ),
                           )

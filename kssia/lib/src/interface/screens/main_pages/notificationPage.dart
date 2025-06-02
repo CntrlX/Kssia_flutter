@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
@@ -17,22 +18,21 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ref.invalidate(fetchUnreadNotificationsProvider);
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        ref.invalidate(fetchUnreadNotificationsProvider);
+      },
       canPop: true,
-      // onWillPop: () async {
-      //   return true;
-      // },
       child: Consumer(
         builder: (context, ref, child) {
           final asyncUnreadNotification =
-              ref.watch(fetchUnreadNotificationsProvider(token));
+              ref.watch(fetchUnreadNotificationsProvider(token, id));
           final asyncreadNotification =
-              ref.watch(fetchreadNotificationsProvider(token));
+              ref.watch(fetchReadNotificationsProvider(token, id));
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -53,20 +53,21 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               child: Column(
                 children: [
                   asyncUnreadNotification.when(
-                    data: (unreadNotifications) {
+                    data: (notifications) {
                       return ListView.builder(
                         shrinkWrap: true, // Added this line
                         physics:
                             NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
-                        itemCount: unreadNotifications.length,
+                        itemCount: notifications.length,
                         itemBuilder: (context, index) {
                           bool readed = false;
                           return _buildNotificationCard(
-                            link: unreadNotifications[index].linkUrl ?? '',
+                            link: notifications[index].linkUrl ?? '',
                             readed: readed,
-                            subject: unreadNotifications[index].subject!,
-                            content: unreadNotifications[index].content!,
-                            dateTime: unreadNotifications[index].updatedAt!,
+                            subject: notifications[index].subject!,
+                            content: notifications[index].content!,
+                            dateTime: notifications[index].updatedAt!,
+                            fileUrl: notifications[index].fileUrl,
                           );
                         },
                         padding: EdgeInsets.all(0.0),
@@ -79,33 +80,33 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                       );
                     },
                   ),
-                  asyncreadNotification.when(
-                    data: (readNotifications) {
-                      return ListView.builder(
-                        shrinkWrap: true, // Added this line
-                        physics:
-                            NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
-                        itemCount: readNotifications.length,
-                        itemBuilder: (context, index) {
-                          bool readed = true;
-                          return _buildNotificationCard(
-                            readed: readed,
-                            subject: readNotifications[index].subject ?? '',
-                            content: readNotifications[index].content ?? '',
-                            dateTime: readNotifications[index].updatedAt!,
-                            link: readNotifications[index].linkUrl ?? '',
-                          );
-                        },
-                        padding: EdgeInsets.all(0.0),
-                      );
-                    },
-                    loading: () => Center(child: LoadingAnimation()),
-                    error: (error, stackTrace) {
-                      return Center(
-                        child: LoadingAnimation(),
-                      );
-                    },
-                  ),
+                  // asyncreadNotification.when(
+                  //   data: (readNotifications) {
+                  //     return ListView.builder(
+                  //       shrinkWrap: true, // Added this line
+                  //       physics:
+                  //           NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
+                  //       itemCount: readNotifications.length,
+                  //       itemBuilder: (context, index) {
+                  //         bool readed = true;
+                  //         return _buildNotificationCard(
+                  //           readed: readed,
+                  //           subject: readNotifications[index].subject ?? '',
+                  //           content: readNotifications[index].content ?? '',
+                  //           dateTime: readNotifications[index].updatedAt!,
+                  //           link: readNotifications[index].linkUrl ?? '',
+                  //         );
+                  //       },
+                  //       padding: EdgeInsets.all(0.0),
+                  //     );
+                  //   },
+                  //   loading: () => Center(child: LoadingAnimation()),
+                  //   error: (error, stackTrace) {
+                  //     return Center(
+                  //       child: LoadingAnimation(),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),
@@ -120,7 +121,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       required String subject,
       required String content,
       required DateTime dateTime,
-      required String link}) {
+      required String link,
+      String? fileUrl}) {
     String time = timeAgo(dateTime);
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
@@ -153,10 +155,43 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   ],
                 ),
                 SizedBox(height: 8),
+                if (fileUrl != null && fileUrl.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        fileUrl,
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.broken_image,
+                            size: 60,
+                            color: Colors.grey),
+                      ),
+                    ),
+                  ),
                 Text(
                   content,
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
+                SizedBox(height: 8),
+                if (link != null && link != '')
+                  Row(
+                    children: [
+                      Text(
+                        "Link: ",
+                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      ),
+                      Text(
+                        link,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: const Color.fromARGB(255, 143, 139, 255)),
+                      ),
+                    ],
+                  ),
                 SizedBox(height: 8),
                 Text(
                   time,

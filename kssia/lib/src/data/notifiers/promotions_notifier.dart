@@ -12,7 +12,7 @@ class PromotionsNotifier extends _$PromotionsNotifier {
   int pageNo = 1;
   final int limit = 20;
   bool hasMore = true;
-
+  bool isFirstLoad = true;
   @override
   List<Promotion> build() {
     return [];
@@ -29,6 +29,7 @@ class PromotionsNotifier extends _$PromotionsNotifier {
       promotions = [...promotions, ...newPromotions];
       pageNo++;
       hasMore = newPromotions.length == limit;
+         isFirstLoad = false;
       state = promotions;
     } catch (e, stackTrace) {
       log(e.toString());

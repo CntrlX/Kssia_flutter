@@ -6,8 +6,8 @@ part of 'notification_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchUnreadNotificationsHash() =>
-    r'6a880fc92b40c00a9caaf2ca8573b10430467e56';
+String _$notificationServiceHash() =>
+    r'4d724a83b9eb7e92e8739b32cdbd59c679edc36b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,6 +30,139 @@ class _SystemHash {
   }
 }
 
+/// See also [notificationService].
+@ProviderFor(notificationService)
+const notificationServiceProvider = NotificationServiceFamily();
+
+/// See also [notificationService].
+class NotificationServiceFamily extends Family<NotificationApiService> {
+  /// See also [notificationService].
+  const NotificationServiceFamily();
+
+  /// See also [notificationService].
+  NotificationServiceProvider call(
+    String token,
+  ) {
+    return NotificationServiceProvider(
+      token,
+    );
+  }
+
+  @override
+  NotificationServiceProvider getProviderOverride(
+    covariant NotificationServiceProvider provider,
+  ) {
+    return call(
+      provider.token,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'notificationServiceProvider';
+}
+
+/// See also [notificationService].
+class NotificationServiceProvider
+    extends AutoDisposeProvider<NotificationApiService> {
+  /// See also [notificationService].
+  NotificationServiceProvider(
+    String token,
+  ) : this._internal(
+          (ref) => notificationService(
+            ref as NotificationServiceRef,
+            token,
+          ),
+          from: notificationServiceProvider,
+          name: r'notificationServiceProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$notificationServiceHash,
+          dependencies: NotificationServiceFamily._dependencies,
+          allTransitiveDependencies:
+              NotificationServiceFamily._allTransitiveDependencies,
+          token: token,
+        );
+
+  NotificationServiceProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.token,
+  }) : super.internal();
+
+  final String token;
+
+  @override
+  Override overrideWith(
+    NotificationApiService Function(NotificationServiceRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: NotificationServiceProvider._internal(
+        (ref) => create(ref as NotificationServiceRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        token: token,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<NotificationApiService> createElement() {
+    return _NotificationServiceProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is NotificationServiceProvider && other.token == token;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, token.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin NotificationServiceRef on AutoDisposeProviderRef<NotificationApiService> {
+  /// The parameter `token` of this provider.
+  String get token;
+}
+
+class _NotificationServiceProviderElement
+    extends AutoDisposeProviderElement<NotificationApiService>
+    with NotificationServiceRef {
+  _NotificationServiceProviderElement(super.provider);
+
+  @override
+  String get token => (origin as NotificationServiceProvider).token;
+}
+
+String _$fetchUnreadNotificationsHash() =>
+    r'd6e70bef08a0bc82ad3aec5b2b3eb93866a1e059';
+
 /// See also [fetchUnreadNotifications].
 @ProviderFor(fetchUnreadNotifications)
 const fetchUnreadNotificationsProvider = FetchUnreadNotificationsFamily();
@@ -43,9 +176,11 @@ class FetchUnreadNotificationsFamily
   /// See also [fetchUnreadNotifications].
   FetchUnreadNotificationsProvider call(
     String token,
+    String userId,
   ) {
     return FetchUnreadNotificationsProvider(
       token,
+      userId,
     );
   }
 
@@ -55,6 +190,7 @@ class FetchUnreadNotificationsFamily
   ) {
     return call(
       provider.token,
+      provider.userId,
     );
   }
 
@@ -79,10 +215,12 @@ class FetchUnreadNotificationsProvider
   /// See also [fetchUnreadNotifications].
   FetchUnreadNotificationsProvider(
     String token,
+    String userId,
   ) : this._internal(
           (ref) => fetchUnreadNotifications(
             ref as FetchUnreadNotificationsRef,
             token,
+            userId,
           ),
           from: fetchUnreadNotificationsProvider,
           name: r'fetchUnreadNotificationsProvider',
@@ -94,6 +232,7 @@ class FetchUnreadNotificationsProvider
           allTransitiveDependencies:
               FetchUnreadNotificationsFamily._allTransitiveDependencies,
           token: token,
+          userId: userId,
         );
 
   FetchUnreadNotificationsProvider._internal(
@@ -104,9 +243,11 @@ class FetchUnreadNotificationsProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.token,
+    required this.userId,
   }) : super.internal();
 
   final String token;
+  final String userId;
 
   @override
   Override overrideWith(
@@ -124,6 +265,7 @@ class FetchUnreadNotificationsProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         token: token,
+        userId: userId,
       ),
     );
   }
@@ -135,13 +277,16 @@ class FetchUnreadNotificationsProvider
 
   @override
   bool operator ==(Object other) {
-    return other is FetchUnreadNotificationsProvider && other.token == token;
+    return other is FetchUnreadNotificationsProvider &&
+        other.token == token &&
+        other.userId == userId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -153,6 +298,9 @@ mixin FetchUnreadNotificationsRef
     on AutoDisposeFutureProviderRef<List<NotificationModel>> {
   /// The parameter `token` of this provider.
   String get token;
+
+  /// The parameter `userId` of this provider.
+  String get userId;
 }
 
 class _FetchUnreadNotificationsProviderElement
@@ -162,36 +310,41 @@ class _FetchUnreadNotificationsProviderElement
 
   @override
   String get token => (origin as FetchUnreadNotificationsProvider).token;
+  @override
+  String get userId => (origin as FetchUnreadNotificationsProvider).userId;
 }
 
-String _$fetchreadNotificationsHash() =>
-    r'c1f355d11e44c1f4bd9dbaede6fc338315085ca7';
+String _$fetchReadNotificationsHash() =>
+    r'e74057960888b2730705616ba197eb4812cceb1d';
 
-/// See also [fetchreadNotifications].
-@ProviderFor(fetchreadNotifications)
-const fetchreadNotificationsProvider = FetchreadNotificationsFamily();
+/// See also [fetchReadNotifications].
+@ProviderFor(fetchReadNotifications)
+const fetchReadNotificationsProvider = FetchReadNotificationsFamily();
 
-/// See also [fetchreadNotifications].
-class FetchreadNotificationsFamily
+/// See also [fetchReadNotifications].
+class FetchReadNotificationsFamily
     extends Family<AsyncValue<List<NotificationModel>>> {
-  /// See also [fetchreadNotifications].
-  const FetchreadNotificationsFamily();
+  /// See also [fetchReadNotifications].
+  const FetchReadNotificationsFamily();
 
-  /// See also [fetchreadNotifications].
-  FetchreadNotificationsProvider call(
+  /// See also [fetchReadNotifications].
+  FetchReadNotificationsProvider call(
     String token,
+    String userId,
   ) {
-    return FetchreadNotificationsProvider(
+    return FetchReadNotificationsProvider(
       token,
+      userId,
     );
   }
 
   @override
-  FetchreadNotificationsProvider getProviderOverride(
-    covariant FetchreadNotificationsProvider provider,
+  FetchReadNotificationsProvider getProviderOverride(
+    covariant FetchReadNotificationsProvider provider,
   ) {
     return call(
       provider.token,
+      provider.userId,
     );
   }
 
@@ -207,33 +360,36 @@ class FetchreadNotificationsFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchreadNotificationsProvider';
+  String? get name => r'fetchReadNotificationsProvider';
 }
 
-/// See also [fetchreadNotifications].
-class FetchreadNotificationsProvider
+/// See also [fetchReadNotifications].
+class FetchReadNotificationsProvider
     extends AutoDisposeFutureProvider<List<NotificationModel>> {
-  /// See also [fetchreadNotifications].
-  FetchreadNotificationsProvider(
+  /// See also [fetchReadNotifications].
+  FetchReadNotificationsProvider(
     String token,
+    String userId,
   ) : this._internal(
-          (ref) => fetchreadNotifications(
-            ref as FetchreadNotificationsRef,
+          (ref) => fetchReadNotifications(
+            ref as FetchReadNotificationsRef,
             token,
+            userId,
           ),
-          from: fetchreadNotificationsProvider,
-          name: r'fetchreadNotificationsProvider',
+          from: fetchReadNotificationsProvider,
+          name: r'fetchReadNotificationsProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchreadNotificationsHash,
-          dependencies: FetchreadNotificationsFamily._dependencies,
+                  : _$fetchReadNotificationsHash,
+          dependencies: FetchReadNotificationsFamily._dependencies,
           allTransitiveDependencies:
-              FetchreadNotificationsFamily._allTransitiveDependencies,
+              FetchReadNotificationsFamily._allTransitiveDependencies,
           token: token,
+          userId: userId,
         );
 
-  FetchreadNotificationsProvider._internal(
+  FetchReadNotificationsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -241,44 +397,50 @@ class FetchreadNotificationsProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.token,
+    required this.userId,
   }) : super.internal();
 
   final String token;
+  final String userId;
 
   @override
   Override overrideWith(
     FutureOr<List<NotificationModel>> Function(
-            FetchreadNotificationsRef provider)
+            FetchReadNotificationsRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchreadNotificationsProvider._internal(
-        (ref) => create(ref as FetchreadNotificationsRef),
+      override: FetchReadNotificationsProvider._internal(
+        (ref) => create(ref as FetchReadNotificationsRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         token: token,
+        userId: userId,
       ),
     );
   }
 
   @override
   AutoDisposeFutureProviderElement<List<NotificationModel>> createElement() {
-    return _FetchreadNotificationsProviderElement(this);
+    return _FetchReadNotificationsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchreadNotificationsProvider && other.token == token;
+    return other is FetchReadNotificationsProvider &&
+        other.token == token &&
+        other.userId == userId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, token.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -286,19 +448,24 @@ class FetchreadNotificationsProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchreadNotificationsRef
+mixin FetchReadNotificationsRef
     on AutoDisposeFutureProviderRef<List<NotificationModel>> {
   /// The parameter `token` of this provider.
   String get token;
+
+  /// The parameter `userId` of this provider.
+  String get userId;
 }
 
-class _FetchreadNotificationsProviderElement
+class _FetchReadNotificationsProviderElement
     extends AutoDisposeFutureProviderElement<List<NotificationModel>>
-    with FetchreadNotificationsRef {
-  _FetchreadNotificationsProviderElement(super.provider);
+    with FetchReadNotificationsRef {
+  _FetchReadNotificationsProviderElement(super.provider);
 
   @override
-  String get token => (origin as FetchreadNotificationsProvider).token;
+  String get token => (origin as FetchReadNotificationsProvider).token;
+  @override
+  String get userId => (origin as FetchReadNotificationsProvider).userId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

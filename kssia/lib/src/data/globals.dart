@@ -5,4 +5,6 @@ bool LoggedIn = false;
 String id = '';
 String fcmToken = '';
 String subscription = '';
-String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+bool paymentEnabled = true;
+String baseUrl = 'http://192.168.1.12:3001/api/v1';
+int selectedIndex = 0;

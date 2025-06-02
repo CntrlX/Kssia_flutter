@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,21 +98,26 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               title: Text(
                                 '${receiver?.name ?? ''}',
                               ),
-                              subtitle: Text(
-                                chats[index].lastMessage?[0].content != null
-                                    ? (chats[index]
-                                                .lastMessage![0]
-                                                .content!
-                                                .length >
-                                            10
-                                        ? chats[index]
-                                                .lastMessage![0]
-                                                .content!
-                                                .substring(0, 10) +
-                                            '...'
-                                        : chats[index].lastMessage![0].content!)
-                                    : '',
-                              ),
+                              subtitle: chats[index].lastMessage!.isNotEmpty
+                                  ? Text(
+                                      chats[index].lastMessage?[0].content !=
+                                              null
+                                          ? (chats[index]
+                                                      .lastMessage![0]
+                                                      .content!
+                                                      .length >
+                                                  10
+                                              ? chats[index]
+                                                      .lastMessage![0]
+                                                      .content!
+                                                      .substring(0, 10) +
+                                                  '...'
+                                              : chats[index]
+                                                  .lastMessage![0]
+                                                  .content!)
+                                          : '',
+                                    )
+                                  : null,
                               trailing: chats[index].unreadCount?[sender?.id] !=
                                           0 &&
                                       chats[index].unreadCount?[sender!.id] !=
