@@ -181,6 +181,20 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
                 SizedBox(height: 8),
+                if(link!=null && link!='')
+                Row(
+                  children: [
+                    Text(
+                      "Link: ",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                    Text(
+                      link,
+                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 143, 139, 255)),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
                 Text(
                   time,
                   style: TextStyle(fontSize: 12, color: Colors.grey),

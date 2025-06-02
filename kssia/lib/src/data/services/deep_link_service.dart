@@ -191,7 +191,7 @@ class DeepLinkService {
               }
             } catch (e) {
               debugPrint('Error fetching product: $e');
-              _showError('Unable to load product: $e');
+              _showError('The Product no longer exists');
             }
           } else {
             try {

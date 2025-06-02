@@ -1,9 +1,6 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
@@ -14,7 +11,6 @@ import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/notificationPage.dart';
 import 'package:kssia/src/interface/screens/main_pages/people_page.dart';
-import 'package:kssia/src/interface/screens/main_pages/profilePage.dart';
 import 'package:kssia/src/interface/screens/menu/my_product.dart';
 import 'package:kssia/src/interface/screens/menu/my_subscription.dart';
 import 'package:kssia/src/interface/screens/menu/myrequirementsPage.dart';
@@ -33,7 +29,7 @@ Future<void> main() async {
   );
 
   FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
-  runApp(ProviderScope(child: MainApp()));
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends ConsumerWidget {
@@ -43,12 +39,12 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Access services through their providers
     final notificationService = ref.watch(notificationServiceProvider);
-    
+
     // Initialize notification service after the app is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notificationService.initialize();
     });
-    
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -111,9 +107,7 @@ class MainApp extends ConsumerWidget {
               sender: sender,
             ),
           );
-        } 
-        else if (settings.name == '/event_details') {
-      
+        } else if (settings.name == '/event_details') {
           Event event = settings.arguments as Event;
 
           return MaterialPageRoute(
@@ -121,15 +115,12 @@ class MainApp extends ConsumerWidget {
               event: event,
             ),
           );
-        }
-        else if (settings.name == '/notification') {
-      
-          List<NotificationModel> notifications = settings.arguments as List<NotificationModel>;
+        } else if (settings.name == '/notification') {
+          List<NotificationModel> notifications =
+              settings.arguments as List<NotificationModel>;
 
           return MaterialPageRoute(
-            builder: (context) => NotificationPage(notifcations: 
-notifications
-            ),
+            builder: (context) => NotificationPage(notifcations: notifications),
           );
         }
 
