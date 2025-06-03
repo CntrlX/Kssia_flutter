@@ -22,6 +22,7 @@ import '../menu/my_subscription.dart';
 import '../menu/my_events.dart';
 import '../menu/my_transaction.dart';
 import 'package:animate_do/animate_do.dart';
+import '../menu/blocked_users.dart';
 
 void showDeleteAccountDialog(BuildContext context) {
   showDialog(
@@ -471,6 +472,19 @@ class MenuPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => TermsAndConditionsPage()),
+                          );
+                        },
+                      ),
+                      const Divider(),
+                      _buildListTile(
+                        context,
+                        Icons.block,
+                        'Blocked Users',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const BlockedUsersPage()),
                           );
                         },
                       ),

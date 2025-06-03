@@ -7,7 +7,7 @@ part of 'notification_api.dart';
 // **************************************************************************
 
 String _$notificationServiceHash() =>
-    r'4d724a83b9eb7e92e8739b32cdbd59c679edc36b';
+    r'19cf737e5ff2b2664ea31e0ca0d5b06b6983e7fe';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -161,7 +161,7 @@ class _NotificationServiceProviderElement
 }
 
 String _$fetchUnreadNotificationsHash() =>
-    r'd6e70bef08a0bc82ad3aec5b2b3eb93866a1e059';
+    r'c35facf17fdc2f84beda0962e0347b13b0602c3b';
 
 /// See also [fetchUnreadNotifications].
 @ProviderFor(fetchUnreadNotifications)

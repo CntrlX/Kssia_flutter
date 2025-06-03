@@ -85,17 +85,12 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
 
     final messageContent = _controller.text;
     final tempMessageId = DateTime.now().millisecondsSinceEpoch.toString();
-    
+
     // Clear input immediately
     _controller.clear();
 
     // Add message locally first with pending status
-    setMessage(
-      tempMessageId,
-      "pending", 
-      messageContent,
-      widget.sender.id!
-    );
+    setMessage(tempMessageId, "pending", messageContent, widget.sender.id!);
 
     try {
       // Make API call in background
@@ -270,6 +265,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                     isBlocked = !isBlocked;
                                   });
                                 });
+                                Navigator.pop(context);
                               },
                             );
                           }

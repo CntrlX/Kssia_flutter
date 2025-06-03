@@ -596,6 +596,8 @@ class ApiRoutes {
   }
 }
 
+final apiRoutesProvider = Provider<ApiRoutes>((ref) => ApiRoutes());
+
 @riverpod
 Future<List<PaymentYearModel>> getPaymentYears(GetPaymentYearsRef ref) async {
   final url = Uri.parse('$baseUrl/payments/parent-subscription');
@@ -655,7 +657,7 @@ Future<UserModel> fetchUserDetails(Ref ref, String token, String userId) async {
 Future<List<UserModel>> fetchUsers(FetchUsersRef ref,
     {int pageNo = 1, int limit = 20, String? query}) async {
   // Construct the base URL
-  Uri url = Uri.parse('$baseUrl/admin/users?pageNo=$pageNo&limit=$limit');
+  Uri url = Uri.parse('$baseUrl/admin/user/users?pageNo=$pageNo&limit=$limit');
 
   // Append query parameter if provided
   if (query != null && query.isNotEmpty) {
@@ -791,5 +793,32 @@ Future<List<Subscription>> getSubscription(GetSubscriptionRef ref) async {
   } catch (e) {
     print('Error in loading subscription details: $e');
     return [];
+  }
+}
+
+@riverpod
+Future<List<Map<String, dynamic>>> fetchBlockedUsers(FetchBlockedUsersRef ref) async {
+  final url = Uri.parse('$baseUrl/user/blocked-users');
+  print('Requesting URL: $url');
+  
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      print('Failed to load blocked users: ${response.statusCode}');
+      throw Exception('Failed to load blocked users');
+    }
+  } catch (e) {
+    print('Error fetching blocked users: $e');
+    throw Exception('Failed to load blocked users');
   }
 }

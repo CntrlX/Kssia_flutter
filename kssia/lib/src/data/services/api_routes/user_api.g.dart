@@ -194,7 +194,7 @@ class _FetchUserDetailsProviderElement
   String get userId => (origin as FetchUserDetailsProvider).userId;
 }
 
-String _$fetchUsersHash() => r'80b28083f0a5f172b9c8665be2ef7507e5272619';
+String _$fetchUsersHash() => r'5f28f0ecc440054ae662b54c2d1b50d21cd925b0';
 
 /// See also [fetchUsers].
 @ProviderFor(fetchUsers)
@@ -532,5 +532,24 @@ final getSubscriptionProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetSubscriptionRef = AutoDisposeFutureProviderRef<List<Subscription>>;
+String _$fetchBlockedUsersHash() => r'f54d7d765a7c01f5b4c8738e81ec068da4ab325e';
+
+/// See also [fetchBlockedUsers].
+@ProviderFor(fetchBlockedUsers)
+final fetchBlockedUsersProvider =
+    AutoDisposeFutureProvider<List<Map<String, dynamic>>>.internal(
+  fetchBlockedUsers,
+  name: r'fetchBlockedUsersProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fetchBlockedUsersHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FetchBlockedUsersRef
+    = AutoDisposeFutureProviderRef<List<Map<String, dynamic>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
