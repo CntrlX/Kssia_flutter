@@ -131,7 +131,15 @@ class DeepLinkService {
 
         case 'my_requirements':
           try {
-            navigatorKey.currentState?.pushNamed('/my_requirements');
+            // First navigate to mainpage if not already there
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                '/mainpage',
+                (route) => false,
+              );
+              await Future.delayed(Duration(milliseconds: 500));
+              navigatorKey.currentState?.pushNamed('/my_requirements');
+            }
           } catch (e) {
             debugPrint('Error navigating to requirements: $e');
             _showError('Unable to navigate to requirements');
@@ -140,8 +148,16 @@ class DeepLinkService {
 
         case 'my_products':
           try {
-            _ref.invalidate(userProvider);
-            navigatorKey.currentState?.pushNamed('/my_products');
+            // First navigate to mainpage if not already there
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                '/mainpage',
+                (route) => false,
+              );
+              await Future.delayed(Duration(milliseconds: 500));
+              _ref.invalidate(userProvider);
+              navigatorKey.currentState?.pushNamed('/my_products');
+            }
           } catch (e) {
             debugPrint('Error navigating to products: $e');
             _showError('Unable to navigate to products');
@@ -150,7 +166,15 @@ class DeepLinkService {
 
         case 'my_subscription':
           try {
-            navigatorKey.currentState?.pushNamed('/my_subscription');
+            // First navigate to mainpage if not already there
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                '/mainpage',
+                (route) => false,
+              );
+              await Future.delayed(Duration(milliseconds: 500));
+              navigatorKey.currentState?.pushNamed('/my_subscription');
+            }
           } catch (e) {
             debugPrint('Error navigating to subscription: $e');
             _showError('Unable to navigate to subscription');
@@ -159,7 +183,15 @@ class DeepLinkService {
 
         case 'requirements':
           try {
-            _ref.read(selectedIndexProvider.notifier).updateIndex(4);
+
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                '/mainpage',
+                (route) => false,
+              );
+              await Future.delayed(Duration(milliseconds: 500));
+              _ref.read(selectedIndexProvider.notifier).updateIndex(4);
+            }
           } catch (e) {
             debugPrint('Error updating tab: $e');
             _showError('Unable to navigate to requirements');
@@ -179,17 +211,26 @@ class DeepLinkService {
                 profilePicture: user.profilePicture,
               );
               final sender = Participant(id: id);
-              _ref.read(selectedIndexProvider.notifier).updateIndex(1);
-              if (navigatorKey.currentContext != null) {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: navigatorKey.currentContext!,
-                  builder: (context) => ProductDetailsModal(
-                    receiver: receiver,
-                    sender: sender,
-                    product: product,
-                  ),
+              
+              // First navigate to mainpage if not already there
+              if (navigatorKey.currentState != null) {
+                navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                  '/mainpage',
+                  (route) => false,
                 );
+                await Future.delayed(Duration(milliseconds: 500));
+                _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+                if (navigatorKey.currentContext != null) {
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: navigatorKey.currentContext!,
+                    builder: (context) => ProductDetailsModal(
+                      receiver: receiver,
+                      sender: sender,
+                      product: product,
+                    ),
+                  );
+                }
               }
             } catch (e) {
               debugPrint('Error fetching product: $e');
@@ -197,7 +238,15 @@ class DeepLinkService {
             }
           } else {
             try {
-              _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+              // First navigate to mainpage if not already there
+              if (navigatorKey.currentState != null) {
+                navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                  '/mainpage',
+                  (route) => false,
+                );
+                await Future.delayed(Duration(milliseconds: 500));
+                _ref.read(selectedIndexProvider.notifier).updateIndex(1);
+              }
             } catch (e) {
               debugPrint('Error updating tab: $e');
               _showError('Unable to navigate to products');
@@ -206,7 +255,15 @@ class DeepLinkService {
           break;
         case 'news':
           try {
-            _ref.read(selectedIndexProvider.notifier).updateIndex(3);
+            // First navigate to mainpage if not already there
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                '/mainpage',
+                (route) => false,
+              );
+              await Future.delayed(Duration(milliseconds: 500));
+              _ref.read(selectedIndexProvider.notifier).updateIndex(3);
+            }
           } catch (e) {
             debugPrint('Error updating tab: $e');
             _showError('Unable to navigate to requirements');
