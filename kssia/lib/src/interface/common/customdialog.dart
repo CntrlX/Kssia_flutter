@@ -187,7 +187,7 @@ class _BlockPersonDialogState extends ConsumerState<BlockPersonDialog> {
 
             try {
               await _toggleBlockStatus(context, isBlocked);
-              ref.read(userProvider.notifier).refreshUser();
+     
             } finally {
               // Hide loading dialog
               Navigator.of(context).pop(); // Close the loading dialog
