@@ -220,6 +220,8 @@ class BlockedUsersPage extends ConsumerWidget {
                                       ref,
                                     );
                                 ref.invalidate(fetchBlockedUsersProvider);
+                                ref.invalidate(userProvider);
+                            
                               } catch (e) {
                                 CustomSnackbar.showSnackbar(
                                   context,

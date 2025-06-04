@@ -265,6 +265,7 @@ class _IndividualPageState extends ConsumerState<IndividualPage> {
                                     isBlocked = !isBlocked;
                                   });
                                 });
+                                ref.invalidate(fetchChatThreadProvider);
                                 Navigator.pop(context);
                               },
                             );
