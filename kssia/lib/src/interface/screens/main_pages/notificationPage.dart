@@ -6,6 +6,7 @@ import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/globals.dart';
 import 'package:kssia/src/data/services/launch_url.dart';
 import 'package:kssia/src/interface/common/loading.dart';
+import 'package:kssia/src/data/services/deep_link_service.dart';
 
 class NotificationPage extends ConsumerStatefulWidget {
   const NotificationPage({super.key});
@@ -55,9 +56,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   asyncUnreadNotification.when(
                     data: (notifications) {
                       return ListView.builder(
-                        shrinkWrap: true, // Added this line
-                        physics:
-                            NeverScrollableScrollPhysics(), // Prevents scrolling within the ListView
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         itemCount: notifications.length,
                         itemBuilder: (context, index) {
                           bool readed = false;
@@ -68,6 +68,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                             content: notifications[index].content!,
                             dateTime: notifications[index].updatedAt!,
                             fileUrl: notifications[index].fileUrl,
+                            pageName: notifications[index].pageName,
+                            itemId: notifications[index].itemId,
                           );
                         },
                         padding: EdgeInsets.all(0.0),
@@ -116,45 +118,72 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
     );
   }
 
-  Widget _buildNotificationCard(
-      {required bool readed,
-      required String subject,
-      required String content,
-      required DateTime dateTime,
-      required String link,
-      String? fileUrl}) {
+  Widget _buildNotificationCard({
+    required bool readed,
+    required String subject,
+    required String content,
+    required DateTime dateTime,
+    required String link,
+    String? fileUrl,
+    String? pageName,
+    String? itemId,
+  }) {
     String time = timeAgo(dateTime);
+
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
       child: InkWell(
         onTap: () {
-          if (link != '') {
-            launchURL(link);
+          if (pageName != '') {
+            final deepLinkService = ref.watch(deepLinkServiceProvider);
+
+            if (pageName != null && pageName.isNotEmpty) {
+              final deepLinkPath =
+                  deepLinkService.getDeepLinkPath(pageName, id: itemId);
+              if (deepLinkPath != null) {
+                deepLinkService.handleDeepLink(Uri.parse(deepLinkPath));
+              }
+            } else {
+              try {
+                final uri = Uri.parse(link);
+                if (uri.scheme == 'kssia') {
+                  deepLinkService.handleDeepLink(uri);
+                } else {
+                  if (link != '') launchURL(link);
+                }
+              } catch (e) {
+                if (link != '') launchURL(link);
+              }
+            }
           }
         },
         child: Card(
           elevation: 1,
-          color: readed ? Color(0xFFF2F2F2) : Colors.white,
+          color: readed ? const Color(0xFFF2F2F2) : Colors.white,
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     if (!readed)
-                      Icon(Icons.circle, color: Colors.blue, size: 12),
-                    SizedBox(width: 8),
-                    Text(
-                      subject,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      const Icon(Icons.circle, color: Colors.blue, size: 12),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        subject,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 if (fileUrl != null && fileUrl.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
@@ -165,37 +194,45 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.broken_image,
-                            size: 60,
-                            color: Colors.grey),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.broken_image,
+                                size: 60, color: Colors.grey),
                       ),
                     ),
                   ),
                 Text(
                   content,
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
                 ),
-                SizedBox(height: 8),
-                if (link != null && link != '')
+                const SizedBox(height: 8),
+                if (link.isNotEmpty)
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Link: ",
                         style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                       ),
-                      Text(
-                        link,
-                        style: TextStyle(
+                      Expanded(
+                        child: Text(
+                          link,
+                          style: const TextStyle(
                             fontSize: 16,
-                            color: const Color.fromARGB(255, 143, 139, 255)),
+                            color: Color.fromARGB(255, 143, 139, 255),
+                          ),
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
                       ),
                     ],
                   ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   time,
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
@@ -204,25 +241,23 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       ),
     );
   }
-}
 
-String timeAgo(DateTime pastDate) {
-  DateTime now = DateTime.now();
-  Duration difference = now.difference(pastDate);
+  String timeAgo(DateTime pastDate) {
+    DateTime now = DateTime.now();
+    Duration difference = now.difference(pastDate);
 
-  // Get the number of days, hours, and minutes
-  int days = difference.inDays;
-  int hours = difference.inHours % 24;
-  int minutes = difference.inMinutes % 60;
+    int days = difference.inDays;
+    int hours = difference.inHours % 24;
+    int minutes = difference.inMinutes % 60;
 
-  // Generate a human-readable string based on the largest unit
-  if (days > 0) {
-    return '$days day${days > 1 ? 's' : ''} ago';
-  } else if (hours > 0) {
-    return '$hours hour${hours > 1 ? 's' : ''} ago';
-  } else if (minutes > 0) {
-    return '$minutes minute${minutes > 1 ? 's' : ''} ago';
-  } else {
-    return 'Just now';
+    if (days > 0) {
+      return '$days day${days > 1 ? 's' : ''} ago';
+    } else if (hours > 0) {
+      return '$hours hour${hours > 1 ? 's' : ''} ago';
+    } else if (minutes > 0) {
+      return '$minutes minute${minutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
   }
 }

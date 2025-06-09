@@ -8,13 +8,13 @@ import 'package:kssia/src/data/models/notification_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notification_api.g.dart';
 
-
 class NotificationApiService {
   final String token;
 
   NotificationApiService({required this.token});
 
-  Future<List<NotificationModel>> fetchUnreadNotifications(String userId) async {
+  Future<List<NotificationModel>> fetchUnreadNotifications(
+      String userId) async {
     final url = Uri.parse('$baseUrl/notification/in-app/unread/$userId');
     print('Requesting URL: $url');
 
@@ -65,12 +65,10 @@ class NotificationApiService {
   }
 }
 
-
 @riverpod
 NotificationApiService notificationService(Ref ref, String token) {
-  return NotificationApiService(token:  token);
+  return NotificationApiService(token: token);
 }
-
 
 @riverpod
 Future<List<NotificationModel>> fetchUnreadNotifications(
@@ -81,7 +79,6 @@ Future<List<NotificationModel>> fetchUnreadNotifications(
   final service = ref.watch(notificationServiceProvider(token));
   return service.fetchUnreadNotifications(userId);
 }
-
 
 @riverpod
 Future<List<NotificationModel>> fetchReadNotifications(

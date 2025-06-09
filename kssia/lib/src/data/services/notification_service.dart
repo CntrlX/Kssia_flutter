@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/data/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,16 +10,16 @@ import 'package:kssia/main.dart';
 
 // Create a provider for NotificationService
 final notificationServiceProvider = Provider<NotificationService>((ref) {
-  // Get the deepLinkService from its provider
   final deepLinkService = ref.watch(deepLinkServiceProvider);
-  return NotificationService(deepLinkService);
+  return NotificationService._(ref, deepLinkService);
 });
 
 class NotificationService {
+  final Ref ref;
   final DeepLinkService _deepLinkService;
   
-  // Constructor now takes DeepLinkService
-  NotificationService(this._deepLinkService);
+  // Private constructor
+  NotificationService._(this.ref, this._deepLinkService);
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -58,6 +59,7 @@ class NotificationService {
   }
 
   void _handleForegroundMessage(RemoteMessage message) {
+    ref.invalidate(fetchUnreadNotificationsProvider);
     log("Notification received: ${message.data}");
     try {
       if (message.notification != null && Platform.isAndroid) {
@@ -93,13 +95,14 @@ class NotificationService {
       debugPrint('Foreground message handling error: $e');
     }
   }
-  
+
   void _handleMessageOpenedApp(RemoteMessage message) {
     try {
       String? deepLink;
       if (message.data.containsKey('screen')) {
         final id = message.data['id'];
-        deepLink = _deepLinkService.getDeepLinkPath(message.data['screen'], id: id);
+        deepLink =
+            _deepLinkService.getDeepLinkPath(message.data['screen'], id: id);
       }
 
       if (deepLink != null) {
@@ -109,10 +112,11 @@ class NotificationService {
       debugPrint('Message opened app handling error: $e');
     }
   }
-  
+
   Future<void> _handleInitialMessage() async {
     try {
-      RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+      RemoteMessage? initialMessage =
+          await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
         debugPrint('Handling initial message: ${initialMessage.data}');
         // Ensure we're on the main page before handling the deep link
@@ -134,7 +138,8 @@ class NotificationService {
   void _handleNotificationTap(NotificationResponse response) {
     try {
       if (response.payload != null) {
-        debugPrint('Handling notification tap with payload: ${response.payload}');
+        debugPrint(
+            'Handling notification tap with payload: ${response.payload}');
         // Ensure we're on the main page before handling the deep link
         if (navigatorKey.currentState != null) {
           navigatorKey.currentState?.pushNamedAndRemoveUntil(

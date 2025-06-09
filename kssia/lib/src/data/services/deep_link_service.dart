@@ -183,7 +183,6 @@ class DeepLinkService {
 
         case 'requirements':
           try {
-
             if (navigatorKey.currentState != null) {
               navigatorKey.currentState?.pushNamedAndRemoveUntil(
                 '/mainpage',
@@ -211,7 +210,7 @@ class DeepLinkService {
                 profilePicture: user.profilePicture,
               );
               final sender = Participant(id: id);
-              
+
               // First navigate to mainpage if not already there
               if (navigatorKey.currentState != null) {
                 navigatorKey.currentState?.pushNamedAndRemoveUntil(
