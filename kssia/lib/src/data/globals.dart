@@ -6,5 +6,5 @@ String id = '';
 String fcmToken = '';
 String subscription = '';
 bool paymentEnabled = true;
-String baseUrl = 'https://api.kssiathrissur.com/api/v1';
+String baseUrl = 'http://192.168.1.103:3001/api/v1';
 int selectedIndex = 0;

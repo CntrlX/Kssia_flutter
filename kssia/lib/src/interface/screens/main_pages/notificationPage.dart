@@ -32,8 +32,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         builder: (context, ref, child) {
           final asyncUnreadNotification =
               ref.watch(fetchUnreadNotificationsProvider(token, id));
-          final asyncreadNotification =
-              ref.watch(fetchReadNotificationsProvider(token, id));
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
