@@ -27,14 +27,7 @@ import 'package:kssia/src/data/providers/user_provider.dart';
 import 'package:kssia/src/interface/common/components/snackbar.dart';
 import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:minio_flutter/io.dart';
-import 'package:minio_flutter/minio.dart';
-import 'package:path/path.dart';
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:image/image.dart' as img;
+
 
 part 'user_api.g.dart';
 
@@ -113,6 +106,7 @@ class ApiRoutes {
       UserCredential userCredential =
           await auth.signInWithCredential(credential);
       User? user = userCredential.user;
+
       if (user != null) {
         String? idToken = await user.getIdToken();
         log("ID Token: $idToken");
