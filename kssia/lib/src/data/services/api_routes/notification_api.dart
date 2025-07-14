@@ -66,7 +66,7 @@ class NotificationApiService {
 }
 
 @riverpod
-NotificationApiService notificationService(Ref ref, String token) {
+NotificationApiService notificationApiService(Ref ref, String token) {
   return NotificationApiService(token: token);
 }
 
@@ -76,7 +76,7 @@ Future<List<NotificationModel>> fetchUnreadNotifications(
   String token,
   String userId,
 ) async {
-  final service = ref.watch(notificationServiceProvider(token));
+  final service = ref.watch(notificationApiServiceProvider(token));
   return service.fetchUnreadNotifications(userId);
 }
 
@@ -86,6 +86,6 @@ Future<List<NotificationModel>> fetchReadNotifications(
   String token,
   String userId,
 ) async {
-  final service = ref.watch(notificationServiceProvider(token));
+  final service = ref.watch(notificationApiServiceProvider(token));
   return service.fetchReadNotifications(userId);
 }

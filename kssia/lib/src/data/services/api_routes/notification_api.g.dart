@@ -6,8 +6,8 @@ part of 'notification_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$notificationServiceHash() =>
-    r'19cf737e5ff2b2664ea31e0ca0d5b06b6983e7fe';
+String _$notificationApiServiceHash() =>
+    r'18f4757e7e9e58d198fc139465d580a945732fa7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,27 +30,27 @@ class _SystemHash {
   }
 }
 
-/// See also [notificationService].
-@ProviderFor(notificationService)
-const notificationServiceProvider = NotificationServiceFamily();
+/// See also [notificationApiService].
+@ProviderFor(notificationApiService)
+const notificationApiServiceProvider = NotificationApiServiceFamily();
 
-/// See also [notificationService].
-class NotificationServiceFamily extends Family<NotificationApiService> {
-  /// See also [notificationService].
-  const NotificationServiceFamily();
+/// See also [notificationApiService].
+class NotificationApiServiceFamily extends Family<NotificationApiService> {
+  /// See also [notificationApiService].
+  const NotificationApiServiceFamily();
 
-  /// See also [notificationService].
-  NotificationServiceProvider call(
+  /// See also [notificationApiService].
+  NotificationApiServiceProvider call(
     String token,
   ) {
-    return NotificationServiceProvider(
+    return NotificationApiServiceProvider(
       token,
     );
   }
 
   @override
-  NotificationServiceProvider getProviderOverride(
-    covariant NotificationServiceProvider provider,
+  NotificationApiServiceProvider getProviderOverride(
+    covariant NotificationApiServiceProvider provider,
   ) {
     return call(
       provider.token,
@@ -69,33 +69,33 @@ class NotificationServiceFamily extends Family<NotificationApiService> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'notificationServiceProvider';
+  String? get name => r'notificationApiServiceProvider';
 }
 
-/// See also [notificationService].
-class NotificationServiceProvider
+/// See also [notificationApiService].
+class NotificationApiServiceProvider
     extends AutoDisposeProvider<NotificationApiService> {
-  /// See also [notificationService].
-  NotificationServiceProvider(
+  /// See also [notificationApiService].
+  NotificationApiServiceProvider(
     String token,
   ) : this._internal(
-          (ref) => notificationService(
-            ref as NotificationServiceRef,
+          (ref) => notificationApiService(
+            ref as NotificationApiServiceRef,
             token,
           ),
-          from: notificationServiceProvider,
-          name: r'notificationServiceProvider',
+          from: notificationApiServiceProvider,
+          name: r'notificationApiServiceProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$notificationServiceHash,
-          dependencies: NotificationServiceFamily._dependencies,
+                  : _$notificationApiServiceHash,
+          dependencies: NotificationApiServiceFamily._dependencies,
           allTransitiveDependencies:
-              NotificationServiceFamily._allTransitiveDependencies,
+              NotificationApiServiceFamily._allTransitiveDependencies,
           token: token,
         );
 
-  NotificationServiceProvider._internal(
+  NotificationApiServiceProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -109,12 +109,12 @@ class NotificationServiceProvider
 
   @override
   Override overrideWith(
-    NotificationApiService Function(NotificationServiceRef provider) create,
+    NotificationApiService Function(NotificationApiServiceRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: NotificationServiceProvider._internal(
-        (ref) => create(ref as NotificationServiceRef),
+      override: NotificationApiServiceProvider._internal(
+        (ref) => create(ref as NotificationApiServiceRef),
         from: from,
         name: null,
         dependencies: null,
@@ -127,12 +127,12 @@ class NotificationServiceProvider
 
   @override
   AutoDisposeProviderElement<NotificationApiService> createElement() {
-    return _NotificationServiceProviderElement(this);
+    return _NotificationApiServiceProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is NotificationServiceProvider && other.token == token;
+    return other is NotificationApiServiceProvider && other.token == token;
   }
 
   @override
@@ -146,18 +146,19 @@ class NotificationServiceProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin NotificationServiceRef on AutoDisposeProviderRef<NotificationApiService> {
+mixin NotificationApiServiceRef
+    on AutoDisposeProviderRef<NotificationApiService> {
   /// The parameter `token` of this provider.
   String get token;
 }
 
-class _NotificationServiceProviderElement
+class _NotificationApiServiceProviderElement
     extends AutoDisposeProviderElement<NotificationApiService>
-    with NotificationServiceRef {
-  _NotificationServiceProviderElement(super.provider);
+    with NotificationApiServiceRef {
+  _NotificationApiServiceProviderElement(super.provider);
 
   @override
-  String get token => (origin as NotificationServiceProvider).token;
+  String get token => (origin as NotificationApiServiceProvider).token;
 }
 
 String _$fetchUnreadNotificationsHash() =>

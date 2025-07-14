@@ -17,7 +17,7 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 class NotificationService {
   final Ref ref;
   final DeepLinkService _deepLinkService;
-  
+
   // Private constructor
   NotificationService._(this.ref, this._deepLinkService);
 
@@ -51,6 +51,7 @@ class NotificationService {
       });
 
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
       await _handleInitialMessage();
     } catch (e) {
@@ -70,6 +71,7 @@ class NotificationService {
             message.data['screen'],
             id: id,
           );
+        
         }
 
         const AndroidNotificationDetails androidPlatformChannelSpecifics =

@@ -6,6 +6,7 @@ import 'package:kssia/firebase_options.dart';
 import 'package:kssia/src/data/models/chat_model.dart';
 import 'package:kssia/src/data/models/events_model.dart';
 import 'package:kssia/src/data/models/notification_model.dart';
+import 'package:kssia/src/data/services/api_routes/notification_api.dart';
 import 'package:kssia/src/interface/screens/event_news/viewmore_event.dart';
 import 'package:kssia/src/interface/screens/main_page.dart';
 import 'package:kssia/src/interface/screens/main_pages/loginPage.dart';
@@ -29,14 +30,39 @@ Future<void> main() async {
   );
 
   FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
-  runApp(const ProviderScope(child: MainApp()));
+  runApp(const ProviderScope(child: MainAppLifecycleHandler()));
 }
 
-class MainApp extends ConsumerWidget {
-  const MainApp({Key? key}) : super(key: key);
+class MainAppLifecycleHandler extends ConsumerStatefulWidget {
+  const MainAppLifecycleHandler({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _MainAppLifecycleHandlerState createState() => _MainAppLifecycleHandlerState();
+}
+
+class _MainAppLifecycleHandlerState extends ConsumerState<MainAppLifecycleHandler> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+
+      ref.invalidate(fetchUnreadNotificationsProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Access services through their providers
     final notificationService = ref.watch(notificationServiceProvider);
 
