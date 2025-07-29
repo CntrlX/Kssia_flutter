@@ -13,7 +13,7 @@ class ProductsNotifier extends _$ProductsNotifier {
   int pageNo = 1;
   final int limit = 20;
   bool hasMore = true;
-
+  bool isFirstLoad = true;
   String? currentSearchQuery;
   String? currentCategory;
   String? currentSubcategory;
@@ -53,6 +53,7 @@ class ProductsNotifier extends _$ProductsNotifier {
       products = [...products, ...newProducts];
       pageNo++;
       hasMore = newProducts.length == limit;
+            isFirstLoad = false;
       state = products;
       log('Total products after fetch: ${products.length}');
     } catch (e, stackTrace) {

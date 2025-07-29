@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kssia/main.dart';
 
-// Create a provider for NotificationService
 final notificationServiceProvider = Provider<NotificationService>((ref) {
   final deepLinkService = ref.watch(deepLinkServiceProvider);
   return NotificationService._(ref, deepLinkService);
@@ -18,7 +17,7 @@ class NotificationService {
   final Ref ref;
   final DeepLinkService _deepLinkService;
 
-  // Private constructor
+
   NotificationService._(this.ref, this._deepLinkService);
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -71,17 +70,19 @@ class NotificationService {
             message.data['screen'],
             id: id,
           );
-        
         }
 
         const AndroidNotificationDetails androidPlatformChannelSpecifics =
             AndroidNotificationDetails(
           'your_channel_id',
           'your_channel_name',
+          channelDescription: 'your_channel_description',
           importance: Importance.max,
-          priority: Priority.high,
+          priority: Priority.max,
           showWhen: true,
+          channelShowBadge: true,
         );
+
         const NotificationDetails platformChannelSpecifics =
             NotificationDetails(android: androidPlatformChannelSpecifics);
 
